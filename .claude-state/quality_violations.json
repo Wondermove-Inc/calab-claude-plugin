@@ -1,14 +1,1 @@
-[
-  {
-    "type": "missing_comments",
-    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/code_quality_validator.py",
-    "functions": [
-      "should_skip_file",
-      "count_lines",
-      "check_function_comments",
-      "log_violation"
-    ],
-    "severity": "warning",
-    "timestamp": "2025-12-29T15:54:34.590563"
-  }
-]
+[]
