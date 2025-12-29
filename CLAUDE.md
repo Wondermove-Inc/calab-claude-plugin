@@ -106,6 +106,17 @@ flowchart LR
 |--------|------|
 | `/check-quality` | 전체 프로젝트 품질 검사 |
 
+### JIRA 연동
+
+| 명령어 | 설명 |
+|--------|------|
+| `/jira-init <project-key>` | JIRA 연동 초기화 |
+| `/jira-push` | Worktree → JIRA 동기화 |
+| `/jira-pull` | JIRA → Worktree 동기화 |
+| `/jira-sync` | 양방향 동기화 |
+| `/jira-link <id> <key>` | 수동 매핑 |
+| `/jira-status` | 연동 상태 확인 |
+
 ---
 
 ## 자동 활성화 스킬
@@ -122,6 +133,7 @@ flowchart LR
 | `clean-architecture` | 코드 구현, 클래스 생성, 레이어, 도메인 | 클린 아키텍처 강제 |
 | `project-onboarding` | 프로젝트 분석, 코드베이스 학습, 온보딩 | 컨텍스트 문서 참조 |
 | `research` | 리서치, 조사, 알아봐, 찾아봐 | 다각도 검색 + 핵심 요약 |
+| `jira-integration` | JIRA, 지라, 이슈, 티켓, 동기화 | Worktree ↔ JIRA 양방향 동기화 |
 
 ---
 
@@ -186,15 +198,20 @@ project/
 │   │       ├── summary.md
 │   │       └── sources.md
 │   │
-│   ├── skills/                  # 자동 활성화 스킬 (8개)
-│   ├── commands/                # 슬래시 커맨드 (20개)
+│   ├── integrations/            # 외부 시스템 연동
+│   │   ├── jira_config.json     # JIRA 설정
+│   │   └── jira_connector.py    # JIRA API 커넥터
+│   │
+│   ├── skills/                  # 자동 활성화 스킬 (9개)
+│   ├── commands/                # 슬래시 커맨드 (26개)
 │   ├── hooks/                   # 이벤트 훅
 │   ├── best-practices/          # 기술별 베스트 프랙티스
 │   ├── templates/               # 문서 템플릿
 │   └── agents/                  # 서브에이전트
 │
 ├── .claude-state/               # 런타임 상태
-│   └── worktree.json            # 작업 트리 상태
+│   ├── worktree.json            # 작업 트리 상태
+│   └── jira_mapping.json        # JIRA ID 매핑
 │
 └── docs/                        # 생성된 문서 (PRD, 아키텍처, 태스크)
 ```

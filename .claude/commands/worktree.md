@@ -275,8 +275,49 @@ work-tracker 스킬이 다음 키워드 감지 시 자동으로 worktree 업데�
 2. `/dev build` 실행 시 → 해당 태스크 자동 시작
 3. 태스크 완료 감지 시 → 자동으로 done 처리
 
+## JIRA 연동
+
+JIRA 연동이 활성화된 경우, Worktree 변경 시 JIRA에 자동 동기화됩니다.
+
+### 자동 동기화 트리거
+
+| Worktree 명령 | JIRA 동작 |
+|--------------|-----------|
+| `/worktree start TASK-001` | JIRA 이슈 → In Progress |
+| `/worktree done TASK-001` | JIRA 이슈 → Done |
+| `/worktree block TASK-001` | JIRA 이슈 → Blocked + 코멘트 |
+
+### 설정
+
+```json
+// .claude/integrations/jira_config.json
+{
+  "jira": {
+    "auto_sync": {
+      "enabled": true,
+      "on_task_start": true,
+      "on_task_done": true,
+      "on_blocker": true
+    }
+  }
+}
+```
+
+### 연계 명령어
+
+| 명령어 | 설명 |
+|--------|------|
+| `/jira-init` | JIRA 연동 초기화 |
+| `/jira-push` | Worktree → JIRA |
+| `/jira-pull` | JIRA → Worktree |
+| `/jira-sync` | 양방향 동기화 |
+| `/jira-status` | 연동 상태 확인 |
+
+자세한 내용: `.claude/skills/jira-integration/SKILL.md`
+
 ## 참조
 
 - `.claude/skills/work-tracker/SKILL.md`
+- `.claude/skills/jira-integration/SKILL.md`
 - `.claude-state/worktree.json`
 - `docs/tasks/{feature}/tasks.md`

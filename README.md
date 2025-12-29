@@ -203,6 +203,30 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 /save-progress 리프레시 토큰 구현 완료
 ```
 
+### 시나리오 5: JIRA 연동으로 팀 협업
+
+```bash
+# 1. JIRA 연동 초기화
+export JIRA_EMAIL='dev@company.com'
+export JIRA_API_TOKEN='your-api-token'
+/jira-init AUTH
+
+# 2. 태스크 분해 후 JIRA 동기화
+/dev tasks
+/jira-push    # Worktree → JIRA 이슈 자동 생성
+
+# 3. 태스크 진행 (JIRA 자동 업데이트)
+/worktree start TASK-001    # JIRA: To Do → In Progress
+# ... 코드 작성 ...
+/worktree done TASK-001     # JIRA: In Progress → Done
+
+# 4. 블로커 발생 시 (JIRA 코멘트 자동 등록)
+/worktree block TASK-002 "외부 API 인증 대기 중"
+
+# 5. 동기화 상태 확인
+/jira-status --detailed
+```
+
 ---
 
 ## 명령어 요약표
@@ -237,6 +261,12 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 | **리서치** | `/research` | `<주제>` | - | 심층 리서치 |
 | | `/research --quick` | `<주제>` | - | 빠른 리서치 |
 | | `/research --deep` | `<주제>` | - | 상세 리서치 |
+| **JIRA** | `/jira-init` | `<project-key>` | - | JIRA 연동 초기화 |
+| | `/jira-push` | - | - | Worktree → JIRA |
+| | `/jira-pull` | - | - | JIRA → Worktree |
+| | `/jira-sync` | - | - | 양방향 동기화 |
+| | `/jira-link` | `<id> <key>` | - | 수동 매핑 |
+| | `/jira-status` | `--detailed` | - | 연동 상태 확인 |
 
 ---
 
@@ -506,6 +536,87 @@ flowchart LR
 
 ---
 
+### JIRA 연동
+
+Worktree와 JIRA를 양방향으로 동기화합니다. 관리자/PM이 JIRA 대시보드에서 진행 상황을 확인할 수 있습니다.
+
+| 명령어 | 설명 | 인자 | 출력 |
+|--------|------|------|------|
+| `/jira-init` | JIRA 연동 초기화 | `<project-key>` | 연결 상태 |
+| `/jira-push` | Worktree → JIRA 동기화 | - | 생성/업데이트 결과 |
+| `/jira-pull` | JIRA → Worktree 동기화 | - | 반영 결과 |
+| `/jira-sync` | 양방향 동기화 | - | 동기화 결과 |
+| `/jira-link` | 수동 매핑 | `<id> <key>` | 매핑 정보 |
+| `/jira-status` | 연동 상태 확인 | `--detailed` | 상태 리포트 |
+
+**초기 설정:**
+
+```bash
+# 1. 환경변수 설정
+export JIRA_EMAIL='your-email@company.com'
+export JIRA_API_TOKEN='your-api-token'
+
+# 2. JIRA 연동 초기화
+/jira-init AUTH
+```
+
+**사용 흐름:**
+
+```mermaid
+flowchart LR
+    subgraph Claude["Claude Code"]
+        W1["/worktree start"]
+        W2["/worktree done"]
+        W3["/worktree block"]
+    end
+
+    subgraph Hook["자동 훅"]
+        H["jira_auto_sync.py"]
+    end
+
+    subgraph JIRA["JIRA Cloud"]
+        J1["In Progress"]
+        J2["Done"]
+        J3["Blocked + 코멘트"]
+    end
+
+    W1 --> H --> J1
+    W2 --> H --> J2
+    W3 --> H --> J3
+```
+
+**자동 동기화:**
+
+| Worktree 명령 | JIRA 자동 동작 |
+|--------------|---------------|
+| `/worktree start TASK-001` | JIRA 이슈 → In Progress |
+| `/worktree done TASK-001` | JIRA 이슈 → Done |
+| `/worktree block TASK-001 "사유"` | JIRA 이슈 → Blocked + 코멘트 |
+
+**상태 확인 예시:**
+
+```
+============================================
+ JIRA 연동 상태
+============================================
+
+ 연결 정보:
+ • 상태: ✅ 연결됨
+ • URL: https://company.atlassian.net
+ • 프로젝트: AUTH (Authentication System)
+
+ 동기화 상태:
+ • 총 매핑: 8개
+ • Worktree 항목: 10개
+ • 미동기화: 2개
+
+ 자동 동기화: ✅ 활성화
+
+============================================
+```
+
+---
+
 ## 스킬 레퍼런스
 
 스킬은 특정 키워드 감지 시 자동으로 활성화됩니다.
@@ -520,6 +631,7 @@ flowchart LR
 | `clean-architecture` | 코드 구현, 클래스 생성, 레이어, 도메인 | 클린 아키텍처 강제 |
 | `project-onboarding` | 프로젝트 분석, 코드베이스 학습, 온보딩 | 컨텍스트 문서 참조 |
 | `research` | 리서치, 조사, 알아봐, 찾아봐 | 다각도 검색 + 핵심 요약 |
+| `jira-integration` | JIRA, 지라, 이슈, 티켓, 동기화 | Worktree ↔ JIRA 양방향 동기화 |
 
 ---
 
@@ -534,6 +646,7 @@ flowchart LR
 | `session_end.py` | 세션 종료 시 | 작업 상태 자동 저장 |
 | `code_quality_validator.py` | 파일 생성/수정 시 | 300줄 초과, 주석 누락 경고 |
 | `track_changes.py` | 파일 변경 시 | 변경 이력 기록 |
+| `jira_auto_sync.py` | worktree.json 변경 시 | JIRA 이슈 상태 자동 업데이트 |
 
 ---
 
@@ -581,8 +694,12 @@ project/
 │   │       ├── summary.md             # 핵심 요약
 │   │       └── sources.md             # 출처 목록
 │   │
-│   ├── skills/                        # 자동 활성화 스킬
-│   ├── commands/                      # 슬래시 커맨드
+│   ├── integrations/                  # 외부 시스템 연동
+│   │   ├── jira_config.json           # JIRA 설정
+│   │   └── jira_connector.py          # JIRA API 커넥터
+│   │
+│   ├── skills/                        # 자동 활성화 스킬 (9개)
+│   ├── commands/                      # 슬래시 커맨드 (26개)
 │   ├── hooks/                         # 이벤트 훅
 │   ├── best-practices/                # 기술별 베스트 프랙티스
 │   ├── templates/                     # 문서 템플릿
@@ -590,7 +707,8 @@ project/
 │
 ├── docs/                              # 생성된 문서
 └── .claude-state/                     # 런타임 상태
-    └── worktree.json                  # 작업 트리 상태
+    ├── worktree.json                  # 작업 트리 상태
+    └── jira_mapping.json              # JIRA ID 매핑
 ```
 
 ---
@@ -604,3 +722,7 @@ project/
 | 온보딩 실패 | package.json 없음 | 프로젝트 루트 확인 |
 | 클린 아키텍처 위반 | 잘못된 import | `/clean-validate` 후 수정 |
 | 품질 검사 미작동 | 훅 설정 오류 | `hooks.json` 확인 |
+| JIRA 연결 실패 (401) | API 토큰 오류 | `JIRA_API_TOKEN` 재설정 |
+| JIRA 연결 실패 (403) | 권한 없음 | JIRA 관리자에게 권한 요청 |
+| JIRA 동기화 안됨 | 매핑 없음 | `/jira-link` 또는 `/jira-push` 실행 |
+| JIRA 상태 전환 실패 | 워크플로우 제한 | JIRA 워크플로우 확인 |

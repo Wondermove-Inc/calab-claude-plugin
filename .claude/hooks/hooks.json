@@ -46,6 +46,16 @@
             "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/code_quality_validator.py\""
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "file_pattern": "**/worktree.json",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/jira_auto_sync.py\""
+          }
+        ]
       }
     ]
   }
