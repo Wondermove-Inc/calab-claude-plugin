@@ -25,7 +25,7 @@
 
 ```bash
 # 상황 1: 새 프로젝트 시작
-/dev-start [아이디어]
+/dev plan [아이디어]
 
 # 상황 2: 기존 프로젝트 투입
 /onboard
@@ -40,16 +40,20 @@
 
 ### 개발 워크플로우
 
-| 명령어 | 설명 |
-|--------|------|
-| `/dev-start` | 전체 워크플로우 시작 (브레인스토밍 → PRD → 설계 → 구현) |
-| `/dev-brainstorm` | 아이디어 브레인스토밍 |
-| `/dev-prd` | PRD 문서 작성 (리서치 결과 자동 반영) |
-| `/dev-architecture` | 시스템 아키텍처 설계 |
-| `/dev-erd` | ERD 데이터 모델 설계 |
-| `/dev-tasks` | 구현 태스크 분해 → worktree.json 자동 생성 |
-| `/dev-implement [task-id]` | 태스크 구현 |
-| `/dev-status` | 진행 상황 확인 |
+```mermaid
+flowchart LR
+    A["/dev plan"] --> B["/dev design"]
+    B --> C["/dev tasks"]
+    C --> D["/dev build"]
+```
+
+| 명령어 | 옵션 | 설명 |
+|--------|------|------|
+| `/dev plan [아이디어]` | `--brainstorm`, `--prd` | 기획 (브레인스토밍 + PRD) |
+| `/dev design` | `--arch`, `--erd` | 설계 (아키텍처 + ERD) |
+| `/dev tasks` | - | 태스크 분해 → worktree.json 자동 생성 |
+| `/dev build [task-id]` | `--tdd` | 태스크 구현 |
+| `/dev status` | - | 진행 상황 확인 |
 
 ### 클린 아키텍처
 
@@ -110,13 +114,13 @@
 
 | 스킬 | 활성화 키워드 | 동작 |
 |------|--------------|------|
-| `project-rules` | 코드 작성, 수정, 리뷰 | 프로젝트 규칙 자동 참조 |
-| `work-tracker` | 작업 시작, 전환, 완료 | 작업 상태 + Worktree 자동 추적 |
-| `code-quality` | 코드 생성, 함수 추가 | 300줄 제한, 주석 필수 적용 |
-| `dev-workflow` | 새 기능 개발, 프로젝트 시작 | 개발 워크플로우 안내 |
-| `best-practices` | React, Node.js, TypeScript 개발 | 기술별 베스트 프랙티스 적용 |
-| `clean-architecture` | 코드 구현, 클래스 생성 | 클린 아키텍처 강제 |
-| `project-onboarding` | 프로젝트 분석, 코드베이스 학습 | 컨텍스트 문서 참조 |
+| `project-rules` | 코드 작성, 수정, 리뷰, 아키텍처 결정 | 프로젝트 규칙 자동 참조 |
+| `work-tracker` | 작업 시작, 전환, 완료, "다음", "이제" | 작업 상태 + Worktree 자동 추적 |
+| `code-quality` | 코드 생성, 함수 추가, 구현, 만들기 | 300줄 제한, 주석 필수 적용 |
+| `dev-workflow` | 새 기능, 프로젝트 시작, 설계, PRD, /dev | 개발 워크플로우 안내 |
+| `best-practices` | React, Node.js, TypeScript, TDD, 테스트 주도 | 기술별 베스트 프랙티스 적용 |
+| `clean-architecture` | 코드 구현, 클래스 생성, 레이어, 도메인 | 클린 아키텍처 강제 |
+| `project-onboarding` | 프로젝트 분석, 코드베이스 학습, 온보딩 | 컨텍스트 문서 참조 |
 | `research` | 리서치, 조사, 알아봐, 찾아봐 | 다각도 검색 + 핵심 요약 |
 
 ---
@@ -125,17 +129,14 @@
 
 ```mermaid
 flowchart TB
-    R["/research"] -.->|자동 반영| D3
+    R["/research"] -.->|자동 반영| D1
 
-    D1["/dev-start"] --> D2["/dev-brainstorm"]
-    D2 --> D3["/dev-prd"]
-    D3 --> D4["/dev-architecture"]
-    D4 --> D5["/dev-erd"]
-    D5 --> D6["/dev-tasks"]
-    D6 -->|자동 생성| W["worktree.json"]
-    D6 --> D7["/dev-implement"]
-    W -.->|자동 업데이트| D7
-    D7 --> Code["코드 생성"]
+    D1["/dev plan"] --> D2["/dev design"]
+    D2 --> D3["/dev tasks"]
+    D3 -->|자동 생성| W["worktree.json"]
+    D3 --> D4["/dev build"]
+    W -.->|자동 업데이트| D4
+    D4 --> Code["코드 생성"]
 
     subgraph Skills["⚡ 자동 적용"]
         S1["clean-architecture"]
@@ -186,7 +187,7 @@ project/
 │   │       └── sources.md
 │   │
 │   ├── skills/                  # 자동 활성화 스킬 (8개)
-│   ├── commands/                # 슬래시 커맨드 (26개+)
+│   ├── commands/                # 슬래시 커맨드 (20개)
 │   ├── hooks/                   # 이벤트 훅
 │   ├── best-practices/          # 기술별 베스트 프랙티스
 │   ├── templates/               # 문서 템플릿
@@ -195,8 +196,7 @@ project/
 ├── .claude-state/               # 런타임 상태
 │   └── worktree.json            # 작업 트리 상태
 │
-├── docs/                        # 생성된 문서
-└── requirement/                 # PRD 및 요구사항
+└── docs/                        # 생성된 문서 (PRD, 아키텍처, 태스크)
 ```
 
 ---

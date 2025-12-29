@@ -1,3 +1,8 @@
+---
+description: 빠른 프로젝트 온보딩을 실행합니다. 핵심 정보만 분석하여 최소 컨텍스트를 구축합니다.
+allowed-tools: Read, Write, Glob
+---
+
 # /onboard-quick - 빠른 온보딩
 
 ## 설명
@@ -96,6 +101,14 @@ src/
 | 빠른 코드 리뷰 | `/onboard-quick` |
 | 깊은 이해 필요 없는 작업 | `/onboard-quick` |
 
+## 다음 단계
+
+| 상황 | 명령어 |
+|------|--------|
+| 더 자세한 분석 필요 | `/onboard` |
+| 바로 작업 시작 | 코드 작성 시작 (컨텍스트 자동 참조) |
+
 ## 참조
+
 - `/onboard` - 전체 온보딩
 - `.claude/skills/project-onboarding/SKILL.md`

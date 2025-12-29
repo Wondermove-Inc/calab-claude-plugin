@@ -1,7 +1,7 @@
 ---
 description: 태스크를 분해합니다. PRD와 아키텍처 문서를 기반으로 구현 태스크를 생성하고 우선순위를 결정합니다.
 allowed-tools: Read, Write, Edit, Glob
-argument-hint: [기능명 (선택)]
+argument-hint: [기능명]
 ---
 
 # 태스크 분해
@@ -9,6 +9,13 @@ argument-hint: [기능명 (선택)]
 ## 목적
 
 PRD와 아키텍처 문서를 기반으로 구현 가능한 태스크로 분해합니다.
+
+## 사용법
+
+| 명령어 | 설명 |
+|--------|------|
+| `/dev tasks` | CURRENT_CONTEXT에서 현재 기능 자동 감지 |
+| `/dev tasks user-auth` | 특정 기능(user-auth) 지정 |
 
 ## 실행 절차
 
@@ -166,7 +173,7 @@ graph TD
 
 ---
 
-*구현 시작: /dev-implement TASK-001*
+*구현 시작: /dev build TASK-001*
 ```
 
 ### Step 8: Worktree 생성
@@ -255,7 +262,7 @@ graph TD
 3. Frontend Components
 4. Testing
 
- 다음 단계: /dev-implement TASK-001
+ 다음 단계: /dev build TASK-001
 
 ============================================
 ```

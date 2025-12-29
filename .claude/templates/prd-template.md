@@ -193,4 +193,4 @@ So that {얻고자 하는 가치}.
 
 ---
 
-*다음 단계: /dev-architecture*
+*다음 단계: /dev design*

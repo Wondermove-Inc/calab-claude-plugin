@@ -1,3 +1,9 @@
+---
+description: 프로젝트를 전체 분석하여 5개 컨텍스트 문서를 생성합니다. 기존 프로젝트 분석, 코드베이스 학습, 온보딩 시 사용합니다.
+allowed-tools: Read, Write, Glob, Grep, Bash
+argument-hint: [--skip-domain]
+---
+
 # /onboard - 프로젝트 온보딩
 
 ## 설명
@@ -132,6 +138,16 @@ cat tsconfig.json
 이제 이 프로젝트의 스타일에 맞춰 개발할 준비가 되었습니다!
 ```
 
+## 다음 단계
+
+| 상황 | 명령어 |
+|------|--------|
+| 새 기능 개발 시작 | `/dev plan [아이디어]` |
+| 특정 영역 심층 학습 | `/learn <path>` |
+| 컨텍스트 확인 | `/context-show` |
+| 코드 작성 시작 | 바로 작업 시작 (컨텍스트 자동 참조) |
+
 ## 참조
+
 - `.claude/skills/project-onboarding/SKILL.md`
-- `requirement/PRD-project-onboarding.md`
+- `.claude/best-practices/project-onboarding.md`

@@ -271,4 +271,4 @@ src/
 
 ---
 
-*다음 단계: /dev-erd*
+*다음 단계: /dev design --erd*

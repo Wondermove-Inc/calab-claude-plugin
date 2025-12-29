@@ -1,3 +1,9 @@
+---
+description: 작업 트리를 관리합니다. 태스크 시작, 진행, 완료를 실시간 추적합니다. 작업 상태, 진행률 확인에 사용합니다.
+allowed-tools: Read, Write, Edit
+argument-hint: [status | start <id> | done <id> | block <id> <reason>]
+---
+
 # /worktree - 작업 트리 관리
 
 ## 설명
@@ -266,7 +272,7 @@ work-tracker 스킬이 다음 키워드 감지 시 자동으로 worktree 업데�
 ## 자동 동기화
 
 1. `/dev-tasks` 실행 시 → `worktree.json` 자동 생성
-2. `/dev-implement` 실행 시 → 해당 태스크 자동 시작
+2. `/dev build` 실행 시 → 해당 태스크 자동 시작
 3. 태스크 완료 감지 시 → 자동으로 done 처리
 
 ## 참조

@@ -617,5 +617,5 @@ describe('CreateUserUseCase', () => {
 ## 참조
 
 - Robert C. Martin, "Clean Architecture" (2017)
-- `/requirement/PRD-clean-architecture.md`
 - `.claude/skills/clean-architecture/SKILL.md`
+- `.claude/commands/clean-init.md`

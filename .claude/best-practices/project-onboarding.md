@@ -301,6 +301,6 @@ export const userService = {
 
 ## 참조
 
-- `requirement/PRD-project-onboarding.md`
 - `.claude/skills/project-onboarding/SKILL.md`
 - `.claude/commands/onboard.md`
+- `.claude/commands/onboard-quick.md`

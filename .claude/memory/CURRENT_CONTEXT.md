@@ -29,7 +29,7 @@
 ## 최근 완료된 작업
 
 ### 이번 세션
-- [x] `/research` → `/dev-prd` 자동 연계 구현
+- [x] `/research` → `/dev plan` 자동 연계 구현
 - [x] `dev-prd.md` 리서치 통합 Step 추가
 - [x] `research/SKILL.md` PRD 연계 안내 추가
 - [x] README.md 플러그인 통합 플로우 다이어그램 추가
@@ -52,8 +52,8 @@
 | 연계 | 상태 |
 |------|------|
 | `/dev-tasks` → `worktree.json` | ✅ 자동 생성 |
-| `/dev-implement` → worktree | ✅ 자동 업데이트 |
-| `/research` → `/dev-prd` | ✅ 자동 검색/반영 |
+| `/dev build` → worktree | ✅ 자동 업데이트 |
+| `/research` → `/dev plan` | ✅ 자동 검색/반영 |
 | `/onboard` → 코드 생성 | ✅ 컨텍스트 참조 |
 | Context Compact → 복원 | ✅ 훅으로 저장 |
 

@@ -4,6 +4,120 @@
 
 ---
 
+## 0. TDD (테스트 주도 개발)
+
+### TDD 사이클: Red → Green → Refactor
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│    ┌─────────┐                                      │
+│    │   RED   │  1. 실패하는 테스트 작성             │
+│    │ (실패)  │     - 구현 전에 테스트 먼저          │
+│    └────┬────┘     - 명확한 기대 동작 정의          │
+│         │                                           │
+│         ▼                                           │
+│    ┌─────────┐                                      │
+│    │  GREEN  │  2. 테스트 통과하는 최소 코드        │
+│    │ (통과)  │     - 가장 단순한 구현               │
+│    └────┬────┘     - 빠르게 초록불 만들기           │
+│         │                                           │
+│         ▼                                           │
+│    ┌─────────┐                                      │
+│    │REFACTOR │  3. 코드 개선                        │
+│    │ (개선)  │     - 중복 제거                      │
+│    └────┬────┘     - 가독성 향상                    │
+│         │          - 테스트는 계속 통과             │
+│         │                                           │
+│         └──────────► 반복                           │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### TDD 실전 예시
+
+**Step 1: RED - 실패하는 테스트 작성**
+
+```typescript
+// user.service.test.ts
+describe('UserService', () => {
+  describe('calculateAge', () => {
+    it('should return age based on birth year', () => {
+      const userService = new UserService();
+
+      // 아직 구현 없음 - 테스트 실패 (RED)
+      expect(userService.calculateAge(1990)).toBe(35); // 2025년 기준
+    });
+  });
+});
+```
+
+**Step 2: GREEN - 테스트 통과하는 최소 코드**
+
+```typescript
+// user.service.ts
+export class UserService {
+  /**
+   * 출생년도로 나이 계산
+   */
+  calculateAge(birthYear: number): number {
+    return new Date().getFullYear() - birthYear; // 최소 구현
+  }
+}
+```
+
+**Step 3: REFACTOR - 코드 개선**
+
+```typescript
+// user.service.ts
+export class UserService {
+  private readonly currentYear = new Date().getFullYear();
+
+  /**
+   * 출생년도로 나이 계산
+   * @param birthYear - 출생년도
+   * @returns 만 나이
+   */
+  calculateAge(birthYear: number): number {
+    if (birthYear > this.currentYear) {
+      throw new InvalidBirthYearError('Birth year cannot be in the future');
+    }
+    return this.currentYear - birthYear;
+  }
+}
+```
+
+### TDD 3대 원칙 (Three Laws of TDD)
+
+| 원칙 | 설명 |
+|------|------|
+| **1. 실패하는 테스트 없이 프로덕션 코드 작성 금지** | 테스트가 먼저, 코드는 나중 |
+| **2. 컴파일/실행이 실패하는 테스트까지만 작성** | 한 번에 하나의 실패만 |
+| **3. 테스트 통과에 필요한 최소 코드만 작성** | 과도한 구현 금지 |
+
+### TDD 적용 대상
+
+| 적용 권장 | 적용 선택적 |
+|----------|------------|
+| 비즈니스 로직 | UI 컴포넌트 |
+| 유틸리티 함수 | 스타일링 |
+| API 엔드포인트 | 설정 파일 |
+| 데이터 변환 | 외부 라이브러리 래퍼 |
+| 유효성 검증 | 간단한 CRUD |
+
+### TDD vs 테스트 후 작성
+
+```
+TDD (테스트 먼저)          vs    테스트 후 작성
+─────────────────────────────────────────────────
+✅ 설계 품질 향상                ❌ 테스트 누락 위험
+✅ 과도한 구현 방지              ❌ 테스트 어려운 코드
+✅ 명확한 요구사항               ❌ "나중에 작성" 미루기
+✅ 리팩토링 안전망               ❌ 버그 발견 지연
+```
+
+---
+
 ## 1. 테스트 피라미드
 
 ```

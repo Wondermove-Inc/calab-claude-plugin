@@ -1,3 +1,9 @@
+---
+description: 유스케이스를 생성합니다. 클린 아키텍처 Application 레이어에 유스케이스, DTO, 포트를 생성합니다.
+allowed-tools: Write, Edit, Glob, Read
+argument-hint: <UseCaseName> [--entity <Entity>]
+---
+
 # /clean-usecase - 유스케이스 생성
 
 ## 설명

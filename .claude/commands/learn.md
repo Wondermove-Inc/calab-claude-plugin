@@ -1,3 +1,9 @@
+---
+description: 특정 영역을 심층 학습합니다. 파일이나 폴더를 분석하여 패턴과 구조를 파악합니다.
+allowed-tools: Read, Glob, Grep
+argument-hint: <path>
+---
+
 # /learn - 특정 영역 학습
 
 ## 설명
@@ -202,6 +208,15 @@ export const userService = {
 이제 동일한 패턴으로 Checkbox 컴포넌트를 만들어줘
 ```
 
+## 다음 단계
+
+| 상황 | 명령어 |
+|------|--------|
+| 학습된 패턴 확인 | `/context-show patterns` |
+| 동일 패턴으로 코드 생성 | "학습한 패턴으로 XXX 만들어줘" |
+| 컨텍스트 갱신 | `/context-refresh` |
+
 ## 참조
+
 - `/onboard` - 전체 프로젝트 온보딩
 - `/context-show patterns` - 학습된 패턴 확인

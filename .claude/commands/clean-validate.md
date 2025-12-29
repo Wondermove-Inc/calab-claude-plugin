@@ -1,3 +1,9 @@
+---
+description: 클린 아키텍처 규칙 준수를 검증합니다. 레이어 의존성, 네이밍 규칙, 구조적 무결성을 검사합니다.
+allowed-tools: Read, Glob, Grep
+argument-hint: [--fix] [--layer <layer>]
+---
+
 # /clean-validate - 클린 아키텍처 검증
 
 ## 설명
@@ -172,6 +178,16 @@ DTO 사용: 정상
 상세 내용은 위 보고서를 확인하세요.
 ```
 
+## 다음 단계
+
+| 상황 | 명령어 |
+|------|--------|
+| 위반 자동 수정 | `/clean-validate --fix` |
+| 새 엔티티 생성 | `/clean-entity <name>` |
+| 새 유스케이스 생성 | `/clean-usecase <name>` |
+| 구현 진행 | `/dev build TASK-XXX` |
+
 ## 참조
+
 - `.claude/skills/clean-architecture/SKILL.md`
 - `.claude/best-practices/clean-architecture.md`

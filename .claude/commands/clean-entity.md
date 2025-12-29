@@ -1,3 +1,9 @@
+---
+description: 도메인 엔티티를 생성합니다. 클린 아키텍처 Domain 레이어에 엔티티, 값 객체, 리포지토리 인터페이스를 생성합니다.
+allowed-tools: Write, Edit, Glob
+argument-hint: <EntityName> [--with-repository]
+---
+
 # /clean-entity - 도메인 엔티티 생성
 
 ## 설명

@@ -13,7 +13,7 @@
 
 2. **PRD 작성**
    - 컨텍스트 지속성 시스템 PRD
-   - 저장 위치: `requirement/PRD-context-persistence.md`
+   - 저장 위치: `docs/prd/context-persistence/prd.md`
 
 3. **기본 인프라 구축**
    - 디렉토리 구조 생성

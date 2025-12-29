@@ -20,7 +20,7 @@ flowchart TB
         C["⏸️ 작업 재개<br/>세션 복원"]
     end
 
-    A --> D["/dev-start"]
+    A --> D["/dev plan"]
     B --> E["/onboard"]
     C --> F["/restore-context"]
 
@@ -40,7 +40,7 @@ flowchart TB
 
 | 상황 | 문제 | 해결 |
 |------|------|------|
-| **새 프로젝트 시작** | 설계 없이 바로 코딩, 아키텍처 무시 | `/dev-start` → 체계적 진행 |
+| **새 프로젝트 시작** | 설계 없이 바로 코딩, 아키텍처 무시 | `/dev plan` → 체계적 진행 |
 | **기존 프로젝트 투입** | 기존 패턴 무시, 스타일 불일치 | `/onboard` → 프로젝트 학습 |
 | **작업 재개** | 이전 맥락 망각, 규칙 무시 | `/restore-context` → 상태 복원 |
 | **장기 프로젝트** | 진행 상황 파악 어려움 | `/worktree` → 실시간 추적 |
@@ -59,12 +59,9 @@ flowchart TB
     end
 
     subgraph Dev["🛠️ 개발 워크플로우"]
-        D1["/dev-start"] --> D2["/dev-brainstorm"]
-        D2 --> D3["/dev-prd"]
-        D3 --> D4["/dev-architecture"]
-        D4 --> D5["/dev-erd"]
-        D5 --> D6["/dev-tasks"]
-        D6 --> D7["/dev-implement"]
+        D1["/dev plan"] --> D2["/dev design"]
+        D2 --> D3["/dev tasks"]
+        D3 --> D4["/dev build"]
     end
 
     subgraph Onboard["📚 온보딩"]
@@ -83,10 +80,10 @@ flowchart TB
         S3["code-quality"]
     end
 
-    R2 -.->|자동 반영| D3
-    D6 -->|자동 생성| W1["worktree.json"]
-    W1 -.->|자동 업데이트| D7
-    D7 --> Code["코드 생성"]
+    R2 -.->|자동 반영| D1
+    D3 -->|자동 생성| W1["worktree.json"]
+    W1 -.->|자동 업데이트| D4
+    D4 --> Code["코드 생성"]
     Skills -.-> Code
     O2 -.->|참조| Code
     O4 -.->|패턴 유지| Code
@@ -97,11 +94,15 @@ flowchart TB
 
 | 트리거 | 자동 동작 |
 |--------|----------|
-| `/dev-tasks` 완료 | `worktree.json` 자동 생성 |
-| `/dev-prd` 실행 | `.claude/research/` 자동 검색 및 반영 |
-| `/dev-implement` 실행 | worktree 태스크 자동 시작 |
-| 코드 작성 | `project-onboarding` skill 컨텍스트 참조 |
+| `/dev plan` 실행 | `.claude/research/` 자동 검색 및 PRD 반영 |
+| `/dev design` 완료 | 아키텍처/ERD 문서 → `/dev tasks` 연계 |
+| `/dev tasks` 완료 | `worktree.json` 자동 생성 |
+| `/dev build` 실행 | worktree 태스크 자동 시작, 베스트 프랙티스 로드 |
+| `/dev build --tdd` 실행 | `testing.md` TDD 가이드 자동 참조 |
 | "TASK-XXX 완료" 키워드 | worktree 태스크 자동 완료 |
+| `/onboard` 실행 | 5개 project-context 문서 자동 생성 |
+| 코드 작성 시 | `project-onboarding`, `code-quality` skill 자동 활성화 |
+| React/TypeScript 코드 | `best-practices` skill 자동 활성화 |
 | Context Compact | `pre_compact.py` 훅으로 상태 저장 |
 
 ---
@@ -123,7 +124,7 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 
 ```bash
 # 1. 새 프로젝트 시작
-/dev-start 사용자 인증 시스템
+/dev plan 사용자 인증 시스템
 
 # 2. 기존 프로젝트에 AI 투입
 /onboard
@@ -139,21 +140,18 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 ### 시나리오 1: 새 기능 개발
 
 ```bash
-# 1. 개발 워크플로우 시작
-/dev-start 사용자 인증 시스템
+# 1. 기획 (브레인스토밍 + PRD)
+/dev plan 사용자 인증 시스템
 
-# 2. 브레인스토밍 결과 확인 후 PRD 작성
-/dev-prd
+# 2. 설계 (아키텍처 + ERD)
+/dev design
 
-# 3. 아키텍처 설계
-/dev-architecture
+# 3. 태스크 분해
+/dev tasks
 
-# 4. 태스크 분해
-/dev-tasks
-
-# 5. 순차적 구현
-/dev-implement TASK-001
-/dev-implement TASK-002
+# 4. 순차적 구현
+/dev build TASK-001
+/dev build TASK-002
 ...
 ```
 
@@ -211,16 +209,13 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 
 ### 전체 명령어 매트릭스
 
-| 카테고리 | 명령어 | 필수 인자 | 선택 인자 | 주요 출력 |
-|----------|--------|----------|----------|----------|
-| **개발** | `/dev-start` | - | `[아이디어]` | 워크플로우 시작 |
-| | `/dev-brainstorm` | - | `[주제]` | 아이디어 문서 |
-| | `/dev-prd` | - | - | PRD 문서 |
-| | `/dev-architecture` | - | - | 아키텍처 문서 |
-| | `/dev-erd` | - | - | ERD 문서 |
-| | `/dev-tasks` | - | - | 태스크 목록 |
-| | `/dev-implement` | - | `[task-id]` | 구현 코드 |
-| | `/dev-status` | - | - | 진행 상황 |
+| 카테고리 | 명령어 | 옵션 | 인자 | 주요 출력 |
+|----------|--------|------|------|----------|
+| **개발** | `/dev plan` | `--brainstorm`, `--prd` | `[아이디어]` | 브레인스토밍 + PRD |
+| | `/dev design` | `--arch`, `--erd` | - | 아키텍처 + ERD |
+| | `/dev tasks` | - | - | 태스크 목록 |
+| | `/dev build` | `--tdd` | `[task-id]` | 구현 코드 |
+| | `/dev status` | - | - | 진행 상황 |
 | **클린 아키텍처** | `/clean-init` | - | - | 디렉토리 구조 |
 | | `/clean-entity` | `<name>` | - | 엔티티 파일 |
 | | `/clean-usecase` | `<name>` | - | 유스케이스 파일 |
@@ -251,46 +246,65 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 
 체계적인 개발 프로세스를 위한 명령어입니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
+```mermaid
+flowchart LR
+    A["/dev plan"] --> B["/dev design"]
+    B --> C["/dev tasks"]
+    C --> D["/dev build"]
+```
+
+| 명령어 | 설명 | 옵션 | 출력 |
 |--------|------|------|------|
-| `/dev-start` | 전체 워크플로우 시작 | `[아이디어]` | 브레인스토밍 → PRD → 설계 → 구현 |
-| `/dev-brainstorm` | 아이디어 브레인스토밍 | `[주제]` | 아이디어 정리 문서 |
-| `/dev-prd` | PRD 문서 작성 | - | `docs/prd/{feature}/prd.md` |
-| `/dev-architecture` | 시스템 아키텍처 설계 | - | `docs/architecture/system-architecture.md` |
-| `/dev-erd` | ERD 데이터 모델 설계 | - | `docs/architecture/erd.md` |
-| `/dev-tasks` | 구현 태스크 분해 | - | `docs/tasks/{feature}/tasks.md` |
-| `/dev-implement` | 태스크 구현 | `[task-id]` | 베스트 프랙티스 적용 코드 |
-| `/dev-status` | 진행 상황 확인 | - | 현재 단계, 완료율 표시 |
+| `/dev plan` | 기획 (브레인스토밍 + PRD) | `--brainstorm`, `--prd` | `docs/prd/{feature}/` |
+| `/dev design` | 설계 (아키텍처 + ERD) | `--arch`, `--erd` | `docs/architecture/` |
+| `/dev tasks` | 태스크 분해 | - | `docs/tasks/`, `worktree.json` |
+| `/dev build` | 태스크 구현 | `--tdd` | 베스트 프랙티스 적용 코드 |
+| `/dev status` | 진행 상황 확인 | - | 현재 단계, 완료율 표시 |
 
 **사용 예시:**
 
 ```bash
-# 전체 워크플로우 시작
-/dev-start 결제 시스템
+# 기획 단계 (브레인스토밍 + PRD 순차 실행)
+/dev plan 결제 시스템
 
 # 출력:
 # ============================================
-#  개발 워크플로우 시작: 결제 시스템
+#  [PLAN] 기획 완료
 # ============================================
 #
-# Phase 1: Brainstorming
-# → 아이디어를 구체화합니다...
+#  기능: 결제 시스템
+#  생성된 문서:
+#  • docs/prd/payment/brainstorm.md
+#  • docs/prd/payment/prd.md
+#
+#  다음 단계: /dev design
+# ============================================
 ```
 
 ```bash
-# 특정 태스크 구현
-/dev-implement TASK-003
+# 브레인스토밍만 실행
+/dev plan 결제 시스템 --brainstorm
+
+# PRD만 실행
+/dev plan --prd
+```
+
+```bash
+# 태스크 구현
+/dev build TASK-003
+
+# TDD 모드로 구현
+/dev build TASK-003 --tdd
 
 # 출력:
 # ============================================
-#  태스크 구현: TASK-003
+#  [BUILD:TDD] RED - 테스트 작성
 # ============================================
 #
-#  태스크: 결제 API 엔드포인트 구현
-#  적용 패턴: Clean Architecture, Repository Pattern
-#  생성 파일:
-#  • src/application/use-cases/payment/ProcessPaymentUseCase.ts
-#  • src/adapters/controllers/PaymentController.ts
+#  테스트 파일: src/__tests__/payment.service.test.ts
+#  상태: ❌ FAILING (예상대로)
+#  다음 단계: GREEN (최소 구현)
+# ============================================
 ```
 
 ---
@@ -444,7 +458,7 @@ flowchart LR
 
 **PRD 자동 연계:**
 
-리서치 결과는 `/dev-prd` 실행 시 자동으로 통합됩니다.
+리서치 결과는 `/dev plan` 실행 시 자동으로 통합됩니다.
 
 ---
 
@@ -498,13 +512,13 @@ flowchart LR
 
 | 스킬 | 활성화 키워드 | 동작 |
 |------|--------------|------|
-| `project-rules` | 코드 작성, 수정, 리뷰 | 프로젝트 규칙 자동 참조 |
-| `work-tracker` | 작업 시작, 전환, 완료 | 작업 상태 + Worktree 자동 추적 |
-| `code-quality` | 코드 생성, 함수 추가 | 300줄 제한, 주석 필수 적용 |
-| `dev-workflow` | 새 기능 개발, 프로젝트 시작 | 개발 워크플로우 안내 |
-| `best-practices` | React, Node.js, TypeScript 개발 | 기술별 베스트 프랙티스 적용 |
-| `clean-architecture` | 코드 구현, 클래스 생성 | 클린 아키텍처 강제 |
-| `project-onboarding` | 프로젝트 분석, 코드베이스 학습 | 컨텍스트 문서 참조 |
+| `project-rules` | 코드 작성, 수정, 리뷰, 아키텍처 결정 | 프로젝트 규칙 자동 참조 |
+| `work-tracker` | 작업 시작, 전환, 완료, "다음", "이제" | 작업 상태 + Worktree 자동 추적 |
+| `code-quality` | 코드 생성, 함수 추가, 구현, 만들기 | 300줄 제한, 주석 필수 적용 |
+| `dev-workflow` | 새 기능, 프로젝트 시작, 설계, PRD, /dev | 개발 워크플로우 안내 |
+| `best-practices` | React, Node.js, TypeScript, TDD, 테스트 주도 | 기술별 베스트 프랙티스 적용 |
+| `clean-architecture` | 코드 구현, 클래스 생성, 레이어, 도메인 | 클린 아키텍처 강제 |
+| `project-onboarding` | 프로젝트 분석, 코드베이스 학습, 온보딩 | 컨텍스트 문서 참조 |
 | `research` | 리서치, 조사, 알아봐, 찾아봐 | 다각도 검색 + 핵심 요약 |
 
 ---

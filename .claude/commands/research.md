@@ -1,3 +1,9 @@
+---
+description: 심층 리서치를 수행합니다. 주제에 대해 5-10회 검색 후 핵심 요약을 제공합니다. 리서치, 조사, 알아봐 요청 시 사용합니다.
+allowed-tools: Read, Write, WebSearch, WebFetch
+argument-hint: <주제> [--quick | --deep]
+---
+
 # /research - 심층 리서치 및 핵심 요약
 
 ## 설명
@@ -230,7 +236,7 @@
 
  💡 다음 단계:
  • 전체 보고서 확인: cat .claude/research/{topic}/report.md
- • PRD 작성: /dev-prd (리서치 결과 자동 반영)
+ • PRD 작성: /dev plan (리서치 결과 자동 반영)
 
 ============================================
 ```

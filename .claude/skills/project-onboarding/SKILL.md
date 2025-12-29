@@ -95,5 +95,5 @@
 
 ## 참조 문서
 
-- `requirement/PRD-project-onboarding.md` - 전체 설계 문서
 - `.claude/best-practices/project-onboarding.md` - 상세 가이드
+- `.claude/commands/onboard.md` - 온보딩 명령어

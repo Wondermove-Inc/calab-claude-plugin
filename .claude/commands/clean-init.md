@@ -1,3 +1,8 @@
+---
+description: 클린 아키텍처 4-레이어 디렉토리 구조를 초기화합니다. 도메인, 애플리케이션, 어댑터, 인프라 레이어를 자동 생성합니다.
+allowed-tools: Write, Edit, Bash
+---
+
 # /clean-init - 클린 아키텍처 초기화
 
 ## 설명

@@ -17,6 +17,7 @@ allowed-tools: Read, Glob
 - React, Node.js, TypeScript 등 기술 언급 시
 - "패턴", "베스트 프랙티스", "모범 사례" 언급 시
 - 아키텍처, 설계 결정 시
+- **TDD, 테스트 주도 개발, 테스트 먼저** 언급 시
 
 ## 베스트 프랙티스 적용 프로토콜
 
@@ -54,7 +55,7 @@ allowed-tools: Read, Glob
 | TypeScript | `typescript.md` | 타입 패턴, 제네릭, 유틸리티 타입 |
 | Database | `database.md` | 스키마 설계, 쿼리 최적화, 마이그레이션 |
 | API Design | `api-design.md` | REST/GraphQL, 버저닝, 에러 응답 |
-| Testing | `testing.md` | 단위/통합/E2E 테스트 패턴 |
+| Testing | `testing.md` | **TDD**, 단위/통합/E2E 테스트 패턴 |
 
 ## 출력 형식
 

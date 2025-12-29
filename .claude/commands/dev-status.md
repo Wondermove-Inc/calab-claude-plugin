@@ -72,7 +72,7 @@ docs/tasks/{feature}/ - tasks.md, progress.md
 ============================================
 
  사용 가능한 명령어:
-• /dev-implement TASK-011  - 다음 태스크 구현
+• /dev build TASK-011  - 다음 태스크 구현
 • /dev-tasks              - 태스크 목록 보기
 
 ============================================
@@ -88,7 +88,7 @@ docs/tasks/{feature}/ - tasks.md, progress.md
  진행 중인 워크플로우가 없습니다.
 
  새 워크플로우 시작:
-  /dev-start "기능 아이디어"
+  /dev plan "기능 아이디어"
 
  기존 문서:
 • docs/prd/user-auth/ (완료)

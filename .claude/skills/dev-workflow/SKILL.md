@@ -1,6 +1,6 @@
 ---
 name: dev-workflow
-description: 구조화된 개발 워크플로우를 관리합니다. 새 기능 개발, 프로젝트 시작, 설계, 아키텍처, PRD, 요구사항, 기획 요청 시 자동 활성화. 브레인스토밍부터 구현까지 전체 프로세스를 안내합니다.
+description: 구조화된 개발 워크플로우를 관리합니다. 새 기능 개발, 프로젝트 시작, 설계, 아키텍처, PRD, 요구사항, 기획 요청 시 자동 활성화. Plan → Design → Tasks → Build 프로세스를 안내합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -15,57 +15,65 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 - "새 기능", "프로젝트 시작", "개발 시작" 요청 시
 - "설계해줘", "아키텍처", "PRD", "요구사항" 언급 시
 - "기획", "브레인스토밍", "아이디어" 언급 시
-- `/dev-*` 명령어 사용 시
+- `/dev` 명령어 사용 시
 
 ## 워크플로우 단계
 
-### Phase 1: Brainstorming (브레인스토밍)
+```mermaid
+flowchart LR
+    A["/dev plan"] --> B["/dev design"]
+    B --> C["/dev tasks"]
+    C --> D["/dev build"]
+```
 
-1. 아이디어 확장
-2. 문제 정의
-3. 타겟 사용자 식별
-4. 핵심 가치 제안
-5. 범위 정의 (In/Out of Scope)
+### Phase 1: Plan (기획)
 
-**산출물**: `docs/prd/{feature}/brainstorm.md`
+브레인스토밍 + PRD 작성
 
-### Phase 2: PRD (Product Requirements Document)
+| 옵션 | 설명 |
+|------|------|
+| `/dev plan [아이디어]` | 전체 실행 |
+| `/dev plan --brainstorm` | 브레인스토밍만 |
+| `/dev plan --prd` | PRD만 |
 
-1. 배경 및 목적
-2. 목표 및 비목표
-3. 사용자 스토리
-4. 기능 요구사항
-5. 비기능 요구사항
-6. 성공 지표
+**산출물**:
+- `docs/prd/{feature}/brainstorm.md`
+- `docs/prd/{feature}/prd.md`
 
-**산출물**: `docs/prd/{feature}/prd.md`
+### Phase 2: Design (설계)
 
-### Phase 3: Architecture (아키텍처 설계)
+아키텍처 + ERD 설계
 
-1. 시스템 아키텍처
-2. 데이터 모델 (ERD)
-3. API 설계
-4. 기술 스택 결정
-5. 보안 고려사항
+| 옵션 | 설명 |
+|------|------|
+| `/dev design` | 전체 실행 |
+| `/dev design --arch` | 아키텍처만 |
+| `/dev design --erd` | ERD만 |
 
 **산출물**:
 - `docs/architecture/system-architecture.md`
 - `docs/architecture/erd.md`
-- `docs/architecture/api-spec.md`
 
-### Phase 4: Task Planning (태스크 계획)
+### Phase 3: Tasks (태스크 분해)
 
-1. 태스크 분해
-2. 의존성 분석
-3. 우선순위 결정
+구현 태스크 분해 및 worktree 생성
 
-**산출물**: `docs/tasks/{feature}/tasks.md`
+| 명령어 | 설명 |
+|--------|------|
+| `/dev tasks` | 태스크 분해 + worktree.json 생성 |
 
-### Phase 5: Implementation (구현)
+**산출물**:
+- `docs/tasks/{feature}/tasks.md`
+- `.claude-state/worktree.json`
 
-1. 베스트 프랙티스 로드
-2. 코드 생성
-3. 테스트 작성
+### Phase 4: Build (구현)
+
+베스트 프랙티스 적용 코드 생성
+
+| 옵션 | 설명 |
+|------|------|
+| `/dev build [task-id]` | 일반 구현 |
+| `/dev build [task-id] --tdd` | TDD 모드 (RED→GREEN→REFACTOR) |
 
 ## 활성화 시 프로토콜
 
@@ -84,17 +92,29 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ============================================
 
  현재 상태: {상태}
- 진행 단계: Phase {n}
+ 진행 단계: {Plan | Design | Tasks | Build}
 
  사용 가능한 명령어:
-• /dev-start [아이디어]   - 새 워크플로우 시작
-• /dev-brainstorm        - 브레인스토밍
-• /dev-prd              - PRD 작성
-• /dev-architecture      - 아키텍처 설계
-• /dev-erd              - ERD 설계
-• /dev-tasks            - 태스크 분해
-• /dev-implement [task]  - 구현 시작
-• /dev-status           - 진행 상황 확인
+
+ 기획:
+• /dev plan [아이디어]      - 브레인스토밍 + PRD
+• /dev plan --brainstorm   - 브레인스토밍만
+• /dev plan --prd          - PRD만
+
+ 설계:
+• /dev design              - 아키텍처 + ERD
+• /dev design --arch       - 아키텍처만
+• /dev design --erd        - ERD만
+
+ 태스크:
+• /dev tasks               - 태스크 분해
+
+ 구현:
+• /dev build [task-id]     - 구현
+• /dev build [task-id] --tdd - TDD 모드
+
+ 상태:
+• /dev status              - 진행 상황 확인
 
 ============================================
 ```
@@ -108,3 +128,4 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 - `.claude/memory/TECH_STACK.md` - 기술 스택 및 베스트 프랙티스
 - `.claude/templates/` - 문서 템플릿
 - `.claude/best-practices/` - 기술별 베스트 프랙티스
+- `.claude-state/worktree.json` - 작업 상태

@@ -171,14 +171,14 @@
 
 ## PRD 자동 연계
 
-리서치 결과는 `/dev-prd` 실행 시 자동으로 참조됩니다:
+리서치 결과는 `/dev plan` 실행 시 자동으로 참조됩니다:
 
 ```
 /research "JWT 인증 방식"
     ↓
 .claude/research/jwt-authentication/report.md 생성
     ↓
-/dev-prd 실행 시 자동 검색
+/dev plan 실행 시 자동 검색
     ↓
 PRD에 리서치 인사이트 반영
 ```
@@ -194,4 +194,4 @@ PRD에 리서치 인사이트 반영
 - `.claude/commands/research.md` - 리서치 명령어
 - `.claude/research/` - 리서치 결과 저장
 - `.claude/templates/research-report-template.md` - 보고서 템플릿
-- `.claude/commands/dev-prd.md` - PRD 명령어 (리서치 연계)
+- `.claude/commands/dev-plan.md` - PRD 명령어 (리서치 연계)
