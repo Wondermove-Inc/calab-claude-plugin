@@ -105,11 +105,6 @@
     "tool": "Write"
   },
   {
-    "timestamp": "2025-12-30T13:08:52.562225",
-    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
-    "tool": "Write"
-  },
-  {
     "timestamp": "2025-12-30T13:09:33.271875",
     "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/track_changes.py",
     "tool": "Write",
@@ -117,17 +112,38 @@
     "extension": "py"
   },
   {
-    "timestamp": "2025-12-30T13:22:19.617544",
+    "timestamp": "2025-12-30T14:10:45.748648",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "tool": "Edit",
+    "category": "hook",
+    "extension": "py"
+  },
+  {
+    "timestamp": "2025-12-30T14:11:41.491521",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/memory/CURRENT_CONTEXT.md",
+    "tool": "Edit",
+    "category": "memory",
+    "extension": "md"
+  },
+  {
+    "timestamp": "2025-12-30T14:18:21.217682",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/README.md",
+    "tool": "Edit",
+    "category": "documentation",
+    "extension": "md"
+  },
+  {
+    "timestamp": "2025-12-30T14:18:35.767023",
     "file_path": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md",
     "tool": "Edit",
     "category": "documentation",
     "extension": "md"
   },
   {
-    "timestamp": "2025-12-30T13:22:27.867389",
-    "file_path": "/home/wondermove/claude-wondermove-marketplace/README.md",
+    "timestamp": "2025-12-30T14:21:16.943280",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.gitignore",
     "tool": "Edit",
-    "category": "documentation",
-    "extension": "md"
+    "category": "other",
+    "extension": "unknown"
   }
 ]

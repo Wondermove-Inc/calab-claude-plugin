@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-30T13:23:00.243648",
+  "timestamp": "2025-12-30T14:21:21.088418",
   "current_task": null,
   "progress": {
     "total": 0,
@@ -12,11 +12,13 @@
   "session_work": [
     "명령어: solve.md, solve-log.md, solve-history.md 외 2개",
     "스킬: SKILL.md, five-whys.md, rca.md 외 3개",
-    "훅: session_stop.py, user_prompt_submit.py, track_changes.py",
+    "훅: session_stop.py, track_changes.py, user_prompt_submit.py",
     "템플릿: problem-definition.md, analysis-report.md, solution-report.md",
-    "문서: README.md, CLAUDE.md, README.md",
-    "설정: patterns.json, solutions.json"
+    "메모리: CURRENT_CONTEXT.md",
+    "문서: README.md, README.md, CLAUDE.md",
+    "설정: patterns.json, solutions.json",
+    "기타: .gitignore"
   ],
-  "files_changed": 22,
+  "files_changed": 24,
   "auto_saved": true
 }

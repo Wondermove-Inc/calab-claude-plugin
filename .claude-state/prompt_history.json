@@ -9,6 +9,53 @@
       "timestamp": "2025-12-30T13:19:35.352485",
       "summary": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md, /home/wondermove/claude-wondermove-mark...",
       "intent": "구현"
+    },
+    {
+      "timestamp": "2025-12-30T14:08:17.618416",
+      "summary": "그러면 명령어로 실행되는것도 전부 memory에 기록이 안되고 있는거야?",
+      "intent": "구현"
+    },
+    {
+      "timestamp": "2025-12-30T14:13:33.064288",
+      "summary": "현재 구현된 플러그인이 서로 유기적으로 잘 ��현되어 있는지 꼼곰하게 검토하고 검증해.",
+      "intent": "구현",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:17:33.310049",
+      "summary": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md, /home/wondermove/claude-wondermove-mark...",
+      "intent": "구현",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:18:57.287139",
+      "summary": "/home/wondermove/claude-wondermove-marketplace/.claude-state 이 폴더는 필요없는거지?",
+      "intent": "general",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:19:46.097897",
+      "summary": "그러니까 git에 push 할때 /home/wondermove/claude-wondermove-marketplace/.claude-state 폴더는 push 안해도 되는거지?",
+      "intent": "general",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:20:16.971248",
+      "summary": "추가해줘.",
+      "intent": "구현",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:20:33.409166",
+      "summary": ".gitignore 에 추가해줘.",
+      "intent": "구현",
+      "is_command": false
+    },
+    {
+      "timestamp": "2025-12-30T14:21:06.949170",
+      "summary": "/home/wondermove/claude-wondermove-marketplace/docs 이것도 push 할 필요 없잖아.",
+      "intent": "general",
+      "is_command": false
     }
   ]
 }

@@ -730,7 +730,8 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 
 | 트리거 | 자동 동작 | 저장 위치 |
 |--------|----------|----------|
-| **사용자 입력** | 작업 의도 감지 → 현재 목표 자동 업데이트 | `.claude/memory/CURRENT_CONTEXT.md` |
+| **사용자 입력 (자연어 + 슬래시 명령어)** | 작업 의도 감지 → 현재 목표 자동 업데이트 | `.claude/memory/CURRENT_CONTEXT.md` |
+| **모든 프롬프트** | 히스토리 자동 기록 (명령어 + 자연어) | `.claude-state/prompt_history.json` |
 | **응답 완료** | 변경 파일 분석 → 작업 내용 자동 기록 | `.claude/memory/CURRENT_CONTEXT.md` |
 | **파일 수정** | 파일 카테고리 분류 → 변경 이력 기록 | `.claude-state/recent_changes.json` |
 | **세션 시작** | 이전 컨텍스트 안내 | 콘솔 출력 |
@@ -867,6 +868,7 @@ project/
     ├── jira_mapping.json              # JIRA ID 매핑
     ├── checkpoint.json                # 체크포인트 (컨텍스트 백업)
     ├── recent_changes.json            # 최근 변경 파일 이력
+    ├── prompt_history.json            # 프롬프트 히스토리 (자연어 + 명령어)
     ├── session_stats.json             # 세션 통계
     └── file_stats.json                # 파일 변경 통계
 ```

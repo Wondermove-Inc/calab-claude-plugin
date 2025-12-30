@@ -1,7 +1,7 @@
 # 현재 작업 컨텍스트
 
-> 마지막 업데이트: 2025-12-30 13:23 (자동)
-> 저장 메시지: 공식문서 개선 권장 사항 전체 적용 완료
+> 마지막 업데이트: 2025-12-30 14:21 (자동)
+> 저장 메시지: 슬래시 명령어 Memory 기록 기능 추가
 
 ---
 
@@ -18,8 +18,9 @@
 - 리서치 자동화 시스템
 - 코드 품질 검사 시스템
 - JIRA 연동 시스템
-- **고급 Hooks 시스템 (신규)**
-- **서브에이전트 스킬 연동 (신규)**
+- 고급 Hooks 시스템
+- 서브에이전트 스킬 연동
+- **슬래시 명령어 Memory 자동 기록 (신규)**
 
 ---
 
@@ -32,30 +33,78 @@
 ## 최근 완료된 작업
 
 ### 이번 세션 (2025-12-30)
-- [13:23] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
-- [13:23] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
-- [13:23] 훅: session_stop.py, user_prompt_submit.py, track_changes.py
-- [13:23] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
-- [13:23] 문서: README.md, CLAUDE.md, README.md
-- [13:23] 설정: patterns.json, solutions.json
+- [14:21] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:21] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:21] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:21] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:21] 메모리: CURRENT_CONTEXT.md
+- [14:21] 문서: README.md, README.md, CLAUDE.md
+- [14:21] 설정: patterns.json, solutions.json
+- [14:21] 기타: .gitignore
 
 ### 이번 세션 (2025-12-30)
-- [13:18] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
-- [13:18] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
-- [13:18] 훅: session_stop.py, user_prompt_submit.py, track_changes.py
-- [13:18] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
-- [13:18] 문서: README.md, CLAUDE.md, README.md
-- [13:18] 설정: patterns.json, solutions.json
+- [14:20] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:20] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:20] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:20] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:20] 메모리: CURRENT_CONTEXT.md
+- [14:20] 문서: README.md, README.md, CLAUDE.md
+- [14:20] 설정: patterns.json, solutions.json
+- [14:20] 기타: .gitignore
 
 ### 이번 세션 (2025-12-30)
-- [13:11] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
-- [13:11] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
-- [13:11] 훅: session_stop.py, user_prompt_submit.py, track_changes.py
-- [13:11] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
-- [13:11] 문서: README.md, CLAUDE.md, README.md
-- [13:11] 설정: patterns.json, solutions.json
+- [14:19] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:19] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:19] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:19] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:19] 메모리: CURRENT_CONTEXT.md
+- [14:19] 문서: README.md, README.md, CLAUDE.md
+- [14:19] 설정: patterns.json, solutions.json
 
 ### 이번 세션 (2025-12-30)
+- [14:19] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:19] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:19] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:19] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:19] 메모리: CURRENT_CONTEXT.md
+- [14:19] 문서: README.md, README.md, CLAUDE.md
+- [14:19] 설정: patterns.json, solutions.json
+
+### 이번 세션 (2025-12-30)
+- [14:18] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:18] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:18] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:18] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:18] 메모리: CURRENT_CONTEXT.md
+- [14:18] 문서: README.md, README.md, CLAUDE.md
+- [14:18] 설정: patterns.json, solutions.json
+
+### 이번 세션 (2025-12-30)
+- [14:16] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:16] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:16] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:16] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:16] 메모리: CURRENT_CONTEXT.md
+- [14:16] 문서: README.md, CLAUDE.md, README.md
+- [14:16] 설정: patterns.json, solutions.json
+
+### 이번 세션 (2025-12-30)
+- [14:13] 명령어: solve.md, solve-log.md, solve-history.md 외 2개
+- [14:13] 스킬: SKILL.md, five-whys.md, rca.md 외 3개
+- [14:13] 훅: session_stop.py, track_changes.py, user_prompt_submit.py
+- [14:13] 템플릿: problem-definition.md, analysis-report.md, solution-report.md
+- [14:13] 메모리: CURRENT_CONTEXT.md
+- [14:13] 문서: README.md, CLAUDE.md, README.md
+- [14:13] 설정: patterns.json, solutions.json
+
+### 이번 세션 (2025-12-30)
+- [14:15] **슬래시 명령어 Memory 자동 기록 기능 추가**
+  - user_prompt_submit.py에 슬래시 명령어 감지 로직 추가
+  - 30개 명령어 패턴 정의 (dev, clean, onboard, research, worktree, jira 등)
+  - 모든 프롬프트 기록 (자연어 + 슬래시 명령어)
+  - prompt_history.json 보관 수량 100개로 증가
+
+### 이전 세션 (2025-12-30)
 - [x] 공식문서 전수 검사 (8개 파일)
 - [x] Hooks 위치 수정: hooks.json → settings.json
 - [x] Subagents에 permissionMode, skills 필드 추가
@@ -86,12 +135,13 @@
 | `/onboard` → 코드 생성 | ✅ 컨텍스트 참조 |
 | Context Compact → 복원 | ✅ 훅으로 저장 |
 | Worktree → JIRA | ✅ 자동 동기화 |
-| 사용자 입력 → 컨텍스트 주입 | ✅ UserPromptSubmit |
+| 자연어 입력 → Memory 기록 | ✅ UserPromptSubmit |
+| **슬래시 명령어 → Memory 기록** | ✅ **신규** |
 | 응답 완료 → 체크포인트 | ✅ Stop 훅 |
 | 민감 파일 → 자동 차단 | ✅ PreToolUse |
 | 서브에이전트 → 스킬 연동 | ✅ skills 필드 |
 
-**통합 점수: 10/10** (고급 기능 포함)
+**통합 점수: 11/11** (완전 자동화)
 
 ---
 

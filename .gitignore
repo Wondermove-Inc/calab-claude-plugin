@@ -1,0 +1,5 @@
+# Claude 런타임 상태 (자동 생성됨)
+.claude-state/
+
+# 생성된 문서 (PRD, 아키텍처, 태스크)
+docs/

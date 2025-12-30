@@ -1,14 +1,17 @@
 {
   "daily": {
     "2025-12-30": {
-      "total_changes": 6,
+      "total_changes": 20,
       "by_category": {
-        "hook": 1,
-        "documentation": 5
+        "hook": 5,
+        "documentation": 10,
+        "memory": 3,
+        "other": 2
       },
       "by_extension": {
-        "py": 1,
-        "md": 5
+        "py": 5,
+        "md": 13,
+        "unknown": 2
       }
     }
   }

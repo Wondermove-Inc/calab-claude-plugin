@@ -49,5 +49,97 @@
     ],
     "severity": "warning",
     "timestamp": "2025-12-30T13:09:33.258274"
+  },
+  {
+    "type": "line_count_exceeded",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "lines": 349,
+    "max": 300,
+    "severity": "error",
+    "timestamp": "2025-12-30T14:10:04.915249"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "functions": [
+      "load_json",
+      "detect_slash_command",
+      "detect_work_intent",
+      "extract_task_description",
+      "log_user_prompt",
+      "get_context_reminder",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T14:10:04.915695"
+  },
+  {
+    "type": "line_count_exceeded",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "lines": 354,
+    "max": 300,
+    "severity": "error",
+    "timestamp": "2025-12-30T14:10:21.324809"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "functions": [
+      "load_json",
+      "detect_slash_command",
+      "detect_work_intent",
+      "extract_task_description",
+      "log_user_prompt",
+      "get_context_reminder",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T14:10:21.325274"
+  },
+  {
+    "type": "line_count_exceeded",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "lines": 354,
+    "max": 300,
+    "severity": "error",
+    "timestamp": "2025-12-30T14:10:33.405705"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "functions": [
+      "load_json",
+      "detect_slash_command",
+      "detect_work_intent",
+      "extract_task_description",
+      "log_user_prompt",
+      "get_context_reminder",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T14:10:33.406188"
+  },
+  {
+    "type": "line_count_exceeded",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "lines": 364,
+    "max": 300,
+    "severity": "error",
+    "timestamp": "2025-12-30T14:10:45.740818"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "functions": [
+      "load_json",
+      "detect_slash_command",
+      "detect_work_intent",
+      "extract_task_description",
+      "log_user_prompt",
+      "get_context_reminder",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T14:10:45.741256"
   }
 ]

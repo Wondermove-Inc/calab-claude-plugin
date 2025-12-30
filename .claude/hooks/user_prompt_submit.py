@@ -39,8 +39,93 @@ def save_json(path: Path, data: dict):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+def detect_slash_command(prompt: str) -> dict | None:
+    """슬래시 명령어 감지"""
+    prompt_stripped = prompt.strip()
+
+    # 슬래시 명령어 패턴 정의
+    command_patterns = {
+        # 개발 워크플로우
+        '/dev plan': {'type': 'design', 'category': '기획', 'command': '/dev plan'},
+        '/dev design': {'type': 'design', 'category': '설계', 'command': '/dev design'},
+        '/dev tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev tasks'},
+        '/dev build': {'type': 'implement', 'category': '구현', 'command': '/dev build'},
+        '/dev status': {'type': 'review', 'category': '진행 확인', 'command': '/dev status'},
+        '/dev-plan': {'type': 'design', 'category': '기획', 'command': '/dev-plan'},
+        '/dev-design': {'type': 'design', 'category': '설계', 'command': '/dev-design'},
+        '/dev-tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev-tasks'},
+        '/dev-build': {'type': 'implement', 'category': '구현', 'command': '/dev-build'},
+        '/dev-status': {'type': 'review', 'category': '진행 확인', 'command': '/dev-status'},
+
+        # 클린 아키텍처
+        '/clean-init': {'type': 'design', 'category': '클린 아키텍처 초기화', 'command': '/clean-init'},
+        '/clean-entity': {'type': 'implement', 'category': '엔티티 생성', 'command': '/clean-entity'},
+        '/clean-usecase': {'type': 'implement', 'category': '유스케이스 생성', 'command': '/clean-usecase'},
+        '/clean-validate': {'type': 'review', 'category': '아키텍처 검증', 'command': '/clean-validate'},
+
+        # 온보딩
+        '/onboard': {'type': 'research', 'category': '프로젝트 온보딩', 'command': '/onboard'},
+        '/onboard-quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard-quick'},
+        '/learn': {'type': 'research', 'category': '영역 학습', 'command': '/learn'},
+        '/context-refresh': {'type': 'document', 'category': '컨텍스트 갱신', 'command': '/context-refresh'},
+        '/context-show': {'type': 'review', 'category': '컨텍스트 확인', 'command': '/context-show'},
+
+        # 리서치
+        '/research': {'type': 'research', 'category': '리서치', 'command': '/research'},
+
+        # Worktree
+        '/worktree': {'type': 'review', 'category': '작업 트리 확인', 'command': '/worktree'},
+        '/worktree status': {'type': 'review', 'category': '작업 상태 확인', 'command': '/worktree status'},
+        '/worktree start': {'type': 'implement', 'category': '태스크 시작', 'command': '/worktree start'},
+        '/worktree done': {'type': 'implement', 'category': '태스크 완료', 'command': '/worktree done'},
+        '/worktree block': {'type': 'implement', 'category': '블로커 등록', 'command': '/worktree block'},
+        '/worktree reset': {'type': 'implement', 'category': '작업 트리 초기화', 'command': '/worktree reset'},
+
+        # 컨텍스트 관리
+        '/restore-context': {'type': 'review', 'category': '컨텍스트 복원', 'command': '/restore-context'},
+        '/save-progress': {'type': 'document', 'category': '진행 저장', 'command': '/save-progress'},
+        '/show-rules': {'type': 'review', 'category': '규칙 확인', 'command': '/show-rules'},
+
+        # 코드 품질
+        '/check-quality': {'type': 'review', 'category': '품질 검사', 'command': '/check-quality'},
+
+        # 문제 해결
+        '/solve': {'type': 'fix', 'category': '문제 해결', 'command': '/solve'},
+        '/solve-log': {'type': 'review', 'category': '분석 로그 확인', 'command': '/solve-log'},
+        '/solve-history': {'type': 'research', 'category': '해결 이력 검색', 'command': '/solve-history'},
+        '/solve-report': {'type': 'document', 'category': '보고서 생성', 'command': '/solve-report'},
+
+        # JIRA 연동
+        '/jira-init': {'type': 'implement', 'category': 'JIRA 연동 초기화', 'command': '/jira-init'},
+        '/jira-push': {'type': 'implement', 'category': 'JIRA 푸시', 'command': '/jira-push'},
+        '/jira-pull': {'type': 'implement', 'category': 'JIRA 풀', 'command': '/jira-pull'},
+        '/jira-sync': {'type': 'implement', 'category': 'JIRA 동기화', 'command': '/jira-sync'},
+        '/jira-link': {'type': 'implement', 'category': 'JIRA 연결', 'command': '/jira-link'},
+        '/jira-status': {'type': 'review', 'category': 'JIRA 상태 확인', 'command': '/jira-status'},
+    }
+
+    # 정확한 명령어 매칭 (긴 명령어부터 체크)
+    for cmd, info in sorted(command_patterns.items(), key=lambda x: -len(x[0])):
+        if prompt_stripped.startswith(cmd):
+            return {
+                'type': info['type'],
+                'category': info['category'],
+                'command': info['command'],
+                'is_command': True
+            }
+
+    return None
+
+
 def detect_work_intent(prompt: str) -> dict | None:
-    """프롬프트에서 작업 의도 감지"""
+    """프롬프트에서 작업 의도 감지 (슬래시 명령어 + 자연어 키워드)"""
+
+    # 1. 슬래시 명령어 우선 감지
+    command_intent = detect_slash_command(prompt)
+    if command_intent:
+        return command_intent
+
+    # 2. 자연어 키워드 기반 감지
     prompt_lower = prompt.lower()
 
     # 작업 의도 패턴
@@ -86,7 +171,8 @@ def detect_work_intent(prompt: str) -> dict | None:
                 detected_intent = {
                     'type': intent_type,
                     'category': data['category'],
-                    'keyword': keyword
+                    'keyword': keyword,
+                    'is_command': False
                 }
                 break
         if detected_intent:
@@ -96,8 +182,18 @@ def detect_work_intent(prompt: str) -> dict | None:
 
 
 def extract_task_description(prompt: str) -> str:
-    """프롬프트에서 작업 설명 추출 (첫 문장 또는 핵심 부분)"""
-    # 줄바꿈 기준 첫 줄
+    """프롬프트에서 작업 설명 추출 (슬래시 명령어 또는 첫 문장)"""
+    prompt_stripped = prompt.strip()
+
+    # 슬래시 명령어인 경우 전체 명령어 반환
+    if prompt_stripped.startswith('/'):
+        # 명령어와 인자를 포함한 전체 첫 줄 반환
+        first_line = prompt_stripped.split('\n')[0].strip()
+        if len(first_line) > 100:
+            first_line = first_line[:97] + '...'
+        return first_line
+
+    # 자연어인 경우 첫 줄
     first_line = prompt.split('\n')[0].strip()
 
     # 너무 길면 자르기
@@ -170,7 +266,7 @@ def update_current_goal(prompt: str, intent: dict):
 
 
 def log_user_prompt(prompt: str, intent: dict | None):
-    """사용자 프롬프트 로깅"""
+    """사용자 프롬프트 로깅 (슬래시 명령어 + 자연어 모두 기록)"""
     log_file = STATE_PATH / 'prompt_history.json'
 
     history = load_json(log_file)
@@ -184,13 +280,18 @@ def log_user_prompt(prompt: str, intent: dict | None):
     entry = {
         'timestamp': datetime.now().isoformat(),
         'summary': extract_task_description(prompt),
-        'intent': intent.get('category') if intent else 'unknown'
+        'intent': intent.get('category') if intent else 'general',
+        'is_command': intent.get('is_command', False) if intent else False
     }
+
+    # 슬래시 명령어인 경우 command 필드 추가
+    if intent and intent.get('is_command'):
+        entry['command'] = intent.get('command', '')
 
     history['prompts'].append(entry)
 
-    # 최근 50개만 유지
-    history['prompts'] = history['prompts'][-50:]
+    # 최근 100개만 유지 (50개에서 증가)
+    history['prompts'] = history['prompts'][-100:]
 
     save_json(log_file, history)
 
@@ -225,20 +326,20 @@ def main():
         input_data = json.load(sys.stdin)
         prompt = input_data.get('prompt', '')
 
-        if not prompt or len(prompt) < 5:
+        if not prompt or len(prompt) < 3:
             # 너무 짧은 프롬프트는 무시
             print("Success")
             return
 
-        # 1. 작업 의도 감지
+        # 1. 작업 의도 감지 (슬래시 명령어 + 자연어)
         intent = detect_work_intent(prompt)
 
-        if intent:
-            # 2. 현재 목표 자동 업데이트
-            update_current_goal(prompt, intent)
+        # 2. 프롬프트 히스토리 기록 (모든 프롬프트 기록)
+        log_user_prompt(prompt, intent)
 
-            # 3. 프롬프트 히스토리 기록
-            log_user_prompt(prompt, intent)
+        # 3. intent가 있으면 현재 목표 업데이트
+        if intent:
+            update_current_goal(prompt, intent)
 
         # 4. 컨텍스트 리마인더 생성 (stdout으로 출력하지 않음 - 조용히 동작)
         # reminder = get_context_reminder(intent)
