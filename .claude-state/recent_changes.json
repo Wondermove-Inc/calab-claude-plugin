@@ -95,18 +95,39 @@
     "tool": "Write"
   },
   {
-    "timestamp": "2025-12-30T12:21:26.939303",
-    "file_path": "/home/wondermove/claude-wondermove-marketplace/README.md",
-    "tool": "Edit"
-  },
-  {
-    "timestamp": "2025-12-30T12:21:39.156724",
-    "file_path": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md",
-    "tool": "Edit"
-  },
-  {
     "timestamp": "2025-12-30T12:26:35.990589",
     "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/commands/restore-context.md",
     "tool": "Edit"
+  },
+  {
+    "timestamp": "2025-12-30T13:07:57.908188",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/session_stop.py",
+    "tool": "Write"
+  },
+  {
+    "timestamp": "2025-12-30T13:08:52.562225",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "tool": "Write"
+  },
+  {
+    "timestamp": "2025-12-30T13:09:33.271875",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/track_changes.py",
+    "tool": "Write",
+    "category": "hook",
+    "extension": "py"
+  },
+  {
+    "timestamp": "2025-12-30T13:22:19.617544",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md",
+    "tool": "Edit",
+    "category": "documentation",
+    "extension": "md"
+  },
+  {
+    "timestamp": "2025-12-30T13:22:27.867389",
+    "file_path": "/home/wondermove/claude-wondermove-marketplace/README.md",
+    "tool": "Edit",
+    "category": "documentation",
+    "extension": "md"
   }
 ]

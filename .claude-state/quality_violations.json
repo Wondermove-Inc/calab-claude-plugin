@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "type": "line_count_exceeded",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/session_stop.py",
+    "lines": 339,
+    "max": 300,
+    "severity": "error",
+    "timestamp": "2025-12-30T13:07:57.899502"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/session_stop.py",
+    "functions": [
+      "load_json",
+      "get_recent_changes",
+      "get_session_changes",
+      "generate_work_summary",
+      "update_session_stats",
+      "create_checkpoint",
+      "log_stop_event",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T13:07:57.899921"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/user_prompt_submit.py",
+    "functions": [
+      "load_json",
+      "detect_work_intent",
+      "extract_task_description",
+      "log_user_prompt",
+      "get_context_reminder",
+      "main"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T13:08:52.557122"
+  },
+  {
+    "type": "missing_comments",
+    "file": "/home/wondermove/claude-wondermove-marketplace/.claude/hooks/track_changes.py",
+    "functions": [
+      "get_project_root",
+      "load_json",
+      "categorize_file",
+      "get_file_extension",
+      "update_session_file_stats"
+    ],
+    "severity": "warning",
+    "timestamp": "2025-12-30T13:09:33.258274"
+  }
+]

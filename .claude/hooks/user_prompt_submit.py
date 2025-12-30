@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-UserPromptSubmit Hook - 사용자 입력 전처리
+UserPromptSubmit Hook - 사용자 입력 전처리 (완전 자동화)
 
 트리거: 사용자가 프롬프트 제출 시
-동작: 컨텍스트 자동 주입, 규칙 리마인더 추가
+동작:
+  1. 작업 의도 자동 감지 및 기록
+  2. 현재 목표 자동 업데이트
+  3. 컨텍스트 리마인더 제공
 """
 
 import json
 import sys
+import re
 from pathlib import Path
 from datetime import datetime
 
@@ -21,91 +25,193 @@ def load_json(path: Path) -> dict:
     """JSON 파일 로드"""
     if not path.exists():
         return {}
-    with open(path, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
-def get_current_context() -> str:
-    """현재 작업 컨텍스트 요약 반환"""
-    context_file = MEMORY_PATH / 'CURRENT_CONTEXT.md'
-    if not context_file.exists():
-        return ""
-
-    with open(context_file, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # 현재 목표 섹션 추출
-    lines = content.split('\n')
-    goal_section = []
-    in_goal = False
-
-    for line in lines:
-        if '## 현재 목표' in line:
-            in_goal = True
-            continue
-        if in_goal:
-            if line.startswith('## ') or line.startswith('---'):
-                break
-            if line.strip():
-                goal_section.append(line.strip())
-
-    return ' | '.join(goal_section[:3]) if goal_section else ""
+def save_json(path: Path, data: dict):
+    """JSON 파일 저장"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def get_current_task() -> str:
-    """현재 진행 중인 태스크 반환"""
-    worktree_file = STATE_PATH / 'worktree.json'
-    worktree = load_json(worktree_file)
+def detect_work_intent(prompt: str) -> dict | None:
+    """프롬프트에서 작업 의도 감지"""
+    prompt_lower = prompt.lower()
 
-    current_task = worktree.get('current_task', '')
-    if not current_task:
-        return ""
-
-    # 태스크 이름 찾기
-    for epic in worktree.get('epics', []):
-        for story in epic.get('stories', []):
-            for task in story.get('tasks', []):
-                if task.get('id') == current_task:
-                    return f"{current_task}: {task.get('name', '')}"
-
-    return current_task
-
-
-def detect_keywords(prompt: str) -> list:
-    """프롬프트에서 특정 키워드 감지"""
-    keywords_detected = []
-
-    keyword_rules = {
-        'code_change': ['코드', '구현', '작성', '수정', '추가', 'implement', 'write', 'create'],
-        'review': ['리뷰', '검토', '확인', 'review', 'check'],
-        'architecture': ['아키텍처', '설계', '구조', 'architecture', 'design'],
-        'task_complete': ['완료', '끝', '다했', 'done', 'complete', 'finish'],
+    # 작업 의도 패턴
+    intent_patterns = {
+        'implement': {
+            'keywords': ['구현', '작성', '만들어', '추가', '생성', 'implement', 'create', 'add', 'write', 'build'],
+            'category': '구현'
+        },
+        'fix': {
+            'keywords': ['수정', '고쳐', '버그', '에러', '오류', 'fix', 'bug', 'error', 'debug'],
+            'category': '수정/버그픽스'
+        },
+        'refactor': {
+            'keywords': ['리팩토링', '개선', '정리', '리팩터', 'refactor', 'improve', 'clean'],
+            'category': '리팩토링'
+        },
+        'review': {
+            'keywords': ['리뷰', '검토', '확인', '검사', 'review', 'check', 'verify'],
+            'category': '검토'
+        },
+        'design': {
+            'keywords': ['설계', '아키텍처', '구조', '기획', 'design', 'architect', 'plan'],
+            'category': '설계'
+        },
+        'research': {
+            'keywords': ['조사', '리서치', '알아봐', '찾아', 'research', 'find', 'search'],
+            'category': '리서치'
+        },
+        'document': {
+            'keywords': ['문서', '주석', '설명', 'document', 'comment', 'explain'],
+            'category': '문서화'
+        },
+        'test': {
+            'keywords': ['테스트', '검증', 'test', 'verify', 'validate'],
+            'category': '테스트'
+        }
     }
 
-    prompt_lower = prompt.lower()
-    for rule_name, keywords in keyword_rules.items():
-        for keyword in keywords:
+    detected_intent = None
+    for intent_type, data in intent_patterns.items():
+        for keyword in data['keywords']:
             if keyword in prompt_lower:
-                keywords_detected.append(rule_name)
+                detected_intent = {
+                    'type': intent_type,
+                    'category': data['category'],
+                    'keyword': keyword
+                }
                 break
+        if detected_intent:
+            break
 
-    return list(set(keywords_detected))
+    return detected_intent
 
 
-def generate_context_reminder(keywords: list) -> str:
-    """감지된 키워드 기반 컨텍스트 리마인더 생성"""
-    reminders = []
+def extract_task_description(prompt: str) -> str:
+    """프롬프트에서 작업 설명 추출 (첫 문장 또는 핵심 부분)"""
+    # 줄바꿈 기준 첫 줄
+    first_line = prompt.split('\n')[0].strip()
 
-    if 'code_change' in keywords:
-        reminders.append("📋 코드 품질 규칙: 300줄 제한, 함수 주석 필수")
+    # 너무 길면 자르기
+    if len(first_line) > 100:
+        first_line = first_line[:97] + '...'
 
-    if 'architecture' in keywords:
-        reminders.append("🏗️ 클린 아키텍처: Domain → Application → Adapters → Infrastructure")
+    return first_line
 
-    if 'task_complete' in keywords:
-        reminders.append("✅ 완료 시 /worktree done 실행 권장")
 
-    return ' | '.join(reminders) if reminders else ""
+def update_current_goal(prompt: str, intent: dict):
+    """현재 목표 자동 업데이트"""
+    context_file = MEMORY_PATH / 'CURRENT_CONTEXT.md'
+
+    if not context_file.exists():
+        return
+
+    try:
+        with open(context_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception:
+        return
+
+    # 작업 설명 추출
+    task_desc = extract_task_description(prompt)
+    category = intent.get('category', '작업')
+    timestamp = datetime.now().strftime('%H:%M')
+
+    # "현재 목표" 섹션 찾기
+    goal_pattern = r'(## 현재 목표\n\n)(.*?)(\n\n---|\n\n##)'
+    match = re.search(goal_pattern, content, re.DOTALL)
+
+    if not match:
+        return
+
+    # 새로운 목표로 업데이트 (기존 목표 유지하면서 현재 작업 추가)
+    current_goal = match.group(2).strip()
+
+    # 이미 같은 작업이 있으면 업데이트 안함
+    if task_desc[:30] in current_goal:
+        return
+
+    # 현재 진행 중인 작업 표시
+    new_goal_section = f"## 현재 목표\n\n**[{category}] {task_desc}** ← 진행 중 ({timestamp})"
+
+    # 기존 목표가 있고 "완료"가 아니면 유지
+    if current_goal and '✅ 완료' not in current_goal:
+        # 기존 목표를 "이전 목표"로 이동하지 않고, 현재 목표만 업데이트
+        pass
+
+    updated_content = re.sub(
+        goal_pattern,
+        f"{new_goal_section}\n\n---",
+        content,
+        count=1
+    )
+
+    # 마지막 업데이트 시간 갱신
+    today = datetime.now().strftime('%Y-%m-%d')
+    updated_content = re.sub(
+        r'> 마지막 업데이트: .*',
+        f'> 마지막 업데이트: {today} {timestamp} (자동)',
+        updated_content
+    )
+
+    try:
+        with open(context_file, 'w', encoding='utf-8') as f:
+            f.write(updated_content)
+    except Exception:
+        pass
+
+
+def log_user_prompt(prompt: str, intent: dict | None):
+    """사용자 프롬프트 로깅"""
+    log_file = STATE_PATH / 'prompt_history.json'
+
+    history = load_json(log_file)
+    if not isinstance(history, dict):
+        history = {'prompts': []}
+
+    if 'prompts' not in history:
+        history['prompts'] = []
+
+    # 프롬프트 기록 (개인정보 보호를 위해 첫 100자만)
+    entry = {
+        'timestamp': datetime.now().isoformat(),
+        'summary': extract_task_description(prompt),
+        'intent': intent.get('category') if intent else 'unknown'
+    }
+
+    history['prompts'].append(entry)
+
+    # 최근 50개만 유지
+    history['prompts'] = history['prompts'][-50:]
+
+    save_json(log_file, history)
+
+
+def get_context_reminder(intent: dict | None) -> str:
+    """작업 의도 기반 컨텍스트 리마인더"""
+    if not intent:
+        return ""
+
+    reminders = {
+        'implement': "📋 코드 품질: 300줄 제한, JSDoc 주석 필수",
+        'fix': "🔍 문제 해결: /solve 명령으로 체계적 분석 가능",
+        'refactor': "🏗️ 리팩토링: 기존 테스트 통과 확인 필수",
+        'review': "✅ 리뷰: 품질 규칙 준수 여부 확인",
+        'design': "📐 설계: 클린 아키텍처 4-레이어 고려",
+        'research': "🔎 리서치: /research 명령으로 심층 조사",
+        'document': "📝 문서화: 코드 주석과 README 동기화",
+        'test': "🧪 테스트: TDD 모드 --tdd 옵션 활용"
+    }
+
+    return reminders.get(intent.get('type', ''), '')
 
 
 def main():
@@ -113,41 +219,44 @@ def main():
     메인 함수 - Hook Entry Point
 
     UserPromptSubmit 이벤트에서 호출됩니다.
-    stdout으로 출력하면 프롬프트에 추가됩니다.
+    완전 자동화: 사용자 입력에서 작업 의도를 감지하고 자동 기록
     """
     try:
         input_data = json.load(sys.stdin)
         prompt = input_data.get('prompt', '')
 
-        if not prompt:
+        if not prompt or len(prompt) < 5:
+            # 너무 짧은 프롬프트는 무시
+            print("Success")
             return
 
-        # 컨텍스트 정보 수집
-        current_context = get_current_context()
-        current_task = get_current_task()
-        keywords = detect_keywords(prompt)
-        reminder = generate_context_reminder(keywords)
+        # 1. 작업 의도 감지
+        intent = detect_work_intent(prompt)
 
-        # 컨텍스트 주입 (stdout으로 출력)
-        context_parts = []
+        if intent:
+            # 2. 현재 목표 자동 업데이트
+            update_current_goal(prompt, intent)
 
-        if current_task:
-            context_parts.append(f"[현재 태스크: {current_task}]")
+            # 3. 프롬프트 히스토리 기록
+            log_user_prompt(prompt, intent)
 
-        if reminder:
-            context_parts.append(f"[리마인더: {reminder}]")
+        # 4. 컨텍스트 리마인더 생성 (stdout으로 출력하지 않음 - 조용히 동작)
+        # reminder = get_context_reminder(intent)
 
-        if context_parts:
-            # JSON 형식으로 출력 (Claude Code가 파싱)
-            output = {
-                "result": "continue",
-                "context": " ".join(context_parts)
-            }
-            print(json.dumps(output, ensure_ascii=False))
+        # 성공 응답
+        print("Success")
 
     except Exception as e:
-        # 에러 시 조용히 통과 (프롬프트 처리 방해하지 않음)
-        pass
+        # 에러 로깅
+        try:
+            error_log = STATE_PATH / 'hook_errors.log'
+            with open(error_log, 'a', encoding='utf-8') as f:
+                f.write(f"[{datetime.now().isoformat()}] user_prompt_submit error: {e}\n")
+        except Exception:
+            pass
+
+        # 에러가 있어도 프롬프트 처리는 진행
+        print("Success")
 
 
 if __name__ == '__main__':

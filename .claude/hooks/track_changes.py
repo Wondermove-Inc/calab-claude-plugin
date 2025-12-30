@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-PostToolUse Hook: 파일 변경 추적
+PostToolUse Hook: 파일 변경 추적 (완전 자동화)
 
-이 스크립트는 Edit 또는 Write 도구 사용 후 실행되어
-변경된 파일을 추적합니다.
+트리거: Edit 또는 Write 도구 사용 후
+동작:
+  1. 변경된 파일 추적 및 기록
+  2. 파일 카테고리 자동 분류
+  3. 세션별 변경 통계 관리
 """
 
 import json
@@ -13,12 +16,120 @@ from datetime import datetime
 from pathlib import Path
 
 
-def main():
-    project_dir = os.environ.get('CLAUDE_PROJECT_DIR', '.')
-    state_dir = Path(project_dir) / '.claude-state'
+def get_project_root() -> Path:
+    """프로젝트 루트 경로 반환"""
+    project_dir = os.environ.get('CLAUDE_PROJECT_DIR', '')
+    if project_dir:
+        return Path(project_dir)
+    return Path(__file__).parent.parent.parent
 
-    # 디렉토리 생성
-    state_dir.mkdir(parents=True, exist_ok=True)
+
+PROJECT_ROOT = get_project_root()
+STATE_DIR = PROJECT_ROOT / '.claude-state'
+
+
+def load_json(path: Path) -> list | dict:
+    """JSON 파일 로드"""
+    if not path.exists():
+        return []
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def save_json(path: Path, data: list | dict):
+    """JSON 파일 저장"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def categorize_file(file_path: str) -> str:
+    """파일 경로를 기반으로 카테고리 분류"""
+    path = file_path.lower()
+
+    if '.claude/commands/' in path:
+        return 'command'
+    elif '.claude/skills/' in path:
+        return 'skill'
+    elif '.claude/hooks/' in path:
+        return 'hook'
+    elif '.claude/templates/' in path:
+        return 'template'
+    elif '.claude/memory/' in path:
+        return 'memory'
+    elif '.claude/best-practices/' in path:
+        return 'best-practice'
+    elif '.claude/integrations/' in path:
+        return 'integration'
+    elif '.claude/research/' in path:
+        return 'research'
+    elif '/docs/' in path or 'readme' in path or 'claude.md' in path:
+        return 'documentation'
+    elif '/src/' in path or '/lib/' in path or '/app/' in path:
+        return 'source'
+    elif '/test' in path or '.test.' in path or '.spec.' in path:
+        return 'test'
+    elif '.json' in path or '.yaml' in path or '.yml' in path:
+        return 'config'
+    elif '.claude/' in path:
+        return 'plugin-config'
+    else:
+        return 'other'
+
+
+def get_file_extension(file_path: str) -> str:
+    """파일 확장자 추출"""
+    path = Path(file_path)
+    return path.suffix.lstrip('.') if path.suffix else 'unknown'
+
+
+def update_session_file_stats(category: str, extension: str):
+    """세션별 파일 통계 업데이트"""
+    stats_file = STATE_DIR / 'file_stats.json'
+    stats = load_json(stats_file)
+    if not isinstance(stats, dict):
+        stats = {}
+
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    if 'daily' not in stats:
+        stats['daily'] = {}
+
+    if today not in stats['daily']:
+        stats['daily'][today] = {
+            'total_changes': 0,
+            'by_category': {},
+            'by_extension': {}
+        }
+
+    daily = stats['daily'][today]
+    daily['total_changes'] += 1
+
+    # 카테고리별 통계
+    if category not in daily['by_category']:
+        daily['by_category'][category] = 0
+    daily['by_category'][category] += 1
+
+    # 확장자별 통계
+    if extension not in daily['by_extension']:
+        daily['by_extension'][extension] = 0
+    daily['by_extension'][extension] += 1
+
+    # 최근 7일만 유지
+    dates = sorted(stats['daily'].keys())
+    if len(dates) > 7:
+        for old_date in dates[:-7]:
+            del stats['daily'][old_date]
+
+    save_json(stats_file, stats)
+
+
+def main():
+    """메인 함수 - Hook Entry Point"""
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
 
     # stdin에서 도구 사용 정보 읽기
     try:
@@ -33,37 +144,38 @@ def main():
     if not file_path:
         return
 
-    # 변경 파일 로그에 추가
-    changes_file = state_dir / 'recent_changes.json'
+    # 파일 정보 추출
+    category = categorize_file(file_path)
+    extension = get_file_extension(file_path)
+    tool_name = input_data.get('tool_name', 'unknown')
 
-    changes = []
-    if changes_file.exists():
-        try:
-            with open(changes_file, 'r', encoding='utf-8') as f:
-                changes = json.load(f)
-        except Exception:
-            changes = []
+    # 변경 파일 로그에 추가
+    changes_file = STATE_DIR / 'recent_changes.json'
+    changes = load_json(changes_file)
+    if not isinstance(changes, list):
+        changes = []
 
     # 새 변경 기록 추가
     change_record = {
         "timestamp": datetime.now().isoformat(),
         "file_path": file_path,
-        "tool": input_data.get('tool_name', 'unknown')
+        "tool": tool_name,
+        "category": category,
+        "extension": extension
     }
 
     # 중복 제거 (같은 파일은 최신 것만 유지)
     changes = [c for c in changes if c.get('file_path') != file_path]
     changes.append(change_record)
 
-    # 최근 50개만 유지
-    changes = changes[-50:]
+    # 최근 100개만 유지
+    changes = changes[-100:]
 
     # 저장
-    try:
-        with open(changes_file, 'w', encoding='utf-8') as f:
-            json.dump(changes, f, ensure_ascii=False, indent=2)
-    except Exception:
-        pass
+    save_json(changes_file, changes)
+
+    # 세션 통계 업데이트
+    update_session_file_stats(category, extension)
 
 
 if __name__ == "__main__":

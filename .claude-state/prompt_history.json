@@ -1,0 +1,14 @@
+{
+  "prompts": [
+    {
+      "timestamp": "2025-12-30T13:12:16.385525",
+      "summary": "현재 구현된 플러그인이 서로 유기적으로 잘 구현되어 있는지 꼼곰하게 검토하고 검증해.",
+      "intent": "구현"
+    },
+    {
+      "timestamp": "2025-12-30T13:19:35.352485",
+      "summary": "/home/wondermove/claude-wondermove-marketplace/CLAUDE.md, /home/wondermove/claude-wondermove-mark...",
+      "intent": "구현"
+    }
+  ]
+}

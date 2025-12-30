@@ -722,24 +722,31 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 
 ---
 
-## 자동 동작 (Hooks)
+## 자동 동작 (Hooks) - 완전 패시브
 
-다음 기능들은 **이벤트 발생 시 자동으로 실행**됩니다. 별도 설정 없이 동작합니다.
+다음 기능들은 **이벤트 발생 시 자동으로 실행**됩니다. **사용자가 별도로 저장하거나 기록할 필요 없이** 모든 것이 자동으로 관리됩니다.
+
+### Memory 완전 자동화
+
+| 트리거 | 자동 동작 | 저장 위치 |
+|--------|----------|----------|
+| **사용자 입력** | 작업 의도 감지 → 현재 목표 자동 업데이트 | `.claude/memory/CURRENT_CONTEXT.md` |
+| **응답 완료** | 변경 파일 분석 → 작업 내용 자동 기록 | `.claude/memory/CURRENT_CONTEXT.md` |
+| **파일 수정** | 파일 카테고리 분류 → 변경 이력 기록 | `.claude-state/recent_changes.json` |
+| **세션 시작** | 이전 컨텍스트 안내 | 콘솔 출력 |
+| **Context Compact** | 체크포인트 자동 저장 | `.claude-state/checkpoint.json` |
+
+### 기타 자동 동작
 
 | 트리거 | 자동 동작 | 관련 파일 |
 |--------|----------|----------|
-| **세션 시작** | 이전 컨텍스트 자동 로드 | `.claude/memory/CURRENT_CONTEXT.md` |
-| **세션 종료** | 작업 상태 자동 저장 | `.claude/memory/WORK_HISTORY.md` |
-| **Context Compact** | 현재 상태 체크포인트 저장 | `.claude/memory/` |
-| **파일 수정 (Edit/Write)** | 변경 이력 기록 + 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
+| **파일 수정 (Edit/Write)** | 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
 | **민감 파일 수정 시도** | 자동 차단 (.env, credentials 등) | 보안 보호 |
 | **worktree.json 변경** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
-| **사용자 입력 시** | 현재 태스크/규칙 리마인더 주입 | 컨텍스트 자동 보강 |
 | **알림 발생 시** | 데스크톱 알림 + 로깅 | 알림 커스터마이징 |
-| **응답 완료 시** | 체크포인트 자동 저장 | 진행 상황 백업 |
 | **서브에이전트 시작/종료** | 사용 통계 추적 | 에이전트 분석 |
 
-> 💡 위 기능들은 `.claude/settings.json`에서 설정되며, Memory 파일들은 자동으로 관리됩니다.
+> 💡 위 기능들은 `.claude/settings.json`에서 설정되며, Memory 파일들은 **완전 자동으로** 관리됩니다. 사용자는 저장에 대해 신경 쓸 필요가 없습니다.
 
 ---
 
@@ -859,7 +866,9 @@ project/
     ├── worktree.json                  # 작업 트리 상태
     ├── jira_mapping.json              # JIRA ID 매핑
     ├── checkpoint.json                # 체크포인트 (컨텍스트 백업)
-    └── recent_changes.json            # 최근 변경 파일 이력
+    ├── recent_changes.json            # 최근 변경 파일 이력
+    ├── session_stats.json             # 세션 통계
+    └── file_stats.json                # 파일 변경 통계
 ```
 
 ---
