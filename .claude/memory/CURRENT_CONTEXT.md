@@ -1,13 +1,13 @@
 # 현재 작업 컨텍스트
 
-> 마지막 업데이트: 2025-12-29
-> 저장 메시지: 플러그인 통합 개선 완료
+> 마지막 업데이트: 2025-12-30
+> 저장 메시지: 공식문서 개선 권장 사항 전체 적용 완료
 
 ---
 
 ## 현재 목표
 
-**Claude Code 업무 자동화 플러그인 완성** ✅ 완료
+**Claude Code 업무 자동화 플러그인 고급 기능 적용** ✅ 완료
 
 구현된 기능:
 - 컨텍스트 지속성 시스템
@@ -17,6 +17,9 @@
 - Worktree 작업 추적 시스템
 - 리서치 자동화 시스템
 - 코드 품질 검사 시스템
+- JIRA 연동 시스템
+- **고급 Hooks 시스템 (신규)**
+- **서브에이전트 스킬 연동 (신규)**
 
 ---
 
@@ -28,22 +31,24 @@
 
 ## 최근 완료된 작업
 
-### 이번 세션
-- [x] `/research` → `/dev plan` 자동 연계 구현
-- [x] `dev-prd.md` 리서치 통합 Step 추가
-- [x] `research/SKILL.md` PRD 연계 안내 추가
-- [x] README.md 플러그인 통합 플로우 다이어그램 추가
-- [x] README.md 리서치 → PRD 연계 정보 추가
+### 이번 세션 (2025-12-30)
+- [x] 공식문서 전수 검사 (8개 파일)
+- [x] Hooks 위치 수정: hooks.json → settings.json
+- [x] Subagents에 permissionMode, skills 필드 추가
+- [x] 고급 Hook 이벤트 구현:
+  - UserPromptSubmit (컨텍스트 자동 주입)
+  - Notification (알림 커스터마이징)
+  - Stop (자동 체크포인트)
+  - SubagentStart/Stop (에이전트 추적)
+- [x] PreToolUse 보안 훅 추가 (민감 파일 보호)
+- [x] Hook type: prompt/agent 예시 추가
+- [x] README.md 문서 대폭 업데이트
 
 ### 이전 세션
+- [x] `/research` → `/dev plan` 자동 연계 구현
+- [x] JIRA 연동 시스템 구현
 - [x] Worktree 시스템 구현
 - [x] 리서치 플러그인 구현
-- [x] README.md 업무 자동화 플러그인으로 완전 재작성
-- [x] 프로젝트 컨텍스트 템플릿 5개 생성
-- [x] 클린 아키텍처 시스템 구현
-- [x] 프로젝트 온보딩 시스템 구현
-- [x] AI 개발 워크플로우 시스템 구현
-- [x] 컨텍스트 지속성 시스템 구현
 
 ---
 
@@ -56,14 +61,19 @@
 | `/research` → `/dev plan` | ✅ 자동 검색/반영 |
 | `/onboard` → 코드 생성 | ✅ 컨텍스트 참조 |
 | Context Compact → 복원 | ✅ 훅으로 저장 |
+| Worktree → JIRA | ✅ 자동 동기화 |
+| 사용자 입력 → 컨텍스트 주입 | ✅ UserPromptSubmit |
+| 응답 완료 → 체크포인트 | ✅ Stop 훅 |
+| 민감 파일 → 자동 차단 | ✅ PreToolUse |
+| 서브에이전트 → 스킬 연동 | ✅ skills 필드 |
 
-**통합 점수: 10/10**
+**통합 점수: 10/10** (고급 기능 포함)
 
 ---
 
 ## 진행 예정 작업
 
-(현재 계획된 작업 없음 - 플러그인 구현 완료)
+(현재 계획된 작업 없음 - 플러그인 고급 기능 구현 완료)
 
 ---
 
@@ -72,6 +82,7 @@
 - Skills의 `description` 필드는 구체적인 트리거 키워드 포함 필요
 - Hooks 스크립트는 실행 권한(`chmod +x`) 필수
 - 모든 경로는 `${CLAUDE_PROJECT_DIR}` 환경변수 사용
+- `prompt`/`agent` 타입 훅은 LLM API 비용 발생
 
 ---
 
@@ -80,6 +91,7 @@
 ### 핵심 설정
 - `CLAUDE.md` - 메인 설정
 - `README.md` - 플러그인 전체 문서
+- `.claude/settings.json` - Hooks 설정
 
 ### 메모리
 - `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
@@ -87,6 +99,8 @@
 
 ### 상태
 - `.claude-state/worktree.json` - 작업 트리 상태
+- `.claude-state/session_stats.json` - 세션 통계
+- `.claude-state/subagent_stats.json` - 서브에이전트 통계
 
 ### 스킬 (자동 활성화)
 - `.claude/skills/project-rules/SKILL.md`
@@ -96,7 +110,19 @@
 - `.claude/skills/best-practices/SKILL.md`
 - `.claude/skills/clean-architecture/SKILL.md`
 - `.claude/skills/project-onboarding/SKILL.md`
-- `.claude/skills/research/SKILL.md`
+- `.claude/skills/research-skill/SKILL.md`
+- `.claude/skills/jira-integration/SKILL.md`
+
+### 서브에이전트
+- `.claude/agents/code-reviewer.md` - 코드 리뷰 (skills: code-quality, clean-architecture, project-rules)
+- `.claude/agents/project-guardian.md` - 규칙 수호 (skills: project-rules, work-tracker)
+
+### 훅 스크립트
+- `.claude/hooks/user_prompt_submit.py` - 컨텍스트 자동 주입
+- `.claude/hooks/notification_handler.py` - 알림 커스터마이징
+- `.claude/hooks/session_stop.py` - 자동 체크포인트
+- `.claude/hooks/subagent_tracker.py` - 에이전트 추적
+- `.claude/hooks/examples/hooks-advanced-examples.json` - 고급 훅 예시
 
 ### 주요 커맨드
 - `.claude/commands/dev-*.md` - 개발 워크플로우
@@ -104,6 +130,7 @@
 - `.claude/commands/onboard*.md` - 온보딩
 - `.claude/commands/research.md` - 리서치
 - `.claude/commands/worktree.md` - 작업 트리
+- `.claude/commands/jira-*.md` - JIRA 연동
 
 ---
 

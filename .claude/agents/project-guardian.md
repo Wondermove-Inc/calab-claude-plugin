@@ -3,6 +3,8 @@ name: project-guardian
 description: 프로젝트 규칙 준수와 작업 맥락 유지를 담당합니다. 코드 변경 시 자동으로 규칙 검증을 수행하고, 작업 방향이 흩어질 때 원래 목표로 안내합니다. 규칙 확인, 검토, 검증 요청 시 활성화됩니다.
 tools: Read, Grep, Glob
 model: haiku
+permissionMode: default
+skills: project-rules, work-tracker
 ---
 
 # Project Guardian Agent

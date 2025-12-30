@@ -266,5 +266,5 @@ argument-hint: <주제> [--quick | --deep]
 
 ## 참조
 
-- `.claude/skills/research/SKILL.md`
+- `.claude/skills/research-skill/SKILL.md`
 - `.claude/templates/research-report-template.md`

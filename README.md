@@ -12,39 +12,115 @@
 
 이 플러그인은 AI를 활용한 개발에서 발생하는 **일관성 문제**를 해결합니다.
 
-```mermaid
-flowchart TB
-    subgraph Input["어떤 상황에서 시작하든"]
-        A["🆕 새 프로젝트<br/>처음부터 시작"]
-        B["🔄 기존 프로젝트<br/>중간에 투입"]
-        C["⏸️ 작업 재개<br/>세션 복원"]
-    end
-
-    A --> D["/dev plan"]
-    B --> E["/onboard"]
-    C --> F["/restore-context"]
-
-    D --> G
-    E --> G
-    F --> G
-
-    subgraph G["동일한 품질의 결과물"]
-        G1["일관된 아키텍처"]
-        G2["통일된 코드 스타일"]
-        G3["체계적인 문서화"]
-        G4["추적 가능한 진행 상황"]
-    end
-```
-
 ### 해결하는 문제
 
 | 상황 | 문제 | 해결 |
 |------|------|------|
-| **새 프로젝트 시작** | 설계 없이 바로 코딩, 아키텍처 무시 | `/dev plan` → 체계적 진행 |
-| **기존 프로젝트 투입** | 기존 패턴 무시, 스타일 불일치 | `/onboard` → 프로젝트 학습 |
-| **작업 재개** | 이전 맥락 망각, 규칙 무시 | `/restore-context` → 상태 복원 |
-| **장기 프로젝트** | 진행 상황 파악 어려움 | `/worktree` → 실시간 추적 |
-| **기술 검토 필요** | 검색 결과 정리 어려움 | `/research` → 자동 요약 |
+| **새 프로젝트 시작** | 설계 없이 바로 코딩, 아키텍처 무시 | "기획해줘" → 체계적 진행 |
+| **기존 프로젝트 투입** | 기존 패턴 무시, 스타일 불일치 | "분석해줘" → 프로젝트 학습 |
+| **작업 재개** | 이전 맥락 망각, 규칙 무시 | "복원해줘" → 상태 복원 |
+| **장기 프로젝트** | 진행 상황 파악 어려움 | "진행률 보여줘" → 실시간 추적 |
+| **기술 검토 필요** | 검색 결과 정리 어려움 | "조사해줘" → 자동 요약 |
+
+---
+
+## 사용 방법
+
+사용자는 **자연어** 또는 **명령어 직접 입력** 두 가지 방식으로 요청할 수 있습니다.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  사용 방식 1: 자연어                                         │
+│  → "사용자 인증 시스템 기획해줘"                             │
+│  → "OAuth 2.0에 대해 조사해줘"                               │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  사용 방식 2: 명령어 직접 입력                               │
+│  → /dev plan 사용자 인증                                     │
+│  → /research OAuth 2.0                                       │
+│  → /onboard                                                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 설치
+
+```bash
+# 저장소 클론
+git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
+
+# 프로젝트에 .claude 폴더와 CLAUDE.md 복사
+cp -r calab-claude-plugin/.claude /your-project/
+cp calab-claude-plugin/CLAUDE.md /your-project/
+
+# (선택) JIRA 연동 사용 시 Python 의존성 설치
+pip install requests
+```
+
+---
+
+## 전체 명령어 요약
+
+| 카테고리 | 명령어 | 옵션 | 자연어 | 설명 |
+|----------|--------|------|--------|------|
+| **개발 워크플로우** | `/dev plan [기능]` | `--brainstorm`, `--prd` | "기획해줘" | 브레인스토밍 + PRD |
+| | `/dev design` | `--arch`, `--erd` | "설계해줘" | 아키텍처 + ERD |
+| | `/dev tasks` | - | "태스크 분해해줘" | 태스크 목록 생성 |
+| | `/dev build [task-id]` | `--tdd` | "구현해줘" | 태스크 구현 |
+| | `/dev status` | - | "진행 상황 보여줘" | 진행률 확인 |
+| **클린 아키텍처** | `/clean-init` | - | "클린 아키텍처 만들어줘" | 4-레이어 구조 초기화 |
+| | `/clean-entity [name]` | - | "엔티티 만들어줘" | 도메인 엔티티 생성 |
+| | `/clean-usecase [name]` | - | "유스케이스 만들어줘" | 유스케이스 생성 |
+| | `/clean-validate` | - | "아키텍처 검증해줘" | 의존성 검증 |
+| **온보딩** | `/onboard` | - | "프로젝트 분석해줘" | 5개 컨텍스트 문서 생성 |
+| | `/onboard-quick` | - | "빠르게 파악해줘" | 핵심만 빠른 분석 |
+| | `/learn [path]` | - | "폴더 분석해줘" | 특정 영역 심층 학습 |
+| | `/context-refresh` | - | "컨텍스트 업데이트해줘" | 문서 갱신 |
+| | `/context-show` | - | "컨텍스트 보여줘" | 컨텍스트 표시 |
+| **리서치** | `/research [주제]` | `--quick`, `--deep` | "조사해줘" | 5-10회 검색 + 핵심 요약 |
+| **Worktree** | `/worktree` | - | "작업 트리 보여줘" | 트리 구조 시각화 |
+| | `/worktree status` | - | "진행률 보여줘" | 상태 요약 |
+| | `/worktree start [id]` | - | "시작해줘" | 태스크 시작 |
+| | `/worktree done [id]` | - | "완료" | 태스크 완료 |
+| | `/worktree block [id] [사유]` | - | "블로킹됨" | 블로커 등록 |
+| | `/worktree reset` | - | "작업 초기화해줘" | 트리 초기화 |
+| **컨텍스트 관리** | `/restore-context` | - | "컨텍스트 복원해줘" | 규칙 + 작업 상태 복원 |
+| | `/save-progress [메시지]` | - | "저장해줘" | 체크포인트 저장 |
+| | `/show-rules` | - | "규칙 보여줘" | 전체 규칙 표시 |
+| **코드 품질** | `/check-quality` | - | "품질 검사해줘" | 전체 프로젝트 검사 |
+| **JIRA 연동** | `/jira-init [key]` | - | "JIRA 연결해줘" | 연동 초기화 |
+| | `/jira-push` | - | "JIRA로 동기화해줘" | Worktree → JIRA |
+| | `/jira-pull` | - | "JIRA에서 가져와줘" | JIRA → Worktree |
+| | `/jira-sync` | - | "양방향 동기화해줘" | 양방향 동기화 |
+| | `/jira-link [id] [key]` | - | "JIRA에 연결해줘" | 수동 매핑 |
+| | `/jira-status` | - | "JIRA 상태 보여줘" | 상태 확인 |
+
+---
+
+## 빠른 시작
+
+### 시나리오별 사용 예시
+
+| 상황 | 자연어 | 명령어 직접 입력 |
+|------|--------|----------------|
+| 새 프로젝트 시작 | "사용자 인증 시스템 기획해줘" | `/dev plan 사용자 인증` |
+| 기존 프로젝트 투입 | "이 프로젝트 분석해줘" | `/onboard` |
+| 세션 재개 | "이전 컨텍스트 복원해줘" | `/restore-context` |
+
+### 옵션 사용법
+
+명령어 옵션도 자연어로 표현할 수 있습니다:
+
+| 옵션 표현 | 자연어 대안 | 예시 |
+|----------|------------|------|
+| `/research OAuth --quick` | "OAuth 빠르게 알아봐줘" | 3회 검색 |
+| `/research OAuth --deep` | "OAuth 자세히 조사해줘" | 10회 검색 |
+| `/dev plan --brainstorm` | "결제시스템 브레인스토밍해줘" | 브레인스토밍만 |
+| `/dev design --erd` | "ERD만 설계해줘" | ERD만 생성 |
+| `/dev build TASK-001 --tdd` | "TASK-001 TDD로 구현해줘" | 테스트 먼저 |
+| `/save-progress "기능 완료"` | "기능 완료로 저장해줘" | 메시지 포함 |
 
 ---
 
@@ -54,24 +130,20 @@ flowchart TB
 
 ```mermaid
 flowchart TB
+    U["👤 사용자 요청<br/>(자연어 또는 명령어)"] --> C["🤖 Claude"]
+
     subgraph Research["🔍 리서치"]
-        R1["/research"] --> R2[".claude/research/"]
+        R1["조사해줘 / /research"] --> R2[".claude/research/"]
     end
 
     subgraph Dev["🛠️ 개발 워크플로우"]
-        D1["/dev plan"] --> D2["/dev design"]
-        D2 --> D3["/dev tasks"]
-        D3 --> D4["/dev build"]
+        D1["기획해줘 / /dev plan"] --> D2["설계해줘 / /dev design"]
+        D2 --> D3["분해해줘 / /dev tasks"]
+        D3 --> D4["구현해줘 / /dev build"]
     end
 
     subgraph Onboard["📚 온보딩"]
-        O1["/onboard"] --> O2["project-context/"]
-        O3["/learn"] --> O4["CODE_PATTERNS.md"]
-    end
-
-    subgraph Context["💾 컨텍스트 관리"]
-        C1["/restore-context"]
-        C2["Compact 후 복원"]
+        O1["분석해줘 / /onboard"] --> O2["project-context/"]
     end
 
     subgraph Skills["⚡ 자동 적용 스킬"]
@@ -80,58 +152,46 @@ flowchart TB
         S3["code-quality"]
     end
 
+    subgraph Hooks["🔗 자동 훅"]
+        H1["코드 품질 검사"]
+        H2["변경 추적"]
+        H3["민감 파일 보호"]
+    end
+
+    subgraph External["🌐 외부 연동"]
+        J1["JIRA Cloud"]
+    end
+
+    C --> Research
+    C --> Dev
+    C --> Onboard
+
     R2 -.->|자동 반영| D1
     D3 -->|자동 생성| W1["worktree.json"]
     W1 -.->|자동 업데이트| D4
+    W1 -.->|자동 동기화| J1
     D4 --> Code["코드 생성"]
     Skills -.-> Code
+    Hooks -.->|자동 실행| Code
     O2 -.->|참조| Code
-    O4 -.->|패턴 유지| Code
-    C2 --> C1
 ```
 
 **자동 연동 포인트:**
 
-| 트리거 | 자동 동작 |
-|--------|----------|
-| `/dev plan` 실행 | `.claude/research/` 자동 검색 및 PRD 반영 |
-| `/dev design` 완료 | 아키텍처/ERD 문서 → `/dev tasks` 연계 |
-| `/dev tasks` 완료 | `worktree.json` 자동 생성 |
-| `/dev build` 실행 | worktree 태스크 자동 시작, 베스트 프랙티스 로드 |
-| `/dev build --tdd` 실행 | `testing.md` TDD 가이드 자동 참조 |
-| "TASK-XXX 완료" 키워드 | worktree 태스크 자동 완료 |
-| `/onboard` 실행 | 5개 project-context 문서 자동 생성 |
-| 코드 작성 시 | `project-onboarding`, `code-quality` skill 자동 활성화 |
-| React/TypeScript 코드 | `best-practices` skill 자동 활성화 |
-| Context Compact | `pre_compact.py` 훅으로 상태 저장 |
-
----
-
-## 설치
-
-```bash
-# 저장소 클론
-git remote add origin https://github.com/Wondermove-Inc/calab-claude-plugin.git
-
-# 프로젝트에 .claude 폴더 복사
-cp -r claude-wondermove-marketplace/.claude /your-project/
-cp claude-wondermove-marketplace/CLAUDE.md /your-project/
-```
-
----
-
-## 빠른 시작
-
-```bash
-# 1. 새 프로젝트 시작
-/dev plan 사용자 인증 시스템
-
-# 2. 기존 프로젝트에 AI 투입
-/onboard
-
-# 3. 세션 재개
-/restore-context
-```
+| 카테고리 | 트리거 | 자동 동작 |
+|---------|--------|----------|
+| **리서치** | "조사해줘" 또는 `/research` | 다각도 검색 → 보고서 생성 |
+| **기획** | "기획해줘" 또는 `/dev plan` | `.claude/research/` 자동 검색 및 PRD 반영 |
+| **설계** | "설계해줘" 또는 `/dev design` | 아키텍처/ERD 문서 → 태스크 분해 연계 |
+| **태스크** | "분해해줘" 또는 `/dev tasks` | `worktree.json` 자동 생성 |
+| **구현** | "구현해줘" 또는 `/dev build` | worktree 태스크 자동 시작, 베스트 프랙티스 로드 |
+| **온보딩** | "분석해줘" 또는 `/onboard` | 5개 project-context 문서 자동 생성 |
+| **코드 작성** | 파일 생성/수정 시 | `code-quality`, `best-practices` skill 자동 활성화 |
+| **보안** | 민감 파일 수정 시도 | `.env`, `credentials` 등 자동 차단 |
+| **JIRA** | worktree 상태 변경 시 | JIRA 이슈 상태 자동 동기화 |
+| **컨텍스트** | 사용자 입력 시 | 현재 태스크/규칙 리마인더 자동 주입 |
+| **백업** | Context Compact 시 | 현재 상태 체크포인트 자동 저장 |
+| **세션** | 응답 완료 시 | 진행 상황 자동 백업 |
 
 ---
 
@@ -139,202 +199,128 @@ cp claude-wondermove-marketplace/CLAUDE.md /your-project/
 
 ### 시나리오 1: 새 기능 개발
 
-```bash
-# 1. 기획 (브레인스토밍 + PRD)
-/dev plan 사용자 인증 시스템
+**대화 예시:**
+```
+👤: "결제 시스템 기획해줘" (또는 /dev plan 결제시스템)
+🤖: 브레인스토밍 + PRD 작성...
 
-# 2. 설계 (아키텍처 + ERD)
-/dev design
+👤: "아키텍처 설계해줘" (또는 /dev design)
+🤖: 아키텍처 + ERD 설계...
 
-# 3. 태스크 분해
-/dev tasks
+👤: "태스크 분해해줘" (또는 /dev tasks)
+🤖: 태스크 목록 생성, worktree.json 자동 생성...
 
-# 4. 순차적 구현
-/dev build TASK-001
-/dev build TASK-002
-...
+👤: "TASK-001 구현해줘" (또는 /dev build TASK-001)
+🤖: 구현 시작...
 ```
 
 ### 시나리오 2: 기존 프로젝트 투입
 
-```bash
-# 1. 프로젝트 온보딩
-/onboard
+**대화 예시:**
+```
+👤: "이 프로젝트 분석해줘" (또는 /onboard)
+🤖: 5개 컨텍스트 문서 생성...
 
-# 2. 특정 영역 심층 학습
-/learn src/services/
+👤: "src/services 폴더 분석해줘" (또는 /learn src/services)
+🤖: 패턴 분석...
 
-# 3. 기존 패턴에 맞춰 개발
-"UserService와 같은 패턴으로 ProductService 만들어줘"
+👤: "UserService와 같은 패턴으로 ProductService 만들어줘"
+🤖: 기존 패턴에 맞춰 코드 생성...
 ```
 
 ### 시나리오 3: 클린 아키텍처 적용
 
-```bash
-# 1. 구조 초기화
-/clean-init
+**대화 예시:**
+```
+👤: "클린 아키텍처 구조 만들어줘" (또는 /clean-init)
+🤖: 4-레이어 구조 생성...
 
-# 2. 도메인 엔티티 생성
-/clean-entity User
-/clean-entity Order
-/clean-entity Product
+👤: "User 엔티티 만들어줘" (또는 /clean-entity User)
+🤖: Entity, Value Object 생성...
 
-# 3. 유스케이스 생성
-/clean-usecase CreateUser
-/clean-usecase CreateOrder
+👤: "CreateUser 유스케이스 만들어줘" (또는 /clean-usecase CreateUser)
+🤖: UseCase, DTO, Port 생성...
 
-# 4. 아키텍처 검증
-/clean-validate
+👤: "아키텍처 규칙 검증해줘" (또는 /clean-validate)
+🤖: 의존성 위반 검사...
 ```
 
 ### 시나리오 4: 세션 재개
 
-```bash
-# 1. 컨텍스트 복원
-/restore-context
+**대화 예시:**
+```
+👤: "이전 컨텍스트 복원해줘" (또는 /restore-context)
+🤖: 규칙 + 작업 상태 복원...
 
-# 2. 현재 상태 확인
-/context-show
+👤: "현재 컨텍스트 보여줘" (또는 /context-show)
+🤖: 컨텍스트 표시...
 
-# 3. 이전 작업 이어서 진행
-"리프레시 토큰 구현 이어서 해줘"
-
-# 4. 종료 전 저장
-/save-progress 리프레시 토큰 구현 완료
+👤: "현재 상태 저장해줘" (또는 /save-progress)
+🤖: 체크포인트 저장...
 ```
 
 ### 시나리오 5: JIRA 연동으로 팀 협업
 
+**1단계: 터미널에서 환경변수 설정**
 ```bash
-# 1. JIRA 연동 초기화
 export JIRA_EMAIL='dev@company.com'
 export JIRA_API_TOKEN='your-api-token'
-/jira-init AUTH
+```
 
-# 2. 태스크 분해 후 JIRA 동기화
-/dev tasks
-/jira-push    # Worktree → JIRA 이슈 자동 생성
+**2단계: Claude와 대화**
+```
+👤: "JIRA AUTH 프로젝트 연결해줘" (또는 /jira-init AUTH)
+🤖: JIRA 연동 초기화...
 
-# 3. 태스크 진행 (JIRA 자동 업데이트)
-/worktree start TASK-001    # JIRA: To Do → In Progress
-# ... 코드 작성 ...
-/worktree done TASK-001     # JIRA: In Progress → Done
+👤: "JIRA로 동기화해줘" (또는 /jira-push)
+🤖: Worktree → JIRA 이슈 자동 생성...
 
-# 4. 블로커 발생 시 (JIRA 코멘트 자동 등록)
-/worktree block TASK-002 "외부 API 인증 대기 중"
+👤: "TASK-001 시작해줘" (또는 /worktree start TASK-001)
+🤖: JIRA: To Do → In Progress
 
-# 5. 동기화 상태 확인
-/jira-status --detailed
+👤: "TASK-001 완료" (또는 /worktree done TASK-001)
+🤖: JIRA: In Progress → Done
+
+👤: "JIRA 연동 상태 보여줘" (또는 /jira-status)
+🤖: 상태 리포트...
 ```
 
 ---
 
-## 명령어 요약표
-
-### 전체 명령어 매트릭스
-
-| 카테고리 | 명령어 | 옵션 | 인자 | 주요 출력 |
-|----------|--------|------|------|----------|
-| **개발** | `/dev plan` | `--brainstorm`, `--prd` | `[아이디어]` | 브레인스토밍 + PRD |
-| | `/dev design` | `--arch`, `--erd` | - | 아키텍처 + ERD |
-| | `/dev tasks` | - | - | 태스크 목록 |
-| | `/dev build` | `--tdd` | `[task-id]` | 구현 코드 |
-| | `/dev status` | - | - | 진행 상황 |
-| **클린 아키텍처** | `/clean-init` | - | - | 디렉토리 구조 |
-| | `/clean-entity` | `<name>` | - | 엔티티 파일 |
-| | `/clean-usecase` | `<name>` | - | 유스케이스 파일 |
-| | `/clean-validate` | - | - | 검증 리포트 |
-| **온보딩** | `/onboard` | - | - | 컨텍스트 문서 |
-| | `/onboard-quick` | - | - | 요약 문서 |
-| | `/context-refresh` | - | - | 문서 갱신 |
-| | `/context-show` | - | - | 컨텍스트 표시 |
-| | `/learn` | `<path>` | - | 패턴 문서 |
-| **컨텍스트** | `/restore-context` | - | - | 상태 복원 |
-| | `/save-progress` | - | `[메시지]` | 체크포인트 |
-| | `/show-rules` | - | - | 규칙 표시 |
-| **품질** | `/check-quality` | - | - | 품질 리포트 |
-| **Worktree** | `/worktree` | - | - | 작업 트리 표시 |
-| | `/worktree status` | - | - | 상태 요약 |
-| | `/worktree start` | `<task-id>` | - | 태스크 시작 |
-| | `/worktree done` | `<task-id>` | - | 태스크 완료 |
-| | `/worktree block` | `<task-id>` | `"사유"` | 블로커 등록 |
-| **리서치** | `/research` | `<주제>` | - | 심층 리서치 |
-| | `/research --quick` | `<주제>` | - | 빠른 리서치 |
-| | `/research --deep` | `<주제>` | - | 상세 리서치 |
-| **JIRA** | `/jira-init` | `<project-key>` | - | JIRA 연동 초기화 |
-| | `/jira-push` | - | - | Worktree → JIRA |
-| | `/jira-pull` | - | - | JIRA → Worktree |
-| | `/jira-sync` | - | - | 양방향 동기화 |
-| | `/jira-link` | `<id> <key>` | - | 수동 매핑 |
-| | `/jira-status` | `--detailed` | - | 연동 상태 확인 |
-
----
-
-## 명령어 상세 레퍼런스
+## 기능 레퍼런스
 
 ### 개발 워크플로우
 
-체계적인 개발 프로세스를 위한 명령어입니다.
+체계적인 개발 프로세스를 위한 기능입니다.
 
 ```mermaid
 flowchart LR
-    A["/dev plan"] --> B["/dev design"]
-    B --> C["/dev tasks"]
-    C --> D["/dev build"]
+    A["기획"] --> B["설계"]
+    B --> C["태스크 분해"]
+    C --> D["구현"]
 ```
 
-| 명령어 | 설명 | 옵션 | 출력 |
-|--------|------|------|------|
-| `/dev plan` | 기획 (브레인스토밍 + PRD) | `--brainstorm`, `--prd` | `docs/prd/{feature}/` |
-| `/dev design` | 설계 (아키텍처 + ERD) | `--arch`, `--erd` | `docs/architecture/` |
-| `/dev tasks` | 태스크 분해 | - | `docs/tasks/`, `worktree.json` |
-| `/dev build` | 태스크 구현 | `--tdd` | 베스트 프랙티스 적용 코드 |
-| `/dev status` | 진행 상황 확인 | - | 현재 단계, 완료율 표시 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/dev plan [기능]` | `--brainstorm`, `--prd` | "결제 시스템 기획해줘" | `docs/prd/{feature}/` |
+| `/dev design` | `--arch`, `--erd` | "아키텍처 설계해줘" | `docs/architecture/` |
+| `/dev tasks` | - | "태스크 분해해줘" | `docs/tasks/`, `worktree.json` |
+| `/dev build [task-id]` | `--tdd` | "TASK-001 구현해줘" | 베스트 프랙티스 적용 코드 |
+| `/dev status` | - | "진행 상황 보여줘" | 현재 단계, 완료율 표시 |
 
-**사용 예시:**
-
-```bash
-# 기획 단계 (브레인스토밍 + PRD 순차 실행)
-/dev plan 결제 시스템
-
-# 출력:
-# ============================================
-#  [PLAN] 기획 완료
-# ============================================
-#
-#  기능: 결제 시스템
-#  생성된 문서:
-#  • docs/prd/payment/brainstorm.md
-#  • docs/prd/payment/prd.md
-#
-#  다음 단계: /dev design
-# ============================================
+**출력 예시:**
 ```
+============================================
+ [PLAN] 기획 완료
+============================================
 
-```bash
-# 브레인스토밍만 실행
-/dev plan 결제 시스템 --brainstorm
+ 기능: 결제 시스템
+ 생성된 문서:
+ • docs/prd/payment/brainstorm.md
+ • docs/prd/payment/prd.md
 
-# PRD만 실행
-/dev plan --prd
-```
-
-```bash
-# 태스크 구현
-/dev build TASK-003
-
-# TDD 모드로 구현
-/dev build TASK-003 --tdd
-
-# 출력:
-# ============================================
-#  [BUILD:TDD] RED - 테스트 작성
-# ============================================
-#
-#  테스트 파일: src/__tests__/payment.service.test.ts
-#  상태: ❌ FAILING (예상대로)
-#  다음 단계: GREEN (최소 구현)
-# ============================================
+ 다음 단계: "설계해줘" 또는 /dev design
+============================================
 ```
 
 ---
@@ -343,12 +329,12 @@ flowchart LR
 
 4-레이어 클린 아키텍처를 강제 적용합니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/clean-init` | 클린 아키텍처 구조 초기화 | - | 4-레이어 디렉토리 구조 |
-| `/clean-entity` | 도메인 엔티티 생성 | `<name>` | Entity, Value Object, Interface |
-| `/clean-usecase` | 유스케이스 생성 | `<name>` | UseCase, DTO, Port, Test |
-| `/clean-validate` | 아키텍처 규칙 검증 | - | 의존성 위반 리포트 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/clean-init` | - | "클린 아키텍처 구조 만들어줘" | 4-레이어 디렉토리 구조 |
+| `/clean-entity [name]` | - | "User 엔티티 만들어줘" | Entity, Value Object, Interface |
+| `/clean-usecase [name]` | - | "CreateUser 유스케이스 만들어줘" | UseCase, DTO, Port, Test |
+| `/clean-validate` | - | "아키텍처 규칙 검증해줘" | 의존성 위반 리포트 |
 
 **레이어 구조:**
 
@@ -382,13 +368,13 @@ flowchart LR
 
 기존 프로젝트를 분석하고 AI가 일관된 코드를 생성하도록 합니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/onboard` | 전체 프로젝트 분석 | - | 5개 컨텍스트 문서 생성 |
-| `/onboard-quick` | 빠른 분석 (핵심만) | - | PROJECT_SUMMARY.md |
-| `/context-refresh` | 컨텍스트 문서 갱신 | - | 업데이트된 컨텍스트 |
-| `/context-show` | 현재 컨텍스트 표시 | - | 컨텍스트 요약 출력 |
-| `/learn` | 특정 영역 심층 학습 | `<path>` | 패턴 추출 및 문서화 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/onboard` | - | "이 프로젝트 분석해줘" | 5개 컨텍스트 문서 생성 |
+| `/onboard-quick` | - | "프로젝트 빠르게 파악해줘" | PROJECT_SUMMARY.md |
+| `/learn [path]` | - | "src/services 폴더 분석해줘" | 패턴 추출 및 문서화 |
+| `/context-refresh` | - | "컨텍스트 문서 업데이트해줘" | 업데이트된 컨텍스트 |
+| `/context-show` | - | "현재 컨텍스트 보여줘" | 컨텍스트 요약 출력 |
 
 **생성되는 컨텍스트 문서:**
 
@@ -406,32 +392,27 @@ flowchart LR
 
 세션 간 컨텍스트를 유지하고 복원합니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/restore-context` | 규칙 + 작업 상태 복원 | - | 핵심 규칙, 현재 작업 표시 |
-| `/save-progress` | 진행 상황 저장 | `[메시지]` | 체크포인트 저장 |
-| `/show-rules` | 프로젝트 규칙 표시 | - | 전체 규칙 출력 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/restore-context` | - | "이전 컨텍스트 복원해줘" | 핵심 규칙, 현재 작업 표시 |
+| `/save-progress [메시지]` | - | "현재 상태 저장해줘" | 체크포인트 저장 |
+| `/show-rules` | - | "프로젝트 규칙 보여줘" | 전체 규칙 출력 |
 
-**사용 예시:**
+**출력 예시:**
+```
+============================================
+ 컨텍스트 복원 완료
+============================================
 
-```bash
-# 컨텍스트 복원 (새 세션 시작 시)
-/restore-context
+ 적용된 핵심 규칙:
+• 코드 품질 - 가독성 최우선, DRY 원칙
+• 파일 제한 - 300줄 이하, 함수 주석 필수
+• 금지 사항 - any, console.log, 하드코딩 비밀키
 
-# 출력:
-# ============================================
-#  컨텍스트 복원 완료
-# ============================================
-#
-#  적용된 핵심 규칙:
-# • 코드 품질 - 가독성 최우선, DRY 원칙
-# • 파일 제한 - 300줄 이하, 함수 주석 필수
-# • 금지 사항 - any, console.log, 하드코딩 비밀키
-#
-#  현재 작업 상태:
-# • 현재 목표: 사용자 인증 시스템 구현
-# • 진행 중인 작업: JWT 토큰 검증 로직
-# • 다음 단계: 리프레시 토큰 구현
+ 현재 작업 상태:
+• 현재 목표: 사용자 인증 시스템 구현
+• 진행 중인 작업: JWT 토큰 검증 로직
+• 다음 단계: 리프레시 토큰 구현
 ```
 
 ---
@@ -440,9 +421,9 @@ flowchart LR
 
 코드 품질을 검사하고 강제합니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/check-quality` | 전체 프로젝트 품질 검사 | - | 위반 사항 리포트 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/check-quality` | - | "코드 품질 검사해줘" | 위반 사항 리포트 |
 
 **자동 적용 규칙:**
 
@@ -459,11 +440,11 @@ flowchart LR
 
 주제에 대해 다각도로 검색하고 핵심만 추출하여 보고서로 정리합니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/research` | 심층 리서치 시작 | `<주제>` | 구조화된 보고서 |
-| `/research --quick` | 빠른 리서치 | `<주제>` | 핵심 요약 |
-| `/research --deep` | 심층 리서치 | `<주제>` | 상세 보고서 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/research [주제]` | - | "OAuth 2.0에 대해 조사해줘" | 구조화된 보고서 |
+| `/research [주제]` | `--quick` | "JWT 빠르게 알아봐줘" | 핵심 요약 |
+| `/research [주제]` | `--deep` | "클린 아키텍처 자세히 조사해줘" | 상세 보고서 |
 
 **리서치 프로세스:**
 
@@ -486,23 +467,20 @@ flowchart LR
 | `summary.md` | 1페이지 핵심 요약 |
 | `sources.md` | 출처 목록 (신뢰도 포함) |
 
-**PRD 자동 연계:**
-
-리서치 결과는 `/dev plan` 실행 시 자동으로 통합됩니다.
-
 ---
 
 ### Worktree (작업 트리)
 
 개발 진행 상황을 실시간으로 추적하는 작업 트리입니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/worktree` | 현재 작업 트리 표시 | - | 트리 구조 시각화 |
-| `/worktree status` | 상태 요약 | - | 진행률, 통계 |
-| `/worktree start` | 태스크 시작 | `<task-id>` | 태스크 상세 정보 |
-| `/worktree done` | 태스크 완료 | `<task-id>` | 진행률 업데이트 |
-| `/worktree block` | 블로커 등록 | `<task-id> "사유"` | 대체 작업 추천 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/worktree` | - | "현재 작업 트리 보여줘" | 트리 구조 시각화 |
+| `/worktree status` | - | "진행률 보여줘" | 진행률, 통계 |
+| `/worktree start [task-id]` | - | "TASK-001 시작해줘" | 태스크 상세 정보 |
+| `/worktree done [task-id]` | - | "TASK-001 완료" | 진행률 업데이트 |
+| `/worktree block [task-id] [사유]` | - | "TASK-001 블로킹됨, API 대기중" | 대체 작업 추천 |
+| `/worktree reset` | - | "작업 트리 초기화해줘" | 트리 초기화 |
 
 **작업 트리 출력 예시:**
 
@@ -540,34 +518,31 @@ flowchart LR
 
 Worktree와 JIRA를 양방향으로 동기화합니다. 관리자/PM이 JIRA 대시보드에서 진행 상황을 확인할 수 있습니다.
 
-| 명령어 | 설명 | 인자 | 출력 |
-|--------|------|------|------|
-| `/jira-init` | JIRA 연동 초기화 | `<project-key>` | 연결 상태 |
-| `/jira-push` | Worktree → JIRA 동기화 | - | 생성/업데이트 결과 |
-| `/jira-pull` | JIRA → Worktree 동기화 | - | 반영 결과 |
-| `/jira-sync` | 양방향 동기화 | - | 동기화 결과 |
-| `/jira-link` | 수동 매핑 | `<id> <key>` | 매핑 정보 |
-| `/jira-status` | 연동 상태 확인 | `--detailed` | 상태 리포트 |
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/jira-init [project-key]` | - | "JIRA AUTH 프로젝트 연결해줘" | 연결 상태 |
+| `/jira-push` | - | "JIRA로 동기화해줘" | 생성/업데이트 결과 |
+| `/jira-pull` | - | "JIRA에서 가져와줘" | 반영 결과 |
+| `/jira-sync` | - | "JIRA 양방향 동기화해줘" | 동기화 결과 |
+| `/jira-link [task-id] [jira-key]` | - | "TASK-001을 AUTH-123에 연결해줘" | 매핑 정보 |
+| `/jira-status` | - | "JIRA 연동 상태 보여줘" | 상태 리포트 |
 
 **초기 설정:**
 
+*터미널에서 환경변수 설정:*
 ```bash
-# 1. 환경변수 설정
 export JIRA_EMAIL='your-email@company.com'
 export JIRA_API_TOKEN='your-api-token'
-
-# 2. JIRA 연동 초기화
-/jira-init AUTH
 ```
 
 **사용 흐름:**
 
 ```mermaid
 flowchart LR
-    subgraph Claude["Claude Code"]
-        W1["/worktree start"]
-        W2["/worktree done"]
-        W3["/worktree block"]
+    subgraph User["👤 사용자"]
+        U1["시작해줘 / /worktree start"]
+        U2["완료 / /worktree done"]
+        U3["블로킹됨 / /worktree block"]
     end
 
     subgraph Hook["자동 훅"]
@@ -580,18 +555,18 @@ flowchart LR
         J3["Blocked + 코멘트"]
     end
 
-    W1 --> H --> J1
-    W2 --> H --> J2
-    W3 --> H --> J3
+    U1 --> H --> J1
+    U2 --> H --> J2
+    U3 --> H --> J3
 ```
 
 **자동 동기화:**
 
-| Worktree 명령 | JIRA 자동 동작 |
-|--------------|---------------|
-| `/worktree start TASK-001` | JIRA 이슈 → In Progress |
-| `/worktree done TASK-001` | JIRA 이슈 → Done |
-| `/worktree block TASK-001 "사유"` | JIRA 이슈 → Blocked + 코멘트 |
+| 사용자 요청 | JIRA 자동 동작 |
+|------------|---------------|
+| "TASK-001 시작해줘" 또는 "/worktree start TASK-001" | JIRA 이슈 → In Progress |
+| "TASK-001 완료" 또는 "/worktree done TASK-001" | JIRA 이슈 → Done |
+| "TASK-001 블로킹됨" 또는 "/worktree block TASK-001 사유" | JIRA 이슈 → Blocked + 코멘트 |
 
 **상태 확인 예시:**
 
@@ -617,27 +592,53 @@ flowchart LR
 
 ---
 
-## 스킬 레퍼런스
+## 자동 활성화 스킬
 
-스킬은 특정 키워드 감지 시 자동으로 활성화됩니다.
+다음 스킬들은 **키워드 감지 시 자동으로 적용**됩니다.
+사용자가 별도로 요청하지 않아도 Claude가 자동으로 활성화합니다.
 
-| 스킬 | 활성화 키워드 | 동작 |
-|------|--------------|------|
-| `project-rules` | 코드 작성, 수정, 리뷰, 아키텍처 결정 | 프로젝트 규칙 자동 참조 |
-| `work-tracker` | 작업 시작, 전환, 완료, "다음", "이제" | 작업 상태 + Worktree 자동 추적 |
-| `code-quality` | 코드 생성, 함수 추가, 구현, 만들기 | 300줄 제한, 주석 필수 적용 |
-| `dev-workflow` | 새 기능, 프로젝트 시작, 설계, PRD, /dev | 개발 워크플로우 안내 |
-| `best-practices` | React, Node.js, TypeScript, TDD, 테스트 주도 | 기술별 베스트 프랙티스 적용 |
-| `clean-architecture` | 코드 구현, 클래스 생성, 레이어, 도메인 | 클린 아키텍처 강제 |
-| `project-onboarding` | 프로젝트 분석, 코드베이스 학습, 온보딩 | 컨텍스트 문서 참조 |
-| `research` | 리서치, 조사, 알아봐, 찾아봐 | 다각도 검색 + 핵심 요약 |
-| `jira-integration` | JIRA, 지라, 이슈, 티켓, 동기화 | Worktree ↔ JIRA 양방향 동기화 |
+| 스킬 | 활성화 조건 | 자동 동작 |
+|------|------------|----------|
+| `project-rules` | 코드 작성, 수정, 리뷰 시 | 프로젝트 규칙 자동 참조 |
+| `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 자동 업데이트 |
+| `code-quality` | 코드 생성, 함수 추가 시 | 300줄 제한, 주석 필수 적용 |
+| `dev-workflow` | 기능 개발, 설계 언급 시 | 개발 워크플로우 안내 |
+| `best-practices` | React, TypeScript, TDD 언급 시 | 기술별 베스트 프랙티스 적용 |
+| `clean-architecture` | 클래스 생성, 레이어 언급 시 | 클린 아키텍처 강제 |
+| `project-onboarding` | 프로젝트 분석 요청 시 | 컨텍스트 문서 참조 |
+| `research-skill` | 조사, 알아봐, 리서치 언급 시 | 다각도 검색 + 핵심 요약 |
+| `jira-integration` | JIRA, 이슈, 티켓 언급 시 | JIRA 양방향 동기화 |
+
+**예시:** "React 컴포넌트 만들어줘" 요청 시 → `best-practices`, `code-quality` 스킬 자동 적용
+
+---
+
+## 자동 동작 (Hooks)
+
+다음 기능들은 **이벤트 발생 시 자동으로 실행**됩니다. 별도 설정 없이 동작합니다.
+
+| 트리거 | 자동 동작 | 관련 파일 |
+|--------|----------|----------|
+| **세션 시작** | 이전 컨텍스트 자동 로드 | `.claude/memory/CURRENT_CONTEXT.md` |
+| **세션 종료** | 작업 상태 자동 저장 | `.claude/memory/WORK_HISTORY.md` |
+| **Context Compact** | 현재 상태 체크포인트 저장 | `.claude/memory/` |
+| **파일 수정 (Edit/Write)** | 변경 이력 기록 + 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
+| **민감 파일 수정 시도** | 자동 차단 (.env, credentials 등) | 보안 보호 |
+| **worktree.json 변경** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
+| **사용자 입력 시** | 현재 태스크/규칙 리마인더 주입 | 컨텍스트 자동 보강 |
+| **알림 발생 시** | 데스크톱 알림 + 로깅 | 알림 커스터마이징 |
+| **응답 완료 시** | 체크포인트 자동 저장 | 진행 상황 백업 |
+| **서브에이전트 시작/종료** | 사용 통계 추적 | 에이전트 분석 |
+
+> 💡 위 기능들은 `.claude/settings.json`에서 설정되며, Memory 파일들은 자동으로 관리됩니다.
 
 ---
 
 ## 훅 레퍼런스
 
 훅은 특정 이벤트 발생 시 자동으로 실행됩니다.
+
+### 기본 훅
 
 | 훅 | 트리거 | 동작 |
 |----|--------|------|
@@ -647,6 +648,39 @@ flowchart LR
 | `code_quality_validator.py` | 파일 생성/수정 시 | 300줄 초과, 주석 누락 경고 |
 | `track_changes.py` | 파일 변경 시 | 변경 이력 기록 |
 | `jira_auto_sync.py` | worktree.json 변경 시 | JIRA 이슈 상태 자동 업데이트 |
+
+### 고급 훅 (신규)
+
+| 훅 | 트리거 | 동작 |
+|----|--------|------|
+| `user_prompt_submit.py` | 사용자 입력 시 | 현재 태스크/규칙 리마인더 자동 주입 |
+| `notification_handler.py` | 알림 발생 시 | 데스크톱 알림 + 로깅 |
+| `session_stop.py` | 응답 완료 시 | 체크포인트 자동 저장, 세션 통계 |
+| `subagent_tracker.py` | 서브에이전트 시작/종료 시 | 사용 통계 추적, 실행 시간 분석 |
+
+### 보안 훅
+
+| 훅 | 트리거 | 동작 |
+|----|--------|------|
+| PreToolUse (인라인) | 민감 파일 수정 시도 | `.env`, `credentials`, `.pem` 등 수정 자동 차단 |
+
+### 고급 훅 타입 (prompt/agent)
+
+LLM을 호출하는 고급 훅 예시는 `.claude/hooks/examples/hooks-advanced-examples.json`에서 확인할 수 있습니다.
+
+```json
+{
+  "type": "prompt",
+  "prompt": "이 코드 변경에 대해 보안 취약점을 분석하세요..."
+}
+
+{
+  "type": "agent",
+  "prompt": "클린 아키텍처 의존성 규칙을 검증하세요..."
+}
+```
+
+> ⚠️ `prompt`와 `agent` 타입은 각 호출마다 LLM API를 사용하므로 비용에 주의하세요.
 
 ---
 
@@ -676,6 +710,8 @@ project/
 ├── README.md                          # 이 문서
 │
 ├── .claude/
+│   ├── settings.json                  # 훅 설정 (핵심 설정 파일)
+│   │
 │   ├── memory/                        # 영구 메모리
 │   │   ├── PROJECT_RULES.md           # 프로젝트 규칙
 │   │   ├── CURRENT_CONTEXT.md         # 현재 작업 상태
@@ -699,16 +735,52 @@ project/
 │   │   └── jira_connector.py          # JIRA API 커넥터
 │   │
 │   ├── skills/                        # 자동 활성화 스킬 (9개)
-│   ├── commands/                      # 슬래시 커맨드 (26개)
-│   ├── hooks/                         # 이벤트 훅
-│   ├── best-practices/                # 기술별 베스트 프랙티스
-│   ├── templates/                     # 문서 템플릿
-│   └── agents/                        # 서브에이전트
+│   ├── commands/                      # 슬래시 명령어 (26개)
+│   ├── hooks/                         # 이벤트 훅 (10개)
+│   ├── best-practices/                # 기술별 베스트 프랙티스 (9개)
+│   ├── templates/                     # 문서 템플릿 (6개)
+│   └── agents/                        # 서브에이전트 (2개)
 │
-├── docs/                              # 생성된 문서
-└── .claude-state/                     # 런타임 상태
+├── docs/                              # 생성된 문서 (PRD, 아키텍처, 태스크)
+└── .claude-state/                     # 런타임 상태 (자동 관리)
     ├── worktree.json                  # 작업 트리 상태
-    └── jira_mapping.json              # JIRA ID 매핑
+    ├── jira_mapping.json              # JIRA ID 매핑
+    ├── checkpoint.json                # 체크포인트 (컨텍스트 백업)
+    └── recent_changes.json            # 최근 변경 파일 이력
+```
+
+---
+
+## 서브에이전트 (Subagents)
+
+서브에이전트는 특정 작업에 특화된 AI 어시스턴트입니다. 자체 컨텍스트를 유지하며 복잡한 작업을 처리합니다.
+
+### 제공되는 서브에이전트
+
+| 에이전트 | 역할 | 자동 로드 스킬 |
+|----------|------|---------------|
+| `code-reviewer` | 코드 품질 검토, 개선점 제안 | code-quality, clean-architecture, project-rules |
+| `project-guardian` | 규칙 준수 검증, 맥락 유지 | project-rules, work-tracker |
+
+### 에이전트 설정 옵션
+
+```yaml
+name: agent-name
+description: 에이전트 설명
+tools: Read, Grep, Glob           # 사용 가능한 도구
+model: haiku | sonnet | opus      # 사용할 모델
+permissionMode: default | acceptEdits | bypassPermissions | plan
+skills: skill1, skill2            # 자동 로드할 스킬
+```
+
+### 사용 예시
+
+```
+> 코드 리뷰해줘
+→ code-reviewer 에이전트가 자동 호출
+
+> 규칙 검증해줘
+→ project-guardian 에이전트가 자동 호출
 ```
 
 ---
@@ -717,12 +789,12 @@ project/
 
 | 문제 | 원인 | 해결 |
 |------|------|------|
-| 명령어가 동작하지 않음 | .claude 폴더 누락 | 플러그인 재설치 |
-| 컨텍스트가 복원되지 않음 | 저장된 상태 없음 | `/save-progress` 실행 |
+| 기능이 동작하지 않음 | .claude 폴더 누락 | 플러그인 재설치 |
+| 컨텍스트가 복원되지 않음 | 저장된 상태 없음 | "저장해줘" 또는 "/save-progress" 요청 |
 | 온보딩 실패 | package.json 없음 | 프로젝트 루트 확인 |
-| 클린 아키텍처 위반 | 잘못된 import | `/clean-validate` 후 수정 |
-| 품질 검사 미작동 | 훅 설정 오류 | `hooks.json` 확인 |
+| 클린 아키텍처 위반 | 잘못된 import | "검증해줘" 또는 "/clean-validate" 요청 후 수정 |
+| 품질 검사 미작동 | 훅 설정 오류 | `.claude/settings.json` 확인 |
 | JIRA 연결 실패 (401) | API 토큰 오류 | `JIRA_API_TOKEN` 재설정 |
 | JIRA 연결 실패 (403) | 권한 없음 | JIRA 관리자에게 권한 요청 |
-| JIRA 동기화 안됨 | 매핑 없음 | `/jira-link` 또는 `/jira-push` 실행 |
+| JIRA 동기화 안됨 | 매핑 없음 | "JIRA로 동기화해줘" 또는 "/jira-push" 요청 |
 | JIRA 상태 전환 실패 | 워크플로우 제한 | JIRA 워크플로우 확인 |

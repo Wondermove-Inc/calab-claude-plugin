@@ -190,6 +190,18 @@ def main():
     이 훅은 worktree.json 파일 변경 시 호출됩니다.
     PostToolUse 이벤트에서 Edit/Write 도구가 worktree.json을 수정할 때 트리거됩니다.
     """
+    # stdin에서 hook 입력 데이터 읽기
+    try:
+        input_data = json.load(sys.stdin)
+        file_path = input_data.get('tool_input', {}).get('file_path', '')
+
+        # worktree.json 파일이 아니면 조기 종료
+        if not file_path.endswith('worktree.json'):
+            return
+    except Exception:
+        # stdin 파싱 실패 시 (직접 실행 등) 계속 진행
+        pass
+
     # JIRA 연동 활성화 확인
     if not is_jira_enabled():
         return
