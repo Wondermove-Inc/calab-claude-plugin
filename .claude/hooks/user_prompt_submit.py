@@ -204,11 +204,12 @@ def extract_task_description(prompt: str) -> str:
 
 
 def update_current_goal(prompt: str, intent: dict):
-    """현재 목표 자동 업데이트"""
+    """현재 목표 자동 업데이트 - 작업 스택에 누적"""
     context_file = MEMORY_PATH / 'CURRENT_CONTEXT.md'
 
     if not context_file.exists():
-        return
+        # 파일이 없으면 기본 구조 생성
+        create_default_context_file(context_file)
 
     try:
         with open(context_file, 'r', encoding='utf-8') as f:
@@ -220,38 +221,79 @@ def update_current_goal(prompt: str, intent: dict):
     task_desc = extract_task_description(prompt)
     category = intent.get('category', '작업')
     timestamp = datetime.now().strftime('%H:%M')
+    today = datetime.now().strftime('%Y-%m-%d')
 
-    # "현재 목표" 섹션 찾기
-    goal_pattern = r'(## 현재 목표\n\n)(.*?)(\n\n---|\n\n##)'
-    match = re.search(goal_pattern, content, re.DOTALL)
-
-    if not match:
+    # 이미 같은 작업이 최근에 있으면 업데이트 안함 (중복 방지)
+    if task_desc[:20] in content[-2000:]:  # 최근 2000자 내에서만 검색
+        # 마지막 업데이트 시간만 갱신
+        updated_content = re.sub(
+            r'> 마지막 업데이트: .*',
+            f'> 마지막 업데이트: {today} {timestamp} (자동)',
+            content
+        )
+        try:
+            with open(context_file, 'w', encoding='utf-8') as f:
+                f.write(updated_content)
+        except Exception:
+            pass
         return
 
-    # 새로운 목표로 업데이트 (기존 목표 유지하면서 현재 작업 추가)
-    current_goal = match.group(2).strip()
+    # 새 작업 항목
+    new_work_entry = f"- [{timestamp}] **[{category}]** {task_desc}"
 
-    # 이미 같은 작업이 있으면 업데이트 안함
-    if task_desc[:30] in current_goal:
-        return
+    updated_content = content
 
-    # 현재 진행 중인 작업 표시
-    new_goal_section = f"## 현재 목표\n\n**[{category}] {task_desc}** ← 진행 중 ({timestamp})"
+    # 방법 1: "작업 스택" 섹션에 추가
+    stack_pattern = r'(## 작업 스택[^\n]*\n\n)(.*?)(\n\n---|\n\n##)'
+    stack_match = re.search(stack_pattern, content, re.DOTALL)
 
-    # 기존 목표가 있고 "완료"가 아니면 유지
-    if current_goal and '✅ 완료' not in current_goal:
-        # 기존 목표를 "이전 목표"로 이동하지 않고, 현재 목표만 업데이트
-        pass
+    if stack_match:
+        current_stack = stack_match.group(2).strip()
+        # 비어있는 상태면 새 항목만 추가
+        if '비어있음' in current_stack or current_stack == '':
+            new_stack = new_work_entry
+        else:
+            # 기존 항목 위에 새 항목 추가 (스택이므로 최신이 위)
+            new_stack = f"{new_work_entry}\n{current_stack}"
 
-    updated_content = re.sub(
-        goal_pattern,
-        f"{new_goal_section}\n\n---",
-        content,
-        count=1
-    )
+        updated_content = re.sub(
+            stack_pattern,
+            f"## 작업 스택 (위에서 아래로 진입 순서)\n\n{new_stack}\n\n---",
+            updated_content,
+            count=1
+        )
+    else:
+        # 방법 2: "최근 완료된 작업" 섹션 위에 추가
+        recent_pattern = r'(## 최근 완료된 작업)'
+        if re.search(recent_pattern, content):
+            # "진행 중인 작업" 섹션이 있는지 확인
+            progress_pattern = r'(## 진행 중인 작업[^\n]*\n\n)(.*?)(\n\n---|\n\n##)'
+            progress_match = re.search(progress_pattern, content, re.DOTALL)
+
+            if progress_match:
+                # 기존 진행 중 섹션에 추가
+                current_progress = progress_match.group(2).strip()
+                if '없음' in current_progress or current_progress == '':
+                    new_progress = new_work_entry
+                else:
+                    new_progress = f"{new_work_entry}\n{current_progress}"
+
+                updated_content = re.sub(
+                    progress_pattern,
+                    f"## 진행 중인 작업\n\n{new_progress}\n\n---",
+                    updated_content,
+                    count=1
+                )
+            else:
+                # "진행 중인 작업" 섹션 새로 생성
+                updated_content = re.sub(
+                    recent_pattern,
+                    f"## 진행 중인 작업\n\n{new_work_entry}\n\n---\n\n## 최근 완료된 작업",
+                    updated_content,
+                    count=1
+                )
 
     # 마지막 업데이트 시간 갱신
-    today = datetime.now().strftime('%Y-%m-%d')
     updated_content = re.sub(
         r'> 마지막 업데이트: .*',
         f'> 마지막 업데이트: {today} {timestamp} (자동)',
@@ -261,6 +303,52 @@ def update_current_goal(prompt: str, intent: dict):
     try:
         with open(context_file, 'w', encoding='utf-8') as f:
             f.write(updated_content)
+    except Exception:
+        pass
+
+
+def create_default_context_file(context_file: Path):
+    """기본 CURRENT_CONTEXT.md 파일 생성"""
+    today = datetime.now().strftime('%Y-%m-%d')
+    timestamp = datetime.now().strftime('%H:%M')
+
+    default_content = f"""# 현재 작업 컨텍스트
+
+> 마지막 업데이트: {today} {timestamp} (자동)
+
+---
+
+## 현재 목표
+
+(목표 설정 대기)
+
+---
+
+## 작업 스택 (위에서 아래로 진입 순서)
+
+(작업 대기)
+
+---
+
+## 최근 완료된 작업
+
+(없음)
+
+---
+
+## 주요 파일
+
+(분석 대기)
+
+---
+
+*이 파일은 자동 훅에 의해 업데이트됩니다.*
+"""
+
+    try:
+        context_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(context_file, 'w', encoding='utf-8') as f:
+            f.write(default_content)
     except Exception:
         pass
 
