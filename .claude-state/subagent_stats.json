@@ -1,9 +1,9 @@
 {
   "agents": {
     "$AGENT_NAME": {
-      "total_invocations": 3,
-      "last_invoked": "2025-12-30T12:29:02.828644",
-      "avg_duration": 36.07
+      "total_invocations": 5,
+      "last_invoked": "2025-12-30T12:36:25.782665",
+      "avg_duration": 29.79
     }
   },
   "running": {}
