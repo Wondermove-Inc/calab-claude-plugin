@@ -90,6 +90,10 @@ pip install requests
 | | `/save-progress [메시지]` | - | "저장해줘" | 체크포인트 저장 |
 | | `/show-rules` | - | "규칙 보여줘" | 전체 규칙 표시 |
 | **코드 품질** | `/check-quality` | - | "품질 검사해줘" | 전체 프로젝트 검사 |
+| **문제 해결** | `/solve [문제]` | `--5whys`, `--rca`, `--hypothesis`, `--binary` | "해결해줘" | 체계적 문제 분석 |
+| | `/solve-log` | - | "분석 로그 보여줘" | 진행 중 문제 확인 |
+| | `/solve-history [키워드]` | `--recent`, `--keyword` | "해결 이력 보여줘" | 과거 사례 검색 |
+| | `/solve-report [id]` | `--draft`, `--summary`, `--full` | "보고서 만들어줘" | 해결 보고서 생성 |
 | **JIRA 연동** | `/jira-init [key]` | - | "JIRA 연결해줘" | 연동 초기화 |
 | | `/jira-push` | - | "JIRA로 동기화해줘" | Worktree → JIRA |
 | | `/jira-pull` | - | "JIRA에서 가져와줘" | JIRA → Worktree |
@@ -108,6 +112,7 @@ pip install requests
 | 새 프로젝트 시작 | "사용자 인증 시스템 기획해줘" | `/dev plan 사용자 인증` |
 | 기존 프로젝트 투입 | "이 프로젝트 분석해줘" | `/onboard` |
 | 세션 재개 | "이전 컨텍스트 복원해줘" | `/restore-context` |
+| 버그/에러 해결 | "로그인 에러 해결해줘" | `/solve 로그인 에러` |
 
 ### 옵션 사용법
 
@@ -121,6 +126,8 @@ pip install requests
 | `/dev design --erd` | "ERD만 설계해줘" | ERD만 생성 |
 | `/dev build TASK-001 --tdd` | "TASK-001 TDD로 구현해줘" | 테스트 먼저 |
 | `/save-progress "기능 완료"` | "기능 완료로 저장해줘" | 메시지 포함 |
+| `/solve 에러 --5whys` | "5 Whys로 분석해줘" | 5 Whys 방법론 |
+| `/solve-history DB` | "DB 관련 해결 이력 보여줘" | 키워드 검색 |
 
 ---
 
@@ -146,6 +153,11 @@ flowchart TB
         O1["분석해줘 / /onboard"] --> O2["project-context/"]
     end
 
+    subgraph Solve["🔧 문제 해결"]
+        SV1["해결해줘 / /solve"] --> SV2["6단계 분석"]
+        SV2 --> SV3["knowledge-base/"]
+    end
+
     subgraph Skills["⚡ 자동 적용 스킬"]
         S1["clean-architecture"]
         S2["best-practices"]
@@ -165,6 +177,7 @@ flowchart TB
     C --> Research
     C --> Dev
     C --> Onboard
+    C --> Solve
 
     R2 -.->|자동 반영| D1
     D3 -->|자동 생성| W1["worktree.json"]
@@ -186,6 +199,7 @@ flowchart TB
 | **태스크** | "분해해줘" 또는 `/dev tasks` | `worktree.json` 자동 생성 |
 | **구현** | "구현해줘" 또는 `/dev build` | worktree 태스크 자동 시작, 베스트 프랙티스 로드 |
 | **온보딩** | "분석해줘" 또는 `/onboard` | 5개 project-context 문서 자동 생성 |
+| **문제 해결** | "해결해줘" 또는 `/solve` | 6단계 체계적 분석, 지식 베이스 축적 |
 | **코드 작성** | 파일 생성/수정 시 | `code-quality`, `best-practices` skill 자동 활성화 |
 | **보안** | 민감 파일 수정 시도 | `.env`, `credentials` 등 자동 차단 |
 | **JIRA** | worktree 상태 변경 시 | JIRA 이슈 상태 자동 동기화 |
@@ -283,6 +297,28 @@ export JIRA_API_TOKEN='your-api-token'
 
 👤: "JIRA 연동 상태 보여줘" (또는 /jira-status)
 🤖: 상태 리포트...
+```
+
+### 시나리오 6: 버그/에러 체계적 해결
+
+**대화 예시:**
+```
+👤: "로그인 API가 500 에러 나는데 해결해줘" (또는 /solve 로그인 API 500 에러)
+🤖: 문제 정의 시작...
+    정보 수집 (git log, 에러 로그)...
+    5 Whys 분석...
+
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    근본 원인: 마이그레이션 누락
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤: "해결 이력 보여줘" (또는 /solve-history)
+🤖: 과거 유사 문제 검색...
+    PROB-012: DB 쿼리 실패 (유사도 85%)
+
+👤: "해결 보고서 만들어줘" (또는 /solve-report PROB-001)
+🤖: 보고서 생성...
+    .claude/problem-solving/resolved/PROB-001/report.md
 ```
 
 ---
@@ -592,6 +628,77 @@ flowchart LR
 
 ---
 
+### 문제 해결 (Problem Solving)
+
+체계적인 방법론(5 Whys, RCA, 가설 기반)으로 버그와 에러를 분석하고 해결합니다.
+
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/solve [문제]` | `--5whys`, `--rca`, `--hypothesis`, `--binary` | "에러 해결해줘" | 6단계 분석 + 해결책 |
+| `/solve-log` | - | "분석 진행 상황 보여줘" | 현재 분석 상태 |
+| `/solve-history [키워드]` | `--recent`, `--keyword` | "해결 이력 보여줘" | 과거 해결 사례 검색 |
+| `/solve-report [id]` | `--draft`, `--summary`, `--full` | "해결 보고서 만들어줘" | 상세 보고서 |
+
+**6단계 문제 해결 프로세스:**
+
+```mermaid
+flowchart LR
+    A["1. 문제 정의<br/>Define"] --> B["2. 정보 수집<br/>Gather"]
+    B --> C["3. 원인 분석<br/>Analyze"]
+    C --> D["4. 가설 검증<br/>Hypothesize"]
+    D --> E["5. 해결<br/>Solve"]
+    E --> F["6. 문서화<br/>Document"]
+```
+
+**분석 방법론:**
+
+| 방법론 | 옵션 | 사용 시점 |
+|--------|------|----------|
+| **5 Whys** | `--5whys` | 원인이 불명확할 때, 반복적 "왜?" 질문 |
+| **RCA** | `--rca` | 복잡한 문제, 8단계 체계적 분석 |
+| **가설 기반** | `--hypothesis` | 검증이 필요할 때, 과학적 방법 |
+| **Binary Search** | `--binary` | 코드 디버깅, 이분 탐색으로 위치 특정 |
+
+**5 Whys 분석 예시:**
+
+```
+문제: 로그인 API 500 에러
+
+Why 1: 왜 500 에러가 발생하나요?
+→ DB 쿼리에서 예외 발생
+
+Why 2: 왜 DB 쿼리에서 예외가 발생하나요?
+→ users 테이블에 email 컬럼 없음
+
+Why 3: 왜 컬럼이 없나요?
+→ 마이그레이션이 실행되지 않음
+
+Why 4: 왜 마이그레이션이 실행되지 않았나요?
+→ 배포 스크립트에서 누락됨
+
+Why 5: 왜 배포 스크립트에서 누락됐나요?
+→ CI/CD 파이프라인 변경 시 마이그레이션 단계 삭제됨
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+근본 원인: CI/CD 파이프라인에서 마이그레이션 단계 누락
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**지식 베이스:**
+
+해결된 문제는 자동으로 `.claude/problem-solving/knowledge-base/`에 저장되어 유사 문제 발생 시 자동 추천됩니다.
+
+```
+.claude/problem-solving/
+├── active/               # 진행 중인 문제
+├── resolved/             # 해결 완료
+└── knowledge-base/       # 패턴 및 해결책 DB
+    ├── patterns.json
+    └── solutions.json
+```
+
+---
+
 ## 자동 활성화 스킬
 
 다음 스킬들은 **키워드 감지 시 자동으로 적용**됩니다.
@@ -607,9 +714,11 @@ flowchart LR
 | `clean-architecture` | 클래스 생성, 레이어 언급 시 | 클린 아키텍처 강제 |
 | `project-onboarding` | 프로젝트 분석 요청 시 | 컨텍스트 문서 참조 |
 | `research-skill` | 조사, 알아봐, 리서치 언급 시 | 다각도 검색 + 핵심 요약 |
+| `problem-solving` | 에러, 버그, 문제, 디버깅 언급 시 | 체계적 문제 해결 방법론 적용 |
 | `jira-integration` | JIRA, 이슈, 티켓 언급 시 | JIRA 양방향 동기화 |
 
 **예시:** "React 컴포넌트 만들어줘" 요청 시 → `best-practices`, `code-quality` 스킬 자동 적용
+**예시:** "로그인 500 에러 해결해줘" 요청 시 → `problem-solving` 스킬 자동 적용
 
 ---
 
@@ -734,11 +843,15 @@ project/
 │   │   ├── jira_config.json           # JIRA 설정
 │   │   └── jira_connector.py          # JIRA API 커넥터
 │   │
-│   ├── skills/                        # 자동 활성화 스킬 (9개)
-│   ├── commands/                      # 슬래시 명령어 (26개)
+│   ├── skills/                        # 자동 활성화 스킬 (10개)
+│   ├── commands/                      # 슬래시 명령어 (30개)
+│   ├── problem-solving/               # 문제 해결 지식 베이스
+│   │   ├── active/                    # 진행 중인 문제
+│   │   ├── resolved/                  # 해결 완료
+│   │   └── knowledge-base/            # 패턴 및 해결책 DB
 │   ├── hooks/                         # 이벤트 훅 (10개)
 │   ├── best-practices/                # 기술별 베스트 프랙티스 (9개)
-│   ├── templates/                     # 문서 템플릿 (6개)
+│   ├── templates/                     # 문서 템플릿 (9개)
 │   └── agents/                        # 서브에이전트 (2개)
 │
 ├── docs/                              # 생성된 문서 (PRD, 아키텍처, 태스크)

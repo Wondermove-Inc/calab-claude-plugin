@@ -1,1 +1,39 @@
-[]
+[
+  {
+    "timestamp": null,
+    "event": null,
+    "save_message": null,
+    "current_task": null,
+    "progress": null,
+    "next_steps": [],
+    "completed_tasks": [],
+    "important_files": [],
+    "notes": null
+  },
+  {
+    "timestamp": "2025-12-30T11:58:37.485734",
+    "current_task": null,
+    "progress": {
+      "total": 0,
+      "done": 0,
+      "in_progress": 0,
+      "blocked": 0,
+      "pending": 0,
+      "percentage": 0
+    },
+    "auto_saved": true
+  },
+  {
+    "timestamp": "2025-12-30T12:28:11.279442",
+    "current_task": null,
+    "progress": {
+      "total": 0,
+      "done": 0,
+      "in_progress": 0,
+      "blocked": 0,
+      "pending": 0,
+      "percentage": 0
+    },
+    "auto_saved": true
+  }
+]

@@ -1,0 +1,83 @@
+{
+  "patterns": [
+    {
+      "pattern_id": "PAT-SAMPLE-001",
+      "name": "DB 연결 문제",
+      "keywords": ["DB", "database", "connection", "timeout", "pool"],
+      "symptoms": [
+        "Connection timeout",
+        "Too many connections",
+        "Connection refused"
+      ],
+      "likely_causes": [
+        "커넥션 풀 소진",
+        "DB 서버 다운",
+        "네트워크 문제",
+        "인증 정보 오류"
+      ],
+      "common_solutions": [
+        "커넥션 풀 사이즈 조정",
+        "DB 서버 상태 확인",
+        "네트워크 연결 확인",
+        "인증 정보 확인"
+      ],
+      "occurrences": 0,
+      "last_seen": null
+    },
+    {
+      "pattern_id": "PAT-SAMPLE-002",
+      "name": "인증 실패",
+      "keywords": ["auth", "authentication", "login", "token", "jwt", "401", "403"],
+      "symptoms": [
+        "401 Unauthorized",
+        "403 Forbidden",
+        "Token expired",
+        "Invalid token"
+      ],
+      "likely_causes": [
+        "토큰 만료",
+        "잘못된 인증 정보",
+        "세션 만료",
+        "권한 부족"
+      ],
+      "common_solutions": [
+        "토큰 갱신",
+        "재로그인",
+        "권한 설정 확인",
+        "세션 관리 확인"
+      ],
+      "occurrences": 0,
+      "last_seen": null
+    },
+    {
+      "pattern_id": "PAT-SAMPLE-003",
+      "name": "서버 에러",
+      "keywords": ["500", "internal server error", "exception", "crash"],
+      "symptoms": [
+        "500 Internal Server Error",
+        "Unhandled exception",
+        "Server crashed"
+      ],
+      "likely_causes": [
+        "코드 버그",
+        "설정 오류",
+        "의존성 문제",
+        "리소스 부족"
+      ],
+      "common_solutions": [
+        "에러 로그 확인",
+        "스택 트레이스 분석",
+        "최근 변경사항 검토",
+        "롤백 고려"
+      ],
+      "occurrences": 0,
+      "last_seen": null
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created_at": "2025-12-30",
+    "last_updated": "2025-12-30",
+    "description": "문제 해결 패턴 데이터베이스. 유사 문제 감지 및 해결책 추천에 사용됩니다."
+  }
+}

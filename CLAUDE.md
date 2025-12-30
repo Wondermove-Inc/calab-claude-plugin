@@ -55,6 +55,11 @@
 |--------|----------------|
 | "이전 컨텍스트 복원해줘" | `/restore-context` |
 
+### 상황 4: 버그/에러 체계적 해결
+| 자연어 | 명령어 직접 입력 |
+|--------|----------------|
+| "로그인 에러 해결해줘" | `/solve 로그인 에러` |
+
 ### 옵션 사용법
 
 명령어 옵션도 자연어로 표현할 수 있습니다:
@@ -66,6 +71,8 @@
 | `/dev plan --brainstorm` | "브레인스토밍해줘" |
 | `/dev build TASK-001 --tdd` | "TDD로 구현해줘" |
 | `/save-progress "메시지"` | "메시지로 저장해줘" |
+| `/solve 에러 --5whys` | "5 Whys로 분석해줘" |
+| `/solve-history DB` | "DB 관련 해결 이력 보여줘" |
 
 ---
 
@@ -98,6 +105,10 @@
 | | `/save-progress [메시지]` | - | "저장해줘" | 체크포인트 저장 |
 | | `/show-rules` | - | "규칙 보여줘" | 전체 규칙 표시 |
 | **코드 품질** | `/check-quality` | - | "품질 검사해줘" | 전체 프로젝트 검사 |
+| **문제 해결** | `/solve [문제]` | `--5whys`, `--rca`, `--hypothesis`, `--binary` | "해결해줘" | 체계적 문제 분석 |
+| | `/solve-log` | - | "분석 로그 보여줘" | 진행 중 문제 확인 |
+| | `/solve-history [키워드]` | `--recent`, `--keyword` | "해결 이력 보여줘" | 과거 사례 검색 |
+| | `/solve-report [id]` | `--draft`, `--summary`, `--full` | "보고서 만들어줘" | 해결 보고서 생성 |
 | **JIRA 연동** | `/jira-init [key]` | - | "JIRA 연결해줘" | 연동 초기화 |
 | | `/jira-push` | - | "JIRA로 동기화해줘" | Worktree → JIRA |
 | | `/jira-pull` | - | "JIRA에서 가져와줘" | JIRA → Worktree |
@@ -180,6 +191,26 @@ flowchart LR
 |--------|------|--------|------|
 | `/check-quality` | - | "코드 품질 검사해줘" | 전체 프로젝트 검사 |
 
+### 문제 해결
+
+체계적인 방법론(5 Whys, RCA, 가설 기반)으로 문제를 분석하고 해결합니다:
+
+```mermaid
+flowchart LR
+    A["문제 정의"] --> B["정보 수집"]
+    B --> C["원인 분석"]
+    C --> D["가설 검증"]
+    D --> E["해결"]
+    E --> F["문서화"]
+```
+
+| 명령어 | 옵션 | 자연어 | 설명 |
+|--------|------|--------|------|
+| `/solve [문제]` | `--5whys`, `--rca`, `--hypothesis`, `--binary` | "에러 해결해줘" | 6단계 문제 해결 |
+| `/solve-log` | - | "분석 진행 상황 보여줘" | 진행 중 문제 확인 |
+| `/solve-history [키워드]` | `--recent`, `--keyword` | "과거 해결 사례 검색해줘" | 유사 문제 검색 |
+| `/solve-report [id]` | `--draft`, `--summary`, `--full` | "해결 보고서 만들어줘" | 보고서 생성 |
+
 ### JIRA 연동
 
 **사전 설정 (터미널에서):**
@@ -228,6 +259,7 @@ export JIRA_API_TOKEN='your-api-token'
 | `clean-architecture` | 클래스 생성, 레이어 언급 시 | 클린 아키텍처 강제 |
 | `project-onboarding` | 프로젝트 분석 요청 시 | 컨텍스트 문서 참조 |
 | `research-skill` | 조사, 알아봐, 리서치 언급 시 | 다각도 검색 + 핵심 요약 |
+| `problem-solving` | 에러, 버그, 문제, 디버깅 언급 시 | 체계적 문제 해결 방법론 적용 |
 | `jira-integration` | JIRA, 이슈, 티켓 언급 시 | JIRA 양방향 동기화 |
 
 ---
@@ -250,8 +282,11 @@ flowchart TB
     W -.->|자동 동기화| J["JIRA"]
     D4 --> Code["코드 생성"]
 
+    C --> SV["문제 해결"]
+    SV --> KB["knowledge-base"]
+
     subgraph Auto["⚡ 자동 적용"]
-        S1["스킬: clean-architecture, best-practices, code-quality"]
+        S1["스킬: clean-architecture, best-practices, code-quality, problem-solving"]
         H1["훅: 품질 검사, 변경 추적, 민감 파일 보호"]
     end
 
@@ -298,11 +333,12 @@ project/
 │   ├── project-context/         # 온보딩 생성 컨텍스트 (5개)
 │   ├── research/                # 리서치 결과
 │   ├── integrations/            # 외부 시스템 연동 (JIRA)
-│   ├── skills/                  # 자동 활성화 스킬 (9개)
-│   ├── commands/                # 슬래시 명령어 (26개)
+│   ├── skills/                  # 자동 활성화 스킬 (10개)
+│   ├── commands/                # 슬래시 명령어 (30개)
+│   ├── problem-solving/         # 문제 해결 지식 베이스
 │   ├── hooks/                   # 이벤트 훅 (10개)
 │   ├── best-practices/          # 기술별 베스트 프랙티스 (9개)
-│   ├── templates/               # 문서 템플릿 (6개)
+│   ├── templates/               # 문서 템플릿 (9개)
 │   └── agents/                  # 서브에이전트 (2개)
 │
 ├── .claude-state/               # 런타임 상태 (자동 관리)
