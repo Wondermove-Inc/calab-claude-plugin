@@ -223,20 +223,27 @@ def update_current_goal(prompt: str, intent: dict):
     timestamp = datetime.now().strftime('%H:%M')
     today = datetime.now().strftime('%Y-%m-%d')
 
-    # 이미 같은 작업이 최근에 있으면 업데이트 안함 (중복 방지)
-    if task_desc[:20] in content[-2000:]:  # 최근 2000자 내에서만 검색
-        # 마지막 업데이트 시간만 갱신
-        updated_content = re.sub(
-            r'> 마지막 업데이트: .*',
-            f'> 마지막 업데이트: {today} {timestamp} (자동)',
-            content
-        )
-        try:
-            with open(context_file, 'w', encoding='utf-8') as f:
-                f.write(updated_content)
-        except Exception:
-            pass
-        return
+    # 중복 방지: 작업 스택 섹션에서만 동일한 작업 설명 검사
+    # 전체 task_desc를 비교하되, 타임스탬프 부분 제외
+    stack_section_match = re.search(r'## 작업 스택[^\n]*\n\n(.*?)(\n\n---|\n\n##)', content, re.DOTALL)
+    if stack_section_match:
+        stack_content = stack_section_match.group(1)
+        # 작업 스택에서 이미 같은 설명이 있는지 확인 (타임스탬프 제외)
+        # 패턴: - [HH:MM] **[카테고리]** 설명
+        existing_entries = re.findall(r'\*\*\[[^\]]+\]\*\* (.+)', stack_content)
+        if task_desc in existing_entries:
+            # 마지막 업데이트 시간만 갱신
+            updated_content = re.sub(
+                r'> 마지막 업데이트: .*',
+                f'> 마지막 업데이트: {today} {timestamp} (자동)',
+                content
+            )
+            try:
+                with open(context_file, 'w', encoding='utf-8') as f:
+                    f.write(updated_content)
+            except Exception:
+                pass
+            return
 
     # 새 작업 항목
     new_work_entry = f"- [{timestamp}] **[{category}]** {task_desc}"
@@ -260,7 +267,8 @@ def update_current_goal(prompt: str, intent: dict):
             stack_pattern,
             f"## 작업 스택 (위에서 아래로 진입 순서)\n\n{new_stack}\n\n---",
             updated_content,
-            count=1
+            count=1,
+            flags=re.DOTALL
         )
     else:
         # 방법 2: "최근 완료된 작업" 섹션 위에 추가
@@ -384,6 +392,101 @@ def log_user_prompt(prompt: str, intent: dict | None):
     save_json(log_file, history)
 
 
+def update_work_history(prompt: str, intent: dict):
+    """WORK_HISTORY.md에 작업 기록 추가"""
+    history_file = MEMORY_PATH / 'WORK_HISTORY.md'
+
+    task_desc = extract_task_description(prompt)
+    category = intent.get('category', '작업')
+    timestamp = datetime.now().strftime('%H:%M')
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    new_entry = f"- [{timestamp}] **[{category}]** {task_desc}"
+
+    if not history_file.exists():
+        # 파일이 없으면 기본 구조 생성
+        default_content = f"""# 작업 히스토리
+
+> 마지막 업데이트: {today} {timestamp} (자동)
+
+---
+
+## {today}
+
+{new_entry}
+
+---
+
+*이 파일은 자동 훅에 의해 업데이트됩니다.*
+"""
+        try:
+            history_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(history_file, 'w', encoding='utf-8') as f:
+                f.write(default_content)
+        except Exception:
+            pass
+        return
+
+    try:
+        with open(history_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception:
+        return
+
+    updated_content = content
+
+    # 오늘 날짜 섹션이 있는지 확인 (다양한 형식 지원)
+    # 형식 1: ## 2025-12-30
+    # 형식 2: ## 2025-12-30: 제목
+    today_section_pattern = rf'(## {today}[^\n]*\n\n)(.*?)(\n\n---|\n\n##|$)'
+    today_match = re.search(today_section_pattern, content, re.DOTALL)
+
+    if today_match:
+        # 오늘 섹션에 추가 (위에 새 항목 추가)
+        section_header = today_match.group(1)
+        current_entries = today_match.group(2).strip()
+        section_end = today_match.group(3)
+
+        # 기존 형식이 다르면 (예: ### 완료된 작업) 그 위에 추가
+        if current_entries.startswith('###'):
+            new_section = f"{new_entry}\n\n{current_entries}"
+        else:
+            new_section = f"{new_entry}\n{current_entries}"
+
+        updated_content = re.sub(
+            today_section_pattern,
+            f'{section_header}{new_section}{section_end}',
+            content,
+            count=1,
+            flags=re.DOTALL
+        )
+    else:
+        # 오늘 섹션이 없으면 새로 생성
+        # 첫 번째 --- 다음에 추가
+        first_separator = content.find('---\n\n')
+        if first_separator != -1:
+            insert_pos = first_separator + 5  # '---\n\n' 다음
+            new_section = f"## {today}\n\n{new_entry}\n\n---\n\n"
+            updated_content = content[:insert_pos] + new_section + content[insert_pos:]
+        else:
+            # --- 가 없으면 파일 끝에 추가
+            updated_content = content + f"\n\n## {today}\n\n{new_entry}\n\n---\n"
+
+    # 마지막 업데이트 시간 갱신 (있으면)
+    if '> 마지막 업데이트:' in updated_content:
+        updated_content = re.sub(
+            r'> 마지막 업데이트: .*',
+            f'> 마지막 업데이트: {today} {timestamp} (자동)',
+            updated_content
+        )
+
+    try:
+        with open(history_file, 'w', encoding='utf-8') as f:
+            f.write(updated_content)
+    except Exception:
+        pass
+
+
 def get_context_reminder(intent: dict | None) -> str:
     """작업 의도 기반 컨텍스트 리마인더"""
     if not intent:
@@ -425,9 +528,10 @@ def main():
         # 2. 프롬프트 히스토리 기록 (모든 프롬프트 기록)
         log_user_prompt(prompt, intent)
 
-        # 3. intent가 있으면 현재 목표 업데이트
+        # 3. intent가 있으면 현재 목표 업데이트 (CURRENT_CONTEXT.md + WORK_HISTORY.md)
         if intent:
             update_current_goal(prompt, intent)
+            update_work_history(prompt, intent)
 
         # 4. 컨텍스트 리마인더 생성 (stdout으로 출력하지 않음 - 조용히 동작)
         # reminder = get_context_reminder(intent)

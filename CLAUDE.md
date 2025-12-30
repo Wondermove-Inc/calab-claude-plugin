@@ -13,10 +13,40 @@
 
 1. **컨텍스트 유지**: 작업 시작 전 `.claude/memory/CURRENT_CONTEXT.md` 확인 필수
 2. **규칙 준수**: 코드 작성 전 `.claude/memory/PROJECT_RULES.md` 참조 필수
-3. **진행 상황 자동 저장**: 모든 작업 내용이 자동으로 기록됨 (패시브)
+3. **🚨 작업 내용 상세 기록**: 의미 있는 작업 완료 시 Memory에 직접 기록 (아래 참조)
 4. **작업 스택 유지**: 하위 작업 진입 시 상위 작업 목표 기억
 5. **Worktree 추적**: 태스크 진행 시 자동 업데이트
 6. **UI/UX 필수**: ShadCN/UI 컴포넌트 우선 사용, 커스터마이징 시 문서화 필수
+
+### 🚨 Memory 상세 기록 규칙 (절대 준수)
+
+**Hook은 파일 변경만 감지합니다. Claude가 실제로 무슨 작업을 했는지는 Claude 자신만 알 수 있습니다.**
+
+**의미 있는 작업 완료 시** (단순 조회/검색 제외) 다음을 직접 기록해야 합니다:
+
+**기록 위치:** `.claude/memory/CURRENT_CONTEXT.md` 작업 스택 섹션
+
+**기록 형식:**
+```markdown
+- [HH:MM] **[카테고리]** 작업 제목
+  - **목적**: 왜 이 작업을 했는지
+  - **수행**: 구체적으로 무엇을 했는지
+  - **변경**: 수정/생성한 파일 목록
+  - **결과**: 성공/실패, 발견한 문제
+  - **다음**: 후속 작업 (있다면)
+```
+
+**카테고리:** 구현, 수정, 버그픽스, 리팩토링, 설계, 문서화, 테스트, 문제해결
+
+**예시:**
+```markdown
+- [17:30] **[문제해결]** Memory 기록 품질 개선
+  - **목적**: Memory에 기록되는 내용이 허접해서 작업 추적 불가
+  - **수행**: work-tracker 스킬에 상세 기록 의무 추가, CLAUDE.md 규칙 강화
+  - **변경**: SKILL.md, CLAUDE.md
+  - **결과**: ✅ Claude가 직접 상세 기록하도록 규칙 강화 완료
+  - **다음**: 실제 작업에서 테스트 필요
+```
 
 ### UI/UX 규칙 (절대 준수)
 
@@ -259,6 +289,8 @@ export JIRA_API_TOKEN='your-api-token'
 | **파일 수정 (Edit/Write)** | 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
 | **worktree.json 변경** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
 | **민감 파일 수정 시도** | 자동 차단 | `.env`, `credentials` 등 |
+| **알림 발생** | 데스크톱 알림 + 로그 기록 | `.claude-state/notifications.log` |
+| **서브에이전트 시작/종료** | 에이전트 사용 추적 | `.claude-state/subagent_stats.json` |
 
 ---
 
@@ -359,14 +391,20 @@ project/
 │   ├── templates/               # 문서 템플릿 (9개)
 │   └── agents/                  # 서브에이전트 (2개)
 │
-├── .claude-state/               # 런타임 상태 (자동 관리)
-│   ├── worktree.json            # 작업 트리 상태
-│   ├── jira_mapping.json        # JIRA ID 매핑
+├── .claude-state/               # 런타임 상태 (자동 관리, .gitignore)
+│   ├── worktree.json            # 작업 트리 상태 (on-demand)
+│   ├── jira_mapping.json        # JIRA ID 매핑 (on-demand)
 │   ├── checkpoint.json          # 체크포인트
+│   ├── checkpoint_history.json  # 체크포인트 히스토리
 │   ├── recent_changes.json      # 최근 변경 파일 이력
 │   ├── prompt_history.json      # 프롬프트 히스토리 (자연어 + 명령어)
 │   ├── session_stats.json       # 세션 통계
-│   └── file_stats.json          # 파일 변경 통계
+│   ├── file_stats.json          # 파일 변경 통계
+│   ├── subagent_stats.json      # 서브에이전트 통계
+│   ├── subagent.log             # 서브에이전트 로그
+│   ├── quality_violations.json  # 코드 품질 위반 기록
+│   ├── activity.log             # 활동 로그
+│   └── notifications.log        # 알림 로그
 │
 └── docs/                        # 생성된 문서 (PRD, 아키텍처, 태스크)
 ```
