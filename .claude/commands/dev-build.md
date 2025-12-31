@@ -36,26 +36,43 @@ $ARGUMENTS에서 태스크 ID 파악:
 TASK-001: User 테이블 마이그레이션
 ```
 
-### Step 3: Worktree 상태 업데이트
+### Step 3: 🚨 Worktree 상태 업데이트 (필수)
 
-태스크 시작 시 `.claude-state/worktree.json` 자동 업데이트:
+> **MUST**: 이 단계는 **반드시 즉시 실행**해야 합니다. 건너뛰지 마세요!
+
+**태스크 시작 시 Edit 도구로 `.claude-state/worktree.json` 직접 수정:**
+
+1. worktree.json 파일 읽기
+2. 해당 태스크의 `status`를 `"in_progress"`로 변경
+3. `started_at`에 현재 시간 추가
+4. `current_task` 필드 업데이트
+5. 파일 저장
 
 ```json
 {
-  "tasks": {
-    "TASK-001": {
-      "status": "in_progress",  // pending → in_progress
-      "started_at": "2024-01-15T09:00:00Z"
+  "current_task": "TASK-001",
+  "epics": [
+    {
+      "stories": [
+        {
+          "tasks": [
+            {
+              "id": "TASK-001",
+              "status": "in_progress",
+              "started_at": "2024-01-15T09:00:00Z"
+            }
+          ]
+        }
+      ]
     }
-  },
-  "current_task": "TASK-001"
+  ],
+  "progress": {
+    "in_progress": 1
+  }
 }
 ```
 
-**자동 연계:**
-- `work-tracker` 스킬이 상태 변경 감지
-- `.claude/memory/CURRENT_CONTEXT.md` 동기화
-- 태스크 완료 시 "TASK-XXX 완료" 키워드로 자동 done 처리
+**검증**: Edit 완료 후 worktree.json의 status가 변경되었는지 확인
 
 ### Step 4: 베스트 프랙티스 로드
 
@@ -236,6 +253,39 @@ export class {Name}Service {
 
 ---
 
+## 🚨 완료 처리 (필수)
+
+> **MUST**: 구현 완료 후 **반드시 즉시 실행**해야 합니다!
+
+**태스크 완료 시 Edit 도구로 `.claude-state/worktree.json` 직접 수정:**
+
+1. worktree.json 파일 읽기
+2. 해당 태스크의 `status`를 `"done"`으로 변경
+3. `completed_at`에 현재 시간 추가
+4. `progress` 필드의 `done` 카운트 증가, `in_progress` 감소
+5. `percentage` 재계산
+6. 파일 저장
+
+```json
+{
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "status": "done",
+      "started_at": "2024-01-15T09:00:00Z",
+      "completed_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "progress": {
+    "done": 1,
+    "in_progress": 0,
+    "percentage": 10
+  }
+}
+```
+
+---
+
 ## 완료 보고
 
 ```
@@ -258,7 +308,10 @@ export class {Name}Service {
 • 줄 수: OK (120줄)
 • 함수 주석: OK (5/5)
 
- Worktree 상태: ✅ 완료로 업데이트
+ ✅ Worktree 업데이트 완료:
+• status: in_progress → done
+• completed_at: {timestamp}
+• progress.done: +1
 
  다음 태스크: /dev build TASK-002
 

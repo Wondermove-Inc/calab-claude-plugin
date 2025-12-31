@@ -197,7 +197,7 @@ flowchart TB
 | **기획** | "기획해줘" 또는 `/dev plan` | `.claude/research/` 자동 검색 및 PRD 반영 |
 | **설계** | "설계해줘" 또는 `/dev design` | 아키텍처/ERD 문서 → 태스크 분해 연계 |
 | **태스크** | "분해해줘" 또는 `/dev tasks` | `worktree.json` 자동 생성 |
-| **구현** | "구현해줘" 또는 `/dev build` | worktree 태스크 자동 시작, 베스트 프랙티스 로드 |
+| **구현** | "구현해줘" 또는 `/dev build` | 소스 코드 수정 시 태스크 자동 시작 (in_progress), 베스트 프랙티스 로드 |
 | **온보딩** | "분석해줘" 또는 `/onboard` | 5개 project-context 문서 자동 생성 |
 | **문제 해결** | "해결해줘" 또는 `/solve` | 6단계 체계적 분석, 지식 베이스 축적 |
 | **코드 작성** | 파일 생성/수정 시 | `code-quality`, `best-practices` skill 자동 활성화 |
@@ -707,7 +707,7 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 | 스킬 | 활성화 조건 | 자동 동작 |
 |------|------------|----------|
 | `project-rules` | 코드 작성, 수정, 리뷰 시 | 프로젝트 규칙 자동 참조 |
-| `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 자동 업데이트 |
+| `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 추적 (시작 자동, 완료는 수동) |
 | `code-quality` | 코드 생성, 함수 추가 시 | 300줄 제한, 주석 필수 적용 |
 | `dev-workflow` | 기능 개발, 설계 언급 시 | 개발 워크플로우 안내 |
 | `best-practices` | React, TypeScript, TDD 언급 시 | 기술별 베스트 프랙티스 적용 |
@@ -742,8 +742,9 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 | 트리거 | 자동 동작 | 관련 파일 |
 |--------|----------|----------|
 | **파일 수정 (Edit/Write)** | 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
+| **소스 코드 수정** | worktree 태스크 자동 시작 (in_progress) | `.claude-state/worktree.json` |
 | **민감 파일 수정 시도** | 자동 차단 (.env, credentials 등) | 보안 보호 |
-| **worktree.json 변경** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
+| **파일 수정 (Edit/Write)** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
 | **알림 발생 시** | 데스크톱 알림 + 로깅 | 알림 커스터마이징 |
 | **서브에이전트 시작/종료** | 사용 통계 추적 | 에이전트 분석 |
 
@@ -764,7 +765,8 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 | `session_end.py` | 세션 종료 시 | 작업 상태 자동 저장 |
 | `code_quality_validator.py` | 파일 생성/수정 시 | 300줄 초과, 주석 누락 경고 |
 | `track_changes.py` | 파일 변경 시 | 변경 이력 기록 |
-| `jira_auto_sync.py` | worktree.json 변경 시 | JIRA 이슈 상태 자동 업데이트 |
+| `jira_auto_sync.py` | 파일 수정 후 (PostToolUse) | JIRA 이슈 상태 자동 업데이트 |
+| `worktree_auto_update.py` | 소스 코드 수정 후 (PostToolUse) | 현재 태스크 status를 in_progress로 자동 변경 |
 
 ### 고급 훅 (신규)
 
@@ -772,7 +774,7 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 |----|--------|------|
 | `user_prompt_submit.py` | 사용자 입력 시 | 현재 태스크/규칙 리마인더 자동 주입 |
 | `notification_handler.py` | 알림 발생 시 | 데스크톱 알림 + 로깅 |
-| `session_stop.py` | 응답 완료 시 | 체크포인트 자동 저장, 세션 통계 |
+| `session_stop.py` | Stop 이벤트 발생 시 | 체크포인트 자동 저장, 세션 통계 |
 | `subagent_tracker.py` | 서브에이전트 시작/종료 시 | 사용 통계 추적, 실행 시간 분석 |
 
 ### 보안 훅
@@ -857,7 +859,7 @@ project/
 │   │   ├── active/                    # 진행 중인 문제
 │   │   ├── resolved/                  # 해결 완료
 │   │   └── knowledge-base/            # 패턴 및 해결책 DB
-│   ├── hooks/                         # 이벤트 훅 (10개)
+│   ├── hooks/                         # 이벤트 훅 (11개)
 │   ├── best-practices/                # 기술별 베스트 프랙티스 (9개)
 │   ├── templates/                     # 문서 템플릿 (9개)
 │   └── agents/                        # 서브에이전트 (2개)

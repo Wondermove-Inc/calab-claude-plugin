@@ -28,7 +28,7 @@
     }
   },
   "worktree_integration": {
-    "auto_create_on_dev_tasks": true,
+    "auto_create_on_dev_tasks": false,
     "sync_on_worktree_change": true,
     "comment_on_status_change": true
   }

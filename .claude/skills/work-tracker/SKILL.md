@@ -140,18 +140,54 @@ Hook은 파일 변경만 감지할 수 있고, Claude가 실제로 무슨 작업
 }
 ```
 
-## Worktree 연동
+## 🚨 Worktree 연동 (필수 - 직접 수정)
 
-### 자동 Worktree 업데이트
+> **CRITICAL**: Hook은 worktree.json을 자동 업데이트하지 않습니다!
+> **Claude가 Edit 도구로 직접 수정해야 합니다.**
 
-다음 키워드 감지 시 `.claude-state/worktree.json` 자동 업데이트:
+### Worktree 업데이트 의무
 
-| 키워드 | 동작 | worktree.json 변경 |
-|--------|------|-------------------|
-| "TASK-XXX 시작", "XXX 작업 시작" | 태스크 시작 | status → in_progress |
-| "TASK-XXX 완료", "XXX 구현 완료", "끝" | 태스크 완료 | status → done |
-| "막혔다", "블로커", "대기 중" | 블로커 등록 | status → blocked |
-| "다음 태스크", "다음으로" | 다음 태스크 시작 | current_task 업데이트 |
+다음 상황에서 **반드시 Edit 도구로 `.claude-state/worktree.json` 직접 수정**:
+
+| 상황 | 즉시 수행할 작업 |
+|------|-----------------|
+| `/dev-build` 시작 시 | 1. worktree.json 읽기 → 2. status를 "in_progress"로 Edit → 3. started_at 추가 |
+| `/dev-build` 완료 시 | 1. worktree.json 읽기 → 2. status를 "done"으로 Edit → 3. completed_at 추가 → 4. progress 업데이트 |
+| "TASK-XXX 시작" 언급 시 | 즉시 status → "in_progress" Edit |
+| "TASK-XXX 완료" 언급 시 | 즉시 status → "done" Edit |
+| "블로커", "막힘" 언급 시 | 즉시 status → "blocked" Edit |
+
+### 업데이트 실행 절차
+
+**Step 1**: worktree.json 파일 읽기
+```
+Read: .claude-state/worktree.json
+```
+
+**Step 2**: 해당 태스크 찾기 (epics[].stories[].tasks[] 구조)
+
+**Step 3**: Edit 도구로 status 변경
+```
+Edit: .claude-state/worktree.json
+old_string: "status": "pending"
+new_string: "status": "in_progress"
+```
+
+**Step 4**: 시간 필드 추가
+```
+started_at: "2024-01-15T10:00:00Z"  (시작 시)
+completed_at: "2024-01-15T11:00:00Z"  (완료 시)
+```
+
+**Step 5**: progress 필드 업데이트
+```json
+"progress": {
+  "done": 5,
+  "in_progress": 1,
+  "pending": 4,
+  "percentage": 50
+}
+```
 
 ### 작업 시작 시 Worktree 업데이트
 

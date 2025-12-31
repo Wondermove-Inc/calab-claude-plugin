@@ -15,7 +15,7 @@
 2. **규칙 준수**: 코드 작성 전 `.claude/memory/PROJECT_RULES.md` 참조 필수
 3. **🚨 작업 내용 상세 기록**: 의미 있는 작업 완료 시 Memory에 직접 기록 (아래 참조)
 4. **작업 스택 유지**: 하위 작업 진입 시 상위 작업 목표 기억
-5. **Worktree 추적**: 태스크 진행 시 자동 업데이트
+5. **Worktree 추적**: 소스 코드 수정 시 자동 시작 (완료는 수동)
 6. **UI/UX 필수**: ShadCN/UI 컴포넌트 우선 사용, 커스터마이징 시 문서화 필수
 
 ### 🚨 Memory 상세 기록 규칙 (절대 준수)
@@ -287,7 +287,8 @@ export JIRA_API_TOKEN='your-api-token'
 | 트리거 | 자동 동작 | 관련 파일 |
 |--------|----------|----------|
 | **파일 수정 (Edit/Write)** | 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
-| **worktree.json 변경** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
+| **소스 코드 수정** | worktree 태스크 자동 시작 (in_progress) | `.claude-state/worktree.json` |
+| **파일 수정 (Edit/Write)** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
 | **민감 파일 수정 시도** | 자동 차단 | `.env`, `credentials` 등 |
 | **알림 발생** | 데스크톱 알림 + 로그 기록 | `.claude-state/notifications.log` |
 | **서브에이전트 시작/종료** | 에이전트 사용 추적 | `.claude-state/subagent_stats.json` |
@@ -302,7 +303,7 @@ export JIRA_API_TOKEN='your-api-token'
 | 스킬 | 활성화 조건 | 자동 동작 |
 |------|------------|----------|
 | `project-rules` | 코드 작성, 수정, 리뷰 시 | 프로젝트 규칙 자동 참조 |
-| `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 자동 업데이트 |
+| `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 추적 (시작 자동, 완료는 수동) |
 | `code-quality` | 코드 생성, 함수 추가 시 | 300줄 제한, 주석 필수 적용 |
 | `dev-workflow` | 기능 개발, 설계 언급 시 | 개발 워크플로우 안내 |
 | `best-practices` | React, TypeScript, TDD 언급 시 | 기술별 베스트 프랙티스 적용 |
@@ -386,7 +387,7 @@ project/
 │   ├── skills/                  # 자동 활성화 스킬 (10개)
 │   ├── commands/                # 슬래시 명령어 (30개)
 │   ├── problem-solving/         # 문제 해결 지식 베이스
-│   ├── hooks/                   # 이벤트 훅 (10개)
+│   ├── hooks/                   # 이벤트 훅 (11개)
 │   ├── best-practices/          # 기술별 베스트 프랙티스 (9개)
 │   ├── templates/               # 문서 템플릿 (9개)
 │   └── agents/                  # 서브에이전트 (2개)
