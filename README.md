@@ -154,6 +154,11 @@ flowchart TB
         D3 --> D4["구현해줘 / /dev build"]
     end
 
+    subgraph QA["🧪 QA 테스트"]
+        Q1["QA 시작 / /qa"] --> Q2["테스트 실행 / /qa-run"]
+        Q2 --> Q3["보고서 / /qa-report"]
+    end
+
     subgraph Onboard["📚 온보딩"]
         O1["분석해줘 / /onboard"] --> O2["project-context/"]
     end
@@ -167,6 +172,7 @@ flowchart TB
         S1["clean-architecture"]
         S2["best-practices"]
         S3["code-quality"]
+        S4["qa-testing"]
     end
 
     subgraph Hooks["🔗 자동 훅"]
@@ -181,6 +187,7 @@ flowchart TB
 
     C --> Research
     C --> Dev
+    C --> QA
     C --> Onboard
     C --> Solve
 
@@ -189,7 +196,11 @@ flowchart TB
     W1 -.->|자동 업데이트| D4
     W1 -.->|자동 동기화| J1
     D4 --> Code["코드 생성"]
+    Code --> Q1
+    Q2 -->|버그 발견| SV1
+    Q3 -->|100% 통과| Done["✅ 완료"]
     Skills -.-> Code
+    Skills -.-> Q2
     Hooks -.->|자동 실행| Code
     O2 -.->|참조| Code
 ```
@@ -203,6 +214,9 @@ flowchart TB
 | **설계** | "설계해줘" 또는 `/dev design` | 아키텍처/ERD 문서 → 태스크 분해 연계 |
 | **태스크** | "분해해줘" 또는 `/dev tasks` | `worktree.json` 자동 생성 |
 | **구현** | "구현해줘" 또는 `/dev build` | 소스 코드 수정 시 태스크 자동 시작 (in_progress), 베스트 프랙티스 로드 |
+| **QA** | "QA 시작" 또는 `/qa` | PRD/worktree 기반 테스트 케이스 자동 생성 |
+| **QA 테스트** | `/qa-run` | MCP Puppeteer로 E2E 테스트, 스크린샷 자동 캡처 |
+| **QA 버그** | 테스트 실패 시 | 버그 자동 기록, `/solve` 연계 가능 |
 | **온보딩** | "분석해줘" 또는 `/onboard` | 5개 project-context 문서 자동 생성 |
 | **문제 해결** | "해결해줘" 또는 `/solve` | 6단계 체계적 분석, 지식 베이스 축적 |
 | **코드 작성** | 파일 생성/수정 시 | `code-quality`, `best-practices` skill 자동 활성화 |
@@ -325,6 +339,37 @@ export JIRA_API_TOKEN='your-api-token'
 🤖: 보고서 생성...
     .claude/problem-solving/resolved/PROB-001/report.md
 ```
+
+### 시나리오 7: QA 테스트 수행
+
+**대화 예시:**
+```
+👤: "QA 테스트 시작해줘" (또는 /qa)
+🤖: QA 프로세스 시작...
+    PRD/worktree 분석 중...
+    테스트 케이스 30개 생성 완료
+
+👤: "테스트 실행해줘" (또는 /qa-run)
+🤖: MCP Puppeteer 테스트 실행...
+    TC-001: 로그인 정상 ✅
+    TC-002: 회원가입 정상 ✅
+    TC-003: 비밀번호 오류 ✅
+    ...
+    진행률: ████████░░ 25/30 (83%)
+
+👤: "QA 상태 보여줘" (또는 /qa-status)
+🤖: ✅ 통과: 22 | ❌ 실패: 2 | ⏸️ 블록: 1
+
+👤: "QA 보고서 만들어줘" (또는 /qa-report)
+🤖: 보고서 생성...
+    docs/qa/QA_REPORT.md
+    릴리스 권장: ⚠️ 조건부 (Major 버그 1개 해결 필요)
+```
+
+**자동 연계:**
+- PRD/worktree 기반 테스트 케이스 자동 생성
+- 버그 발견 시 `/solve` 연계 가능
+- 스크린샷 자동 캡처 및 증거 수집
 
 ---
 

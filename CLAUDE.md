@@ -256,6 +256,11 @@ Acceptance Criteria 검증:
 |--------|----------------|
 | "로그인 에러 해결해줘" | `/solve 로그인 에러` |
 
+### 상황 5: QA 테스트 수행
+| 자연어 | 명령어 직접 입력 |
+|--------|----------------|
+| "QA 테스트 시작해줘" | `/qa` |
+
 ### 옵션 사용법
 
 명령어 옵션도 자연어로 표현할 수 있습니다:
@@ -526,16 +531,22 @@ flowchart TB
     W -.->|자동 업데이트| D4
     W -.->|자동 동기화| J["JIRA"]
     D4 --> Code["코드 생성"]
+    Code --> QA["QA 테스트"]
+    QA -->|버그 발견| SV
+    QA -->|100% 통과| Done["✅ 완료"]
 
     C --> SV["문제 해결"]
     SV --> KB["knowledge-base"]
 
+    C --> QA
+
     subgraph Auto["⚡ 자동 적용"]
-        S1["스킬: clean-architecture, best-practices, code-quality, problem-solving"]
+        S1["스킬: clean-architecture, best-practices, code-quality, qa-testing"]
         H1["훅: 품질 검사, 변경 추적, 민감 파일 보호"]
     end
 
     Auto -.-> Code
+    Auto -.-> QA
 ```
 
 **핵심 자동 연동:**
@@ -546,6 +557,8 @@ flowchart TB
 | 태스크 분해 | `worktree.json` 자동 생성 |
 | worktree 변경 | JIRA 이슈 상태 자동 동기화 |
 | 코드 작성 | 품질 검사 + 베스트 프랙티스 자동 적용 |
+| 구현 완료 | QA 테스트 연계 (PRD/worktree 기반 테스트 케이스) |
+| QA 버그 발견 | 문제 해결 프로세스 자동 연계 |
 | 민감 파일 수정 | `.env`, `credentials` 등 자동 차단 |
 
 ---
