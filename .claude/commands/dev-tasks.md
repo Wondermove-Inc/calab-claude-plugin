@@ -65,6 +65,29 @@ Story 1.1: 회원가입
 └── TASK-007: 회원가입 유닛 테스트 작성
 ```
 
+### 🚨 Step 4.5: Acceptance Criteria 정의 (필수!)
+
+> **CRITICAL**: 모든 Task에 반드시 검증 가능한 AC를 3~5개 정의하세요!
+
+**AC 작성 규칙:**
+1. **구체적**: "구현함" ❌ → "사용자가 이메일로 가입할 수 있음" ✅
+2. **검증 가능**: 테스트나 확인으로 통과/실패 판단 가능
+3. **완전성**: 이 AC만 충족하면 Task가 "완료"라고 할 수 있어야 함
+
+**AC 예시:**
+```markdown
+#### TASK-003: AuthService.register() 구현
+
+**🚨 Acceptance Criteria:**
+- [ ] AC1: register(dto) 메서드가 User 객체를 반환
+- [ ] AC2: 중복 이메일 시 ConflictException 발생
+- [ ] AC3: 비밀번호가 bcrypt로 해싱되어 저장
+- [ ] AC4: 성공 시 DB에 새 레코드 생성
+- [ ] AC5: 유닛 테스트 3개 이상 통과
+```
+
+**⚠️ AC 없이 Task를 생성하지 마세요! AC가 없으면 완료 검증이 불가능합니다.**
+
 ### Step 5: 의존성 분석
 
 ```mermaid
@@ -126,13 +149,16 @@ P3 (Low): 나중에 해도 됨
 
 **설명**: Prisma 스키마에 User 모델 정의 및 마이그레이션 실행
 
-**Acceptance Criteria**:
-- [ ] User 모델 정의 완료
-- [ ] 마이그레이션 파일 생성
-- [ ] 마이그레이션 실행 성공
+**🚨 Acceptance Criteria (완료 검증 필수 - 모두 충족해야 완료 가능)**:
+- [ ] AC1: User 모델이 Prisma 스키마에 정의됨
+- [ ] AC2: 마이그레이션 파일이 생성됨
+- [ ] AC3: `npx prisma migrate dev` 실행 성공
+- [ ] AC4: DB에 users 테이블 생성 확인
 
 **참조**:
 - `docs/architecture/erd.md`
+
+> ⚠️ **모든 AC가 ✅ 될 때까지 TASK-002로 넘어가지 마세요!**
 
 ---
 

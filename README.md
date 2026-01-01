@@ -100,6 +100,11 @@ pip install requests
 | | `/jira-sync` | - | "양방향 동기화해줘" | 양방향 동기화 |
 | | `/jira-link [id] [key]` | - | "JIRA에 연결해줘" | 수동 매핑 |
 | | `/jira-status` | - | "JIRA 상태 보여줘" | 상태 확인 |
+| **QA 테스트** | `/qa` | `--from-prd`, `--from-worktree` | "QA 시작해줘" | QA 프로세스 시작 |
+| | `/qa-plan` | `--edit` | "QA 계획서 만들어줘" | QA 계획서 생성 |
+| | `/qa-run [tc-id]` | `--all`, `--failed`, `--continue` | "테스트 실행해줘" | MCP Puppeteer 테스트 |
+| | `/qa-report` | `--summary`, `--full` | "QA 보고서 만들어줘" | 테스트 결과 보고서 |
+| | `/qa-status` | - | "QA 진행 상태" | 테스트 진행률 확인 |
 
 ---
 
@@ -699,6 +704,83 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 
 ---
 
+### QA 테스트
+
+MCP Puppeteer를 활용한 체계적인 E2E 테스트를 수행합니다.
+
+| 명령어 | 옵션 | 자연어 | 출력 |
+|--------|------|--------|------|
+| `/qa` | `--from-prd`, `--from-worktree` | "QA 시작해줘" | QA 프로세스 초기화 |
+| `/qa-plan` | `--edit` | "QA 계획서 만들어줘" | 테스트 계획서 생성 |
+| `/qa-run [tc-id]` | `--all`, `--failed`, `--continue` | "테스트 실행해줘" | MCP Puppeteer 테스트 실행 |
+| `/qa-report` | `--summary`, `--full` | "QA 보고서 만들어줘" | 테스트 결과 보고서 |
+| `/qa-status` | - | "QA 진행 상태 보여줘" | 테스트 진행률 확인 |
+
+**7단계 QA 프로세스:**
+
+```mermaid
+flowchart LR
+    A["요구사항<br/>분석"] --> B["계획<br/>수립"]
+    B --> C["케이스<br/>설계"]
+    C --> D["테스트<br/>실행"]
+    D --> E["결함<br/>관리"]
+    E --> F["보고서<br/>작성"]
+    F --> G["회귀<br/>테스트"]
+```
+
+**테스트 피라미드:**
+
+```
+        /\
+       /E2E\        ← 10% - 사용자 시나리오 (MCP Puppeteer)
+      /------\
+     / Integr \     ← 20% - API 연동
+    /----------\
+   /    Unit    \   ← 70% - 개별 함수
+  /--------------\
+```
+
+**MCP Puppeteer 테스트 패턴:**
+
+```javascript
+// 페이지 이동
+puppeteer_navigate({ url: "http://localhost:3000" })
+
+// 폼 입력
+puppeteer_fill({ selector: "#email", value: "test@example.com" })
+
+// 버튼 클릭
+puppeteer_click({ selector: "button[type='submit']" })
+
+// 스크린샷
+puppeteer_screenshot({ name: "login-result" })
+
+// JavaScript 검증
+puppeteer_evaluate({ script: "document.querySelector('.message').innerText" })
+```
+
+**생성되는 산출물:**
+
+| 파일 | 내용 | 위치 |
+|------|------|------|
+| QA 계획서 | 테스트 범위, 전략, 일정 | `docs/qa/QA_PLAN.md` |
+| 테스트 케이스 | 상세 테스트 시나리오 | `docs/qa/TEST_CASES.md` |
+| 테스트 결과 | 통과/실패 상세 | `docs/qa/TEST_RESULTS.md` |
+| 버그 리포트 | 발견된 버그 목록 | `docs/qa/BUG_REPORT.md` |
+| QA 보고서 | 종합 결과 리포트 | `docs/qa/QA_REPORT.md` |
+| 스크린샷 | 테스트 증거 | `.claude-state/qa/screenshots/` |
+
+**버그 심각도:**
+
+| 심각도 | 기준 | 예시 | 대응 |
+|--------|------|------|------|
+| 🔴 Critical | 시스템 장애 | 서버 크래시, 데이터 손실 | 즉시 수정 |
+| 🟠 Major | 핵심 기능 불가 | 로그인 실패, 결제 오류 | 24시간 내 |
+| 🟡 Minor | 불편하지만 동작 | UI 깨짐, 느린 응답 | 다음 릴리스 |
+| ⚪ Trivial | 사소한 이슈 | 오타, 정렬 | 백로그 |
+
+---
+
 ## 자동 활성화 스킬
 
 다음 스킬들은 **키워드 감지 시 자동으로 적용**됩니다.
@@ -716,6 +798,7 @@ Why 5: 왜 배포 스크립트에서 누락됐나요?
 | `research-skill` | 조사, 알아봐, 리서치 언급 시 | 다각도 검색 + 핵심 요약 |
 | `problem-solving` | 에러, 버그, 문제, 디버깅 언급 시 | 체계적 문제 해결 방법론 적용 |
 | `jira-integration` | JIRA, 이슈, 티켓 언급 시 | JIRA 양방향 동기화 |
+| `qa-testing` | QA, 테스트, 검증, 품질 언급 시 | E2E 테스트 + MCP Puppeteer |
 
 **예시:** "React 컴포넌트 만들어줘" 요청 시 → `best-practices`, `code-quality` 스킬 자동 적용
 **예시:** "로그인 500 에러 해결해줘" 요청 시 → `problem-solving` 스킬 자동 적용
@@ -818,6 +901,12 @@ LLM을 호출하는 고급 훅 예시는 `.claude/hooks/examples/hooks-advanced-
 | `testing.md` | 단위 테스트, 통합 테스트, 목킹 |
 | `clean-architecture.md` | 레이어 규칙, 의존성 주입, 패턴 예시 |
 | `project-onboarding.md` | 온보딩 가이드, 컨텍스트 유지 전략 |
+| `python.md` | Python 코딩 스타일, 타입 힌트, 패턴 |
+| `go.md` | Go 언어 컨벤션, 에러 처리, 패턴 |
+| `rust.md` | Rust 소유권, 에러 처리, 패턴 |
+| `java.md` | Java 스타일, 스프링 패턴, 예외 처리 |
+| `tailwind.md` | Tailwind CSS 유틸리티, 반응형 패턴 |
+| `qa-testing.md` | E2E 테스트, MCP Puppeteer, QA 프로세스 |
 
 ---
 
@@ -853,15 +942,15 @@ project/
 │   │   ├── jira_config.json           # JIRA 설정
 │   │   └── jira_connector.py          # JIRA API 커넥터
 │   │
-│   ├── skills/                        # 자동 활성화 스킬 (10개)
-│   ├── commands/                      # 슬래시 명령어 (30개)
+│   ├── skills/                        # 자동 활성화 스킬 (11개)
+│   ├── commands/                      # 슬래시 명령어 (35개)
 │   ├── problem-solving/               # 문제 해결 지식 베이스
 │   │   ├── active/                    # 진행 중인 문제
 │   │   ├── resolved/                  # 해결 완료
 │   │   └── knowledge-base/            # 패턴 및 해결책 DB
 │   ├── hooks/                         # 이벤트 훅 (11개)
-│   ├── best-practices/                # 기술별 베스트 프랙티스 (9개)
-│   ├── templates/                     # 문서 템플릿 (9개)
+│   ├── best-practices/                # 기술별 베스트 프랙티스 (15개)
+│   ├── templates/                     # 문서 템플릿 (11개)
 │   └── agents/                        # 서브에이전트 (2개)
 │
 ├── docs/                              # 생성된 문서 (PRD, 아키텍처, 태스크)

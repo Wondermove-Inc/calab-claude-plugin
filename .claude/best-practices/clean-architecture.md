@@ -561,6 +561,45 @@ async getUser(id: string): Promise<UserResponseDto> {
 
 ---
 
+## 코드 작성 체크리스트
+
+### 새 파일 생성 전
+- [ ] 이 코드가 속할 레이어 결정 (Domain/Application/Adapters/Infrastructure)
+- [ ] 해당 레이어의 디렉토리에 파일 생성 확인
+- [ ] import할 대상이 의존성 규칙 준수하는지 확인
+
+### Domain 레이어 작성 시
+- [ ] 외부 라이브러리 import 없음
+- [ ] 프레임워크 코드 참조 없음
+- [ ] 순수 TypeScript만 사용
+- [ ] 엔티티는 Factory Method (create) + Reconstitute 패턴 사용
+- [ ] 값 객체는 불변 + equals 메서드 구현
+
+### Application 레이어 작성 시
+- [ ] Domain 레이어만 import
+- [ ] 구현체가 아닌 인터페이스에 의존 (IRepository, IService)
+- [ ] 하나의 유스케이스는 하나의 비즈니스 규칙만 담당
+- [ ] DTO 유효성 검사 포함
+- [ ] 엔티티 직접 반환 금지, DTO로 변환
+
+### Adapters 레이어 작성 시
+- [ ] Domain, Application만 import
+- [ ] 포트/인터페이스 구현
+- [ ] toDomain/toPersistence 매퍼 구현
+- [ ] 컨트롤러에서 try-catch 에러 처리
+
+### Infrastructure 레이어 작성 시
+- [ ] DI 컨테이너에서 의존성 조립
+- [ ] 환경 변수 설정 관리
+- [ ] 프레임워크 초기화 코드만 배치
+
+### 코드 작성 후
+- [ ] 레이어 경계 위반 없는지 검증
+- [ ] 테스트 가능한 구조인지 확인
+- [ ] 의존성 역전 원칙 준수
+
+---
+
 ## 테스트 전략
 
 ### 유닛 테스트 (Use Case)

@@ -299,6 +299,73 @@ export const userService = {
 
 ---
 
+## 금지 사항
+
+### 온보딩 시 절대 하지 말아야 할 것
+
+```typescript
+// ❌ 금지: 코드를 읽지 않고 추측하기
+"이 프로젝트는 아마 React를 사용할 것 같습니다..."
+
+// ✅ 올바름: 실제 파일을 확인하고 파악
+package.json, tsconfig.json 등 실제 파일을 읽고 기술 스택 파악
+```
+
+```typescript
+// ❌ 금지: 기존 패턴 무시하고 새 패턴 도입
+// 프로젝트가 fetch + 서비스 패턴 사용하는데
+const getUserData = async (userId) => {
+  const response = await axios.get(`/users/${userId}`);
+  return response.data;
+};
+
+// ✅ 올바름: 기존 패턴 따르기
+export const userService = {
+  getUser: (id: string) => api.get<User>(`/api/users/${id}`),
+};
+```
+
+```typescript
+// ❌ 금지: 불완전한 컨텍스트 문서 작성
+PROJECT_SUMMARY.md:
+"React 프로젝트입니다."  // 너무 간단
+
+// ✅ 올바름: 상세하고 유용한 문서 작성
+PROJECT_SUMMARY.md:
+- 기술 스택 표
+- 디렉토리 맵
+- 개발 명령어
+- 주요 진입점
+```
+
+### 온보딩 문서 작성 금지 사항
+
+- 프로젝트 코드를 직접 확인하지 않고 문서 작성 금지
+- 다른 프로젝트의 패턴을 그대로 복사 금지
+- 컨텍스트 문서 갱신 없이 구조 변경 금지
+- 사용자 확인 없이 대규모 리팩토링 제안 금지
+- 기존 코드 스타일 무시하고 개인 선호 스타일 적용 금지
+
+### 피해야 할 실수
+
+1. **성급한 결론**
+   - 몇 개 파일만 보고 전체 아키텍처 판단 금지
+   - 최소 3-5개 주요 파일 확인 후 패턴 파악
+
+2. **컨텍스트 누락**
+   - 온보딩 완료 후 컨텍스트 문서 미생성 금지
+   - 세션 종료 전 CURRENT_CONTEXT.md 업데이트 필수
+
+3. **일관성 무시**
+   - 기존 네이밍 규칙 무시 금지
+   - 기존 폴더 구조 무시하고 새 구조 제안 금지
+
+4. **과도한 리팩토링**
+   - 온보딩 단계에서 대규모 코드 변경 금지
+   - 먼저 이해하고, 이해 후 개선 제안
+
+---
+
 ## 참조
 
 - `.claude/skills/project-onboarding/SKILL.md`
