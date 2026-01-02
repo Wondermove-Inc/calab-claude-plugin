@@ -2,7 +2,10 @@
   "name": "calab-plugin",
   "version": "1.0.0",
   "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build",
-  "author": "Wonder Move Lab",
+  "author": {
+    "name": "Wonder Move Lab",
+    "email": "support@wondermovelab.com"
+  },
   "homepage": "https://github.com/wondermovelab/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
@@ -14,9 +17,5 @@
     "qa",
     "jira",
     "problem-solving"
-  ],
-  "commands": "commands",
-  "agents": "agents",
-  "skills": "skills",
-  "hooks": "hooks"
+  ]
 }

@@ -28,19 +28,33 @@ echo ""
 # 마켓플레이스 디렉토리 생성
 echo "🔧 1/3: 로컬 마켓플레이스 생성 중..."
 mkdir -p "$MARKETPLACE_DIR/.claude-plugin"
+mkdir -p "$MARKETPLACE_DIR/plugins"
 
-# marketplace.json 생성
+# 플러그인 심볼릭 링크 생성
+ln -sf "$PLUGIN_DIR" "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME"
+
+# marketplace.json 생성 (공식 스키마 준수)
 cat > "$MARKETPLACE_DIR/.claude-plugin/marketplace.json" <<MARKETPLACE
 {
+  "\$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "calab-marketplace",
-  "owner": "wondermove",
-  "description": "Calab Plugin Marketplace",
+  "description": "Calab Plugin Marketplace - 개발 워크플로우 자동화",
+  "owner": {
+    "name": "Wonder Move Lab",
+    "email": "support@wondermovelab.com"
+  },
   "plugins": [
     {
       "name": "$PLUGIN_NAME",
-      "source": "$PLUGIN_DIR",
+      "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build",
       "version": "1.0.0",
-      "description": "개발 워크플로우 자동화 플러그인"
+      "author": {
+        "name": "Wonder Move Lab",
+        "email": "support@wondermovelab.com"
+      },
+      "source": "./plugins/$PLUGIN_NAME",
+      "category": "development",
+      "strict": false
     }
   ]
 }
@@ -63,8 +77,6 @@ echo ""
 echo "  # 또는 프로젝트 스코프 (현재 프로젝트만)"
 echo "  claude plugin install $PLUGIN_NAME@calab-marketplace --scope project"
 echo ""
-echo "  # 설치 확인"
-echo "  claude plugin list"
 echo ""
 
 echo "=================================================="
