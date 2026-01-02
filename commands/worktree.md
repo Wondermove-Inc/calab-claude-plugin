@@ -313,11 +313,11 @@ JIRA 연동이 활성화된 경우, Worktree 변경 시 JIRA에 자동 동기화
 | `/jira-sync` | 양방향 동기화 |
 | `/jira-status` | 연동 상태 확인 |
 
-자세한 내용: `.claude/skills/jira-integration/SKILL.md`
+자세한 내용: `skills/jira-integration/SKILL.md`
 
 ## 참조
 
-- `.claude/skills/work-tracker/SKILL.md`
-- `.claude/skills/jira-integration/SKILL.md`
+- `skills/work-tracker/SKILL.md`
+- `skills/jira-integration/SKILL.md`
 - `.claude-state/worktree.json`
 - `docs/tasks/{feature}/tasks.md`

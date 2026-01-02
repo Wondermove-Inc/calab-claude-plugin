@@ -98,7 +98,7 @@ TASK-001: User 테이블 마이그레이션
 > **CRITICAL**: 코드 생성 전 반드시 확인!
 
 ```
-.claude/skills/clean-architecture/SKILL.md 로드
+skills/clean-architecture/SKILL.md 로드
 → 파일 위치가 올바른 레이어인지 확인
 → import 경로가 의존성 규칙 준수하는지 확인
 ```

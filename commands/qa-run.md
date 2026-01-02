@@ -444,4 +444,4 @@ puppeteer_evaluate({
 
 - `/qa-status` - 진행 상태 확인
 - `/qa-report` - 보고서 생성
-- `.claude/skills/qa-testing/SKILL.md`
+- `skills/qa-testing/SKILL.md`

@@ -178,5 +178,5 @@ export class Email {
 5. **프레임워크 독립**: 순수 TypeScript만 사용
 
 ## 참조
-- `.claude/skills/clean-architecture/SKILL.md`
+- `skills/clean-architecture/SKILL.md`
 - `.claude/best-practices/clean-architecture.md`

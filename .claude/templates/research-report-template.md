@@ -404,8 +404,8 @@ Step 3: {세 번째 단계}
 
 ## 참조
 
-- `.claude/skills/research-skill/SKILL.md`
-- `.claude/commands/research.md`
+- `skills/research-skill/SKILL.md`
+- `commands/research.md`
 
 ---
 

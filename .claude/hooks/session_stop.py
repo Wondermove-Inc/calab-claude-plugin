@@ -79,8 +79,8 @@ def get_session_changes() -> list:
 def categorize_changes(changes: list) -> dict:
     """변경 파일을 카테고리별로 분류"""
     categories = {
-        'commands': [],      # .claude/commands/
-        'skills': [],        # .claude/skills/
+        'commands': [],      # commands/
+        'skills': [],        # skills/
         'hooks': [],         # .claude/hooks/
         'templates': [],     # .claude/templates/
         'memory': [],        # .claude/memory/
@@ -93,9 +93,9 @@ def categorize_changes(changes: list) -> dict:
     for change in changes:
         path = change.get('file_path', '')
 
-        if '.claude/commands/' in path:
+        if 'commands/' in path:
             categories['commands'].append(path)
-        elif '.claude/skills/' in path:
+        elif 'skills/' in path:
             categories['skills'].append(path)
         elif '.claude/hooks/' in path:
             categories['hooks'].append(path)

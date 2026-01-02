@@ -368,6 +368,6 @@ PROJECT_SUMMARY.md:
 
 ## 참조
 
-- `.claude/skills/project-onboarding/SKILL.md`
-- `.claude/commands/onboard.md`
-- `.claude/commands/onboard-quick.md`
+- `skills/project-onboarding/SKILL.md`
+- `commands/onboard.md`
+- `commands/onboard-quick.md`

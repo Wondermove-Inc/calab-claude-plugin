@@ -485,8 +485,8 @@ Blameless Postmortem 원칙에 따라 비난 없이 시스템 개선에 집중�
 
 ## 참조
 
-- `.claude/skills/problem-solving/SKILL.md`
-- `.claude/commands/solve-report.md`
+- `skills/problem-solving/SKILL.md`
+- `commands/solve-report.md`
 - `.claude/templates/problem-definition.md`
 - `.claude/templates/analysis-report.md`
 - [Google SRE Book - Postmortem Culture](https://sre.google/sre-book/postmortem-culture/)

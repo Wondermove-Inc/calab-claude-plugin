@@ -286,5 +286,5 @@ if (dependencies["@tanstack/react-query"]) return "React Query (서버 상태)";
 ## 참조
 
 - `/onboard` - 전체 온보딩
-- `.claude/skills/project-onboarding/SKILL.md`
+- `skills/project-onboarding/SKILL.md`
 - `.claude/best-practices/project-onboarding.md`

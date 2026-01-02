@@ -262,4 +262,4 @@ docs/qa/
 - `/qa-run` - 테스트 실행
 - `/qa-report` - 보고서 생성
 - `/qa-status` - 상태 확인
-- `.claude/skills/qa-testing/SKILL.md`
+- `skills/qa-testing/SKILL.md`

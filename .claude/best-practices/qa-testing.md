@@ -503,9 +503,9 @@ flowchart LR
 
 ## 참조
 
-- `.claude/skills/qa-testing/SKILL.md` - QA 스킬
-- `.claude/commands/qa.md` - QA 시작
-- `.claude/commands/qa-run.md` - 테스트 실행
-- `.claude/commands/qa-report.md` - 보고서 생성
+- `skills/qa-testing/SKILL.md` - QA 스킬
+- `commands/qa.md` - QA 시작
+- `commands/qa-run.md` - 테스트 실행
+- `commands/qa-report.md` - 보고서 생성
 - `.claude/templates/qa-plan-template.md` - 계획서 템플릿
 - `.claude/templates/qa-report-template.md` - 보고서 템플릿
