@@ -189,5 +189,5 @@ DTO 사용: 정상
 
 ## 참조
 
-- `.claude/skills/clean-architecture/SKILL.md`
+- `skills/clean-architecture/SKILL.md`
 - `.claude/best-practices/clean-architecture.md`

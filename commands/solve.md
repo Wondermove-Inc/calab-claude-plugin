@@ -350,7 +350,7 @@ Step 3: {조정된 중간} 지점 → {결과}
 
 ## 참조 파일
 
-- `.claude/skills/problem-solving/SKILL.md` - 스킬 정의
-- `.claude/skills/problem-solving/methods/` - 방법론 가이드
+- `skills/problem-solving/SKILL.md` - 스킬 정의
+- `skills/problem-solving/methods/` - 방법론 가이드
 - `.claude/templates/problem-definition.md` - 문제 정의 템플릿
 - `.claude/templates/solution-report.md` - 해결 보고서 템플릿

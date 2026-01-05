@@ -169,4 +169,4 @@ src/infrastructure/
 ## 참조 문서
 
 - `.claude/best-practices/clean-architecture.md` - 상세 패턴 및 예제
-- `.claude/commands/clean-init.md` - 초기화 명령어
+- `commands/clean-init.md` - 초기화 명령어

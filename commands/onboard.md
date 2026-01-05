@@ -1155,6 +1155,6 @@ Closes #123
 
 ## 참조
 
-- `.claude/skills/project-onboarding/SKILL.md`
+- `skills/project-onboarding/SKILL.md`
 - `.claude/best-practices/project-onboarding.md`
 - [C4 Model](https://c4model.com/) - 아키텍처 문서화 표준

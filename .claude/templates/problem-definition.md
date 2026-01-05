@@ -420,6 +420,6 @@ curl -X POST https://api.example.com/auth/login \
 
 ## 참조
 
-- `.claude/skills/problem-solving/SKILL.md`
-- `.claude/commands/solve.md`
+- `skills/problem-solving/SKILL.md`
+- `commands/solve.md`
 - `.claude/templates/analysis-report.md` (다음 단계)

@@ -275,4 +275,4 @@ completed_at: "2024-01-15T11:00:00Z"  (완료 시)
 - `.claude-state/checkpoint.json` - 체크포인트
 - `.claude-state/worktree.json` - 작업 트리 상태
 - `.claude/memory/WORK_HISTORY.md` - 작업 히스토리
-- `.claude/commands/worktree.md` - Worktree 명령어
+- `commands/worktree.md` - Worktree 명령어

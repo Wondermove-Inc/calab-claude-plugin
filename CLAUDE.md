@@ -32,13 +32,13 @@
 │  트리거: 코드 생성/수정/구현 요청                              │
 │                                                             │
 │  📁 필수 로드 파일:                                          │
-│  ├─ .claude/skills/clean-architecture/SKILL.md             │
+│  ├─ skills/clean-architecture/SKILL.md             │
 │  │   → 4-레이어 구조 강제, 의존성 규칙 검증                   │
-│  ├─ .claude/skills/best-practices/SKILL.md                  │
+│  ├─ skills/best-practices/SKILL.md                  │
 │  │   → 기술 감지 후 해당 베스트 프랙티스 로드                  │
 │  ├─ .claude/memory/PROJECT_RULES.md                         │
 │  │   → 프로젝트별 규칙 적용                                  │
-│  └─ .claude/skills/code-quality/SKILL.md                    │
+│  └─ skills/code-quality/SKILL.md                    │
 │      → 300줄 제한, 주석 필수                                 │
 │                                                             │
 │  ⚡ 자동 동작 흐름:                                          │
@@ -58,7 +58,7 @@
 │  📁 필수 로드 파일:                                          │
 │  ├─ .claude/memory/CURRENT_CONTEXT.md                       │
 │  │   → 현재 작업 상태 확인                                   │
-│  └─ .claude/skills/work-tracker/SKILL.md                    │
+│  └─ skills/work-tracker/SKILL.md                    │
 │      → Worktree 상태 추적                                   │
 └─────────────────────────────────────────────────────────────┘
 
@@ -66,10 +66,10 @@
 │  ⚠️ Tier 3: 상황 감지 (특정 키워드 시)                        │
 ├─────────────────────────────────────────────────────────────┤
 │  에러/버그/문제 언급 시:                                      │
-│  → .claude/skills/problem-solving/SKILL.md                  │
+│  → skills/problem-solving/SKILL.md                  │
 │                                                             │
 │  JIRA/이슈/티켓 언급 시:                                      │
-│  → .claude/skills/jira-integration/SKILL.md                 │
+│  → skills/jira-integration/SKILL.md                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -577,9 +577,22 @@ flowchart TB
 ## 프로젝트 구조
 
 ```
-project/
+calab-claude-plugin/
 ├── CLAUDE.md                    # 이 파일 (항상 로드됨)
 ├── README.md                    # 상세 문서
+│
+├── .claude-plugin/
+│   └── plugin.json              # 플러그인 매니페스트 (네임스페이스: calab-plugin)
+│
+├── commands/                    # 슬래시 명령어 (35개) - 네임스페이스 적용
+│   ├── onboard.md               # → /calab-plugin:onboard
+│   ├── dev-plan.md              # → /calab-plugin:dev-plan
+│   └── ...
+│
+├── skills/                      # 자동 활성화 스킬 (11개)
+│   ├── clean-architecture/
+│   ├── best-practices/
+│   └── ...
 │
 ├── .claude/
 │   ├── settings.json            # 훅 설정 (핵심)
@@ -591,8 +604,6 @@ project/
 │   ├── project-context/         # 온보딩 생성 컨텍스트 (5개)
 │   ├── research/                # 리서치 결과
 │   ├── integrations/            # 외부 시스템 연동 (JIRA)
-│   ├── skills/                  # 자동 활성화 스킬 (11개)
-│   ├── commands/                # 슬래시 명령어 (35개)
 │   ├── problem-solving/         # 문제 해결 지식 베이스
 │   ├── hooks/                   # 이벤트 훅 (11개)
 │   ├── best-practices/          # 기술별 베스트 프랙티스 (15개)

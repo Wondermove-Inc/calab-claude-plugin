@@ -194,5 +194,5 @@ describe('{UseCaseName}', () => {
 5. **테스트 용이성**: 의존성 주입으로 Mock 가능
 
 ## 참조
-- `.claude/skills/clean-architecture/SKILL.md`
+- `skills/clean-architecture/SKILL.md`
 - `.claude/best-practices/clean-architecture.md`

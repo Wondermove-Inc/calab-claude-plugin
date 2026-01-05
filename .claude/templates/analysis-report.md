@@ -520,8 +520,8 @@ Why 5: 왜 {답변 4}?
 
 ## 참조
 
-- `.claude/skills/problem-solving/SKILL.md`
-- `.claude/skills/problem-solving/methods/`
-- `.claude/commands/solve.md`
+- `skills/problem-solving/SKILL.md`
+- `skills/problem-solving/methods/`
+- `commands/solve.md`
 - `.claude/templates/problem-definition.md` (이전 단계)
 - `.claude/templates/solution-report.md` (다음 단계)

@@ -145,5 +145,5 @@ export const container = new Container();
 ```
 
 ## 참조
-- `.claude/skills/clean-architecture/SKILL.md`
+- `skills/clean-architecture/SKILL.md`
 - `.claude/best-practices/clean-architecture.md`

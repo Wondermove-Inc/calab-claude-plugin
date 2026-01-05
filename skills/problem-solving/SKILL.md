@@ -290,10 +290,10 @@ Why 2: {질문}
 
 ## 참조 파일
 
-- `.claude/skills/problem-solving/methods/five-whys.md`
-- `.claude/skills/problem-solving/methods/rca.md`
-- `.claude/skills/problem-solving/methods/hypothesis.md`
-- `.claude/skills/problem-solving/methods/binary-search.md`
-- `.claude/skills/problem-solving/methods/fishbone.md`
+- `skills/problem-solving/methods/five-whys.md`
+- `skills/problem-solving/methods/rca.md`
+- `skills/problem-solving/methods/hypothesis.md`
+- `skills/problem-solving/methods/binary-search.md`
+- `skills/problem-solving/methods/fishbone.md`
 - `.claude/templates/problem-definition.md`
 - `.claude/templates/solution-report.md`

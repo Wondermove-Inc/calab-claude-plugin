@@ -197,7 +197,7 @@ PRD에 리서치 인사이트 반영
 
 ## 참조 파일
 
-- `.claude/commands/research.md` - 리서치 명령어
+- `commands/research.md` - 리서치 명령어
 - `.claude/research/` - 리서치 결과 저장
 - `.claude/templates/research-report-template.md` - 보고서 템플릿
-- `.claude/commands/dev-plan.md` - PRD 명령어 (리서치 연계)
+- `commands/dev-plan.md` - PRD 명령어 (리서치 연계)

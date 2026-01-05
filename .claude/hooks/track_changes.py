@@ -50,9 +50,9 @@ def categorize_file(file_path: str) -> str:
     """파일 경로를 기반으로 카테고리 분류"""
     path = file_path.lower()
 
-    if '.claude/commands/' in path:
+    if 'commands/' in path:
         return 'command'
-    elif '.claude/skills/' in path:
+    elif 'skills/' in path:
         return 'skill'
     elif '.claude/hooks/' in path:
         return 'hook'

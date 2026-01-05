@@ -361,11 +361,11 @@ await mcp__puppeteer__puppeteer_screenshot({ name: "hover-menu" })
 
 ## 참조 문서
 
-- `.claude/commands/qa.md` - QA 시작 명령어
-- `.claude/commands/qa-plan.md` - QA 계획서 생성
-- `.claude/commands/qa-run.md` - 테스트 실행
-- `.claude/commands/qa-report.md` - 보고서 생성
-- `.claude/commands/qa-status.md` - 상태 확인
+- `commands/qa.md` - QA 시작 명령어
+- `commands/qa-plan.md` - QA 계획서 생성
+- `commands/qa-run.md` - 테스트 실행
+- `commands/qa-report.md` - 보고서 생성
+- `commands/qa-status.md` - 상태 확인
 - `.claude/templates/qa-plan-template.md` - 계획서 템플릿
 - `.claude/templates/qa-report-template.md` - 보고서 템플릿
 - `.claude/best-practices/qa-testing.md` - QA 베스트 프랙티스
