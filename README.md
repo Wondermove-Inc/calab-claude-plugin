@@ -17,20 +17,28 @@
 | 제거 | 수동 | `/plugin uninstall` + `./uninstall-plugin.sh` |
 
 **마이그레이션 가이드:**
+
 ```bash
-# 1. 기존 설치 제거 (v1.x 사용자)
-# v1.x 스크립트가 없다면 수동으로 ~/.claude/ 백업 후 제거
+# ⚠️ 순서가 중요합니다!
 
-# 2. 글로벌 파일 설치 (터미널에서)
-./install-plugin.sh
+# Step 1: 기존 설치 제거 (v1.x 또는 이전 v2.x 사용자)
+# Claude Code 내부에서 먼저 실행:
+/plugin uninstall calab-plugin
+/plugin marketplace remove calab-marketplace
 
-# 3. 플러그인 등록 (Claude Code 내부에서 - 최초 1회만)
+# Step 2: 터미널에서 스크립트 실행
+./uninstall-plugin.sh    # 캐시 포함 전체 제거
+./install-plugin.sh      # 캐시 삭제 옵션 Y 선택 권장
+
+# Step 3: Claude Code 내부에서 다시 등록
 /plugin marketplace add ~/.claude/calab-marketplace
 /plugin install calab-plugin@calab-marketplace --scope user
 
-# 4. 명령어 네임스페이스 확인
-/calab-plugin:onboard  # (기존: /onboard)
+# Step 4: 설치 확인
+/calab-plugin:onboard  # (기존 v1.x: /onboard)
 ```
+
+> **v1.x에서 처음 마이그레이션하는 경우**: Step 1의 `/plugin` 명령어가 실패해도 무시하고 Step 2부터 진행하세요.
 
 ---
 
