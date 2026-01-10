@@ -36,7 +36,7 @@ echo ""
 # ============================================================
 # Step 1: Claude 플러그인 시스템에서 제거 안내
 # ============================================================
-echo "📋 1/3: 플러그인 시스템에서 제거하기"
+echo "📋 1/4: 플러그인 시스템에서 제거하기"
 echo ""
 echo "   Claude Code 내부에서 다음 명령어를 먼저 실행하세요:"
 echo ""
@@ -59,7 +59,7 @@ echo ""
 # ============================================================
 # Step 2: ~/.claude/에 설치된 파일 제거
 # ============================================================
-echo "🔧 2/3: 글로벌 파일 제거 중..."
+echo "🔧 2/4: 글로벌 파일 제거 중..."
 echo ""
 
 # CLAUDE.md 제거
@@ -135,13 +135,53 @@ echo ""
 # ============================================================
 # Step 3: 마켓플레이스 디렉토리 제거
 # ============================================================
-echo "🔧 3/3: 마켓플레이스 제거 중..."
+echo "🔧 3/4: 마켓플레이스 제거 중..."
 
 if [ -d "$MARKETPLACE_DIR" ]; then
     rm -rf "$MARKETPLACE_DIR"
     echo "   ✅ 마켓플레이스 제거 완료: $MARKETPLACE_DIR"
 else
     echo "   ⏭️ 마켓플레이스 디렉토리 없음"
+fi
+
+echo ""
+
+# ============================================================
+# Step 4: 플러그인 캐시 제거
+# ============================================================
+echo "🔧 4/4: 플러그인 캐시 제거 중..."
+
+PLUGIN_CACHE="$CLAUDE_HOME/plugins/cache/calab-marketplace"
+if [ -d "$PLUGIN_CACHE" ]; then
+    rm -rf "$PLUGIN_CACHE"
+    echo "   ✅ 플러그인 캐시 제거 완료: $PLUGIN_CACHE"
+else
+    echo "   ⏭️ 플러그인 캐시 없음"
+fi
+
+# installed_plugins.json, known_marketplaces.json 정리 안내
+INSTALLED_PLUGINS="$CLAUDE_HOME/plugins/installed_plugins.json"
+KNOWN_MARKETPLACES="$CLAUDE_HOME/plugins/known_marketplaces.json"
+
+CLEANUP_NEEDED=false
+
+if [ -f "$INSTALLED_PLUGINS" ]; then
+    if grep -q "calab-plugin" "$INSTALLED_PLUGINS"; then
+        CLEANUP_NEEDED=true
+    fi
+fi
+
+if [ -f "$KNOWN_MARKETPLACES" ]; then
+    if grep -q "calab-marketplace" "$KNOWN_MARKETPLACES"; then
+        CLEANUP_NEEDED=true
+    fi
+fi
+
+if [ "$CLEANUP_NEEDED" = true ]; then
+    echo ""
+    echo "   ⚠️ 플러그인 설정 파일에 잔여 항목이 있을 수 있습니다."
+    echo "   Claude Code 재시작 후 자동으로 정리되거나,"
+    echo "   /plugin 명령어로 정리된 상태를 확인하세요."
 fi
 
 echo ""
@@ -164,6 +204,7 @@ echo "   ~/.claude/integrations/"
 echo "   ~/.claude/memory/ (선택)"
 echo "   ~/.claude/problem-solving/"
 echo "   ~/.claude/calab-marketplace/"
+echo "   ~/.claude/plugins/cache/calab-marketplace/"
 echo ""
 echo "⚠️ 프로젝트별 파일은 수동 제거 필요:"
 echo "   rm -rf 프로젝트경로/.claude-state/   # 런타임 상태"

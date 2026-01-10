@@ -58,6 +58,23 @@ echo "✅ plugin.json 확인 완료"
 echo ""
 
 # ============================================================
+# Step 0: 이전 설치 캐시 정리 (업데이트/재설치 시)
+# ============================================================
+PLUGIN_CACHE="$CLAUDE_HOME/plugins/cache/calab-marketplace"
+if [ -d "$PLUGIN_CACHE" ]; then
+    echo "🔄 이전 플러그인 캐시 발견: $PLUGIN_CACHE"
+    read -p "   캐시를 삭제하시겠습니까? (재설치/업데이트 시 권장) (Y/n) " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        rm -rf "$PLUGIN_CACHE"
+        echo "   ✅ 이전 캐시 삭제 완료"
+    else
+        echo "   ⏭️ 캐시 유지 (플러그인 재설치 시 문제가 발생할 수 있습니다)"
+    fi
+    echo ""
+fi
+
+# ============================================================
 # Step 1: ~/.claude/ 디렉토리 생성 및 파일 복사
 # ============================================================
 echo "🔧 1/3: 글로벌 파일 설치 중..."
@@ -232,6 +249,18 @@ echo "   # 플러그인 설치 (Claude Code 내부에서)"
 echo "   /plugin install $PLUGIN_NAME@calab-marketplace --scope user"
 echo ""
 echo "   ※ 터미널이 아닌 Claude Code를 실행한 후 내부에서 입력하세요"
+echo ""
+echo "🔄 재설치/업데이트 시:"
+echo "   # Claude Code 내부에서 먼저 제거"
+echo "   /plugin uninstall $PLUGIN_NAME"
+echo "   /plugin marketplace remove calab-marketplace"
+echo ""
+echo "   # 터미널에서 다시 설치"
+echo "   ./install-plugin.sh  # 캐시 삭제 권장"
+echo ""
+echo "   # Claude Code 내부에서 다시 등록"
+echo "   /plugin marketplace add $MARKETPLACE_DIR"
+echo "   /plugin install $PLUGIN_NAME@calab-marketplace --scope user"
 echo ""
 echo "✨ 설치 후 사용법:"
 echo "   /calab-plugin:onboard        - 프로젝트 분석"
