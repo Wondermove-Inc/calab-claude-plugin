@@ -131,6 +131,6 @@ allowed-tools: Read, Glob
 
 ## 참조 파일
 
-- `.claude/best-practices/` - 기술별 베스트 프랙티스 (12개)
+- `.claude/best-practices/` - 기술별 베스트 프랙티스 (15개)
 - `.claude/memory/TECH_STACK.md` - 기술 스택 설정
 - `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙

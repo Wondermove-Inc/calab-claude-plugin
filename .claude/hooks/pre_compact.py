@@ -16,8 +16,15 @@ from pathlib import Path
 def main():
     # 프로젝트 디렉토리 확인
     project_dir = os.environ.get('CLAUDE_PROJECT_DIR', '.')
+    home_dir = os.environ.get('HOME', '')
+
+    # 상태는 프로젝트별
     state_dir = Path(project_dir) / '.claude-state'
-    memory_dir = Path(project_dir) / '.claude' / 'memory'
+
+    # 메모리는 프로젝트 우선, 없으면 글로벌
+    project_memory = Path(project_dir) / '.claude' / 'memory'
+    global_memory = Path(home_dir) / '.claude' / 'memory'
+    memory_dir = project_memory if project_memory.exists() else global_memory
 
     # 디렉토리 생성
     state_dir.mkdir(parents=True, exist_ok=True)

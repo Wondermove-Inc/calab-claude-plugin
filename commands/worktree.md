@@ -11,6 +11,33 @@ argument-hint: [status | start <id> | done <id> | block <id> <reason>]
 현재 개발 중인 작업의 전체 트리를 표시하고 관리합니다.
 작업 시작, 진행, 완료를 실시간으로 추적합니다.
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md
+│       ├── 03-architecture.md
+│       ├── 04-erd.md
+│       ├── 05-tasks.md
+│       └── qa/
+│
+└── complete/                        ← 모든 태스크 완료 시 자동 이동
+    └── {feature-name}/              ← active에서 이동됨
+        ├── 01-brainstorm.md
+        ├── 02-prd.md
+        ├── 03-architecture.md
+        ├── 04-erd.md
+        ├── 05-tasks.md
+        └── qa/
+```
+
+**자동 이동 조건:**
+- 모든 태스크가 `done` 상태일 때
+- `/worktree done` 명령으로 마지막 태스크 완료 시 자동 실행
+
 ## 사용법
 
 ```bash
@@ -95,7 +122,7 @@ argument-hint: [status | start <id> | done <id> | block <id> <reason>]
  - [ ] 사용자 생성 및 저장
 
  참조:
- • docs/architecture/api-spec.md
+ • .claude/docs/active/{feature}/03-architecture.md
  • .claude/best-practices/nodejs.md
 
 ============================================
@@ -113,6 +140,7 @@ argument-hint: [status | start <id> | done <id> | block <id> <reason>]
 3. 다음 태스크로 `current_task` 이동
 4. 진행률 업데이트
 5. CURRENT_CONTEXT.md 업데이트
+6. **모든 태스크 완료 시**: 기능 폴더를 `active/` → `complete/`로 이동
 
 **출력**:
 ```
@@ -129,6 +157,53 @@ argument-hint: [status | start <id> | done <id> | block <id> <reason>]
 
  다음 태스크: TASK-004 AuthController 구현
  자동 시작할까요? (Y/n)
+
+============================================
+```
+
+### 🎉 모든 태스크 완료 시: 자동 아카이브
+
+마지막 태스크가 완료되면 자동으로 기능 폴더를 `complete/`로 이동:
+
+```bash
+/worktree done TASK-010  # 마지막 태스크
+```
+
+**자동 동작**:
+1. 모든 태스크 `done` 상태 확인
+2. 기능 폴더 이동:
+   ```
+   .claude/docs/active/{feature-name}/
+   → .claude/docs/complete/{feature-name}/
+   ```
+3. worktree.json 업데이트 (status: "completed")
+4. CURRENT_CONTEXT.md 초기화
+
+**출력**:
+```
+============================================
+🎉 기능 개발 완료: {feature-name}
+============================================
+
+ 모든 태스크 완료!
+
+ 진행률: ████████████████████ 100% (10/10)
+
+ 📁 아카이브 완료:
+ FROM: .claude/docs/active/{feature-name}/
+ TO:   .claude/docs/complete/{feature-name}/
+
+ 생성된 문서:
+ • 01-brainstorm.md
+ • 02-prd.md
+ • 03-architecture.md
+ • 04-erd.md
+ • 05-tasks.md
+ • qa/
+
+ 다음 단계:
+ • /dev plan [새 기능] - 새로운 기능 개발 시작
+ • /qa - QA 진행 (선택)
 
 ============================================
 ```
@@ -191,6 +266,8 @@ argument-hint: [status | start <id> | done <id> | block <id> <reason>]
 ```json
 {
   "project": "사용자 인증 시스템",
+  "feature_folder": ".claude/docs/active/user-auth/",
+  "status": "in_progress",
   "created_at": "2024-01-15T09:00:00Z",
   "updated_at": "2024-01-15T14:30:00Z",
   "current_task": "TASK-003",
@@ -320,4 +397,5 @@ JIRA 연동이 활성화된 경우, Worktree 변경 시 JIRA에 자동 동기화
 - `skills/work-tracker/SKILL.md`
 - `skills/jira-integration/SKILL.md`
 - `.claude-state/worktree.json`
-- `docs/tasks/{feature}/tasks.md`
+- `.claude/docs/active/{feature}/05-tasks.md`
+- `.claude/docs/complete/` - 완료된 기능 폴더

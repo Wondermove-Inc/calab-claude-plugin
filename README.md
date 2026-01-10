@@ -4,29 +4,31 @@
 
 ---
 
-## ⚠️ v2.0 Breaking Changes
+## ⚠️ v2.x Breaking Changes
 
-**기존 사용자는 마이그레이션 필수입니다:**
+**기존 v1.x 사용자는 마이그레이션 필수입니다:**
 
-| 항목 | v1.x (Old) | v2.0 (New) |
-|------|-----------|-----------|
-| 설치 방식 | `install-global.sh` (파일 복사) | `install-plugin.sh` (마켓플레이스) |
+| 항목 | v1.x (Old) | v2.1 (Current) |
+|------|-----------|----------------|
+| 설치 방식 | 파일 복사 (레거시) | `install-plugin.sh` (마켓플레이스 + 전체 복사) |
 | 명령어 | `/dev-plan` | `/calab-plugin:dev-plan` |
 | 설정 위치 | `~/.claude/` 직접 수정 | 플러그인 스코프 분리 |
-| 업데이트 | 수동 재설치 | `claude plugin update` |
-| 제거 | `uninstall-global.sh` | `claude plugin uninstall` |
+| 업데이트 | 수동 재설치 | `/plugin update` (Claude Code 내부) |
+| 제거 | 수동 | `/plugin uninstall` + `./uninstall-plugin.sh` |
 
 **마이그레이션 가이드:**
 ```bash
-# 1. 기존 설치 제거 (v1.x)
-./uninstall-global.sh  # 또는 수동으로 ~/.claude/ 백업
+# 1. 기존 설치 제거 (v1.x 사용자)
+# v1.x 스크립트가 없다면 수동으로 ~/.claude/ 백업 후 제거
 
-# 2. 새 플러그인 설치 (v2.0)
+# 2. 글로벌 파일 설치 (터미널에서)
 ./install-plugin.sh
-claude plugin marketplace add ~/.claude/calab-marketplace
-claude plugin install calab-plugin@calab-marketplace --scope user
 
-# 3. 명령어 네임스페이스 확인
+# 3. 플러그인 등록 (Claude Code 내부에서 - 최초 1회만)
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
+
+# 4. 명령어 네임스페이스 확인
 /calab-plugin:onboard  # (기존: /onboard)
 ```
 
@@ -70,7 +72,7 @@ claude plugin install calab-plugin@calab-marketplace --scope user
 | 스킬 | 활성화 조건 | 효과 |
 |------|------------|------|
 | `clean-architecture` | 코드 구현 시 (항상) | 4-레이어 구조 강제, 의존성 규칙 검증 |
-| `best-practices` | 기술 감지 시 | 12개 언어별 베스트 프랙티스 자동 적용 |
+| `best-practices` | 기술 감지 시 | 15개 언어별 베스트 프랙티스 자동 적용 |
 | `code-quality` | 코드 생성 시 | 300줄 제한, 주석 필수, 타입 완전성 검증 |
 | `project-rules` | 코드 작성/수정 시 | 프로젝트 규칙 자동 참조 |
 | `work-tracker` | 소스 코드 수정 시 | Worktree 태스크 자동 시작 |
@@ -82,16 +84,43 @@ claude plugin install calab-plugin@calab-marketplace --scope user
 
 ## 설치
 
-### v2.0 공식 플러그인 설치 (권장)
+### v2.1 공식 플러그인 설치 (권장)
 
 ```bash
-# 1. 마켓플레이스 생성
+# Step 1: 글로벌 파일 설치 (터미널에서)
 ./install-plugin.sh
-
-# 2. 출력된 명령어 복사 후 실행
-claude plugin marketplace add ~/.claude/calab-marketplace
-claude plugin install calab-plugin@calab-marketplace --scope user
 ```
+
+```bash
+# Step 2: 플러그인 등록 (Claude Code 내부에서 - 최초 1회만)
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
+```
+
+> **참고**: Step 2는 Claude Code를 실행한 후 내부에서 슬래시 명령어로 입력합니다.
+
+**글로벌 설치 항목 (~/.claude/):**
+
+| 위치 | 항목 | 용도 |
+|------|------|------|
+| `~/.claude/CLAUDE.md` | 마스터 지침 | 모든 프로젝트에서 동일한 규칙 적용 |
+| `~/.claude/settings.json` | 훅 설정 | 이벤트 훅 자동 트리거 |
+| `~/.claude/hooks/` | Python 훅 | 품질 검증, 변경 추적 등 자동 실행 |
+| `~/.claude/best-practices/` | 베스트 프랙티스 | 15개 언어별 코드 품질 규칙 |
+| `~/.claude/templates/` | 문서 템플릿 | PRD, 아키텍처, QA 등 템플릿 |
+| `~/.claude/memory/` | 메모리 템플릿 | 규칙, 컨텍스트 기본 템플릿 |
+| `~/.claude/calab-marketplace/` | 마켓플레이스 | commands/ (35개), skills/ (11개) 전체 복사 |
+
+**프로젝트별 자동 생성 (명령어 실행 시):**
+
+| 위치 | 항목 | 생성 시점 |
+|------|------|----------|
+| `프로젝트/.claude-state/` | 런타임 상태 | 자동 (훅) |
+| `프로젝트/.claude/docs/active/` | 진행 중 기능 문서 | `/dev-plan` |
+| `프로젝트/.claude/docs/complete/` | 완료 기능 문서 | worktree 100% 시 자동 이동 |
+| `프로젝트/.claude/project-context/` | 온보딩 문서 (5개) | `/onboard` |
+| `프로젝트/.claude/research/{topic}/` | 리서치 보고서 | `/research` |
+| `프로젝트/.claude/problem-solving/` | 문제 해결 보고서 | `/solve` |
 
 ### 설치 스코프 비교
 
@@ -609,45 +638,80 @@ flowchart TB
 
 ## 프로젝트 구조
 
+### 글로벌 설치 (~/.claude/)
+
 ```
-project/
-├── .claude-plugin/
-│   └── plugin.json              # 플러그인 메타데이터
-│
-├── .claude/
-│   ├── settings.json            # 훅 설정 (핵심)
-│   ├── memory/                  # 영구 메모리
-│   │   ├── PROJECT_RULES.md     # 프로젝트 규칙
-│   │   ├── CURRENT_CONTEXT.md   # 현재 작업 컨텍스트
-│   │   └── WORK_HISTORY.md      # 작업 히스토리
-│   │
-│   ├── project-context/         # 온보딩 생성 컨텍스트 (5개)
-│   ├── research/                # 리서치 결과
-│   ├── integrations/            # 외부 시스템 연동 (JIRA)
-│   ├── skills/                  # 자동 활성화 스킬 (11개)
-│   ├── commands/                # 슬래시 명령어 (35개)
-│   ├── problem-solving/         # 문제 해결 지식 베이스
-│   ├── hooks/                   # 이벤트 훅 (11개)
-│   ├── best-practices/          # 기술별 베스트 프랙티스 (15개)
-│   ├── templates/               # 문서 템플릿 (11개)
-│   └── agents/                  # 서브에이전트 (2개)
-│
-├── .claude-state/               # 런타임 상태 (자동 관리, .gitignore)
-│   ├── worktree.json            # 작업 트리 상태 (on-demand)
-│   ├── jira_mapping.json        # JIRA ID 매핑 (on-demand)
+~/.claude/                       # 글로벌 (모든 프로젝트 공유)
+├── CLAUDE.md                    # 마스터 지침
+├── settings.json                # 훅 설정
+├── hooks/                       # Python 훅 (11개)
+├── best-practices/              # 언어별 베스트 프랙티스 (15개)
+├── templates/                   # 문서 템플릿 (11개)
+├── agents/                      # 서브에이전트 (2개)
+├── integrations/                # 외부 연동 설정
+├── memory/                      # 메모리 템플릿
+├── problem-solving/             # 문제 해결 방법론
+└── calab-marketplace/           # 마켓플레이스
+    └── plugins/
+        └── calab-plugin/        # 전체 복사됨
+            ├── .claude-plugin/  # 플러그인 메타데이터
+            ├── commands/        # 슬래시 명령어 (35개)
+            └── skills/          # 자동 활성화 스킬 (11개)
+```
+
+### 프로젝트별 자동 생성
+
+```
+프로젝트/                         # 명령어 실행 시 자동 생성
+├── .claude-state/               # 런타임 상태 (.gitignore 권장)
+│   ├── worktree.json            # 작업 트리 상태
 │   ├── checkpoint.json          # 체크포인트
-│   ├── checkpoint_history.json  # 체크포인트 히스토리
-│   ├── recent_changes.json      # 최근 변경 파일 이력
-│   ├── prompt_history.json      # 프롬프트 히스토리 (자연어 + 명령어)
+│   ├── jira_mapping.json        # JIRA ID 매핑
+│   ├── recent_changes.json      # 최근 변경 이력
+│   ├── prompt_history.json      # 프롬프트 히스토리
 │   ├── session_stats.json       # 세션 통계
-│   ├── file_stats.json          # 파일 변경 통계
-│   ├── subagent_stats.json      # 서브에이전트 통계
-│   ├── subagent.log             # 서브에이전트 로그
-│   ├── quality_violations.json  # 코드 품질 위반 기록
+│   ├── quality_violations.json  # 코드 품질 위반
 │   ├── activity.log             # 활동 로그
-│   └── notifications.log        # 알림 로그
+│   └── qa/                      # QA 런타임
+│       ├── test-results.json
+│       ├── bugs.json
+│       └── screenshots/
 │
-└── docs/                        # 생성된 문서 (PRD, 아키텍처, 태스크)
+└── .claude/                     # 프로젝트별 문서
+    │
+    ├── docs/                    # 기능별 문서 (/dev-plan 시)
+    │   ├── active/              # 진행 중인 기능
+    │   │   └── {feature-name}/
+    │   │       ├── 01-brainstorm.md
+    │   │       ├── 02-prd.md
+    │   │       ├── 03-architecture.md
+    │   │       ├── 04-erd.md
+    │   │       ├── 05-tasks.md
+    │   │       └── qa/
+    │   │           ├── QA_PLAN.md
+    │   │           ├── TEST_CASES.md
+    │   │           └── QA_REPORT.md
+    │   │
+    │   └── complete/            # 완료된 기능 (자동 이동)
+    │
+    ├── project-context/         # 온보딩 문서 (/onboard 시)
+    │   ├── PROJECT_SUMMARY.md
+    │   ├── ARCHITECTURE.md
+    │   ├── CODE_PATTERNS.md
+    │   ├── CONVENTIONS.md
+    │   └── DOMAIN_KNOWLEDGE.md
+    │
+    ├── research/                # 리서치 결과 (/research 시)
+    │   └── {topic}/
+    │       ├── report.md
+    │       ├── summary.md
+    │       └── sources.md
+    │
+    └── problem-solving/         # 문제 해결 보고서 (/solve 시)
+        ├── active/              # 진행 중인 문제
+        └── resolved/            # 해결된 문제
+            └── {problem-id}/
+                └── report.md
 ```
 
 ---
@@ -655,17 +719,26 @@ project/
 ## 제거
 
 ```bash
-# 플러그인 제거
-claude plugin uninstall calab-plugin
-
-# 마켓플레이스 제거
-claude plugin marketplace remove calab-marketplace
-
-# 마켓플레이스 디렉토리 삭제
-rm -rf ~/.claude/calab-marketplace
+# Step 1: 플러그인 제거 (Claude Code 내부에서)
+/plugin uninstall calab-plugin
+/plugin marketplace remove calab-marketplace
 ```
 
-**주의:** 사용자가 직접 생성한 `.claude-state/` 파일은 별도로 백업하세요.
+```bash
+# Step 2: 글로벌 파일 제거 (터미널에서)
+./uninstall-plugin.sh
+
+# 또는 수동으로
+rm -rf ~/.claude/calab-marketplace
+rm ~/.claude/CLAUDE.md ~/.claude/settings.json
+rm -rf ~/.claude/hooks ~/.claude/best-practices ~/.claude/templates
+```
+
+**주의:** 프로젝트별 파일은 수동 제거 필요:
+```bash
+rm -rf 프로젝트경로/.claude-state/   # 런타임 상태
+rm -rf 프로젝트경로/.claude/docs/    # 기능 문서
+```
 
 ---
 
@@ -678,17 +751,25 @@ rm -rf ~/.claude/calab-marketplace
 
 ## 버전 히스토리
 
+### v2.1 (2026-01-10)
+- **글로벌/프로젝트 경로 명확화**: 설치 위치와 프로젝트별 자동 생성 구분
+- **설치 안정성 개선**: 심볼릭 링크 → 전체 복사 (`cp -r`)로 변경
+- **프로젝트별 폴더 완성**: `project-context/`, `research/`, `problem-solving/` 추가
+- **문서 정확도 개선**: best-practices 15개, 전체 파일 개수 통일
+- 설치/제거 스크립트 일관성 확보
+
 ### v2.0 (2026-01-02)
 - **Breaking Change**: 파일 복사 방식 → 공식 플러그인 시스템으로 전환
 - 명령어 네임스페이스 자동 적용 (`/calab-plugin:명령어`)
-- 마켓플레이스 기반 설치
+- 마켓플레이스 기반 설치 (`install-plugin.sh`)
 - 3가지 스코프 지원 (user, project, local)
 - 비침투적 설치 (사용자 설정 보존)
 
-### v1.x
-- 파일 복사 방식 설치 (`install-global.sh`)
+### v1.x (deprecated)
+- 파일 복사 방식 설치 (레거시)
 - 직접 명령어 사용 (`/dev-plan`)
 - 글로벌 설치만 지원
+- **주의**: v1.x 스크립트는 더 이상 포함되지 않음
 
 ---
 

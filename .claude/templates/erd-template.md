@@ -1135,7 +1135,7 @@ $$ LANGUAGE plpgsql;
 
 - `.claude/best-practices/database.md` - 데이터베이스 베스트 프랙티스
 - `.claude/templates/api-spec-template.md` - API 스펙 템플릿
-- `docs/architecture/system-architecture.md` - 시스템 아키텍처
+- `.claude/docs/active/{feature}/03-architecture.md` - 시스템 아키텍처
 
 ---
 

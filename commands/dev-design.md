@@ -10,6 +10,43 @@ argument-hint: [--arch | --erd]
 
 PRD를 기반으로 시스템 아키텍처를 설계하고 데이터 모델을 정의합니다.
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/              ← 기능별 폴더 (/dev plan에서 생성됨)
+│       ├── 01-brainstorm.md         ← /dev plan에서 생성
+│       ├── 02-prd.md                ← /dev plan에서 생성
+│       ├── 03-architecture.md       ← 이 명령어에서 생성
+│       ├── 04-erd.md                ← 이 명령어에서 생성
+│       ├── 05-tasks.md              ← /dev tasks에서 생성
+│       └── qa/                      ← /qa에서 생성
+│
+└── complete/                        ← worktree 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
+## 워크플로우
+
+```mermaid
+flowchart LR
+    subgraph Design["📐 /dev design"]
+        A[아키텍처 설계] --> B[ERD 설계]
+    end
+
+    P["/dev plan"] --> Design
+    Design --> T["/dev tasks"]
+
+    style Design fill:#e8f5e9
+    style P fill:#e3f2fd
+    style T fill:#fff3e0
+```
+
+**자동 연계:**
+- `/dev plan`에서 생성된 PRD 자동 참조
+- 완료 후 `/dev tasks`로 자연스럽게 이어짐
+
 ## 옵션
 
 | 옵션 | 설명 |
@@ -27,11 +64,22 @@ $ARGUMENTS에서 옵션 확인:
 - `--erd`: Phase 2만 실행
 - 옵션 없음: Phase 1 → Phase 2 순차 실행
 
-### Step 2: 컨텍스트 로드
+### Step 2: 기능 폴더 확인
+
+`.claude/memory/CURRENT_CONTEXT.md`에서 현재 작업 중인 기능 확인:
+
+```
+현재 기능: {feature-name}
+작업 폴더: .claude/docs/active/{feature-name}/
+```
+
+**⚠️ 주의**: `/dev plan`이 먼저 실행되어 있어야 합니다!
+
+### Step 3: 컨텍스트 로드
 
 ```
 1. .claude/memory/CURRENT_CONTEXT.md - 현재 작업 상태
-2. docs/prd/{feature}/prd.md - PRD 문서
+2. .claude/docs/active/{feature-name}/02-prd.md - PRD 문서
 3. .claude/memory/TECH_STACK.md - 기술 스택
 4. .claude/best-practices/ - 베스트 프랙티스
 ```
@@ -85,7 +133,7 @@ TECH_STACK.md와 베스트 프랙티스 기반:
 
 ### 1.4 아키텍처 문서 작성
 
-`docs/architecture/system-architecture.md` 생성
+`.claude/docs/active/{feature-name}/03-architecture.md` 생성
 
 ```
 ============================================
@@ -93,7 +141,8 @@ TECH_STACK.md와 베스트 프랙티스 기반:
 ============================================
 
  기능: {feature-name}
- 문서: docs/architecture/system-architecture.md
+ 폴더: .claude/docs/active/{feature-name}/
+ 문서: 03-architecture.md
 
  아키텍처 요약:
 • 프론트엔드: {기술}
@@ -131,7 +180,7 @@ erDiagram
 
 ### 2.4 ERD 문서 작성
 
-`docs/architecture/erd.md` 생성 (Mermaid ERD + 테이블 정의 + Prisma 스키마)
+`.claude/docs/active/{feature-name}/04-erd.md` 생성 (Mermaid ERD + 테이블 정의 + Prisma 스키마)
 
 ---
 
@@ -143,10 +192,11 @@ erDiagram
 ============================================
 
  기능: {feature-name}
+ 폴더: .claude/docs/active/{feature-name}/
 
  생성된 문서:
-• docs/architecture/system-architecture.md
-• docs/architecture/erd.md
+• 03-architecture.md
+• 04-erd.md
 
  아키텍처 요약:
 • 프론트엔드: React + TypeScript
@@ -171,12 +221,21 @@ erDiagram
 ## 워크플로우 상태
 
 - **현재 기능**: {feature-name}
+- **작업 폴더**: .claude/docs/active/{feature-name}/
 - **현재 단계**: Design 완료
 - **다음 단계**: Tasks
+
+## 생성된 문서
+
+- [x] 01-brainstorm.md
+- [x] 02-prd.md
+- [x] 03-architecture.md
+- [x] 04-erd.md
+- [ ] 05-tasks.md
 ```
 
 ## 참조 파일
 
 - `.claude/memory/TECH_STACK.md` - 기술 스택
 - `.claude/best-practices/` - 베스트 프랙티스
-- `docs/prd/{feature}/prd.md` - PRD 문서
+- `.claude/docs/active/{feature-name}/02-prd.md` - PRD 문서

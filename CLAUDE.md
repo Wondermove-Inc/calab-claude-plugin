@@ -504,7 +504,7 @@ flowchart LR
 | `work-tracker` | 작업 시작, 전환, 완료 언급 시 | Worktree 추적 (시작 자동, 완료는 수동) |
 | `code-quality` | 코드 생성, 함수 추가 시 | 300줄 제한, 주석 필수 적용 |
 | `dev-workflow` | 기능 개발, 설계 언급 시 | 개발 워크플로우 안내 |
-| `best-practices` | 코드 구현, 기술 언급 시 | 12개 언어 베스트 프랙티스 자동 적용 |
+| `best-practices` | 코드 구현, 기술 언급 시 | 15개 언어 베스트 프랙티스 자동 적용 |
 | `clean-architecture` | **모든 코드 구현 시 (항상)** | 4-레이어 구조 + 의존성 규칙 강제 |
 | `project-onboarding` | 프로젝트 분석 요청 시 | 컨텍스트 문서 참조 |
 | `research-skill` | 조사, 알아봐, 리서치 언급 시 | 다각도 검색 + 핵심 요약 |
@@ -608,7 +608,17 @@ calab-claude-plugin/
 │   ├── hooks/                   # 이벤트 훅 (11개)
 │   ├── best-practices/          # 기술별 베스트 프랙티스 (15개)
 │   ├── templates/               # 문서 템플릿 (11개)
-│   └── agents/                  # 서브에이전트 (2개)
+│   ├── agents/                  # 서브에이전트 (2개)
+│   └── docs/                    # 생성된 문서
+│       ├── active/              # 진행 중인 기능
+│       │   └── {feature-name}/  # 기능별 폴더
+│       │       ├── 01-brainstorm.md
+│       │       ├── 02-prd.md
+│       │       ├── 03-architecture.md
+│       │       ├── 04-erd.md
+│       │       ├── 05-tasks.md
+│       │       └── qa/
+│       └── complete/            # 완료된 기능 (자동 이동)
 │
 ├── .claude-state/               # 런타임 상태 (자동 관리, .gitignore)
 │   ├── worktree.json            # 작업 트리 상태 (on-demand)
@@ -623,9 +633,11 @@ calab-claude-plugin/
 │   ├── subagent.log             # 서브에이전트 로그
 │   ├── quality_violations.json  # 코드 품질 위반 기록
 │   ├── activity.log             # 활동 로그
-│   └── notifications.log        # 알림 로그
-│
-└── docs/                        # 생성된 문서 (PRD, 아키텍처, 태스크)
+│   ├── notifications.log        # 알림 로그
+│   └── qa/                      # QA 상태 데이터
+│       ├── qa-status.json
+│       ├── test-cases.json
+│       └── screenshots/
 ```
 
 ---

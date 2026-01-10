@@ -12,13 +12,26 @@ Stop Hook - 세션 종료 시 자동 요약 저장 (완전 자동화)
 import json
 import sys
 import re
+import os
 from pathlib import Path
 from datetime import datetime
 
-# 프로젝트 루트 경로
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-STATE_PATH = PROJECT_ROOT / '.claude-state'
-MEMORY_PATH = PROJECT_ROOT / '.claude' / 'memory'
+# 경로 설정
+HOME_DIR = os.environ.get('HOME', '')
+PROJECT_DIR = os.environ.get('CLAUDE_PROJECT_DIR', '.')
+
+# 상태는 프로젝트별
+STATE_PATH = Path(PROJECT_DIR) / '.claude-state'
+
+# 메모리 경로
+PROJECT_MEMORY = Path(PROJECT_DIR) / '.claude' / 'memory'
+GLOBAL_MEMORY = Path(HOME_DIR) / '.claude' / 'memory'
+
+# 읽기: 프로젝트 우선, 없으면 글로벌 fallback
+MEMORY_PATH = PROJECT_MEMORY if PROJECT_MEMORY.exists() else GLOBAL_MEMORY
+
+# 쓰기: 항상 프로젝트에 (디렉토리 없으면 생성)
+MEMORY_PATH_WRITE = PROJECT_MEMORY
 
 
 def load_json(path: Path) -> dict | list:
@@ -154,13 +167,19 @@ def generate_work_summary(categories: dict) -> list:
 
 def update_current_context(work_summary: list):
     """CURRENT_CONTEXT.md 자동 업데이트"""
-    context_file = MEMORY_PATH / 'CURRENT_CONTEXT.md'
+    # 읽기용: 프로젝트 우선, 없으면 글로벌
+    context_file_read = MEMORY_PATH / 'CURRENT_CONTEXT.md'
+    # 쓰기용: 항상 프로젝트
+    context_file_write = MEMORY_PATH_WRITE / 'CURRENT_CONTEXT.md'
 
-    if not context_file.exists():
+    if not context_file_read.exists():
         return
 
+    # 프로젝트 memory 디렉토리 생성
+    MEMORY_PATH_WRITE.mkdir(parents=True, exist_ok=True)
+
     try:
-        with open(context_file, 'r', encoding='utf-8') as f:
+        with open(context_file_read, 'r', encoding='utf-8') as f:
             content = f.read()
     except Exception:
         return
@@ -213,7 +232,7 @@ def update_current_context(work_summary: list):
     )
 
     try:
-        with open(context_file, 'w', encoding='utf-8') as f:
+        with open(context_file_write, 'w', encoding='utf-8') as f:
             f.write(updated_content)
     except Exception:
         pass

@@ -216,11 +216,11 @@ Feature: 로그인
 
 | 산출물 | 위치 |
 |--------|------|
-| QA 계획서 | docs/qa/QA_PLAN.md |
-| 테스트 케이스 | docs/qa/TEST_CASES.md |
-| 테스트 결과 | docs/qa/TEST_RESULTS.md |
-| 버그 리포트 | docs/qa/BUG_REPORT.md |
-| 최종 보고서 | docs/qa/QA_REPORT.md |
+| QA 계획서 | .claude/docs/active/{feature}/qa/QA_PLAN.md |
+| 테스트 케이스 | .claude/docs/active/{feature}/qa/TEST_CASES.md |
+| 테스트 결과 | .claude/docs/active/{feature}/qa/TEST_RESULTS.md |
+| 버그 리포트 | .claude/docs/active/{feature}/qa/BUG_REPORT.md |
+| 최종 보고서 | .claude/docs/active/{feature}/qa/QA_REPORT.md |
 
 ---
 
@@ -287,7 +287,7 @@ Feature: 로그인
 ══════════════════════════════════════════════
 
 📁 생성된 파일:
-└── docs/qa/QA_PLAN.md
+└── .claude/docs/active/{feature}/qa/QA_PLAN.md
 
 💡 다음 단계:
    /qa-run          → 테스트 실행

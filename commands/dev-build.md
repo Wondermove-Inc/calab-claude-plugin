@@ -18,14 +18,33 @@ argument-hint: [task-id] [--tdd]
 
 ## 실행 절차
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/              ← 기능별 폴더
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md                ← 요구사항 참조
+│       ├── 03-architecture.md       ← 설계 참조
+│       ├── 04-erd.md                ← 데이터 모델 참조
+│       ├── 05-tasks.md              ← 태스크 목록 참조
+│       └── qa/                      ← QA 문서
+│
+└── complete/                        ← worktree 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
 ### Step 1: 컨텍스트 로드
 
 ```
 1. .claude/memory/CURRENT_CONTEXT.md - 현재 작업 상태
 2. .claude/memory/TECH_STACK.md - 기술 스택
 3. .claude-state/worktree.json - 태스크 상태
-4. docs/prd/{feature}/prd.md - 요구사항
-5. docs/architecture/ - 설계 문서
+4. .claude/docs/active/{feature-name}/02-prd.md - 요구사항
+5. .claude/docs/active/{feature-name}/03-architecture.md - 아키텍처
+6. .claude/docs/active/{feature-name}/04-erd.md - ERD
+7. .claude/docs/active/{feature-name}/05-tasks.md - 태스크 목록
 ```
 
 ### Step 2: 태스크 식별

@@ -39,12 +39,34 @@ flowchart LR
 
 ## 7단계 QA 프로세스
 
+## QA 폴더 구조
+
+```
+.claude/docs/
+├── active/
+│   └── {feature-name}/
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md
+│       ├── 03-architecture.md
+│       ├── 04-erd.md
+│       ├── 05-tasks.md
+│       └── qa/                    ← QA 문서 위치
+│           ├── QA_PLAN.md
+│           ├── TEST_CASES.md
+│           ├── TEST_RESULTS.md
+│           └── QA_REPORT.md
+│
+└── complete/
+```
+
+---
+
 ### Phase 1: 요구사항 분석
 
 **수행 작업:**
 
 1. **기능 목록 수집**
-   - PRD 문서 확인 (`docs/prd/`)
+   - PRD 문서 확인 (`.claude/docs/active/{feature}/02-prd.md`)
    - 태스크 목록 확인 (`worktree.json`)
    - 사용자 스토리 파악
 
@@ -288,9 +310,20 @@ await mcp__puppeteer__puppeteer_screenshot({ name: "hover-menu" })
 
 ### 저장 위치
 
+**QA 문서 (기능별):**
+```
+.claude/docs/active/{feature}/qa/
+├── QA_PLAN.md             # QA 계획서
+├── TEST_CASES.md          # 테스트 케이스 목록
+├── TEST_RESULTS.md        # 테스트 결과
+├── BUG_REPORT.md          # 버그 보고서
+└── QA_REPORT.md           # 최종 보고서
+```
+
+**상태 데이터:**
 ```
 .claude-state/qa/
-├── qa-plan.json           # QA 계획서
+├── qa-plan.json           # QA 계획 JSON
 ├── test-cases.json        # 테스트 케이스 목록
 ├── test-results.json      # 테스트 결과
 ├── bugs.json              # 발견된 버그

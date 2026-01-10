@@ -10,6 +10,23 @@ argument-hint: [아이디어] [--brainstorm | --prd]
 
 아이디어를 체계적으로 정리하고 요구사항 문서(PRD)를 작성합니다.
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/              ← 기능별 폴더 (이 명령어에서 생성)
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md
+│       ├── 03-architecture.md       ← /dev design에서 생성
+│       ├── 04-erd.md                ← /dev design에서 생성
+│       ├── 05-tasks.md              ← /dev tasks에서 생성
+│       └── qa/                      ← /qa에서 생성
+│
+└── complete/                        ← worktree 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
 ## 워크플로우
 
 ```mermaid
@@ -46,6 +63,24 @@ $ARGUMENTS에서 옵션 확인:
 - `--prd`: Phase 2만 실행
 - 옵션 없음: Phase 1 → Phase 2 순차 실행
 
+### Step 2: 기능 이름 결정
+
+$ARGUMENTS에서 기능 이름을 추출하거나 사용자에게 질문:
+
+```
+이 기능의 이름을 정해주세요.
+예: user-authentication, payment-system, product-catalog
+```
+
+**네이밍 규칙:**
+- 영문 소문자 + 하이픈
+- 간결하고 명확한 이름
+- 예: `user-auth`, `order-management`, `ai-chat`
+
+### Step 3: 프로젝트 폴더 생성
+
+`.claude/docs/active/{feature-name}/` 폴더 생성
+
 ---
 
 ## Phase 1: 브레인스토밍
@@ -81,7 +116,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 
 ### 1.3 브레인스토밍 문서 작성
 
-`docs/prd/{feature-name}/brainstorm.md` 생성
+`.claude/docs/active/{feature-name}/01-brainstorm.md` 생성
 
 ```
 ============================================
@@ -89,7 +124,8 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 ============================================
 
  기능: {feature-name}
- 문서: docs/prd/{feature-name}/brainstorm.md
+ 폴더: .claude/docs/active/{feature-name}/
+ 문서: 01-brainstorm.md
 
  요약:
 • 문제: {문제 요약}
@@ -106,7 +142,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 ### 2.1 컨텍스트 로드
 
 ```
-1. docs/prd/{feature}/brainstorm.md - 브레인스토밍 결과
+1. .claude/docs/active/{feature-name}/01-brainstorm.md - 브레인스토밍 결과
 2. .claude/templates/prd-template.md - PRD 템플릿
 3. .claude/research/{관련주제}/ - 관련 리서치 (있는 경우)
 ```
@@ -128,7 +164,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 
 ### 2.4 PRD 문서 저장
 
-`docs/prd/{feature-name}/prd.md` 생성
+`.claude/docs/active/{feature-name}/02-prd.md` 생성
 
 ---
 
@@ -140,10 +176,11 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 ============================================
 
  기능: {feature-name}
+ 폴더: .claude/docs/active/{feature-name}/
 
  생성된 문서:
-• docs/prd/{feature-name}/brainstorm.md
-• docs/prd/{feature-name}/prd.md
+• 01-brainstorm.md
+• 02-prd.md
 
  요약:
 • 목표: {n}개
@@ -163,6 +200,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 ## 워크플로우 상태
 
 - **현재 기능**: {feature-name}
+- **작업 폴더**: .claude/docs/active/{feature-name}/
 - **현재 단계**: Plan 완료
 - **다음 단계**: Design
 ```

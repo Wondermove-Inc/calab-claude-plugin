@@ -75,7 +75,7 @@ QA 테스트 결과를 **종합 보고서**로 생성합니다.
 **생성 파일:**
 
 ```
-docs/qa/
+.claude/docs/active/{feature-name}/qa/
 ├── QA_REPORT.md           # 메인 보고서
 ├── BUG_REPORT.md          # 버그 상세 보고서
 └── TEST_RESULTS.md        # 테스트 결과 상세
@@ -300,9 +300,9 @@ Major 버그 1건 해결 필요.
 ══════════════════════════════════════════════
 
 📁 생성된 파일:
-├── docs/qa/QA_REPORT.md
-├── docs/qa/BUG_REPORT.md
-└── docs/qa/TEST_RESULTS.md
+├── .claude/docs/active/{feature}/qa/QA_REPORT.md
+├── .claude/docs/active/{feature}/qa/BUG_REPORT.md
+└── .claude/docs/active/{feature}/qa/TEST_RESULTS.md
 
 📈 요약:
    통과율: 90%

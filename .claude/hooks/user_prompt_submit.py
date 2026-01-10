@@ -12,13 +12,26 @@ UserPromptSubmit Hook - 사용자 입력 전처리 (완전 자동화)
 import json
 import sys
 import re
+import os
 from pathlib import Path
 from datetime import datetime
 
-# 프로젝트 루트 경로
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-MEMORY_PATH = PROJECT_ROOT / '.claude' / 'memory'
-STATE_PATH = PROJECT_ROOT / '.claude-state'
+# 경로 설정
+HOME_DIR = os.environ.get('HOME', '')
+PROJECT_DIR = os.environ.get('CLAUDE_PROJECT_DIR', '.')
+
+# 상태는 프로젝트별
+STATE_PATH = Path(PROJECT_DIR) / '.claude-state'
+
+# 메모리 경로
+PROJECT_MEMORY = Path(PROJECT_DIR) / '.claude' / 'memory'
+GLOBAL_MEMORY = Path(HOME_DIR) / '.claude' / 'memory'
+
+# 읽기: 프로젝트 우선, 없으면 글로벌 fallback
+MEMORY_PATH = PROJECT_MEMORY if PROJECT_MEMORY.exists() else GLOBAL_MEMORY
+
+# 쓰기: 항상 프로젝트에 (디렉토리 없으면 생성)
+MEMORY_PATH_WRITE = PROJECT_MEMORY
 
 
 def load_json(path: Path) -> dict:
@@ -205,11 +218,22 @@ def extract_task_description(prompt: str) -> str:
 
 def update_current_goal(prompt: str, intent: dict):
     """현재 목표 자동 업데이트 - 작업 스택에 누적"""
-    context_file = MEMORY_PATH / 'CURRENT_CONTEXT.md'
+    # 읽기: 프로젝트 우선, 없으면 글로벌 fallback
+    context_file_read = MEMORY_PATH / 'CURRENT_CONTEXT.md'
+    # 쓰기: 항상 프로젝트에
+    context_file = MEMORY_PATH_WRITE / 'CURRENT_CONTEXT.md'
+
+    # 프로젝트 memory 디렉토리 생성
+    MEMORY_PATH_WRITE.mkdir(parents=True, exist_ok=True)
 
     if not context_file.exists():
-        # 파일이 없으면 기본 구조 생성
-        create_default_context_file(context_file)
+        if context_file_read.exists() and context_file_read != context_file:
+            # 글로벌 템플릿을 프로젝트로 복사
+            import shutil
+            shutil.copy(context_file_read, context_file)
+        else:
+            # 기본 구조 생성
+            create_default_context_file(context_file)
 
     try:
         with open(context_file, 'r', encoding='utf-8') as f:
@@ -394,7 +418,10 @@ def log_user_prompt(prompt: str, intent: dict | None):
 
 def update_work_history(prompt: str, intent: dict):
     """WORK_HISTORY.md에 작업 기록 추가"""
-    history_file = MEMORY_PATH / 'WORK_HISTORY.md'
+    # 쓰기: 항상 프로젝트에
+    history_file = MEMORY_PATH_WRITE / 'WORK_HISTORY.md'
+    # 프로젝트 memory 디렉토리 생성
+    MEMORY_PATH_WRITE.mkdir(parents=True, exist_ok=True)
 
     task_desc = extract_task_description(prompt)
     category = intent.get('category', '작업')

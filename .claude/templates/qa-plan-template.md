@@ -174,12 +174,12 @@
 
 | 산출물 | 위치 | 담당 |
 |--------|------|------|
-| QA 계획서 | docs/qa/QA_PLAN.md | Claude AI |
-| 테스트 케이스 | docs/qa/TEST_CASES.md | Claude AI |
-| 테스트 결과 | docs/qa/TEST_RESULTS.md | Claude AI |
-| 버그 리포트 | docs/qa/BUG_REPORT.md | Claude AI |
-| 최종 보고서 | docs/qa/QA_REPORT.md | Claude AI |
-| 스크린샷 | .claude-state/qa/screenshots/ | 자동 생성 |
+| QA 계획서 | `.claude/docs/active/{feature}/qa/QA_PLAN.md` | Claude AI |
+| 테스트 케이스 | `.claude/docs/active/{feature}/qa/TEST_CASES.md` | Claude AI |
+| 테스트 결과 | `.claude/docs/active/{feature}/qa/TEST_RESULTS.md` | Claude AI |
+| 버그 리포트 | `.claude/docs/active/{feature}/qa/BUG_REPORT.md` | Claude AI |
+| 최종 보고서 | `.claude/docs/active/{feature}/qa/QA_REPORT.md` | Claude AI |
+| 스크린샷 | `.claude-state/qa/screenshots/` | 자동 생성 |
 
 ---
 

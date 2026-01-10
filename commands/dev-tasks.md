@@ -10,6 +10,44 @@ argument-hint: [기능명]
 
 PRD와 아키텍처 문서를 기반으로 구현 가능한 태스크로 분해합니다.
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/              ← 기능별 폴더
+│       ├── 01-brainstorm.md         ← /dev plan에서 생성
+│       ├── 02-prd.md                ← /dev plan에서 생성
+│       ├── 03-architecture.md       ← /dev design에서 생성
+│       ├── 04-erd.md                ← /dev design에서 생성
+│       ├── 05-tasks.md              ← 이 명령어에서 생성
+│       └── qa/                      ← /qa에서 생성
+│
+└── complete/                        ← worktree 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
+## 워크플로우
+
+```mermaid
+flowchart LR
+    subgraph Tasks["📋 /dev tasks"]
+        A[태스크 분해] --> B[Worktree 생성]
+    end
+
+    D["/dev design"] --> Tasks
+    Tasks --> I["/dev build"]
+
+    style Tasks fill:#fff3e0
+    style D fill:#e8f5e9
+    style I fill:#ffebee
+```
+
+**자동 연계:**
+- `/dev design`에서 생성된 아키텍처/ERD 자동 참조
+- 완료 시 `worktree.json` 자동 생성
+- `/dev build`로 구현 시작
+
 ## 사용법
 
 | 명령어 | 설명 |
@@ -19,16 +57,27 @@ PRD와 아키텍처 문서를 기반으로 구현 가능한 태스크로 분해�
 
 ## 실행 절차
 
-### Step 1: 컨텍스트 로드
+### Step 1: 기능 폴더 확인
+
+`.claude/memory/CURRENT_CONTEXT.md`에서 현재 작업 중인 기능 확인:
+
+```
+현재 기능: {feature-name}
+작업 폴더: .claude/docs/active/{feature-name}/
+```
+
+**⚠️ 주의**: `/dev plan`과 `/dev design`이 먼저 실행되어 있어야 합니다!
+
+### Step 2: 컨텍스트 로드
 
 ```
 1. .claude/memory/CURRENT_CONTEXT.md - 현재 작업 상태
-2. docs/prd/{feature}/prd.md - PRD 문서
-3. docs/architecture/system-architecture.md - 아키텍처 문서
-4. docs/architecture/erd.md - ERD 문서
+2. .claude/docs/active/{feature-name}/02-prd.md - PRD 문서
+3. .claude/docs/active/{feature-name}/03-architecture.md - 아키텍처 문서
+4. .claude/docs/active/{feature-name}/04-erd.md - ERD 문서
 ```
 
-### Step 2: 에픽 정의
+### Step 3: 에픽 정의
 
 PRD의 기능 요구사항을 에픽으로 그룹화:
 
@@ -38,7 +87,7 @@ Epic 2: 상품 관리
 Epic 3: 주문 처리
 ```
 
-### Step 3: 스토리 분해
+### Step 4: 스토리 분해
 
 각 에픽을 사용자 스토리로 분해:
 
@@ -50,7 +99,7 @@ Epic 1: 사용자 인증
 └── Story 1.4: 비밀번호 재설정
 ```
 
-### Step 4: 태스크 분해
+### Step 5: 태스크 분해
 
 각 스토리를 구현 태스크로 분해:
 
@@ -65,7 +114,7 @@ Story 1.1: 회원가입
 └── TASK-007: 회원가입 유닛 테스트 작성
 ```
 
-### 🚨 Step 4.5: Acceptance Criteria 정의 (필수!)
+### 🚨 Step 5.5: Acceptance Criteria 정의 (필수!)
 
 > **CRITICAL**: 모든 Task에 반드시 검증 가능한 AC를 3~5개 정의하세요!
 
@@ -88,7 +137,7 @@ Story 1.1: 회원가입
 
 **⚠️ AC 없이 Task를 생성하지 마세요! AC가 없으면 완료 검증이 불가능합니다.**
 
-### Step 5: 의존성 분석
+### Step 6: 의존성 분석
 
 ```mermaid
 graph LR
@@ -99,7 +148,7 @@ graph LR
     T006 --> T005[TASK-005]
 ```
 
-### Step 6: 우선순위 결정
+### Step 7: 우선순위 결정
 
 ```
 P0 (Critical): 기능의 핵심, 즉시 필요
@@ -108,9 +157,9 @@ P2 (Medium): 있으면 좋음
 P3 (Low): 나중에 해도 됨
 ```
 
-### Step 7: 태스크 문서 작성
+### Step 8: 태스크 문서 작성
 
-`docs/tasks/{feature-name}/tasks.md` 작성:
+`.claude/docs/active/{feature-name}/05-tasks.md` 작성:
 
 ```markdown
 # 태스크 목록: {기능명}
@@ -156,7 +205,7 @@ P3 (Low): 나중에 해도 됨
 - [ ] AC4: DB에 users 테이블 생성 확인
 
 **참조**:
-- `docs/architecture/erd.md`
+- `.claude/docs/active/{feature-name}/04-erd.md`
 
 > ⚠️ **모든 AC가 ✅ 될 때까지 TASK-002로 넘어가지 마세요!**
 
@@ -202,13 +251,14 @@ graph TD
 *구현 시작: /dev build TASK-001*
 ```
 
-### Step 8: Worktree 생성
+### Step 9: Worktree 생성
 
 태스크 분해 완료 시 `.claude-state/worktree.json` 자동 생성:
 
 ```json
 {
   "project": "{feature-name}",
+  "feature_folder": ".claude/docs/active/{feature-name}/",
   "created_at": "2024-01-15T09:00:00Z",
   "updated_at": "2024-01-15T09:00:00Z",
   "current_task": "TASK-001",
@@ -246,7 +296,7 @@ graph TD
 }
 ```
 
-### Step 9: 상태 업데이트
+### Step 10: 상태 업데이트
 
 `.claude/memory/CURRENT_CONTEXT.md` 업데이트:
 
@@ -254,19 +304,20 @@ graph TD
 ## 워크플로우 상태
 
 - **현재 기능**: {feature-name}
-- **현재 단계**: Phase 4 완료 (Task Planning)
-- **다음 단계**: Phase 5 (Implementation)
+- **작업 폴더**: .claude/docs/active/{feature-name}/
+- **현재 단계**: Tasks 완료
+- **다음 단계**: Build
 
 ## 생성된 문서
 
-- [x] brainstorm.md
-- [x] prd.md
-- [x] architecture.md
-- [x] erd.md
-- [x] tasks.md
+- [x] 01-brainstorm.md
+- [x] 02-prd.md
+- [x] 03-architecture.md
+- [x] 04-erd.md
+- [x] 05-tasks.md
 ```
 
-### Step 9: 완료 보고
+### Step 11: 완료 보고
 
 ```
 ============================================
@@ -274,7 +325,8 @@ graph TD
 ============================================
 
  기능: {feature-name}
- 생성된 문서: docs/tasks/{feature-name}/tasks.md
+ 폴더: .claude/docs/active/{feature-name}/
+ 문서: 05-tasks.md
 
  태스크 요약:
 • 총 태스크: {n}개
@@ -295,5 +347,6 @@ graph TD
 
 ## 참조 파일
 
-- `docs/prd/{feature}/prd.md` - PRD 문서
-- `docs/architecture/` - 아키텍처 문서
+- `.claude/docs/active/{feature-name}/02-prd.md` - PRD 문서
+- `.claude/docs/active/{feature-name}/03-architecture.md` - 아키텍처 문서
+- `.claude/docs/active/{feature-name}/04-erd.md` - ERD 문서

@@ -41,11 +41,31 @@ curl -s http://localhost:3000 > /dev/null && echo "서버 실행 중" || echo "�
 
 ### Step 2: 기능 목록 수집 (2분)
 
+**폴더 구조:**
+
+```
+.claude/docs/
+├── active/
+│   └── {feature-name}/
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md
+│       ├── 03-architecture.md
+│       ├── 04-erd.md
+│       ├── 05-tasks.md
+│       └── qa/                    ← QA 문서 저장 위치
+│           ├── QA_PLAN.md
+│           ├── TEST_CASES.md
+│           ├── TEST_RESULTS.md
+│           └── QA_REPORT.md
+│
+└── complete/
+```
+
 **수집 소스:**
 
 | 소스 | 위치 | 추출 정보 |
 |------|------|----------|
-| PRD | `docs/prd/*.md` | 기능 요구사항 |
+| PRD | `.claude/docs/active/{feature}/02-prd.md` | 기능 요구사항 |
 | Worktree | `.claude-state/worktree.json` | 구현된 태스크 |
 | Routes | `src/app/**/page.tsx` | 페이지 목록 |
 | Components | `src/components/**/*.tsx` | UI 컴포넌트 |
@@ -75,12 +95,13 @@ curl -s http://localhost:3000 > /dev/null && echo "서버 실행 중" || echo "�
 **자동 생성 파일:**
 
 ```
-docs/qa/
+.claude/docs/active/{feature-name}/qa/
 ├── QA_PLAN.md              # QA 계획서
-├── TEST_CASES.md           # 테스트 케이스 목록
-└── .claude-state/qa/
-    ├── qa-plan.json        # 계획 데이터
-    └── test-cases.json     # 케이스 데이터
+└── TEST_CASES.md           # 테스트 케이스 목록
+
+.claude-state/qa/
+├── qa-plan.json            # 계획 데이터
+└── test-cases.json         # 케이스 데이터
 ```
 
 **계획서 내용:**
@@ -220,8 +241,8 @@ docs/qa/
 ══════════════════════════════════════════════
 
 📁 생성된 파일:
-├── docs/qa/QA_PLAN.md
-├── docs/qa/TEST_CASES.md
+├── .claude/docs/active/{feature}/qa/QA_PLAN.md
+├── .claude/docs/active/{feature}/qa/TEST_CASES.md
 ├── .claude-state/qa/qa-status.json
 ├── .claude-state/qa/test-cases.json
 └── .claude-state/qa/screenshots/

@@ -17,6 +17,23 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 - "기획", "브레인스토밍", "아이디어" 언급 시
 - `/dev` 명령어 사용 시
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/
+│       ├── 01-brainstorm.md         ← /dev plan
+│       ├── 02-prd.md                ← /dev plan
+│       ├── 03-architecture.md       ← /dev design
+│       ├── 04-erd.md                ← /dev design
+│       ├── 05-tasks.md              ← /dev tasks
+│       └── qa/                      ← /qa
+│
+└── complete/                        ← worktree 100% 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
 ## 워크플로우 단계
 
 ```mermaid
@@ -24,6 +41,7 @@ flowchart LR
     A["/dev plan"] --> B["/dev design"]
     B --> C["/dev tasks"]
     C --> D["/dev build"]
+    D --> E["완료 → complete/"]
 ```
 
 ### Phase 1: Plan (기획)
@@ -37,8 +55,8 @@ flowchart LR
 | `/dev plan --prd` | PRD만 |
 
 **산출물**:
-- `docs/prd/{feature}/brainstorm.md`
-- `docs/prd/{feature}/prd.md`
+- `.claude/docs/active/{feature}/01-brainstorm.md`
+- `.claude/docs/active/{feature}/02-prd.md`
 
 ### Phase 2: Design (설계)
 
@@ -51,8 +69,8 @@ flowchart LR
 | `/dev design --erd` | ERD만 |
 
 **산출물**:
-- `docs/architecture/system-architecture.md`
-- `docs/architecture/erd.md`
+- `.claude/docs/active/{feature}/03-architecture.md`
+- `.claude/docs/active/{feature}/04-erd.md`
 
 ### Phase 3: Tasks (태스크 분해)
 
@@ -63,7 +81,7 @@ flowchart LR
 | `/dev tasks` | 태스크 분해 + worktree.json 생성 |
 
 **산출물**:
-- `docs/tasks/{feature}/tasks.md`
+- `.claude/docs/active/{feature}/05-tasks.md`
 - `.claude-state/worktree.json`
 
 ### Phase 4: Build (구현)

@@ -9,6 +9,23 @@ allowed-tools: Read, Glob
 
 현재 개발 워크플로우의 진행 상황을 한눈에 파악합니다.
 
+## 폴더 구조
+
+```
+.claude/docs/
+├── active/                          ← 진행 중인 기능
+│   └── {feature-name}/
+│       ├── 01-brainstorm.md
+│       ├── 02-prd.md
+│       ├── 03-architecture.md
+│       ├── 04-erd.md
+│       ├── 05-tasks.md
+│       └── qa/
+│
+└── complete/                        ← worktree 완료 시 자동 이동
+    └── {완료된-기능}/
+```
+
 ## 실행 절차
 
 ### Step 1: 컨텍스트 로드
@@ -20,9 +37,13 @@ allowed-tools: Read, Glob
 ### Step 2: 문서 상태 확인
 
 ```
-docs/prd/{feature}/ - brainstorm.md, prd.md
-docs/architecture/ - system-architecture.md, erd.md, api-spec.md
-docs/tasks/{feature}/ - tasks.md, progress.md
+.claude/docs/active/{feature-name}/
+├── 01-brainstorm.md     ← Phase 1: 브레인스토밍
+├── 02-prd.md            ← Phase 2: PRD
+├── 03-architecture.md   ← Phase 3: 아키텍처
+├── 04-erd.md            ← Phase 3: ERD
+├── 05-tasks.md          ← Phase 4: 태스크 분해
+└── qa/                  ← Phase 6: QA (선택)
 ```
 
 ### Step 3: 상태 출력
@@ -33,23 +54,23 @@ docs/tasks/{feature}/ - tasks.md, progress.md
 ============================================
 
  현재 기능: {feature-name}
+ 작업 폴더: .claude/docs/active/{feature-name}/
  시작일: {시작일}
 
  워크플로우 진행 상황:
 
  Phase 1: Brainstorming     [완료]
  Phase 2: PRD              [완료]
- Phase 3: Architecture      [완료]
+ Phase 3: Design           [완료]
  Phase 4: Task Planning     [완료]
  Phase 5: Implementation    [진행 중]
 
  생성된 문서:
-• [x] docs/prd/{feature}/brainstorm.md
-• [x] docs/prd/{feature}/prd.md
-• [x] docs/architecture/system-architecture.md
-• [x] docs/architecture/erd.md
-• [x] docs/architecture/api-spec.md
-• [x] docs/tasks/{feature}/tasks.md
+• [x] 01-brainstorm.md
+• [x] 02-prd.md
+• [x] 03-architecture.md
+• [x] 04-erd.md
+• [x] 05-tasks.md
 
  태스크 진행 상황:
 • 총 태스크: 15개
@@ -73,12 +94,18 @@ docs/tasks/{feature}/ - tasks.md, progress.md
 
  사용 가능한 명령어:
 • /dev build TASK-011  - 다음 태스크 구현
-• /dev-tasks              - 태스크 목록 보기
+• /worktree            - 작업 트리 보기
 
 ============================================
 ```
 
-### Step 4: 진행 중인 워크플로우 없을 경우
+### Step 4: 완료된 기능 확인
+
+```
+.claude/docs/complete/ 디렉토리에서 완료된 기능 목록 확인
+```
+
+### Step 5: 진행 중인 워크플로우 없을 경우
 
 ```
 ============================================
@@ -90,9 +117,12 @@ docs/tasks/{feature}/ - tasks.md, progress.md
  새 워크플로우 시작:
   /dev plan "기능 아이디어"
 
- 기존 문서:
-• docs/prd/user-auth/ (완료)
-• docs/prd/payment/ (진행 중)
+ 완료된 기능:
+• .claude/docs/complete/user-auth/
+• .claude/docs/complete/payment/
+
+ 진행 중인 기능:
+• (없음)
 
 ============================================
 ```
@@ -100,4 +130,6 @@ docs/tasks/{feature}/ - tasks.md, progress.md
 ## 참조 파일
 
 - `.claude/memory/CURRENT_CONTEXT.md` - 현재 컨텍스트
-- `docs/tasks/{feature}/progress.md` - 진행 상황
+- `.claude-state/worktree.json` - 태스크 진행 상황
+- `.claude/docs/active/` - 진행 중인 기능 폴더
+- `.claude/docs/complete/` - 완료된 기능 폴더
