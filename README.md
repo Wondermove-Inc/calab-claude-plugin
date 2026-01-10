@@ -130,6 +130,68 @@
 | `project` | `.claude/plugins/` | 현재 프로젝트 (Git 관리) | **팀 협업, Git 공유** |
 | `local` | 세션 메모리 | 현재 세션만 | **테스트, 임시 사용** |
 
+### 재설치/업데이트
+
+버전 업데이트 또는 문제 발생 시 아래 순서를 **정확히** 따르세요:
+
+```bash
+# ⚠️ 순서가 중요합니다!
+
+# Step 1: Claude Code 내부에서 먼저 제거
+/plugin uninstall calab-plugin
+/plugin marketplace remove calab-marketplace
+
+# Step 2: 터미널에서 스크립트 실행
+./uninstall-plugin.sh    # 캐시 포함 전체 제거
+./install-plugin.sh      # 캐시 삭제 옵션 Y 선택 권장
+
+# Step 3: Claude Code 내부에서 다시 등록
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
+```
+
+> **중요**: Step 1을 건너뛰면 "already installed" 오류가 발생할 수 있습니다.
+
+### 문제 해결
+
+#### 플러그인이 목록에 표시되지 않음
+
+```bash
+# 1. 캐시 수동 삭제
+rm -rf ~/.claude/plugins/cache/calab-marketplace/
+
+# 2. installed_plugins.json 정리 (선택)
+# 파일을 열어 calab-plugin 항목이 있으면 제거
+cat ~/.claude/plugins/installed_plugins.json
+
+# 3. Claude Code 재시작 후 다시 등록
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
+```
+
+#### "already installed" 오류
+
+```bash
+# Claude Code 내부에서
+/plugin uninstall calab-plugin
+/plugin marketplace remove calab-marketplace
+
+# 터미널에서 캐시 삭제
+rm -rf ~/.claude/plugins/cache/calab-marketplace/
+
+# Claude Code 내부에서 다시 설치
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
+```
+
+#### Claude Code 버전 확인
+
+플러그인 시스템은 Claude Code 2.x 이상에서 지원됩니다:
+```bash
+claude --version   # 2.x 이상 필요
+claude update      # 구버전이면 업데이트
+```
+
 상세: [INSTALL.md](INSTALL.md)
 
 ---
