@@ -4,7 +4,7 @@
 
 ---
 
-## ⚠️ v2.x Breaking Changes
+## Breaking Changes
 
 **기존 v1.x 사용자는 마이그레이션 필수입니다:**
 
