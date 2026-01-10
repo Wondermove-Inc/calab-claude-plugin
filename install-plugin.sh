@@ -180,8 +180,8 @@ if [ -d "$PLUGIN_DIR/.claude-plugin" ]; then
     echo "   ✅ .claude-plugin/ 복사 완료"
 fi
 
-# marketplace.json 생성
-cat > "$MARKETPLACE_DIR/.claude-plugin/marketplace.json" <<MARKETPLACE
+# marketplace.json 생성 (루트 디렉토리에 위치해야 함)
+cat > "$MARKETPLACE_DIR/marketplace.json" <<MARKETPLACE
 {
   "\$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "calab-marketplace",

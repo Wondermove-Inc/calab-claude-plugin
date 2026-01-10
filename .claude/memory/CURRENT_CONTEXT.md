@@ -1,6 +1,6 @@
 # 현재 작업 컨텍스트
 
-> 마지막 업데이트: 2026-01-10 15:45 (자동)
+> 마지막 업데이트: 2026-01-10 16:02 (자동)
 
 ---
 
@@ -12,6 +12,10 @@
 
 ## 작업 스택 (위에서 아래로 진입 순서)
 
+- [16:02] **[구현]** ❯ /plugin uninstall calab-plugin
+- [15:55] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
+- [15:52] **[수정/버그픽스]** 에러가 발생한다 확인되?
+- [15:49] **[구현]** /home/wondermove/claude-projects/calab-claude-plugin/uninstall-plugin.sh 이거를 실행하고, /home/wondermo...
 - [15:45] **[구현]** git add . 하고, 전체 파일에 대해서 git commit 하고, 전체에 대해서 git push를 해라.
 - [15:43] **[수정/버그픽스]** 수정해. 그리고 한번만 해주면 되는건가?
 - [15:42] **[검토]** 타비리 검색으로 정확하게 확인해
@@ -45,6 +49,132 @@
 ---
 
 ## 최근 완료된 작업
+
+### 이번 세션 (2026-01-10)
+- [15:58] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:58] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:58] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:58] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:58] 메모리: CURRENT_CONTEXT.md
+- [15:58] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:58] 기타: plugin.json, INSTALL.md, install-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:58] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:58] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:58] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:58] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:58] 메모리: CURRENT_CONTEXT.md
+- [15:58] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:58] 기타: plugin.json, INSTALL.md, install-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:56] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:56] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:56] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:56] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:56] 메모리: CURRENT_CONTEXT.md
+- [15:56] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:56] 기타: plugin.json, INSTALL.md, install-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:56] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:56] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:56] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:56] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:56] 메모리: CURRENT_CONTEXT.md
+- [15:56] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:56] 기타: plugin.json, INSTALL.md, install-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:55] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:55] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:55] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:55] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:55] 메모리: CURRENT_CONTEXT.md
+- [15:55] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:55] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:55] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:55] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:55] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:55] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:55] 메모리: CURRENT_CONTEXT.md
+- [15:55] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:55] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:53] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:53] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:53] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:53] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:53] 메모리: CURRENT_CONTEXT.md
+- [15:53] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:53] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:53] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:53] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:53] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:53] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:53] 메모리: CURRENT_CONTEXT.md
+- [15:53] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:53] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:52] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:52] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:52] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:52] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:52] 메모리: CURRENT_CONTEXT.md
+- [15:52] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:52] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:52] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:52] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:52] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:52] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:52] 메모리: CURRENT_CONTEXT.md
+- [15:52] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:52] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:51] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:51] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:51] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:51] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:51] 메모리: CURRENT_CONTEXT.md
+- [15:51] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:51] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:49] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:49] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:49] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:49] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:49] 메모리: CURRENT_CONTEXT.md
+- [15:49] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:49] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:49] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:49] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:49] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:49] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:49] 메모리: CURRENT_CONTEXT.md
+- [15:49] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:49] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [15:45] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [15:45] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [15:45] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [15:45] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [15:45] 메모리: CURRENT_CONTEXT.md
+- [15:45] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [15:45] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
 
 ### 이번 세션 (2026-01-10)
 - [15:45] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개

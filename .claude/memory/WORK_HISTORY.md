@@ -1,11 +1,21 @@
 # 작업 히스토리
 
-> 마지막 업데이트: 2026-01-10 15:45 (자동)
+> 마지막 업데이트: 2026-01-10 16:02 (자동)
 
 ---
 
 ## 2026-01-10
 
+- [16:02] **[구현]** ❯ /plugin uninstall calab-plugin
+- [16:02] **[구현]** ❯ /plugin uninstall calab-plugin
+- [15:56] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
+- [15:56] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
+- [15:55] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
+- [15:55] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
+- [15:52] **[수정/버그픽스]** 에러가 발생한다 확인되?
+- [15:52] **[수정/버그픽스]** 에러가 발생한다 확인되?
+- [15:49] **[구현]** /home/wondermove/claude-projects/calab-claude-plugin/uninstall-plugin.sh 이거를 실행하고, /home/wondermo...
+- [15:49] **[구현]** /home/wondermove/claude-projects/calab-claude-plugin/uninstall-plugin.sh 이거를 실행하고, /home/wondermo...
 - [15:45] **[구현]** git add . 하고, 전체 파일에 대해서 git commit 하고, 전체에 대해서 git push를 해라.
 - [15:43] **[수정/버그픽스]** 수정해. 그리고 한번만 해주면 되는건가?
 - [15:42] **[검토]** 타비리 검색으로 정확하게 확인해
