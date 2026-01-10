@@ -1,6 +1,6 @@
 # 현재 작업 컨텍스트
 
-> 마지막 업데이트: 2026-01-10 16:09 (자동)
+> 마지막 업데이트: 2026-01-10 16:13 (자동)
 
 ---
 
@@ -12,6 +12,7 @@
 
 ## 작업 스택 (위에서 아래로 진입 순서)
 
+- [16:13] **[구현]** 3단계에서  /plugin marketplace add ~/.claude/calab-marketplace
 - [16:06] **[수정/버그픽스]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh, /home/wondermove/claude-p...
 - [16:02] **[구현]** ❯ /plugin uninstall calab-plugin
 - [15:55] **[검토]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh , /home/wondermove/claude-...
@@ -50,6 +51,26 @@
 ---
 
 ## 최근 완료된 작업
+
+### 이번 세션 (2026-01-10)
+- [16:10] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [16:10] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [16:10] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [16:10] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [16:10] 메모리: CURRENT_CONTEXT.md
+- [16:10] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [16:10] 설정: installed_plugins.json
+- [16:10] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
+
+### 이번 세션 (2026-01-10)
+- [16:10] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개
+- [16:10] 스킬: SKILL.md, SKILL.md, SKILL.md
+- [16:10] 훅: pre_compact.py, user_prompt_submit.py, session_stop.py 외 1개
+- [16:10] 템플릿: task-template.md, qa-plan-template.md, erd-template.md 외 1개
+- [16:10] 메모리: CURRENT_CONTEXT.md
+- [16:10] 문서: CLAUDE.md, REFACTORING_REPORT.md, README.md
+- [16:10] 설정: installed_plugins.json
+- [16:10] 기타: plugin.json, INSTALL.md, uninstall-plugin.sh 외 1개
 
 ### 이번 세션 (2026-01-10)
 - [16:09] 명령어: dev-plan.md, dev-design.md, dev-tasks.md 외 6개

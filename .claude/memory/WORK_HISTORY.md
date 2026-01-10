@@ -1,11 +1,13 @@
 # 작업 히스토리
 
-> 마지막 업데이트: 2026-01-10 16:06 (자동)
+> 마지막 업데이트: 2026-01-10 16:13 (자동)
 
 ---
 
 ## 2026-01-10
 
+- [16:13] **[구현]** 3단계에서  /plugin marketplace add ~/.claude/calab-marketplace
+- [16:13] **[구현]** 3단계에서  /plugin marketplace add ~/.claude/calab-marketplace
 - [16:06] **[수정/버그픽스]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh, /home/wondermove/claude-p...
 - [16:06] **[수정/버그픽스]** /home/wondermove/claude-projects/calab-claude-plugin/install-plugin.sh, /home/wondermove/claude-p...
 - [16:02] **[구현]** ❯ /plugin uninstall calab-plugin
