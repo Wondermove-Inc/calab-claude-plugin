@@ -1,6 +1,10 @@
 # Claude 런타임 상태 (자동 생성됨)
 .claude-state/
 
+# Python 캐시
+__pycache__/
+*.pyc
+
 # 생성된 문서 (PRD, 아키텍처, 태스크)
 docs/
 .claude/project-context

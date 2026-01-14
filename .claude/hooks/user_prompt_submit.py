@@ -15,6 +15,7 @@ import re
 import os
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # 경로 설정
 HOME_DIR = os.environ.get('HOME', '')
@@ -52,7 +53,7 @@ def save_json(path: Path, data: dict):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def detect_slash_command(prompt: str) -> dict | None:
+def detect_slash_command(prompt: str) -> Optional[dict]:
     """슬래시 명령어 감지"""
     prompt_stripped = prompt.strip()
 
@@ -130,7 +131,7 @@ def detect_slash_command(prompt: str) -> dict | None:
     return None
 
 
-def detect_work_intent(prompt: str) -> dict | None:
+def detect_work_intent(prompt: str) -> Optional[dict]:
     """프롬프트에서 작업 의도 감지 (슬래시 명령어 + 자연어 키워드)"""
 
     # 1. 슬래시 명령어 우선 감지
@@ -385,7 +386,7 @@ def create_default_context_file(context_file: Path):
         pass
 
 
-def log_user_prompt(prompt: str, intent: dict | None):
+def log_user_prompt(prompt: str, intent: Optional[dict]):
     """사용자 프롬프트 로깅 (슬래시 명령어 + 자연어 모두 기록)"""
     log_file = STATE_PATH / 'prompt_history.json'
 
@@ -514,7 +515,7 @@ def update_work_history(prompt: str, intent: dict):
         pass
 
 
-def get_context_reminder(intent: dict | None) -> str:
+def get_context_reminder(intent: Optional[dict]) -> str:
     """작업 의도 기반 컨텍스트 리마인더"""
     if not intent:
         return ""

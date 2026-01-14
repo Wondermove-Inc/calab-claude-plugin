@@ -15,6 +15,7 @@ import re
 import os
 from pathlib import Path
 from datetime import datetime
+from typing import Union
 
 # 경로 설정
 HOME_DIR = os.environ.get('HOME', '')
@@ -34,7 +35,7 @@ MEMORY_PATH = PROJECT_MEMORY if PROJECT_MEMORY.exists() else GLOBAL_MEMORY
 MEMORY_PATH_WRITE = PROJECT_MEMORY
 
 
-def load_json(path: Path) -> dict | list:
+def load_json(path: Path) -> Union[dict, list]:
     """JSON 파일 로드"""
     if not path.exists():
         return {}
@@ -45,7 +46,7 @@ def load_json(path: Path) -> dict | list:
         return {}
 
 
-def save_json(path: Path, data: dict | list):
+def save_json(path: Path, data: Union[dict, list]):
     """JSON 파일 저장"""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:

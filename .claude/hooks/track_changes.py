@@ -14,6 +14,7 @@ import sys
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Union
 
 
 def get_project_root() -> Path:
@@ -28,7 +29,7 @@ PROJECT_ROOT = get_project_root()
 STATE_DIR = PROJECT_ROOT / '.claude-state'
 
 
-def load_json(path: Path) -> list | dict:
+def load_json(path: Path) -> Union[list, dict]:
     """JSON 파일 로드"""
     if not path.exists():
         return []
@@ -39,7 +40,7 @@ def load_json(path: Path) -> list | dict:
         return []
 
 
-def save_json(path: Path, data: list | dict):
+def save_json(path: Path, data: Union[list, dict]):
     """JSON 파일 저장"""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
