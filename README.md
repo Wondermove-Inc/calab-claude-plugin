@@ -90,6 +90,104 @@
 
 ---
 
+## 플러그인 명령어별 적용 표준 정리
+
+### 1. 개발 워크플로우 (Development Workflow)
+
+| 명령어             | 적용 표준                               | 설명                                                                        |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| **/dev plan**   | PRD 템플릿                             | 브레인스토밍 + 요구사항 문서 작성<br>· 배경<br>· 목표<br>· 사용자 스토리<br>· 기능 요구사항             |
+| **/dev design** | C4 Model + Layered Architecture     | 시스템 아키텍처(C4)<br>ERD 설계<br>3NF 정규화<br>필수 컬럼 규칙                             |
+| **/dev tasks**  | Epic–Story–Task 구조 + AC             | 작업 분해(Epic→Story→Task)<br>의존성 분석<br>우선순위(P0~P3)<br>Acceptance Criteria 필수 |
+| **/dev build**  | Clean Architecture + Best Practices | 4-Layer 구조<br>기술별 베스트 프랙티스<br>파일 300줄 제한<br>JSDoc 필수                      |
+| **/dev status** | Worktree 진행률 추적                     | 작업 상태 시각화<br>완료 / 진행중 / 블로킹                                               |
+
+---
+
+### 2. 클린 아키텍처 (Clean Architecture)
+
+| 명령어                 | 적용 표준                      | 설명                                                       |
+| ------------------- | -------------------------- | -------------------------------------------------------- |
+| **/clean-init**     | 4-Layer Clean Architecture | Domain / Application / Adapters / Infrastructure 디렉토리 구조 |
+| **/clean-entity**   | Domain Layer 규칙            | 외부 import 금지<br>순수 TypeScript<br>Value Object 중심         |
+| **/clean-usecase**  | Application Layer 규칙       | Domain만 import<br>Interface 의존<br>DTO / Port 정의          |
+| **/clean-validate** | 의존성 규칙 검증                  | 내부 → 외부 참조 금지<br>순환 의존성 탐지                               |
+
+---
+
+### 3. 온보딩 & 컨텍스트 관리
+
+| 명령어                | 적용 표준                   | 설명                                                                                                                |
+| ------------------ | ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **/onboard**       | C4 Model + Docs-as-Code | 5개 핵심 컨텍스트 문서 생성<br>· PROJECT_SUMMARY<br>· ARCHITECTURE<br>· CODE_PATTERNS<br>· CONVENTIONS<br>· DOMAIN_KNOWLEDGE |
+| **/onboard-quick** | 핵심 컨텍스트 추출              | 기술 스택<br>디렉토리 구조<br>핵심 패턴 요약                                                                                      |
+| **/learn**         | 패턴 추출                   | 특정 영역 심층 분석<br>코드 패턴 식별                                                                                           |
+
+---
+
+### 4. 리서치 (Research)
+
+| 명령어           | 적용 표준        | 설명                                       |
+| ------------- | ------------ | ---------------------------------------- |
+| **/research** | 체계적 리서치 프로토콜 | 5~10회 다각도 검색<br>핵심 요약<br>출처 검증<br>신뢰도 평가 |
+
+---
+
+### 5. 문제 해결 (Problem Solving)
+
+| 명령어                     | 적용 표준                            | 설명                                                                   |
+| ----------------------- | -------------------------------- | -------------------------------------------------------------------- |
+| **/solve**              | 5 Whys + RCA + Scientific Method | 6단계 문제 해결<br>① 문제 정의<br>② 데이터 수집<br>③ 분석<br>④ 가설 수립<br>⑤ 해결<br>⑥ 문서화 |
+| **/solve --5whys**      | 5 Whys                           | “왜?”를 5번 반복하여 근본 원인 추적                                               |
+| **/solve --rca**        | Root Cause Analysis              | 8단계 RCA<br>Fishbone 다이어그램                                            |
+| **/solve --hypothesis** | 가설 기반 접근                         | 가설 → 예측 → 실험 → 검증                                                    |
+| **/solve --binary**     | Binary Search Debugging          | 코드 이분 탐색으로 문제 위치 특정                                                  |
+
+---
+
+### 6. QA & 테스트
+
+| 명령어            | 적용 표준                   | 설명                                               |
+| -------------- | ----------------------- | ------------------------------------------------ |
+| **/qa**        | 7단계 QA 프로세스             | 요구사항 분석 → 계획 → 케이스 설계 → 실행 → 결함 관리 → 보고 → 회귀     |
+| **/qa-plan**   | 테스트 피라미드 + Risk-based   | Unit 70%<br>Integration 20%<br>E2E 10%<br>고위험 우선 |
+| **/qa-run**    | MCP Puppeteer E2E + BDD | 자동화 브라우저 테스트<br>Given–When–Then                  |
+| **/qa-report** | 표준 QA 보고서               | 통과율<br>실패 상세<br>버그 목록<br>권장사항                    |
+
+---
+
+### 7. Worktree & JIRA 연동
+
+| 명령어           | 적용 표준              | 설명                        |
+| ------------- | ------------------ | ------------------------- |
+| **/worktree** | Epic–Story–Task 트리 | 계층적 작업 구조<br>진행률 시각화      |
+| **/jira-***   | 양방향 동기화            | Worktree ↔ JIRA 상태 자동 동기화 |
+
+---
+
+### 8. 컨텍스트 저장 & 복원
+
+| 명령어                  | 적용 표준         | 설명                                 |
+| -------------------- | ------------- | ---------------------------------- |
+| **/restore-context** | 규칙 + 작업 상태 복원 | PROJECT_RULES + CURRENT_CONTEXT 로드 |
+| **/save-progress**   | 체크포인트 저장      | 현재 상태를 `checkpoint.json`에 저장       |
+
+---
+
+### 9. 자동 적용 스킬 (Passive Skills)
+
+> **코드 작성 시 항상 자동 적용**
+
+| 스킬                     | 적용 표준              | 트리거               |
+| ---------------------- | ------------------ | ----------------- |
+| **clean-architecture** | 4-Layer 의존성 규칙     | 모든 코드 구현          |
+| **best-practices**     | 기술별 베스트 프랙티스 (15+) | 파일 확장자 / 키워드 감지   |
+| **code-quality**       | 300줄 제한 + JSDoc 필수 | 코드 생성 / 수정        |
+| **work-tracker**       | Worktree 자동 추적     | 작업 시작 / 완료 키워드    |
+| **problem-solving**    | 6단계 문제 해결 방법론      | 에러 / 버그 / 디버깅 키워드 |
+
+---
+
 ## 설치
 
 ### v2.1 공식 플러그인 설치 (권장)
