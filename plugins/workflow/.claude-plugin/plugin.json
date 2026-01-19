@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
     "name": "Wonder Move Lab",
@@ -11,11 +11,7 @@
   "keywords": [
     "workflow",
     "development",
-    "planning",
-    "automation",
-    "jira",
-    "testing",
-    "qa"
+    "automation"
   ],
   "commands": [
     "dev-plan",
@@ -41,64 +37,5 @@
     "qa-run",
     "qa-report",
     "qa-status"
-  ],
-  "skills": [
-    "dev-workflow",
-    "work-tracker",
-    "project-rules",
-    "code-quality",
-    "best-practices",
-    "jira-integration",
-    "qa-testing"
-  ],
-  "hooks": [
-    "code_quality_validator",
-    "track_changes",
-    "session_start",
-    "session_end",
-    "pre_compact",
-    "notification_handler",
-    "subagent_tracker",
-    "jira_auto_sync",
-    "worktree_auto_update"
-  ],
-  "includes": {
-    "best-practices": [
-      "go.md",
-      "java.md",
-      "nodejs.md",
-      "python.md",
-      "react.md",
-      "rust.md",
-      "tailwind.md",
-      "typescript.md",
-      "nextjs.md",
-      "qa-testing.md",
-      "testing.md"
-    ],
-    "templates": [
-      "prd-template.md",
-      "task-template.md",
-      "qa-plan-template.md",
-      "qa-report-template.md"
-    ],
-    "memory": [
-      "PROJECT_RULES.md",
-      "CURRENT_CONTEXT.md",
-      "WORK_HISTORY.md",
-      "CODE_STYLE.md",
-      "TECH_STACK.md"
-    ],
-    "agents": [
-      "code-reviewer.md",
-      "project-guardian.md"
-    ],
-    "integrations": [
-      "connector.py",
-      "sync.py",
-      "cli.py",
-      "utils.py",
-      "jira_config.json"
-    ]
-  }
+  ]
 }
