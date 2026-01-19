@@ -41,9 +41,9 @@
 
 ```bash
 # 1. 마켓플레이스 등록 (SSH - 최초 1회)
-/plugin marketplace add Wondermove-Inc/calab-claude-plugin
+/plugin marketplace add https://github.com/Wondermove-Inc/calab-claude-plugin.git
 # workflow 브랜치 등록
-/plugin marketplace add Wondermove-Inc/calab-claude-plugin#workflow
+/plugin marketplace add https://github.com/Wondermove-Inc/calab-claude-plugin.git#workflow
 
 
 # 2. 원하는 플러그인 설치
