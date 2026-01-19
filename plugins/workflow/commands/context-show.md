@@ -76,7 +76,7 @@ src/
 | Testing | Jest | 29.x |
 | Testing | Testing Library | 14.x |
 
-참조: memory/PROJECT_SUMMARY.md
+참조: .claude/memory/PROJECT_SUMMARY.md
 ```
 
 ### 코드 패턴만 (`/context-show patterns`)
@@ -117,7 +117,7 @@ describe('Component', () => {
 });
 ```
 
-참조: memory/CODE_PATTERNS.md
+참조: .claude/memory/CODE_PATTERNS.md
 ```
 
 ## 컨텍스트가 없는 경우

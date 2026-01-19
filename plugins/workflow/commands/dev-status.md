@@ -31,7 +31,7 @@ allowed-tools: Read, Glob
 ### Step 1: 컨텍스트 로드
 
 ```
-memory/CURRENT_CONTEXT.md 읽기
+.claude/memory/CURRENT_CONTEXT.md 읽기
 ```
 
 ### Step 2: 문서 상태 확인
@@ -129,7 +129,7 @@ memory/CURRENT_CONTEXT.md 읽기
 
 ## 참조 파일
 
-- `memory/CURRENT_CONTEXT.md` - 현재 컨텍스트
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 컨텍스트
 - `.claude-state/worktree.json` - 태스크 진행 상황
 - `.claude/docs/active/` - 진행 중인 기능 폴더
 - `.claude/docs/complete/` - 완료된 기능 폴더

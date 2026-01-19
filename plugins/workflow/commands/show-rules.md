@@ -9,7 +9,7 @@ allowed-tools: Read
 
 ### 1. 규칙 파일 읽기
 
-`memory/PROJECT_RULES.md` 파일을 읽으세요.
+`.claude/memory/PROJECT_RULES.md` 파일을 읽으세요.
 
 ### 2. 정리하여 표시
 

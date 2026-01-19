@@ -59,7 +59,7 @@ def categorize_file(file_path: str) -> str:
         return 'hook'
     elif 'templates/' in path:
         return 'template'
-    elif 'memory/' in path:
+    elif '.claude/memory/' in path:
         return 'memory'
     elif 'best-practices/' in path:
         return 'best-practice'

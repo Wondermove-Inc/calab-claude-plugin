@@ -21,14 +21,14 @@ allowed-tools: Read, Grep, Glob
 ## 규칙 참조 절차
 
 ### 1. 핵심 규칙 확인
-`memory/PROJECT_RULES.md` 파일을 읽어서 다음을 확인:
+`.claude/memory/PROJECT_RULES.md` 파일을 읽어서 다음을 확인:
 - 코딩 컨벤션
 - 아키텍처 원칙
 - 금지 사항
 - 네이밍 규칙
 
 ### 2. 현재 컨텍스트 확인
-`memory/CURRENT_CONTEXT.md` 파일을 읽어서 다음을 확인:
+`.claude/memory/CURRENT_CONTEXT.md` 파일을 읽어서 다음을 확인:
 - 현재 진행 중인 작업
 - 관련 주의사항
 - 작업 목표와의 일관성
@@ -60,5 +60,5 @@ allowed-tools: Read, Grep, Glob
 ```
 
 ## 참조 파일
-- `memory/PROJECT_RULES.md` - 상세 프로젝트 규칙
+- `.claude/memory/PROJECT_RULES.md` - 상세 프로젝트 규칙
 - `CLAUDE.md` - 핵심 규칙 요약

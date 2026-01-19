@@ -13,9 +13,9 @@ allowed-tools: Read
 
 | 파일 | 설명 | 중요도 |
 |------|------|--------|
-| `memory/PROJECT_RULES.md` | 프로젝트 규칙 | 🔴 필수 |
-| `memory/CURRENT_CONTEXT.md` | 현재 작업 상태 | 🔴 필수 |
-| `memory/WORK_HISTORY.md` | 작업 히스토리 | 🟡 권장 |
+| `.claude/memory/PROJECT_RULES.md` | 프로젝트 규칙 | 🔴 필수 |
+| `.claude/memory/CURRENT_CONTEXT.md` | 현재 작업 상태 | 🔴 필수 |
+| `.claude/memory/WORK_HISTORY.md` | 작업 히스토리 | 🟡 권장 |
 
 ### Phase 2: 런타임 상태 (.claude-state/) (필수)
 

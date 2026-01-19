@@ -20,7 +20,7 @@ def setup_project_files(project_dir: Path, home_dir: Path) -> list:
 
     복사 대상:
     - CLAUDE.md: 플러그인 메인 설명서
-    - .claude/memory/: 메모리 템플릿 (없는 경우)
+    - .claude/.claude/memory/: 메모리 템플릿 (없는 경우)
     """
     messages = []
 
@@ -38,7 +38,7 @@ def setup_project_files(project_dir: Path, home_dir: Path) -> list:
         except Exception as e:
             messages.append(f" ⚠️ CLAUDE.md 복사 실패: {e}")
 
-    # 2. .claude/memory/ 디렉토리 및 템플릿 복사
+    # 2. .claude/.claude/memory/ 디렉토리 및 템플릿 복사
     project_memory = project_claude_dir / 'memory'
     global_memory = global_claude_dir / 'memory'
 

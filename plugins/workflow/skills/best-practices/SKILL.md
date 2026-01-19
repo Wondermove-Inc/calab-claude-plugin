@@ -132,5 +132,5 @@ best-practices/{technology}.md 읽기
 ## 참조 파일
 
 - `best-practices/` - 기술별 베스트 프랙티스 (15개)
-- `memory/TECH_STACK.md` - 기술 스택 설정
-- `memory/CODE_STYLE.md` - 코드 스타일 규칙
+- `.claude/memory/TECH_STACK.md` - 기술 스택 설정
+- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙

@@ -61,7 +61,7 @@ Hook은 파일 변경만 감지할 수 있고, Claude가 실제로 무슨 작업
 ### 새 작업 시작 시
 
 1. **현재 상태 확인**
-   - `memory/CURRENT_CONTEXT.md` 읽기
+   - `.claude/memory/CURRENT_CONTEXT.md` 읽기
    - 기존 작업 스택 확인
 
 2. **작업 스택 업데이트**
@@ -271,8 +271,8 @@ completed_at: "2024-01-15T11:00:00Z"  (완료 시)
 ```
 
 ## 참조 파일
-- `memory/CURRENT_CONTEXT.md` - 현재 작업 상태
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 상태
 - `.claude-state/checkpoint.json` - 체크포인트
 - `.claude-state/worktree.json` - 작업 트리 상태
-- `memory/WORK_HISTORY.md` - 작업 히스토리
+- `.claude/memory/WORK_HISTORY.md` - 작업 히스토리
 - `commands/worktree.md` - Worktree 명령어

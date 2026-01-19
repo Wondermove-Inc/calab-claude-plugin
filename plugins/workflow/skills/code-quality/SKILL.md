@@ -127,5 +127,5 @@ async def get_user_by_id(user_id: str) -> Optional[User]:
 
 ## 참조 파일
 
-- `memory/CODE_STYLE.md` - 상세 코드 스타일 규칙
-- `memory/PROJECT_RULES.md` - 프로젝트 규칙
+- `.claude/memory/CODE_STYLE.md` - 상세 코드 스타일 규칙
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙

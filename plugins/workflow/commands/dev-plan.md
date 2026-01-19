@@ -194,7 +194,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 
 ## 상태 업데이트
 
-`memory/CURRENT_CONTEXT.md` 업데이트:
+`.claude/memory/CURRENT_CONTEXT.md` 업데이트:
 
 ```markdown
 ## 워크플로우 상태

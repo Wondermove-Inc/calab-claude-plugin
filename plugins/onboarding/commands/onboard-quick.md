@@ -199,7 +199,7 @@ src/
 ══════════════════════════════════════════════
 
 📁 생성된 문서:
-└── memory/PROJECT_SUMMARY.md
+└── .claude/memory/PROJECT_SUMMARY.md
 
 💡 다음 단계:
    /onboard          → 상세 분석 (5개 문서)

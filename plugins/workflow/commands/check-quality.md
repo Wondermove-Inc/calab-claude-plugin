@@ -88,5 +88,5 @@ allowed-tools: Read, Grep, Glob, Bash
 
 ## 참조 파일
 
-- `memory/CODE_STYLE.md` - 코드 스타일 규칙
+- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙
 - `.claude-state/quality_violations.json` - 위반 기록

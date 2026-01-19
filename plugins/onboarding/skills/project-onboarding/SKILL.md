@@ -39,7 +39,7 @@ flowchart TD
 ### 저장 위치
 
 ```
-memory/
+.claude/memory/
 ├── PROJECT_SUMMARY.md      # 프로젝트 요약 (필수)
 ├── ARCHITECTURE.md         # 아키텍처 분석 (C4 Model)
 ├── CODE_PATTERNS.md        # 코드 패턴 및 예시

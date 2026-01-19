@@ -30,7 +30,7 @@ skills: project-rules, work-tracker
 
 ```
 절차:
-1. memory/PROJECT_RULES.md 로드
+1. .claude/memory/PROJECT_RULES.md 로드
 2. 변경된 코드와 규칙 대조
 3. 위반 사항 발견 시 즉시 보고
 ```
@@ -46,7 +46,7 @@ skills: project-rules, work-tracker
 
 ```
 절차:
-1. memory/CURRENT_CONTEXT.md 로드
+1. .claude/memory/CURRENT_CONTEXT.md 로드
 2. 현재 작업이 목표와 일치하는지 확인
 3. 방향 이탈 감지 시 경고
 ```
@@ -127,6 +127,6 @@ skills: project-rules, work-tracker
 
 ## 참조 파일
 
-- `memory/PROJECT_RULES.md` - 프로젝트 규칙
-- `memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
 - `.claude-state/recent_changes.json` - 최근 변경 파일 목록

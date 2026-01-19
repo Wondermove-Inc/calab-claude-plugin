@@ -98,7 +98,7 @@ flowchart LR
 ### 1. 현재 상태 확인
 
 ```
-memory/CURRENT_CONTEXT.md 읽기
+.claude/memory/CURRENT_CONTEXT.md 읽기
 → 진행 중인 워크플로우가 있는지 확인
 ```
 
@@ -139,11 +139,11 @@ memory/CURRENT_CONTEXT.md 읽기
 
 ### 3. 상태 저장
 
-`memory/CURRENT_CONTEXT.md`에 워크플로우 상태 기록
+`.claude/memory/CURRENT_CONTEXT.md`에 워크플로우 상태 기록
 
 ## 참조 파일
 
-- `memory/TECH_STACK.md` - 기술 스택 및 베스트 프랙티스
+- `.claude/memory/TECH_STACK.md` - 기술 스택 및 베스트 프랙티스
 - `templates/` - 문서 템플릿
 - `best-practices/` - 기술별 베스트 프랙티스
 - `.claude-state/worktree.json` - 작업 상태

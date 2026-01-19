@@ -1126,11 +1126,11 @@ Closes #123
 ══════════════════════════════════════════════════════════════
 
 📁 생성된 컨텍스트 문서:
-├── memory/PROJECT_SUMMARY.md
-├── memory/ARCHITECTURE.md
-├── memory/CODE_PATTERNS.md
-├── memory/CONVENTIONS.md
-└── memory/DOMAIN_KNOWLEDGE.md
+├── .claude/memory/PROJECT_SUMMARY.md
+├── .claude/memory/ARCHITECTURE.md
+├── .claude/memory/CODE_PATTERNS.md
+├── .claude/memory/CONVENTIONS.md
+└── .claude/memory/DOMAIN_KNOWLEDGE.md
 
 💡 다음 단계:
    /dev plan [아이디어]  → 새 기능 개발 시작

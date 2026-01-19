@@ -38,8 +38,8 @@ argument-hint: [task-id] [--tdd]
 ### Step 1: 컨텍스트 로드
 
 ```
-1. memory/CURRENT_CONTEXT.md - 현재 작업 상태
-2. memory/TECH_STACK.md - 기술 스택
+1. .claude/memory/CURRENT_CONTEXT.md - 현재 작업 상태
+2. .claude/memory/TECH_STACK.md - 기술 스택
 3. .claude-state/worktree.json - 태스크 상태
 4. .claude/docs/active/{feature-name}/02-prd.md - 요구사항
 5. .claude/docs/active/{feature-name}/03-architecture.md - 아키텍처
@@ -421,5 +421,5 @@ export class {Name}Service {
 
 - `best-practices/` - 기술별 베스트 프랙티스 (workflow)
 - `best-practices/testing.md` - TDD 가이드 (test 플러그인)
-- `memory/TECH_STACK.md` - 기술 스택
+- `.claude/memory/TECH_STACK.md` - 기술 스택
 - `.claude-state/worktree.json` - 작업 상태

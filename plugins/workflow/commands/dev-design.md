@@ -66,7 +66,7 @@ $ARGUMENTS에서 옵션 확인:
 
 ### Step 2: 기능 폴더 확인
 
-`memory/CURRENT_CONTEXT.md`에서 현재 작업 중인 기능 확인:
+`.claude/memory/CURRENT_CONTEXT.md`에서 현재 작업 중인 기능 확인:
 
 ```
 현재 기능: {feature-name}
@@ -78,9 +78,9 @@ $ARGUMENTS에서 옵션 확인:
 ### Step 3: 컨텍스트 로드
 
 ```
-1. memory/CURRENT_CONTEXT.md - 현재 작업 상태
+1. .claude/memory/CURRENT_CONTEXT.md - 현재 작업 상태
 2. .claude/docs/active/{feature-name}/02-prd.md - PRD 문서
-3. memory/TECH_STACK.md - 기술 스택
+3. .claude/memory/TECH_STACK.md - 기술 스택
 4. best-practices/ - 베스트 프랙티스
 ```
 
@@ -215,7 +215,7 @@ erDiagram
 
 ## 상태 업데이트
 
-`memory/CURRENT_CONTEXT.md` 업데이트:
+`.claude/memory/CURRENT_CONTEXT.md` 업데이트:
 
 ```markdown
 ## 워크플로우 상태
@@ -236,6 +236,6 @@ erDiagram
 
 ## 참조 파일
 
-- `memory/TECH_STACK.md` - 기술 스택
+- `.claude/memory/TECH_STACK.md` - 기술 스택
 - `best-practices/` - 베스트 프랙티스
 - `.claude/docs/active/{feature-name}/02-prd.md` - PRD 문서

@@ -31,7 +31,7 @@ skills: code-quality, clean-architecture, project-rules
 ### 1. 코드 스타일 규칙 로드
 
 ```
-memory/CODE_STYLE.md 읽기
+.claude/memory/CODE_STYLE.md 읽기
 ```
 
 ### 2. 대상 파일 분석
@@ -129,6 +129,6 @@ memory/CODE_STYLE.md 읽기
 
 ## 참조 파일
 
-- `memory/CODE_STYLE.md` - 코드 스타일 규칙
-- `memory/PROJECT_RULES.md` - 프로젝트 규칙
+- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
 - `.claude-state/quality_violations.json` - 품질 위반 기록

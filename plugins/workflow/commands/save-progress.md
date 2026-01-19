@@ -19,7 +19,7 @@ argument-hint: [저장 메시지]
 
 ### 2. CURRENT_CONTEXT.md 업데이트
 
-`memory/CURRENT_CONTEXT.md` 파일을 다음 형식으로 업데이트:
+`.claude/memory/CURRENT_CONTEXT.md` 파일을 다음 형식으로 업데이트:
 
 ```markdown
 # 현재 작업 컨텍스트
@@ -108,7 +108,7 @@ argument-hint: [저장 메시지]
 • 다음 단계: [단계]
 
  저장 위치:
-• memory/CURRENT_CONTEXT.md
+• .claude/memory/CURRENT_CONTEXT.md
 • .claude-state/checkpoint.json
 
 ============================================
