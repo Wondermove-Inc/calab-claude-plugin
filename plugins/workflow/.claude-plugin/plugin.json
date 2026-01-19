@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
     "name": "Wonder Move Lab",

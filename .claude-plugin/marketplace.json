@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "4.0.0"
+    "version": "2.2.0"
   },
   "plugins": [
     {
       "name": "workflow",
       "source": "./plugins/workflow",
       "description": "개발 워크플로우 자동화 + JIRA 연동 + QA 테스트 통합",
-      "version": "4.0.0",
+      "version": "2.2.0",
       "category": "development",
       "tags": ["workflow", "jira", "qa", "automation"]
     },
@@ -21,7 +21,7 @@
       "name": "onboarding",
       "source": "./plugins/onboarding",
       "description": "프로젝트 분석 및 온보딩 자동화",
-      "version": "4.0.0",
+      "version": "2.2.0",
       "category": "productivity",
       "tags": ["onboarding", "analysis", "context"]
     },
@@ -29,7 +29,7 @@
       "name": "architecture",
       "source": "./plugins/architecture",
       "description": "클린 아키텍처 설계 및 검증",
-      "version": "4.0.0",
+      "version": "2.2.0",
       "category": "development",
       "tags": ["architecture", "clean-architecture", "design"]
     },
@@ -37,7 +37,7 @@
       "name": "toolkit",
       "source": "./plugins/toolkit",
       "description": "리서치 및 문제 해결 (웹 검색, 5 Whys, RCA)",
-      "version": "4.0.0",
+      "version": "2.2.0",
       "category": "productivity",
       "tags": ["research", "problem-solving", "rca"]
     }
