@@ -1,6 +1,6 @@
 {
   "name": "onboarding",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "프로젝트 분석 및 온보딩 자동화",
   "author": {
     "name": "Wonder Move Lab",
@@ -13,21 +13,5 @@
     "project-analysis",
     "documentation",
     "context"
-  ],
-  "commands": [
-    "onboard",
-    "onboard-quick",
-    "learn",
-    "context-refresh",
-    "context-show"
-  ],
-  "skills": [
-    "project-onboarding"
-  ],
-  "hooks": [],
-  "includes": {
-    "best-practices": [
-      "project-onboarding.md"
-    ]
-  }
+  ]
 }

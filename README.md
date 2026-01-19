@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Private](https://img.shields.io/badge/Repo-Private-orange.svg)]()
-[![Version](https://img.shields.io/badge/Version-2.2.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-2.3.0-blue.svg)]()
 
 > **어떤 상황에서든 동일한 개발 품질을 보장하는** Claude Code 플러그인 마켓플레이스 (사내 전용)
 
