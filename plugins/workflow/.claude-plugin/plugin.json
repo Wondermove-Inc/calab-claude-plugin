@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
     "name": "Wonder Move Lab",
@@ -12,30 +12,5 @@
     "workflow",
     "development",
     "automation"
-  ],
-  "commands": [
-    "dev-plan",
-    "dev-design",
-    "dev-tasks",
-    "dev-build",
-    "dev-status",
-    "worktree",
-    "restore-context",
-    "save-progress",
-    "show-rules",
-    "check-quality",
-    "context-refresh",
-    "context-show",
-    "jira-init",
-    "jira-push",
-    "jira-pull",
-    "jira-sync",
-    "jira-link",
-    "jira-status",
-    "qa",
-    "qa-plan",
-    "qa-run",
-    "qa-report",
-    "qa-status"
   ]
 }
