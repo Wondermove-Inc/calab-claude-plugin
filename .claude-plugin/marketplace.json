@@ -13,7 +13,7 @@
       "name": "workflow",
       "source": "./plugins/workflow",
       "description": "개발 워크플로우 자동화 + JIRA 연동 + QA 테스트 통합",
-      "version": "2.2.0",
+      "version": "2.2.2",
       "category": "development",
       "tags": ["workflow", "jira", "qa", "automation"]
     },
