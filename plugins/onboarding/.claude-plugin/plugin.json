@@ -1,0 +1,33 @@
+{
+  "name": "onboarding",
+  "version": "1.0.0",
+  "description": "프로젝트 분석 및 온보딩 자동화",
+  "author": {
+    "name": "Wonder Move Lab",
+    "email": "support@wondermovelab.com"
+  },
+  "homepage": "https://github.com/wondermovelab/calab-claude-plugin/tree/main/plugins/onboarding",
+  "license": "MIT",
+  "keywords": [
+    "onboarding",
+    "project-analysis",
+    "documentation",
+    "context"
+  ],
+  "commands": [
+    "onboard",
+    "onboard-quick",
+    "learn",
+    "context-refresh",
+    "context-show"
+  ],
+  "skills": [
+    "project-onboarding"
+  ],
+  "hooks": [],
+  "includes": {
+    "best-practices": [
+      "project-onboarding.md"
+    ]
+  }
+}

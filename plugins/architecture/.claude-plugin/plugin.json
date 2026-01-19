@@ -1,0 +1,39 @@
+{
+  "name": "architecture",
+  "version": "1.0.0",
+  "description": "클린 아키텍처 설계 및 검증",
+  "author": {
+    "name": "Wonder Move Lab",
+    "email": "support@wondermovelab.com"
+  },
+  "homepage": "https://github.com/wondermovelab/calab-claude-plugin/tree/main/plugins/architecture",
+  "license": "MIT",
+  "keywords": [
+    "clean-architecture",
+    "hexagonal",
+    "ddd",
+    "design"
+  ],
+  "commands": [
+    "clean-init",
+    "clean-entity",
+    "clean-usecase",
+    "clean-validate"
+  ],
+  "skills": [
+    "clean-architecture"
+  ],
+  "hooks": [],
+  "includes": {
+    "best-practices": [
+      "clean-architecture.md",
+      "api-design.md",
+      "database.md"
+    ],
+    "templates": [
+      "architecture-template.md",
+      "erd-template.md",
+      "api-spec-template.md"
+    ]
+  }
+}

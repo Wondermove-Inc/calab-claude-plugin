@@ -10,3 +10,8 @@ docs/
 .claude/project-context
 .claude/memory/CURRENT_CONTEXT.md
 .claude/memory/WORK_HISTORY.md
+
+AGENTS.md
+CLAUDE.md
+.beads
+.gitattributes
