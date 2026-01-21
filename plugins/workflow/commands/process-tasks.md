@@ -16,10 +16,10 @@ PRD와 아키텍처 문서를 기반으로 구현 가능한 태스크로 분해�
 .claude/docs/
 ├── active/                          ← 진행 중인 기능
 │   └── {feature-name}/              ← 기능별 폴더
-│       ├── 01-brainstorm.md         ← /dev plan에서 생성
-│       ├── 02-prd.md                ← /dev plan에서 생성
-│       ├── 03-architecture.md       ← /dev design에서 생성
-│       ├── 04-erd.md                ← /dev design에서 생성
+│       ├── 01-brainstorm.md         ← /workflow:process-plan에서 생성
+│       ├── 02-prd.md                ← /workflow:process-plan에서 생성
+│       ├── 03-architecture.md       ← /workflow:process-design에서 생성
+│       ├── 04-erd.md                ← /workflow:process-design에서 생성
 │       ├── 05-tasks.md              ← 이 명령어에서 생성
 │       └── qa/                      ← /qa에서 생성
 │
@@ -31,12 +31,12 @@ PRD와 아키텍처 문서를 기반으로 구현 가능한 태스크로 분해�
 
 ```mermaid
 flowchart LR
-    subgraph Tasks["📋 /dev tasks"]
+    subgraph Tasks["📋 /workflow:process-tasks"]
         A[태스크 분해] --> B[Worktree 생성]
     end
 
-    D["/dev design"] --> Tasks
-    Tasks --> I["/dev build"]
+    D["/workflow:process-design"] --> Tasks
+    Tasks --> I["/workflow:process-build"]
 
     style Tasks fill:#fff3e0
     style D fill:#e8f5e9
@@ -44,16 +44,16 @@ flowchart LR
 ```
 
 **자동 연계:**
-- `/dev design`에서 생성된 아키텍처/ERD 자동 참조
+- `/workflow:process-design`에서 생성된 아키텍처/ERD 자동 참조
 - 완료 시 `worktree.json` 자동 생성
-- `/dev build`로 구현 시작
+- `/workflow:process-build`로 구현 시작
 
 ## 사용법
 
 | 명령어 | 설명 |
 |--------|------|
-| `/dev tasks` | CURRENT_CONTEXT에서 현재 기능 자동 감지 |
-| `/dev tasks user-auth` | 특정 기능(user-auth) 지정 |
+| `/workflow:process-tasks` | CURRENT_CONTEXT에서 현재 기능 자동 감지 |
+| `/workflow:process-tasks user-auth` | 특정 기능(user-auth) 지정 |
 
 ## 실행 절차
 
@@ -66,7 +66,7 @@ flowchart LR
 작업 폴더: .claude/docs/active/{feature-name}/
 ```
 
-**⚠️ 주의**: `/dev plan`과 `/dev design`이 먼저 실행되어 있어야 합니다!
+**⚠️ 주의**: `/workflow:process-plan`과 `/workflow:process-design`이 먼저 실행되어 있어야 합니다!
 
 ### Step 2: 컨텍스트 로드
 
@@ -248,7 +248,7 @@ graph TD
 
 ---
 
-*구현 시작: /dev build TASK-001*
+*구현 시작: /workflow:process-build TASK-001*
 ```
 
 ### Step 9: Worktree 생성
@@ -340,7 +340,7 @@ graph TD
 3. Frontend Components
 4. Testing
 
- 다음 단계: /dev build TASK-001
+ 다음 단계: /workflow:process-build TASK-001
 
 ============================================
 ```

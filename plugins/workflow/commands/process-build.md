@@ -404,7 +404,7 @@ export class {Name}Service {
 • completed_at: {timestamp}
 • progress.done: +1
 
- 다음 태스크: /dev build TASK-002
+ 다음 태스크: /workflow:process-build TASK-002
 
 ============================================
 ```

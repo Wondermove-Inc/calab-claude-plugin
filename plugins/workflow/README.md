@@ -8,7 +8,7 @@
 
 | 상황 | 문제점 | 솔루션 | 명령어 |
 |------|--------|--------|--------|
-| **새 프로젝트 시작** | 어떻게 시작할지 막막함 | 체계적 워크플로우 제공 | `/workflow:dev-plan` |
+| **새 프로젝트 시작** | 어떻게 시작할지 막막함 | 체계적 워크플로우 제공 | `/workflow:process` |
 | **QA 누락** | 수동 테스트 반복 | E2E 자동화 | `/workflow:qa` |
 | **작업 추적 어려움** | 진행률 파악 불가 | Worktree 자동 추적 | `/workflow:worktree` |
 | **JIRA 수동 업데이트** | 중복 작업 | 양방향 자동 동기화 | `/workflow:jira-sync` |
@@ -18,15 +18,16 @@
 
 ## 명령어
 
-### 개발 워크플로우
+### 개발 프로세스
 
 | 명령어 | 옵션 | 자연어 | 설명 |
 |--------|------|--------|------|
-| `/workflow:dev-plan [기능]` | `--brainstorm`, `--prd` | "기획해줘" | 브레인스토밍 + PRD |
-| `/workflow:dev-design` | `--arch`, `--erd` | "설계해줘" | 아키텍처 + ERD |
-| `/workflow:dev-tasks` | - | "태스크 분해해줘" | 태스크 목록 생성 |
-| `/workflow:dev-build [task-id]` | `--tdd` | "구현해줘" | 태스크 구현 |
-| `/workflow:dev-status` | - | "진행 상황 보여줘" | 진행률 확인 |
+| `/workflow:process` | `--from=plan\|design\|tasks\|build` | "개발 시작해줘" | 전체 프로세스 실행 |
+| `/workflow:process-plan [기능]` | `--brainstorm`, `--prd` | "기획해줘" | 브레인스토밍 + PRD |
+| `/workflow:process-design` | `--arch`, `--erd` | "설계해줘" | 아키텍처 + ERD |
+| `/workflow:process-tasks` | - | "태스크 분해해줘" | 태스크 목록 생성 |
+| `/workflow:process-build [task-id]` | `--tdd` | "구현해줘" | 태스크 구현 |
+| `/workflow:process-status` | - | "진행 상황 보여줘" | 진행률 확인 |
 
 ### Worktree (작업 추적)
 
@@ -80,7 +81,7 @@
 
 ## 주요 기능 상세
 
-### 1. 개발 워크플로우
+### 1. 개발 프로세스
 
 순서대로 진행되는 체계적인 개발 프로세스:
 
@@ -94,20 +95,24 @@ flowchart LR
 **사용 예시:**
 
 ```bash
+# 전체 프로세스 한번에 실행
+/workflow:process 사용자 인증 시스템
+
+# 또는 단계별 실행
 # 1. 기획
-/workflow:dev-plan 사용자 인증 시스템
+/workflow:process-plan 사용자 인증 시스템
 
 # 2. 설계
-/workflow:dev-design
+/workflow:process-design
 
 # 3. 태스크 분해
-/workflow:dev-tasks
+/workflow:process-tasks
 
 # 4. 구현
-/workflow:dev-build TASK-001 --tdd
+/workflow:process-build TASK-001 --tdd
 
 # 5. 진행 상황 확인
-/workflow:dev-status
+/workflow:process-status
 ```
 
 ### 2. Worktree (작업 추적)
@@ -166,7 +171,7 @@ flowchart LR
 
 | 스킬 | 활성화 조건 | 효과 |
 |------|------------|------|
-| `dev-workflow` | 개발 작업 시 | 워크플로우 가이드 |
+| `process` | 개발 작업 시 | 개발 프로세스 가이드 |
 | `best-practices` | 기술 감지 시 | 언어별 베스트 프랙티스 자동 적용 |
 | `code-quality` | 코드 생성 시 | 300줄 제한, 주석 필수, 타입 완전성 검증 |
 | `project-rules` | 코드 작성/수정 시 | 프로젝트 규칙 자동 참조 |
@@ -197,15 +202,15 @@ flowchart LR
 ├── docs/
 │   ├── active/                    # 진행 중인 기능
 │   │   └── {feature-name}/
-│   │       ├── 01-brainstorm.md   # /dev-plan (브레인스토밍)
-│   │       ├── 02-prd.md          # /dev-plan (PRD)
-│   │       ├── 03-architecture.md # /dev-design
-│   │       ├── 04-erd.md          # /dev-design
-│   │       ├── 05-tasks.md        # /dev-tasks
+│   │       ├── 01-brainstorm.md   # /workflow:process-plan (브레인스토밍)
+│   │       ├── 02-prd.md          # /workflow:process-plan (PRD)
+│   │       ├── 03-architecture.md # /workflow:process-design
+│   │       ├── 04-erd.md          # /workflow:process-design
+│   │       ├── 05-tasks.md        # /workflow:process-tasks
 │   │       └── qa/
-│   │           ├── QA_PLAN.md     # /qa-plan
-│   │           ├── TEST_CASES.md  # /qa
-│   │           └── QA_REPORT.md   # /qa-report
+│   │           ├── QA_PLAN.md     # /workflow:qa-plan
+│   │           ├── TEST_CASES.md  # /workflow:qa
+│   │           └── QA_REPORT.md   # /workflow:qa-report
 │   │
 │   └── complete/                  # 완료된 기능 (worktree 100% 시 자동 이동)
 │

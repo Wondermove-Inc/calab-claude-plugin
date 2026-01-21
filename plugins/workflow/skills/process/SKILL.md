@@ -1,21 +1,21 @@
 ---
-name: dev-workflow
-description: 구조화된 개발 워크플로우를 관리합니다. 새 기능 개발, 프로젝트 시작, 설계, 아키텍처, PRD, 요구사항, 기획 요청 시 자동 활성화. Plan → Design → Tasks → Build 프로세스를 안내합니다.
+name: process
+description: 구조화된 개발 프로세스를 관리합니다. 새 기능 개발, 프로젝트 시작, 설계, 아키텍처, PRD, 요구사항, 기획 요청 시 자동 활성화. Plan → Design → Tasks → Build 프로세스를 안내합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Development Workflow Skill
+# Development Process Skill
 
 ## 목적
 
-구조화된 개발 워크플로우를 통해 체계적인 소프트웨어 개발을 지원합니다.
+구조화된 개발 프로세스를 통해 체계적인 소프트웨어 개발을 지원합니다.
 
 ## 활성화 조건
 
 - "새 기능", "프로젝트 시작", "개발 시작" 요청 시
 - "설계해줘", "아키텍처", "PRD", "요구사항" 언급 시
 - "기획", "브레인스토밍", "아이디어" 언급 시
-- `/dev` 명령어 사용 시
+- `/workflow:process` 명령어 사용 시
 
 ## 폴더 구조
 
@@ -23,11 +23,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 .claude/docs/
 ├── active/                          ← 진행 중인 기능
 │   └── {feature-name}/
-│       ├── 01-brainstorm.md         ← /dev plan
-│       ├── 02-prd.md                ← /dev plan
-│       ├── 03-architecture.md       ← /dev design
-│       ├── 04-erd.md                ← /dev design
-│       ├── 05-tasks.md              ← /dev tasks
+│       ├── 01-brainstorm.md         ← /workflow:process-plan
+│       ├── 02-prd.md                ← /workflow:process-plan
+│       ├── 03-architecture.md       ← /workflow:process-design
+│       ├── 04-erd.md                ← /workflow:process-design
+│       ├── 05-tasks.md              ← /workflow:process-tasks
 │       └── qa/                      ← /qa
 │
 └── complete/                        ← worktree 100% 완료 시 자동 이동
@@ -38,9 +38,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ```mermaid
 flowchart LR
-    A["/dev plan"] --> B["/dev design"]
-    B --> C["/dev tasks"]
-    C --> D["/dev build"]
+    A["/workflow:process-plan"] --> B["/workflow:process-design"]
+    B --> C["/workflow:process-tasks"]
+    C --> D["/workflow:process-build"]
     D --> E["완료 → complete/"]
 ```
 
@@ -50,9 +50,9 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/dev plan [아이디어]` | 전체 실행 |
-| `/dev plan --brainstorm` | 브레인스토밍만 |
-| `/dev plan --prd` | PRD만 |
+| `/workflow:process-plan [아이디어]` | 전체 실행 |
+| `/workflow:process-plan --brainstorm` | 브레인스토밍만 |
+| `/workflow:process-plan --prd` | PRD만 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/01-brainstorm.md`
@@ -64,9 +64,9 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/dev design` | 전체 실행 |
-| `/dev design --arch` | 아키텍처만 |
-| `/dev design --erd` | ERD만 |
+| `/workflow:process-design` | 전체 실행 |
+| `/workflow:process-design --arch` | 아키텍처만 |
+| `/workflow:process-design --erd` | ERD만 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/03-architecture.md`
@@ -78,7 +78,7 @@ flowchart LR
 
 | 명령어 | 설명 |
 |--------|------|
-| `/dev tasks` | 태스크 분해 + worktree.json 생성 |
+| `/workflow:process-tasks` | 태스크 분해 + worktree.json 생성 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/05-tasks.md`
@@ -90,8 +90,8 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/dev build [task-id]` | 일반 구현 |
-| `/dev build [task-id] --tdd` | TDD 모드 (RED→GREEN→REFACTOR) |
+| `/workflow:process-build [task-id]` | 일반 구현 |
+| `/workflow:process-build [task-id] --tdd` | TDD 모드 (RED→GREEN→REFACTOR) |
 
 ## 활성화 시 프로토콜
 
@@ -115,24 +115,24 @@ flowchart LR
  사용 가능한 명령어:
 
  기획:
-• /dev plan [아이디어]      - 브레인스토밍 + PRD
-• /dev plan --brainstorm   - 브레인스토밍만
-• /dev plan --prd          - PRD만
+• /workflow:process-plan [아이디어]      - 브레인스토밍 + PRD
+• /workflow:process-plan --brainstorm   - 브레인스토밍만
+• /workflow:process-plan --prd          - PRD만
 
  설계:
-• /dev design              - 아키텍처 + ERD
-• /dev design --arch       - 아키텍처만
-• /dev design --erd        - ERD만
+• /workflow:process-design              - 아키텍처 + ERD
+• /workflow:process-design --arch       - 아키텍처만
+• /workflow:process-design --erd        - ERD만
 
  태스크:
-• /dev tasks               - 태스크 분해
+• /workflow:process-tasks               - 태스크 분해
 
  구현:
-• /dev build [task-id]     - 구현
-• /dev build [task-id] --tdd - TDD 모드
+• /workflow:process-build [task-id]     - 구현
+• /workflow:process-build [task-id] --tdd - TDD 모드
 
  상태:
-• /dev status              - 진행 상황 확인
+• /workflow:process-status              - 진행 상황 확인
 
 ============================================
 ```

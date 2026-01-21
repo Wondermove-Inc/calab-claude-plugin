@@ -473,10 +473,10 @@ TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-005 → TASK-008
 - `best-practices/testing.md` (test 플러그인)
 
 ### 관련 명령어
-- `/dev build TASK-001` - 태스크 구현 시작
+- `/workflow:process-build TASK-001` - 태스크 구현 시작
 - `/worktree start TASK-001` - 태스크 시작 추적
 - `/worktree done TASK-001` - 태스크 완료 표시
 
 ---
 
-*구현 시작: `/dev build TASK-001`*
+*구현 시작: `/workflow:process-build TASK-001`*

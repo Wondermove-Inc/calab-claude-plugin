@@ -15,12 +15,12 @@ PRD를 기반으로 시스템 아키텍처를 설계하고 데이터 모델을 �
 ```
 .claude/docs/
 ├── active/                          ← 진행 중인 기능
-│   └── {feature-name}/              ← 기능별 폴더 (/dev plan에서 생성됨)
-│       ├── 01-brainstorm.md         ← /dev plan에서 생성
-│       ├── 02-prd.md                ← /dev plan에서 생성
+│   └── {feature-name}/              ← 기능별 폴더 (/workflow:process-plan에서 생성됨)
+│       ├── 01-brainstorm.md         ← /workflow:process-plan에서 생성
+│       ├── 02-prd.md                ← /workflow:process-plan에서 생성
 │       ├── 03-architecture.md       ← 이 명령어에서 생성
 │       ├── 04-erd.md                ← 이 명령어에서 생성
-│       ├── 05-tasks.md              ← /dev tasks에서 생성
+│       ├── 05-tasks.md              ← /workflow:process-tasks에서 생성
 │       └── qa/                      ← /qa에서 생성
 │
 └── complete/                        ← worktree 완료 시 자동 이동
@@ -31,12 +31,12 @@ PRD를 기반으로 시스템 아키텍처를 설계하고 데이터 모델을 �
 
 ```mermaid
 flowchart LR
-    subgraph Design["📐 /dev design"]
+    subgraph Design["📐 /workflow:process-design"]
         A[아키텍처 설계] --> B[ERD 설계]
     end
 
-    P["/dev plan"] --> Design
-    Design --> T["/dev tasks"]
+    P["/workflow:process-plan"] --> Design
+    Design --> T["/workflow:process-tasks"]
 
     style Design fill:#e8f5e9
     style P fill:#e3f2fd
@@ -44,8 +44,8 @@ flowchart LR
 ```
 
 **자동 연계:**
-- `/dev plan`에서 생성된 PRD 자동 참조
-- 완료 후 `/dev tasks`로 자연스럽게 이어짐
+- `/workflow:process-plan`에서 생성된 PRD 자동 참조
+- 완료 후 `/workflow:process-tasks`로 자연스럽게 이어짐
 
 ## 옵션
 
@@ -73,7 +73,7 @@ $ARGUMENTS에서 옵션 확인:
 작업 폴더: .claude/docs/active/{feature-name}/
 ```
 
-**⚠️ 주의**: `/dev plan`이 먼저 실행되어 있어야 합니다!
+**⚠️ 주의**: `/workflow:process-plan`이 먼저 실행되어 있어야 합니다!
 
 ### Step 3: 컨텍스트 로드
 
@@ -208,7 +208,7 @@ erDiagram
 • 관계: {n}개
 • 인덱스: {n}개
 
- 다음 단계: /dev tasks
+ 다음 단계: /workflow:process-tasks
 
 ============================================
 ```

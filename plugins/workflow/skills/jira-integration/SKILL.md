@@ -107,9 +107,9 @@ flowchart LR
     W3 --> H --> J3
 ```
 
-### /dev tasks → JIRA 자동 생성
+### /workflow:process-tasks → JIRA 자동 생성
 
-`/dev tasks` 실행 시:
+`/workflow:process-tasks` 실행 시:
 1. `worktree.json` 자동 생성
 2. JIRA 연동 활성화 시 → `/jira-push` 자동 실행 (옵션)
 
