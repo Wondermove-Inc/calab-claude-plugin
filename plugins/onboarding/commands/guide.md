@@ -3,9 +3,10 @@ description: Onboarding 플러그인 도움말을 표시합니다. 모든 명령
 allowed-tools: Read
 ---
 
-# Onboarding 플러그인 도움말
+# /guide - Onboarding 플러그인 도움말
 
-사용자에게 Onboarding 플러그인의 기능과 명령어를 안내합니다.
+## 설명
+Onboarding 플러그인의 모든 명령어와 사용 예시를 안내합니다.
 
 ## 출력 형식
 
