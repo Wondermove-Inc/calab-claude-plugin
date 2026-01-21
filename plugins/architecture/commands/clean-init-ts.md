@@ -3,14 +3,14 @@ description: 클린 아키텍처 4-레이어 디렉토리 구조를 초기화합
 allowed-tools: Write, Edit, Bash
 ---
 
-# /clean-init - 클린 아키텍처 초기화
+# /architecture:clean-init-ts - 클린 아키텍처 초기화
 
 ## 설명
 프로젝트에 클린 아키텍처 디렉토리 구조와 기본 파일들을 생성합니다.
 
 ## 사용법
 ```
-/clean-init
+/architecture:clean-init-ts
 ```
 
 ## 실행 순서
@@ -140,10 +140,10 @@ export const container = new Container();
 - infrastructure/di/container.ts
 
 다음 단계:
-1. /clean-entity User 로 첫 번째 엔티티 생성
-2. /clean-usecase CreateUser 로 유스케이스 생성
+1. /architecture:clean-entity-ts User 로 첫 번째 엔티티 생성
+2. /architecture:clean-usecase-ts CreateUser 로 유스케이스 생성
 ```
 
 ## 참조
-- `skills/clean-architecture/SKILL.md`
-- `best-practices/clean-architecture.md`
+- `skills/clean-architecture-ts/SKILL.md`
+- `best-practices/clean-architecture-ts.md`

@@ -656,5 +656,5 @@ describe('CreateUserUseCase', () => {
 ## 참조
 
 - Robert C. Martin, "Clean Architecture" (2017)
-- `skills/clean-architecture/SKILL.md`
-- `commands/clean-init.md`
+- `skills/clean-architecture-ts/SKILL.md`
+- `commands/clean-init-ts.md`

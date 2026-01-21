@@ -4,16 +4,16 @@ allowed-tools: Write, Edit, Glob, Read
 argument-hint: <UseCaseName> [--entity <Entity>]
 ---
 
-# /clean-usecase - 유스케이스 생성
+# /architecture:clean-usecase-ts - 유스케이스 생성
 
 ## 설명
 클린 아키텍처의 Application 레이어에 새로운 유스케이스를 생성합니다.
 
 ## 사용법
 ```
-/clean-usecase <UseCaseName>
-/clean-usecase CreateUser
-/clean-usecase GetUserById --entity User
+/architecture:clean-usecase-ts <UseCaseName>
+/architecture:clean-usecase-ts CreateUser
+/architecture:clean-usecase-ts GetUserById --entity User
 ```
 
 ## 옵션
@@ -194,5 +194,5 @@ describe('{UseCaseName}', () => {
 5. **테스트 용이성**: 의존성 주입으로 Mock 가능
 
 ## 참조
-- `skills/clean-architecture/SKILL.md`
-- `best-practices/clean-architecture.md`
+- `skills/clean-architecture-ts/SKILL.md`
+- `best-practices/clean-architecture-ts.md`

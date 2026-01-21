@@ -1,17 +1,19 @@
 {
   "name": "architecture",
   "version": "2.3.0",
-  "description": "클린 아키텍처 설계 및 검증",
+  "description": "클린 아키텍처 설계 및 검증 (TypeScript, Go 지원)",
   "author": {
-    "name": "Wonder Move Lab",
-    "email": "support@wondermovelab.com"
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
   },
-  "homepage": "https://github.com/wondermovelab/calab-claude-plugin/tree/main/plugins/architecture",
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
     "clean-architecture",
     "hexagonal",
     "ddd",
-    "design"
+    "design",
+    "golang",
+    "typescript"
   ]
 }

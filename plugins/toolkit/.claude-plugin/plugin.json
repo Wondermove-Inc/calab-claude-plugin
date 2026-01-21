@@ -3,10 +3,10 @@
   "version": "2.3.0",
   "description": "리서치 및 문제 해결 도구 - 웹 검색, 체계적 문제 분석",
   "author": {
-    "name": "Wonder Move Lab",
-    "email": "support@wondermovelab.com"
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
   },
-  "homepage": "https://github.com/wondermovelab/calab-claude-plugin/tree/main/plugins/toolkit",
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
     "research",

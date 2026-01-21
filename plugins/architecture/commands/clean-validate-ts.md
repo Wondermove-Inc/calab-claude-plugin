@@ -4,16 +4,16 @@ allowed-tools: Read, Glob, Grep
 argument-hint: [--fix] [--layer <layer>]
 ---
 
-# /clean-validate - 클린 아키텍처 검증
+# /architecture:clean-validate-ts - 클린 아키텍처 검증
 
 ## 설명
 현재 프로젝트 코드가 클린 아키텍처 원칙을 준수하는지 검증합니다.
 
 ## 사용법
 ```
-/clean-validate
-/clean-validate --fix
-/clean-validate --layer domain
+/architecture:clean-validate-ts
+/architecture:clean-validate-ts --fix
+/architecture:clean-validate-ts --layer domain
 ```
 
 ## 옵션
@@ -182,12 +182,12 @@ DTO 사용: 정상
 
 | 상황 | 명령어 |
 |------|--------|
-| 위반 자동 수정 | `/clean-validate --fix` |
-| 새 엔티티 생성 | `/clean-entity <name>` |
-| 새 유스케이스 생성 | `/clean-usecase <name>` |
-| 구현 진행 | `/dev build TASK-XXX` |
+| 위반 자동 수정 | `/architecture:clean-validate-ts --fix` |
+| 새 엔티티 생성 | `/architecture:clean-entity-ts <name>` |
+| 새 유스케이스 생성 | `/architecture:clean-usecase-ts <name>` |
+| 구현 진행 | `/workflow:dev-build TASK-XXX` |
 
 ## 참조
 
-- `skills/clean-architecture/SKILL.md`
-- `best-practices/clean-architecture.md`
+- `skills/clean-architecture-ts/SKILL.md`
+- `best-practices/clean-architecture-ts.md`

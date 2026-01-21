@@ -3,10 +3,10 @@
   "version": "2.3.0",
   "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
-    "name": "Wonder Move Lab",
-    "email": "support@wondermovelab.com"
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
   },
-  "homepage": "https://github.com/wondermovelab/calab-claude-plugin/tree/main/plugins/workflow",
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
     "workflow",

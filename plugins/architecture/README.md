@@ -1,28 +1,48 @@
 # Architecture Plugin
 
-> **클린 아키텍처 설계 및 검증**: 4-레이어 구조 자동 생성 + 의존성 규칙 강제
+> **클린 아키텍처 설계 및 검증**: 4-레이어 구조 자동 생성 + 의존성 규칙 강제 (TypeScript, Go 지원)
+
+---
+
+## 지원 언어
+
+| 언어 | 상태 | 명령어 접미사 |
+|------|------|--------------|
+| **TypeScript** | ✅ 지원 | `-ts` |
+| **Go** | ✅ 지원 | `-go` |
 
 ---
 
 ## 문제 해결 매트릭스
 
-| 상황 | 문제점 | 솔루션 | 명령어 |
-|------|--------|--------|--------|
-| **아키텍처 혼란** | 의존성 규칙 위반 | 클린 아키텍처 강제 | `/architecture:clean-init` |
-| **엔티티 생성** | 일관성 없는 도메인 모델 | 표준화된 엔티티 생성 | `/architecture:clean-entity` |
-| **유스케이스 작성** | 비즈니스 로직 분산 | 유스케이스 패턴 적용 | `/architecture:clean-usecase` |
-| **의존성 위반** | 레이어 간 잘못된 참조 | 자동 검증 + 수정 | `/architecture:clean-validate` |
+| 상황 | 문제점 | 솔루션 | TypeScript | Go |
+|------|--------|--------|------------|-----|
+| **아키텍처 혼란** | 의존성 규칙 위반 | 클린 아키텍처 강제 | `/architecture:clean-init-ts` | `/architecture:clean-init-go` |
+| **엔티티 생성** | 일관성 없는 도메인 모델 | 표준화된 엔티티 생성 | `/architecture:clean-entity-ts` | `/architecture:clean-entity-go` |
+| **유스케이스 작성** | 비즈니스 로직 분산 | 유스케이스 패턴 적용 | `/architecture:clean-usecase-ts` | `/architecture:clean-usecase-go` |
+| **의존성 위반** | 레이어 간 잘못된 참조 | 자동 검증 + 수정 | `/architecture:clean-validate-ts` | `/architecture:clean-validate-go` |
 
 ---
 
 ## 명령어
 
+### TypeScript
+
 | 명령어 | 옵션 | 자연어 | 설명 |
 |--------|------|--------|------|
-| `/architecture:clean-init` | - | "클린 아키텍처 만들어줘" | 4-레이어 구조 초기화 |
-| `/architecture:clean-entity [name]` | `--with-repository` | "엔티티 만들어줘" | 도메인 엔티티 생성 |
-| `/architecture:clean-usecase [name]` | `--entity [name]` | "유스케이스 만들어줘" | 유스케이스 생성 |
-| `/architecture:clean-validate` | `--fix` | "아키텍처 검증해줘" | 의존성 규칙 검증 |
+| `/architecture:clean-init-ts` | - | "TS 클린 아키텍처 만들어줘" | 4-레이어 구조 초기화 |
+| `/architecture:clean-entity-ts [name]` | `--with-repository` | "TS 엔티티 만들어줘" | 도메인 엔티티 생성 |
+| `/architecture:clean-usecase-ts [name]` | `--entity [name]` | "TS 유스케이스 만들어줘" | 유스케이스 생성 |
+| `/architecture:clean-validate-ts` | `--fix` | "TS 아키텍처 검증해줘" | 의존성 규칙 검증 |
+
+### Go
+
+| 명령어 | 옵션 | 자연어 | 설명 |
+|--------|------|--------|------|
+| `/architecture:clean-init-go` | `--module` | "Go 클린 아키텍처 만들어줘" | Go 4-레이어 구조 초기화 |
+| `/architecture:clean-entity-go [name]` | `--with-repository` | "Go 엔티티 만들어줘" | Go 도메인 엔티티 생성 |
+| `/architecture:clean-usecase-go [name]` | `--entity [name]` | "Go 유스케이스 만들어줘" | Go 유스케이스 생성 |
+| `/architecture:clean-validate-go` | `--fix` | "Go 아키텍처 검증해줘" | Go 의존성 규칙 검증 |
 
 ---
 
@@ -253,7 +273,8 @@ export class CreateUserUseCase {
 
 | 스킬 | 활성화 조건 | 효과 |
 |------|------------|------|
-| `clean-architecture` | 코드 구현 시 (항상) | 4-레이어 구조 강제, 의존성 규칙 검증 |
+| `clean-architecture-ts` | TypeScript 코드 구현 시 | 4-레이어 구조 강제, 의존성 규칙 검증 |
+| `clean-architecture-go` | Go 코드 구현 시 | Go 4-레이어 구조 강제, 의존성 규칙 검증 |
 
 **자동 적용 내용:**
 - 새 파일 생성 시 올바른 레이어 위치 제안
@@ -275,10 +296,64 @@ export class CreateUserUseCase {
 ## 포함 리소스
 
 - **best-practices/**:
-  - clean-architecture.md (의존성 규칙, 레이어 가이드)
+  - clean-architecture-ts.md (TypeScript 의존성 규칙, 레이어 가이드)
+  - clean-architecture-go.md (Go 의존성 규칙, 레이어 가이드)
   - api-design.md (REST API 설계 원칙)
   - database.md (데이터베이스 설계 원칙)
 - **templates/**:
   - architecture-template.md (아키텍처 문서 템플릿)
   - erd-template.md (ERD 템플릿)
   - api-spec-template.md (API 스펙 템플릿)
+- **skills/**:
+  - clean-architecture-ts/ (TypeScript 클린 아키텍처 스킬)
+  - clean-architecture-go/ (Go 클린 아키텍처 스킬)
+
+---
+
+## Go 프로젝트 구조
+
+`/architecture:clean-init-go` 실행 시 생성되는 구조:
+
+```
+project/
+├── cmd/
+│   └── server/
+│       └── main.go              # 진입점
+├── internal/                     # 비공개 패키지
+│   ├── domain/                   # Domain Layer
+│   │   ├── entity/              # 엔티티
+│   │   ├── valueobject/         # 값 객체
+│   │   ├── repository/          # 리포지토리 인터페이스
+│   │   └── errors/              # 도메인 에러
+│   ├── application/              # Application Layer
+│   │   ├── usecase/             # 유스케이스
+│   │   ├── dto/                 # 데이터 전송 객체
+│   │   └── port/                # 외부 서비스 인터페이스
+│   ├── adapters/                 # Adapters Layer
+│   │   ├── handler/             # HTTP 핸들러
+│   │   ├── repository/          # 리포지토리 구현
+│   │   └── gateway/             # 외부 서비스 구현
+│   └── infrastructure/           # Infrastructure Layer
+│       ├── http/                # HTTP 서버 설정
+│       ├── database/            # DB 연결 설정
+│       ├── config/              # 환경 설정
+│       └── di/                  # 의존성 주입
+├── pkg/                          # 공개 패키지
+├── go.mod
+└── Makefile
+```
+
+### Go 의존성 규칙
+
+```
+cmd/ → infrastructure → adapters → application → domain
+  ↓          ↓              ↓            ↓           ↓
+진입점   프레임워크/DB    포트 구현   비즈니스 로직  순수 엔티티
+
+✅ 올바른 의존성:
+   infrastructure → adapters → application → domain
+
+❌ 잘못된 의존성:
+   domain → infrastructure (위반!)
+   application → adapters (위반!)
+```

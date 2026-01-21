@@ -4,16 +4,16 @@ allowed-tools: Write, Edit, Glob
 argument-hint: <EntityName> [--with-repository]
 ---
 
-# /clean-entity - 도메인 엔티티 생성
+# /architecture:clean-entity-ts - 도메인 엔티티 생성
 
 ## 설명
 클린 아키텍처의 Domain 레이어에 새로운 엔티티를 생성합니다.
 
 ## 사용법
 ```
-/clean-entity <EntityName>
-/clean-entity User
-/clean-entity Product --with-repository
+/architecture:clean-entity-ts <EntityName>
+/architecture:clean-entity-ts User
+/architecture:clean-entity-ts Product --with-repository
 ```
 
 ## 옵션
@@ -165,7 +165,7 @@ export class Email {
 - updatedAt: Date
 
 다음 단계:
-1. /clean-usecase CreateUser 로 유스케이스 생성
+1. /architecture:clean-usecase-ts CreateUser 로 유스케이스 생성
 2. Adapters 레이어에서 리포지토리 구현
 ```
 
@@ -178,5 +178,5 @@ export class Email {
 5. **프레임워크 독립**: 순수 TypeScript만 사용
 
 ## 참조
-- `skills/clean-architecture/SKILL.md`
-- `best-practices/clean-architecture.md`
+- `skills/clean-architecture-ts/SKILL.md`
+- `best-practices/clean-architecture-ts.md`

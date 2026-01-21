@@ -1,14 +1,17 @@
 ---
-name: clean-architecture
-description: 클린 아키텍처를 강제합니다. 코드 구현, 클래스 생성, 레이어, 도메인, 엔티티, 유스케이스 언급 시 자동 활성화. 의존성 규칙을 엄격하게 검사합니다.
+name: clean-architecture-ts
+description: TypeScript 클린 아키텍처를 강제합니다. TypeScript/JavaScript 파일(.ts, .tsx, .js, .jsx) 생성, 레이어, 도메인, 엔티티, 유스케이스 언급 시 자동 활성화. 의존성 규칙을 엄격하게 검사합니다.
 allowed-tools: Read, Glob, Grep
 ---
 
-# Clean Architecture Skill
+# Clean Architecture Skill (TypeScript)
+
+> **이 스킬은 TypeScript/JavaScript 프로젝트 전용입니다.**
+> Go 프로젝트는 `clean-architecture-go` 스킬을 사용하세요.
 
 ## 🚨 패시브 자동 활성화 (필수 적용)
 
-> **이 스킬은 모든 코드 구현 시 자동으로 적용됩니다.**
+> **이 스킬은 TypeScript/JavaScript 코드 구현 시 자동으로 적용됩니다.**
 > 사용자가 명시적으로 요청하지 않아도 Claude는 클린 아키텍처를 적용해야 합니다.
 
 ### 1. 항상 활성화되는 상황
@@ -16,9 +19,9 @@ allowed-tools: Read, Glob, Grep
 | 트리거 | 동작 |
 |--------|------|
 | **파일 생성/수정** (.ts, .tsx, .js, .jsx) | 레이어 위치 검증 |
-| **`/dev build`** 명령 실행 | 클린 아키텍처 구조 강제 |
-| **코드 구현 요청** | 4-레이어 구조 적용 |
-| **API/서비스 구현** | 의존성 규칙 검증 |
+| **`/dev build`** 명령 실행 (TS 프로젝트) | 클린 아키텍처 구조 강제 |
+| **TypeScript 코드 구현 요청** | 4-레이어 구조 적용 |
+| **API/서비스 구현** (Node.js) | 의존성 규칙 검증 |
 
 ### 2. 키워드 감지 (추가 활성화)
 
@@ -157,16 +160,19 @@ src/infrastructure/
 - [ ] 레이어 경계 위반 없는지 검증
 - [ ] 테스트 가능한 구조인지 확인
 
-## 사용 가능한 명령어
+## 사용 가능한 명령어 (TypeScript)
 
 | 명령어 | 설명 |
 |--------|------|
-| `/clean-init` | 프로젝트에 클린 아키텍처 구조 초기화 |
-| `/clean-entity <name>` | 새 도메인 엔티티 생성 |
-| `/clean-usecase <name>` | 새 유스케이스 생성 |
-| `/clean-validate` | 현재 코드의 클린 아키텍처 준수 검증 |
+| `/architecture:clean-init-ts` | TypeScript 프로젝트에 클린 아키텍처 구조 초기화 |
+| `/architecture:clean-entity-ts <name>` | 새 TypeScript 도메인 엔티티 생성 |
+| `/architecture:clean-usecase-ts <name>` | 새 TypeScript 유스케이스 생성 |
+| `/architecture:clean-validate-ts` | 현재 코드의 클린 아키텍처 준수 검증 |
+
+> **Go 프로젝트의 경우** `/architecture:clean-init-go`, `/architecture:clean-entity-go`, `/architecture:clean-usecase-go`, `/architecture:clean-validate-go` 명령어를 사용하세요.
 
 ## 참조 문서
 
-- `best-practices/clean-architecture.md` - 상세 패턴 및 예제
-- `commands/clean-init.md` - 초기화 명령어
+- `best-practices/clean-architecture-ts.md` - TypeScript 상세 패턴 및 예제
+- `commands/clean-init-ts.md` - TypeScript 초기화 명령어
+- `skills/clean-architecture-go/SKILL.md` - Go 클린 아키텍처 스킬
