@@ -143,7 +143,7 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 
 ```
 1. .claude/docs/active/{feature-name}/01-brainstorm.md - 브레인스토밍 결과
-2. .claude/templates/prd-template.md - PRD 템플릿
+2. ~/.claude/templates/prd-template.md - PRD 템플릿 (글로벌)
 3. .claude/research/{관련주제}/ - 관련 리서치 (있는 경우)
 ```
 
@@ -207,5 +207,5 @@ Q7. 이번에 포함하지 않을 기능은? (Out of scope)
 
 ## 참조 파일
 
-- `.claude/templates/prd-template.md` - PRD 템플릿
+- `~/.claude/templates/prd-template.md` - PRD 템플릿 (글로벌)
 - `.claude/research/` - 리서치 결과

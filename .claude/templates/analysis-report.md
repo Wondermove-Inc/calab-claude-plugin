@@ -454,7 +454,7 @@ Why 5: 왜 {답변 4}?
 
 *분석 완료: {날짜}*
 *분석자: Claude Code*
-*다음 단계: `.claude/templates/solution-report.md`*
+*다음 단계: `~/.claude/templates/solution-report.md` (글로벌)*
 ```
 
 ---
@@ -523,5 +523,5 @@ Why 5: 왜 {답변 4}?
 - `skills/problem-solving/SKILL.md`
 - `skills/problem-solving/methods/`
 - `commands/solve.md`
-- `.claude/templates/problem-definition.md` (이전 단계)
-- `.claude/templates/solution-report.md` (다음 단계)
+- `~/.claude/templates/problem-definition.md` (이전 단계, 글로벌)
+- `~/.claude/templates/solution-report.md` (다음 단계, 글로벌)

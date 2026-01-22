@@ -399,6 +399,6 @@ await mcp__puppeteer__puppeteer_screenshot({ name: "hover-menu" })
 - `commands/qa-run.md` - 테스트 실행
 - `commands/qa-report.md` - 보고서 생성
 - `commands/qa-status.md` - 상태 확인
-- `.claude/templates/qa-plan-template.md` - 계획서 템플릿
-- `.claude/templates/qa-report-template.md` - 보고서 템플릿
-- `.claude/best-practices/qa-testing.md` - QA 베스트 프랙티스
+- `~/.claude/templates/qa-plan-template.md` - 계획서 템플릿 (글로벌)
+- `~/.claude/templates/qa-report-template.md` - 보고서 템플릿 (글로벌)
+- `~/.claude/best-practices/qa-testing.md` - QA 베스트 프랙티스 (글로벌)

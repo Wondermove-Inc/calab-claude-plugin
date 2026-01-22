@@ -311,4 +311,4 @@ Feature: 로그인
 
 - `/qa` - QA 시작
 - `/qa-run` - 테스트 실행
-- `.claude/templates/qa-plan-template.md`
+- `~/.claude/templates/qa-plan-template.md` (글로벌)

@@ -1133,8 +1133,8 @@ $$ LANGUAGE plpgsql;
 
 ## 참조
 
-- `.claude/best-practices/database.md` - 데이터베이스 베스트 프랙티스
-- `.claude/templates/api-spec-template.md` - API 스펙 템플릿
+- `~/.claude/best-practices/database.md` - 데이터베이스 베스트 프랙티스 (글로벌)
+- `~/.claude/templates/api-spec-template.md` - API 스펙 템플릿 (글로벌)
 - `.claude/docs/active/{feature}/03-architecture.md` - 시스템 아키텍처
 
 ---

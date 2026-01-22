@@ -507,5 +507,5 @@ flowchart LR
 - `commands/qa.md` - QA 시작
 - `commands/qa-run.md` - 테스트 실행
 - `commands/qa-report.md` - 보고서 생성
-- `.claude/templates/qa-plan-template.md` - 계획서 템플릿
-- `.claude/templates/qa-report-template.md` - 보고서 템플릿
+- `~/.claude/templates/qa-plan-template.md` - 계획서 템플릿 (글로벌)
+- `~/.claude/templates/qa-report-template.md` - 보고서 템플릿 (글로벌)

@@ -422,4 +422,4 @@ curl -X POST https://api.example.com/auth/login \
 
 - `skills/problem-solving/SKILL.md`
 - `commands/solve.md`
-- `.claude/templates/analysis-report.md` (다음 단계)
+- `~/.claude/templates/analysis-report.md` (다음 단계, 글로벌)

@@ -392,7 +392,7 @@ src/
 
 ### 8.3 상세 API 스펙
 
-→ `.claude/templates/api-spec-template.md` 참조
+→ `~/.claude/templates/api-spec-template.md` 참조 (글로벌)
 
 ---
 

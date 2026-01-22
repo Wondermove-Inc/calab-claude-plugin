@@ -295,5 +295,5 @@ Why 2: {질문}
 - `skills/problem-solving/methods/hypothesis.md`
 - `skills/problem-solving/methods/binary-search.md`
 - `skills/problem-solving/methods/fishbone.md`
-- `.claude/templates/problem-definition.md`
-- `.claude/templates/solution-report.md`
+- `~/.claude/templates/problem-definition.md` (글로벌)
+- `~/.claude/templates/solution-report.md` (글로벌)

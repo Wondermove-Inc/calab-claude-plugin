@@ -144,6 +144,6 @@ flowchart LR
 ## 참조 파일
 
 - `.claude/memory/TECH_STACK.md` - 기술 스택 및 베스트 프랙티스
-- `.claude/templates/` - 문서 템플릿
-- `.claude/best-practices/` - 기술별 베스트 프랙티스
+- `~/.claude/templates/` - 문서 템플릿 (글로벌)
+- `~/.claude/best-practices/` - 기술별 베스트 프랙티스 (글로벌)
 - `.claude-state/worktree.json` - 작업 상태

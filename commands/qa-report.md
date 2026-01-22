@@ -331,4 +331,4 @@ Major 버그 1건 해결 필요.
 
 - `/qa-status` - 현재 상태 확인
 - `/qa-run --failed` - 실패 테스트 재실행
-- `.claude/templates/qa-report-template.md`
+- `~/.claude/templates/qa-report-template.md` (글로벌)

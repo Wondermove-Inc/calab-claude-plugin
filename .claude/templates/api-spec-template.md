@@ -1056,8 +1056,8 @@ Link: </api/v2/users>; rel="successor-version"
 
 ## 참조
 
-- `.claude/best-practices/api-design.md` - API 베스트 프랙티스
-- `.claude/templates/erd-template.md` - ERD 템플릿
+- `~/.claude/best-practices/api-design.md` - API 베스트 프랙티스 (글로벌)
+- `~/.claude/templates/erd-template.md` - ERD 템플릿 (글로벌)
 - [RFC 7807 - Problem Details](https://tools.ietf.org/html/rfc7807)
 - [OpenAPI Specification](https://swagger.io/specification/)
 
