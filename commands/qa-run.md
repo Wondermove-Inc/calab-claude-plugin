@@ -5,6 +5,8 @@ allowed-tools: Read, Write, Glob, Grep, Bash, mcp__puppeteer__*
 
 # /qa-run - 테스트 실행
 
+> **🚨 중요**: 문서, 코드, 기타 확인 및 검증이 필요한 부분은 **전부 에이전트 사용 필수**. 에이전트를 적극 활용하고, 파일이 크면 분할해서 읽어라.
+
 ## 설명
 
 MCP Puppeteer를 활용하여 **실제 프론트엔드 테스트**를 실행합니다.

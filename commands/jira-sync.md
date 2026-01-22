@@ -6,6 +6,8 @@ argument-hint: [--prefer-jira | --prefer-worktree]
 
 # /jira-sync
 
+> **🚨 중요**: 문서, 코드, 기타 확인 및 검증이 필요한 부분은 **전부 에이전트 사용 필수**. 에이전트를 적극 활용하고, 파일이 크면 분할해서 읽어라.
+
 Worktree와 JIRA 간 양방향 동기화를 수행합니다.
 
 ## 사용법
