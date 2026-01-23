@@ -154,20 +154,29 @@ def main():
     if rules_file.exists():
         messages.append(" 프로젝트 규칙 파일이 존재합니다.")
 
-    # 출력
-    if messages:
-        print("")
-        print("=" * 50)
-        print(" [SESSION START] 컨텍스트 복원 안내")
-        print("=" * 50)
-        for msg in messages:
-            print(msg)
-        print("")
+    # Silent Mode: 간결한 출력
+    # 환경 변수로 VERBOSE 모드 지원 (CLAUDE_HOOKS_VERBOSE=1)
+    verbose = os.environ.get('CLAUDE_HOOKS_VERBOSE', '') == '1'
+
+    if verbose:
+        # Verbose 모드: 전체 출력
+        if messages:
+            print("")
+            print("=" * 50)
+            print(" [SESSION START] 컨텍스트 복원 안내")
+            print("=" * 50)
+            for msg in messages:
+                print(msg)
+            print("")
+            if has_context:
+                print(" '/restore-context' 명령으로")
+                print("   이전 작업을 이어갈 수 있습니다.")
+            print("=" * 50)
+            print("")
+    else:
+        # Silent 모드: 한 줄 요약
         if has_context:
-            print(" '/restore-context' 명령으로")
-            print("   이전 작업을 이어갈 수 있습니다.")
-        print("=" * 50)
-        print("")
+            print("[Session] 이전 컨텍스트 존재 → /restore-context로 복원 가능")
 
 
 if __name__ == "__main__":
