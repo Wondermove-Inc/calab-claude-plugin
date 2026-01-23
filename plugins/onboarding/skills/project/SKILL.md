@@ -1,5 +1,5 @@
 ---
-name: project-onboarding
+name: project
 description: 프로젝트를 분석하고 컨텍스트 문서를 생성합니다. 프로젝트 분석, 코드베이스 학습, 온보딩 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Glob, Grep
 ---
@@ -26,7 +26,7 @@ allowed-tools: Read, Write, Glob, Grep
 flowchart TD
     A[세션 시작] --> B{project-context 폴더 존재?}
     B -->|Yes| C{PROJECT_SUMMARY.md 존재?}
-    B -->|No| D["/onboard 안내"]
+    B -->|No| D["/onboarding:start 안내"]
     C -->|Yes| E[컨텍스트 자동 로드]
     C -->|No| D
     E --> F[개발 준비 완료]
@@ -284,11 +284,11 @@ flowchart TD
 
 | 명령어 | 설명 | 생성 문서 |
 |--------|------|----------|
-| `/onboard` | 전체 온보딩 (5단계) | 5개 문서 |
-| `/onboard-quick` | 빠른 온보딩 | PROJECT_SUMMARY만 |
-| `/context-refresh` | 컨텍스트 갱신 | 기존 문서 업데이트 |
-| `/context-show` | 컨텍스트 표시 | 읽기 전용 |
-| `/learn <path>` | 특정 영역 학습 | 해당 영역 심층 분석 |
+| `/onboarding:start` | 전체 온보딩 (5단계) | 5개 문서 |
+| `/onboarding:quick` | 빠른 온보딩 | PROJECT_SUMMARY만 |
+| `/onboarding:refresh` | 컨텍스트 갱신 | 기존 문서 업데이트 |
+| `/onboarding:show` | 컨텍스트 표시 | 읽기 전용 |
+| `/onboarding:learn <path>` | 특정 영역 학습 | 해당 영역 심층 분석 |
 
 ---
 
@@ -326,7 +326,7 @@ flowchart TD
 
 ## 참조 문서
 
-- `skills/onboard/SKILL.md` - 전체 온보딩 스킬
-- `skills/onboard-quick/SKILL.md` - 빠른 온보딩 스킬
+- `/onboarding:start` - 전체 온보딩 스킬
+- `/onboarding:quick` - 빠른 온보딩 스킬
 - `best-practices/project-onboarding.md` - 온보딩 베스트 프랙티스
 - [C4 Model](https://c4model.com/) - 아키텍처 문서화 표준

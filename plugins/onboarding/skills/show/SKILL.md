@@ -1,27 +1,27 @@
 ---
-name: onboarding:context-show
+name: show
 description: 현재 프로젝트 컨텍스트를 표시합니다. 기술 스택, 패턴, 아키텍처, 도메인 정보를 확인합니다.
 allowed-tools: Read, Glob
 argument-hint: [tech | patterns | architecture | domain]
 ---
 
-# /onboarding:context-show - 컨텍스트 표시
+# /onboarding:show - 컨텍스트 표시
 
 ## 설명
 현재 로드된 프로젝트 컨텍스트를 요약하여 표시합니다.
 
 ## 사용법
 ```
-/context-show              # 전체 요약
-/context-show tech         # 기술 스택만
-/context-show patterns     # 코드 패턴만
-/context-show architecture # 아키텍처만
-/context-show domain       # 도메인 지식만
+/onboarding:show              # 전체 요약
+/onboarding:show tech         # 기술 스택만
+/onboarding:show patterns     # 코드 패턴만
+/onboarding:show architecture # 아키텍처만
+/onboarding:show domain       # 도메인 지식만
 ```
 
 ## 출력 형식
 
-### 전체 요약 (`/context-show`)
+### 전체 요약 (`/onboarding:show`)
 
 ```
 📋 현재 프로젝트 컨텍스트
@@ -61,7 +61,7 @@ src/
 진행률: 60%
 ```
 
-### 기술 스택만 (`/context-show tech`)
+### 기술 스택만 (`/onboarding:show tech`)
 
 ```
 📦 기술 스택
@@ -80,7 +80,7 @@ src/
 참조: .claude/memory/PROJECT_SUMMARY.md
 ```
 
-### 코드 패턴만 (`/context-show patterns`)
+### 코드 패턴만 (`/onboarding:show patterns`)
 
 ```
 🎨 코드 패턴
@@ -127,12 +127,12 @@ describe('Component', () => {
 ⚠️ 프로젝트 컨텍스트가 없습니다.
 
 다음 명령어로 온보딩을 시작하세요:
-- /onboard       - 전체 분석
-- /onboard-quick - 빠른 분석
+- /onboarding:start - 전체 분석
+- /onboarding:quick - 빠른 분석
 
 온보딩 후 AI가 프로젝트 스타일에 맞게 개발할 수 있습니다.
 ```
 
 ## 참조
-- `/onboard` - 초기 온보딩
-- `/context-refresh` - 컨텍스트 갱신
+- `/onboarding:start` - 초기 온보딩
+- `/onboarding:refresh` - 컨텍스트 갱신

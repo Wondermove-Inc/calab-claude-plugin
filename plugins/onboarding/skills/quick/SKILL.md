@@ -1,10 +1,10 @@
 ---
-name: onboarding:onboard-quick
+name: quick
 description: 빠른 프로젝트 온보딩을 실행합니다. 핵심 정보만 분석하여 최소 컨텍스트를 구축합니다.
 allowed-tools: Read, Write, Glob, Bash
 ---
 
-# /onboarding:onboard-quick - 빠른 온보딩
+# /onboarding:quick - 빠른 온보딩
 
 ## 설명
 
@@ -16,7 +16,7 @@ allowed-tools: Read, Write, Glob, Bash
 ## 사용법
 
 ```bash
-/onboard-quick
+/onboarding:quick
 ```
 
 ---
@@ -154,7 +154,7 @@ src/
 
 ---
 
-💡 상세 분석이 필요하면 `/onboard` 실행
+💡 상세 분석이 필요하면 `/onboarding:start` 실행
 ```
 
 ---
@@ -203,17 +203,17 @@ src/
 └── .claude/memory/PROJECT_SUMMARY.md
 
 💡 다음 단계:
-   /onboard          → 상세 분석 (5개 문서)
-   /learn <path>     → 특정 영역 학습
-   바로 코딩 시작!    → 기본 컨텍스트 적용됨
+   /onboarding:start        → 상세 분석 (5개 문서)
+   /onboarding:learn <path> → 특정 영역 학습
+   바로 코딩 시작!           → 기본 컨텍스트 적용됨
 ```
 
 ---
 
-## /onboard vs /onboard-quick 비교
+## /onboarding:start vs /onboarding:quick 비교
 
-| 항목 | /onboard-quick | /onboard |
-|------|----------------|----------|
+| 항목 | /onboarding:quick | /onboarding:start |
+|------|-------------------|-------------------|
 | **소요 시간** | ~1분 | ~10분 |
 | **분석 깊이** | 표면적 | 심층적 |
 | **생성 문서** | 1개 | 5개 |
@@ -225,13 +225,13 @@ src/
 
 | 상황 | 권장 명령어 |
 |------|------------|
-| 새 프로젝트 투입, 장기 개발 | `/onboard` |
-| 간단한 버그 수정 | `/onboard-quick` |
-| 빠른 코드 리뷰 | `/onboard-quick` |
-| PR 리뷰 전 빠른 파악 | `/onboard-quick` |
-| 기능 추가 (단기) | `/onboard-quick` → 필요시 `/onboard` |
-| 아키텍처 이해 필요 | `/onboard` |
-| 신규 팀원 온보딩 | `/onboard` |
+| 새 프로젝트 투입, 장기 개발 | `/onboarding:start` |
+| 간단한 버그 수정 | `/onboarding:quick` |
+| 빠른 코드 리뷰 | `/onboarding:quick` |
+| PR 리뷰 전 빠른 파악 | `/onboarding:quick` |
+| 기능 추가 (단기) | `/onboarding:quick` → 필요시 `/onboarding:start` |
+| 아키텍처 이해 필요 | `/onboarding:start` |
+| 신규 팀원 온보딩 | `/onboarding:start` |
 
 ---
 
@@ -239,9 +239,9 @@ src/
 
 | 상황 | 명령어 |
 |------|--------|
-| 더 자세한 분석 필요 | `/onboard` |
-| 특정 폴더 심층 학습 | `/learn <path>` |
-| 컨텍스트 확인 | `/context-show` |
+| 더 자세한 분석 필요 | `/onboarding:start` |
+| 특정 폴더 심층 학습 | `/onboarding:learn <path>` |
+| 컨텍스트 확인 | `/onboarding:show` |
 | 바로 작업 시작 | 코드 작성 (컨텍스트 자동 참조) |
 
 ---
@@ -286,6 +286,6 @@ if (dependencies["@tanstack/react-query"]) return "React Query (서버 상태)";
 
 ## 참조
 
-- `/onboard` - 전체 온보딩
-- `skills/project-onboarding/SKILL.md`
+- `/onboarding:start` - 전체 온보딩
+- `/onboarding:learn` - 특정 영역 학습
 - `best-practices/project-onboarding.md`

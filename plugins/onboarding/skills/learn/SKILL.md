@@ -1,5 +1,5 @@
 ---
-name: onboarding:learn
+name: learn
 description: 특정 영역을 심층 학습합니다. 파일이나 폴더를 분석하여 패턴과 구조를 파악합니다.
 allowed-tools: Read, Glob, Grep
 argument-hint: <path>
@@ -12,17 +12,17 @@ argument-hint: <path>
 
 ## 사용법
 ```
-/learn <path>
-/learn src/components/Button
-/learn src/services/
-/learn src/app/api/users/route.ts
+/onboarding:learn <path>
+/onboarding:learn src/components/Button
+/onboarding:learn src/services/
+/onboarding:learn src/app/api/users/route.ts
 ```
 
 ## 학습 대상
 
 ### 폴더 학습
 ```
-/learn src/components/
+/onboarding:learn src/components/
 
 분석 내용:
 - 모든 컴포넌트 파일 구조
@@ -34,7 +34,7 @@ argument-hint: <path>
 
 ### 파일 학습
 ```
-/learn src/services/userService.ts
+/onboarding:learn src/services/userService.ts
 
 분석 내용:
 - 함수 구조
@@ -87,7 +87,7 @@ argument-hint: <path>
 ### 컴포넌트 폴더 학습
 
 ```
-/learn src/components/Button
+/onboarding:learn src/components/Button
 
 📚 학습 시작: src/components/Button
 
@@ -151,7 +151,7 @@ export function Button({
 ### API 서비스 학습
 
 ```
-/learn src/services/
+/onboarding:learn src/services/
 
 📚 학습 시작: src/services/
 
@@ -200,12 +200,12 @@ export const userService = {
 
 ### 다중 경로 학습
 ```
-/learn src/components/Button src/components/Input src/components/Modal
+/onboarding:learn src/components/Button src/components/Input src/components/Modal
 ```
 
 ### 학습 후 즉시 생성
 ```
-/learn src/components/Button
+/onboarding:learn src/components/Button
 이제 동일한 패턴으로 Checkbox 컴포넌트를 만들어줘
 ```
 
@@ -213,11 +213,11 @@ export const userService = {
 
 | 상황 | 명령어 |
 |------|--------|
-| 학습된 패턴 확인 | `/context-show patterns` |
+| 학습된 패턴 확인 | `/onboarding:show patterns` |
 | 동일 패턴으로 코드 생성 | "학습한 패턴으로 XXX 만들어줘" |
-| 컨텍스트 갱신 | `/context-refresh` |
+| 컨텍스트 갱신 | `/onboarding:refresh` |
 
 ## 참조
 
-- `/onboard` - 전체 프로젝트 온보딩
-- `/context-show patterns` - 학습된 패턴 확인
+- `/onboarding:start` - 전체 프로젝트 온보딩
+- `/onboarding:show patterns` - 학습된 패턴 확인

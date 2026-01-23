@@ -8,11 +8,11 @@
 
 | 상황 | 스킬 | 설명 |
 |------|------|------|
-| 기존 프로젝트 투입 | `/onboarding:onboard` | 5개 컨텍스트 문서 생성 |
-| 빠른 파악 필요 | `/onboarding:onboard-quick` | 핵심만 빠른 분석 |
+| 기존 프로젝트 투입 | `/onboarding:start` | 5개 컨텍스트 문서 생성 |
+| 빠른 파악 필요 | `/onboarding:quick` | 핵심만 빠른 분석 |
 | 특정 영역 학습 | `/onboarding:learn [path]` | 영역별 심층 학습 |
-| 코드 변경 후 동기화 | `/onboarding:context-refresh` | 문서 갱신 |
-| 컨텍스트 확인 | `/onboarding:context-show` | 현재 컨텍스트 표시 |
+| 코드 변경 후 동기화 | `/onboarding:refresh` | 문서 갱신 |
+| 컨텍스트 확인 | `/onboarding:show` | 현재 컨텍스트 표시 |
 | 도움말 | `/onboarding:help` | 플러그인 사용법 |
 
 ---
@@ -66,90 +66,39 @@ flowchart LR
 ## 사용 예시
 
 ```bash
-# 전체 분석 (5-10분 소요)
-/onboarding:onboard
+# 전체 분석
+/onboarding:start
 
-# 빠른 분석 (1-2분 소요)
-/onboarding:onboard-quick
+# 빠른 분석
+/onboarding:quick
 
 # 특정 영역 심층 학습
 /onboarding:learn src/services
 
 # 컨텍스트 확인
-/onboarding:context-show
+/onboarding:show
 
 # 컨텍스트 갱신
-/onboarding:context-refresh
-```
-
----
-
-## 출력 예시
-
-```
-🔍 프로젝트 온보딩 시작...
-
-══════════════════════════════════════════════════════════════
- Phase 1: 프로젝트 스캔
-══════════════════════════════════════════════════════════════
-✅ package.json 분석 완료
-   - Framework: Next.js 14.1.0
-   - Language: TypeScript 5.3.3
-   - Database: PostgreSQL (Prisma 5.8.0)
-
-✅ tsconfig.json 분석 완료
-   - Path alias: @/* → src/*
-   - Strict mode: enabled
-
-✅ 디렉토리 구조 파악
-   - 구조 유형: Feature-based (App Router)
-   - 주요 폴더: app/, components/, lib/
-
-══════════════════════════════════════════════════════════════
- Phase 2: 코드 패턴 분석
-══════════════════════════════════════════════════════════════
-✅ 컴포넌트 패턴 (5개 파일 분석)
-   - Props: interface 사용
-   - 스타일: Tailwind CSS + cn() 유틸
-   - 상태: React Query + Zustand
-
-✅ API 패턴 (3개 파일 분석)
-   - 라우터: Next.js App Router API Routes
-   - 검증: Zod
-   - 응답: 표준화된 JSON 형식
-
-══════════════════════════════════════════════════════════════
- Phase 4: 컨텍스트 문서 생성
-══════════════════════════════════════════════════════════════
-📄 PROJECT_SUMMARY.md 생성 완료 (2.3KB)
-📄 ARCHITECTURE.md 생성 완료 (4.1KB)
-📄 CODE_PATTERNS.md 생성 완료 (5.8KB)
-📄 CONVENTIONS.md 생성 완료 (3.2KB)
-
-══════════════════════════════════════════════════════════════
-✅ 온보딩 완료!
-══════════════════════════════════════════════════════════════
-
-📁 생성된 컨텍스트 문서:
-├── .claude/memory/PROJECT_SUMMARY.md
-├── .claude/memory/ARCHITECTURE.md
-├── .claude/memory/CODE_PATTERNS.md
-├── .claude/memory/CONVENTIONS.md
-└── .claude/memory/DOMAIN_KNOWLEDGE.md
-
-💡 다음 단계:
-   /workflow:process [아이디어]   → 새 기능 개발 시작
-   /onboarding:learn <path>      → 특정 영역 심층 학습
-   /onboarding:context-show      → 컨텍스트 확인
+/onboarding:refresh
 ```
 
 ---
 
 ## 자동 적용 기능 (패시브 스킬)
 
-| 스킬 | 활성화 조건 | 효과 |
-|------|------------|------|
-| `project-onboarding` | 프로젝트 분석 요청 시 | C4 Model 기반 아키텍처 문서화 |
+### `onboarding:project`
+
+프로젝트 분석 관련 키워드가 감지되면 **자동으로 활성화**되어 온보딩을 지원합니다.
+
+**활성화 키워드:**
+- "프로젝트 분석", "코드 분석", "온보딩", "프로젝트 파악"
+- "기존 프로젝트", "이어서 개발", "코드베이스 학습"
+- "이 프로젝트 어떻게 되어있어?"
+
+**자동 동작:**
+- 세션 시작 시 `.claude/memory/` 폴더의 컨텍스트 문서 존재 여부 확인
+- 문서가 없으면 `/onboarding:start` 또는 `/onboarding:quick` 안내
+- 문서가 있으면 자동으로 컨텍스트 로드
 
 ---
 
@@ -169,4 +118,4 @@ flowchart LR
 ## 포함 리소스
 
 - **best-practices/**: project-onboarding.md
-- **skills/**: onboarding:onboard, onboarding:onboard-quick, onboarding:learn, onboarding:context-refresh, onboarding:context-show, onboarding:help, project-onboarding
+- **skills/**: start, quick, learn, refresh, show, help, project

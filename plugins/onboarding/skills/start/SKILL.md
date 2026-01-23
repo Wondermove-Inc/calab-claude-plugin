@@ -1,11 +1,11 @@
 ---
-name: onboarding:onboard
+name: start
 description: 프로젝트를 전체 분석하여 5개 컨텍스트 문서를 생성합니다. 기존 프로젝트 분석, 코드베이스 학습, 온보딩 시 사용합니다.
 allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint: [--skip-domain]
 ---
 
-# /onboarding:onboard - 프로젝트 온보딩
+# /onboarding:start - 프로젝트 온보딩
 
 ## 설명
 
@@ -16,8 +16,8 @@ argument-hint: [--skip-domain]
 ## 사용법
 
 ```bash
-/onboard                 # 전체 온보딩 (5개 문서 생성)
-/onboard --skip-domain   # 도메인 지식 단계 건너뛰기
+/onboarding:start                 # 전체 온보딩 (5개 문서 생성)
+/onboarding:start --skip-domain   # 도메인 지식 단계 건너뛰기
 ```
 
 ---
@@ -1134,9 +1134,9 @@ Closes #123
 └── .claude/memory/DOMAIN_KNOWLEDGE.md
 
 💡 다음 단계:
-   /process [아이디어]   → 새 기능 개발 시작
-   /learn <path>        → 특정 영역 심층 학습
-   /context-show        → 컨텍스트 확인
+   /process [아이디어]        → 새 기능 개발 시작
+   /onboarding:learn <path>  → 특정 영역 심층 학습
+   /onboarding:show          → 컨텍스트 확인
 ```
 
 ---
@@ -1156,6 +1156,7 @@ Closes #123
 
 ## 참조
 
-- `skills/project-onboarding/SKILL.md`
+- `/onboarding:quick` - 빠른 온보딩
+- `/onboarding:learn` - 특정 영역 학습
 - `best-practices/project-onboarding.md`
 - [C4 Model](https://c4model.com/) - 아키텍처 문서화 표준

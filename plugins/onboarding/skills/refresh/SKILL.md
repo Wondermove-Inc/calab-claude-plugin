@@ -1,20 +1,20 @@
 ---
-name: onboarding:context-refresh
+name: refresh
 description: 프로젝트 컨텍스트 문서를 갱신합니다. 코드 변경 후 컨텍스트 동기화가 필요할 때 사용합니다.
 allowed-tools: Read, Write, Glob, Grep
 argument-hint: [patterns | architecture | domain]
 ---
 
-# /onboarding:context-refresh - 컨텍스트 갱신
+# /onboarding:refresh - 컨텍스트 갱신
 
 ## 설명
 프로젝트에 변경사항이 생겼을 때 컨텍스트 문서를 업데이트합니다.
 
 ## 사용법
 ```
-/context-refresh              # 전체 갱신
-/context-refresh patterns     # 코드 패턴만 갱신
-/context-refresh architecture # 아키텍처만 갱신
+/onboarding:refresh              # 전체 갱신
+/onboarding:refresh patterns     # 코드 패턴만 갱신
+/onboarding:refresh architecture # 아키텍처만 갱신
 ```
 
 ## 갱신 대상
@@ -77,7 +77,7 @@ argument-hint: [patterns | architecture | domain]
 ### 특정 대상 갱신
 
 ```
-/context-refresh patterns
+/onboarding:refresh patterns
 
 🔄 코드 패턴 갱신 중...
 
@@ -97,5 +97,5 @@ argument-hint: [patterns | architecture | domain]
 - 다른 개발자가 코드를 많이 변경한 후
 
 ## 참조
-- `/onboard` - 초기 온보딩
-- `/context-show` - 현재 컨텍스트 확인
+- `/onboarding:start` - 초기 온보딩
+- `/onboarding:show` - 현재 컨텍스트 확인
