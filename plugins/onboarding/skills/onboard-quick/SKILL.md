@@ -1,10 +1,10 @@
 ---
-name: onboard-quick
+name: onboarding:onboard-quick
 description: 빠른 프로젝트 온보딩을 실행합니다. 핵심 정보만 분석하여 최소 컨텍스트를 구축합니다.
 allowed-tools: Read, Write, Glob, Bash
 ---
 
-# /onboard-quick - 빠른 온보딩
+# /onboarding:onboard-quick - 빠른 온보딩
 
 ## 설명
 

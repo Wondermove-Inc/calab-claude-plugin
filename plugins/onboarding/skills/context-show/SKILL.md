@@ -1,11 +1,11 @@
 ---
-name: context-show
+name: onboarding:context-show
 description: 현재 프로젝트 컨텍스트를 표시합니다. 기술 스택, 패턴, 아키텍처, 도메인 정보를 확인합니다.
 allowed-tools: Read, Glob
 argument-hint: [tech | patterns | architecture | domain]
 ---
 
-# /context-show - 컨텍스트 표시
+# /onboarding:context-show - 컨텍스트 표시
 
 ## 설명
 현재 로드된 프로젝트 컨텍스트를 요약하여 표시합니다.

@@ -1,11 +1,11 @@
 ---
-name: learn
+name: onboarding:learn
 description: 특정 영역을 심층 학습합니다. 파일이나 폴더를 분석하여 패턴과 구조를 파악합니다.
 allowed-tools: Read, Glob, Grep
 argument-hint: <path>
 ---
 
-# /learn - 특정 영역 학습
+# /onboarding:learn - 특정 영역 학습
 
 ## 설명
 프로젝트의 특정 파일이나 폴더를 심층 분석하여 해당 영역의 패턴과 구조를 학습합니다.

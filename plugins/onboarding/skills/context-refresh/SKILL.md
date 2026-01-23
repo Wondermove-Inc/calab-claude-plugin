@@ -1,11 +1,11 @@
 ---
-name: context-refresh
+name: onboarding:context-refresh
 description: 프로젝트 컨텍스트 문서를 갱신합니다. 코드 변경 후 컨텍스트 동기화가 필요할 때 사용합니다.
 allowed-tools: Read, Write, Glob, Grep
 argument-hint: [patterns | architecture | domain]
 ---
 
-# /context-refresh - 컨텍스트 갱신
+# /onboarding:context-refresh - 컨텍스트 갱신
 
 ## 설명
 프로젝트에 변경사항이 생겼을 때 컨텍스트 문서를 업데이트합니다.

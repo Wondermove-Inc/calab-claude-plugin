@@ -8,12 +8,12 @@
 
 | 상황 | 스킬 | 설명 |
 |------|------|------|
-| 기존 프로젝트 투입 | `/onboard` | 5개 컨텍스트 문서 생성 |
-| 빠른 파악 필요 | `/onboard-quick` | 핵심만 빠른 분석 |
-| 특정 영역 학습 | `/learn [path]` | 영역별 심층 학습 |
-| 코드 변경 후 동기화 | `/context-refresh` | 문서 갱신 |
-| 컨텍스트 확인 | `/context-show` | 현재 컨텍스트 표시 |
-| 도움말 | `/help` | 플러그인 사용법 |
+| 기존 프로젝트 투입 | `/onboarding:onboard` | 5개 컨텍스트 문서 생성 |
+| 빠른 파악 필요 | `/onboarding:onboard-quick` | 핵심만 빠른 분석 |
+| 특정 영역 학습 | `/onboarding:learn [path]` | 영역별 심층 학습 |
+| 코드 변경 후 동기화 | `/onboarding:context-refresh` | 문서 갱신 |
+| 컨텍스트 확인 | `/onboarding:context-show` | 현재 컨텍스트 표시 |
+| 도움말 | `/onboarding:help` | 플러그인 사용법 |
 
 ---
 
@@ -67,19 +67,19 @@ flowchart LR
 
 ```bash
 # 전체 분석 (5-10분 소요)
-/onboard
+/onboarding:onboard
 
 # 빠른 분석 (1-2분 소요)
-/onboard-quick
+/onboarding:onboard-quick
 
 # 특정 영역 심층 학습
-/learn src/services
+/onboarding:learn src/services
 
 # 컨텍스트 확인
-/context-show
+/onboarding:context-show
 
 # 컨텍스트 갱신
-/context-refresh
+/onboarding:context-refresh
 ```
 
 ---
@@ -138,9 +138,9 @@ flowchart LR
 └── .claude/memory/DOMAIN_KNOWLEDGE.md
 
 💡 다음 단계:
-   /process [아이디어]   → 새 기능 개발 시작
-   /learn <path>        → 특정 영역 심층 학습
-   /context-show        → 컨텍스트 확인
+   /workflow:process [아이디어]   → 새 기능 개발 시작
+   /onboarding:learn <path>      → 특정 영역 심층 학습
+   /onboarding:context-show      → 컨텍스트 확인
 ```
 
 ---
@@ -169,4 +169,4 @@ flowchart LR
 ## 포함 리소스
 
 - **best-practices/**: project-onboarding.md
-- **skills/**: onboard, onboard-quick, learn, context-refresh, context-show, help, project-onboarding
+- **skills/**: onboarding:onboard, onboarding:onboard-quick, onboarding:learn, onboarding:context-refresh, onboarding:context-show, onboarding:help, project-onboarding
