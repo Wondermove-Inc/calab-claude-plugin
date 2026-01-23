@@ -515,4 +515,4 @@ func TestUserService_GetUser(t *testing.T) {
 - [ ] golangci-lint 통과
 - [ ] go vet -race 통과
 - [ ] 명확한 패키지 구조
-- [ ] 파일 300줄 이하
+- [ ] 파일 500줄 이하

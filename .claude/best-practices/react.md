@@ -287,4 +287,4 @@ class ErrorBoundary extends React.Component<
 - [ ] 비즈니스 로직은 Custom Hook으로 분리
 - [ ] 서버 상태는 React Query 사용
 - [ ] JSDoc 주석 작성
-- [ ] 컴포넌트 300줄 이하
+- [ ] 컴포넌트 500줄 이하

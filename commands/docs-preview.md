@@ -24,11 +24,11 @@ Hot reload가 지원되어 문서 수정 시 즉시 반영됩니다.
 ### 1. 사전 조건 확인
 
 ```bash
-# docs-site 디렉토리 존재 확인
-ls docs-site/
+# .claude/docs-site 디렉토리 존재 확인
+ls .claude/docs-site/
 
 # node_modules 존재 확인
-ls docs-site/node_modules/
+ls .claude/docs-site/node_modules/
 ```
 
 ### 2. 의존성 확인
@@ -36,13 +36,13 @@ ls docs-site/node_modules/
 node_modules가 없으면 설치:
 
 ```bash
-cd docs-site && npm install
+cd .claude/docs-site && npm install
 ```
 
 ### 3. 개발 서버 실행
 
 ```bash
-cd docs-site && npm run start -- --port 3000
+cd .claude/docs-site && npm run start -- --port 3000
 ```
 
 ### 4. 완료 메시지
@@ -83,7 +83,7 @@ Error: Port 3000 is already in use.
 Error: Cannot find module 'docusaurus'
 
 해결:
-cd docs-site && npm install
+cd .claude/docs-site && npm install
 ```
 
 ### 빌드 에러

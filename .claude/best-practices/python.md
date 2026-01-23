@@ -447,4 +447,4 @@ def process_order(order_id: str) -> None:
 - [ ] 커스텀 예외 사용
 - [ ] pytest 테스트 작성
 - [ ] 구조화된 로깅
-- [ ] 파일 300줄 이하
+- [ ] 파일 500줄 이하

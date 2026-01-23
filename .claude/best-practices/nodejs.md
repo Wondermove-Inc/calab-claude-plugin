@@ -386,4 +386,4 @@ export const verifyPassword = (password: string, hash: string): Promise<boolean>
 - [ ] 구조화된 로깅
 - [ ] 환경 변수 검증 (zod)
 - [ ] JSDoc 주석 작성
-- [ ] 파일 300줄 이하
+- [ ] 파일 500줄 이하

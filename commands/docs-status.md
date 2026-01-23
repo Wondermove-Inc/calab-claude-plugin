@@ -23,7 +23,7 @@ argument-hint: [--verbose]
 
 ### 1. 문서 구조 스캔
 
-에이전트를 사용하여 `docs-site/docs/` 디렉토리 구조 분석:
+에이전트를 사용하여 `.claude/docs-site/docs/` 디렉토리 구조 분석:
 
 ```
 스캔 항목:

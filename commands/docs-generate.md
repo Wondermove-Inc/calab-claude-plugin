@@ -22,7 +22,7 @@ argument-hint: [--from-prd] [--from-context] [--sections <list>]
 
 ## 사전 조건
 
-1. `/docs init` 실행 완료 (docs-site 디렉토리 존재)
+1. `/docs init` 실행 완료 (.claude/docs-site 디렉토리 존재)
 2. 다음 중 하나 이상 존재:
    - `.claude/memory/CURRENT_CONTEXT.md`
    - `.claude/docs/prd.md`
@@ -34,7 +34,7 @@ argument-hint: [--from-prd] [--from-context] [--sections <list>]
 
 ```
 에이전트를 사용하여 확인:
-1. docs-site/ 디렉토리 존재 여부
+1. .claude/docs-site/ 디렉토리 존재 여부
 2. 컨텍스트 문서 존재 여부
 3. PRD 문서 존재 여부
 ```

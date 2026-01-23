@@ -30,7 +30,7 @@ docs.cast.ai, Stripe Docs 스타일의 전문적인 문서 사이트를 구축�
 ## 문서 구조 (Diátaxis 프레임워크)
 
 ```
-docs-site/                        # Docusaurus 프로젝트
+.claude/docs-site/                        # Docusaurus 프로젝트
 ├── docs/
 │   ├── intro.md                  # 제품 소개
 │   ├── getting-started/

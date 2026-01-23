@@ -70,7 +70,7 @@ argument-hint: [--fix] [--strict]
 
 ### 1. 파일 수집
 
-에이전트를 사용하여 `docs-site/docs/` 내 모든 마크다운 파일 수집.
+에이전트를 사용하여 `.claude/docs-site/docs/` 내 모든 마크다운 파일 수집.
 
 ### 2. 검증 실행
 
@@ -208,7 +208,7 @@ name: Validate Docs
 on:
   pull_request:
     paths:
-      - 'docs-site/docs/**'
+      - '.claude/docs-site/docs/**'
 
 jobs:
   validate:
@@ -222,17 +222,17 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: cd docs-site && npm ci
+        run: cd .claude/docs-site && npm ci
 
       - name: Build (link check)
-        run: cd docs-site && npm run build
+        run: cd .claude/docs-site && npm run build
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 ```
 
 ## 검증 규칙 커스터마이징
 
-`docs-site/.docsvalidate.json`:
+`.claude/docs-site/.docsvalidate.json`:
 
 ```json
 {

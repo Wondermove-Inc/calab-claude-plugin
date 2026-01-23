@@ -1,5 +1,5 @@
 ---
-description: 현재 프로젝트의 코드 품질을 전체 검사합니다. 300줄 초과 파일, 주석 누락 함수를 찾아 보고합니다.
+description: 현재 프로젝트의 코드 품질을 전체 검사합니다. 500줄 초과 파일, 주석 누락 함수를 찾아 보고합니다.
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -27,7 +27,7 @@ allowed-tools: Read, Grep, Glob, Bash
 ### 2. 줄 수 검사
 
 각 파일의 줄 수를 확인하고:
-- 300줄 초과: 오류 (분리 필수)
+- 500줄 초과: 오류 (분리 필수)
 - 250줄 이상: 경고 (분리 권장)
 
 ### 3. 주석 검사
@@ -49,7 +49,7 @@ allowed-tools: Read, Grep, Glob, Bash
 • 경고: N개
 • 오류: N개
 
- 300줄 초과 파일 (분리 필요):
+ 500줄 초과 파일 (분리 필요):
 1. src/services/user-service.ts - 450줄 (150줄 초과)
 2. src/utils/helpers.ts - 380줄 (80줄 초과)
 
@@ -78,7 +78,7 @@ allowed-tools: Read, Grep, Glob, Bash
  수정 제안
 ============================================
 
-1. 300줄 초과 파일 분리:
+1. 500줄 초과 파일 분리:
    • user-service.ts → user-auth.ts, user-profile.ts, user-types.ts
 
 2. 주석 추가 필요:

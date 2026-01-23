@@ -100,7 +100,7 @@ rm -rf ~/.claude/calab-marketplace
 |------|------------|------|
 | `clean-architecture` | 코드 구현 시 (항상) | 4-레이어 구조 강제, 의존성 규칙 검증 |
 | `best-practices` | 기술 감지 시 | 15개 언어별 베스트 프랙티스 자동 적용 |
-| `code-quality` | 코드 생성 시 | 300줄 제한, 주석 필수, 타입 완전성 검증 |
+| `code-quality` | 코드 생성 시 | 500줄 제한, 주석 필수, 타입 완전성 검증 |
 | `project-rules` | 코드 작성/수정 시 | 프로젝트 규칙 자동 참조 |
 | `work-tracker` | 소스 코드 수정 시 | Worktree 태스크 자동 시작 |
 | `problem-solving` | 에러/버그 언급 시 | 5 Whys, RCA 방법론 자동 적용 |
@@ -118,7 +118,7 @@ rm -rf ~/.claude/calab-marketplace
 | **/dev plan**   | PRD 템플릿                             | 브레인스토밍 + 요구사항 문서 작성<br>· 배경<br>· 목표<br>· 사용자 스토리<br>· 기능 요구사항             |
 | **/dev design** | C4 Model + Layered Architecture     | 시스템 아키텍처(C4)<br>ERD 설계<br>3NF 정규화<br>필수 컬럼 규칙                             |
 | **/dev tasks**  | Epic–Story–Task 구조 + AC             | 작업 분해(Epic→Story→Task)<br>의존성 분석<br>우선순위(P0~P3)<br>Acceptance Criteria 필수 |
-| **/dev build**  | Clean Architecture + Best Practices | 4-Layer 구조<br>기술별 베스트 프랙티스<br>파일 300줄 제한<br>JSDoc 필수                      |
+| **/dev build**  | Clean Architecture + Best Practices | 4-Layer 구조<br>기술별 베스트 프랙티스<br>파일 500줄 제한<br>JSDoc 필수                      |
 | **/dev status** | Worktree 진행률 추적                     | 작업 상태 시각화<br>완료 / 진행중 / 블로킹                                               |
 
 ---
@@ -219,7 +219,7 @@ rm -rf ~/.claude/calab-marketplace
 | ---------------------- | ------------------ | ----------------- |
 | **clean-architecture** | 4-Layer 의존성 규칙     | 모든 코드 구현          |
 | **best-practices**     | 기술별 베스트 프랙티스 (15+) | 파일 확장자 / 키워드 감지   |
-| **code-quality**       | 300줄 제한 + JSDoc 필수 | 코드 생성 / 수정        |
+| **code-quality**       | 500줄 제한 + JSDoc 필수 | 코드 생성 / 수정        |
 | **work-tracker**       | Worktree 자동 추적     | 작업 시작 / 완료 키워드    |
 | **problem-solving**    | 6단계 문제 해결 방법론      | 에러 / 버그 / 디버깅 키워드 |
 
@@ -766,7 +766,7 @@ flowchart LR
 
 | 트리거 | 자동 동작 | 관련 파일 |
 |--------|----------|----------|
-| **파일 수정 (Edit/Write)** | 코드 품질 검사 | 300줄 초과, 주석 누락 경고 |
+| **파일 수정 (Edit/Write)** | 코드 품질 검사 | 500줄 초과, 주석 누락 경고 |
 | **소스 코드 수정** | worktree 태스크 자동 시작 (in_progress) | `.claude-state/worktree.json` |
 | **파일 수정 (Edit/Write)** | JIRA 이슈 상태 자동 업데이트 | JIRA 연동 활성화 시 |
 | **민감 파일 수정 시도** | 자동 차단 | `.env`, `credentials` 등 |

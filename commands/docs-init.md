@@ -41,8 +41,8 @@ $ARGUMENTS에서 옵션 파싱:
 ### 3. Docusaurus 프로젝트 생성
 
 ```bash
-# docs-site 디렉토리에 Docusaurus 설치
-npx create-docusaurus@latest docs-site classic --typescript
+# .claude/docs-site 디렉토리에 Docusaurus 설치
+npx create-docusaurus@latest .claude/docs-site classic --typescript
 ```
 
 ### 4. 디렉토리 구조 생성
@@ -50,7 +50,7 @@ npx create-docusaurus@latest docs-site classic --typescript
 생성할 구조 (Diátaxis 프레임워크 기반):
 
 ```
-docs-site/
+.claude/docs-site/
 ├── docs/
 │   ├── intro.md                      # 제품 소개
 │   ├── getting-started/
@@ -266,7 +266,7 @@ export default config;
  ✅ 문서 사이트 초기화 완료!
 ============================================
 
- 생성된 디렉토리: docs-site/
+ 생성된 디렉토리: .claude/docs-site/
 
  구조:
  └── docs/
@@ -291,7 +291,7 @@ export default config;
     /docs preview
 
  4. 설정 커스터마이징:
-    docs-site/docusaurus.config.ts 편집
+    .claude/docs-site/docusaurus.config.ts 편집
 
 ============================================
 ```

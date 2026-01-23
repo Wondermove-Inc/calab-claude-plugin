@@ -521,7 +521,7 @@ def get_context_reminder(intent: Optional[dict]) -> str:
         return ""
 
     reminders = {
-        'implement': "📋 코드 품질: 300줄 제한, JSDoc 주석 필수",
+        'implement': "📋 코드 품질: 500줄 제한, JSDoc 주석 필수",
         'fix': "🔍 문제 해결: /solve 명령으로 체계적 분석 가능",
         'refactor': "🏗️ 리팩토링: 기존 테스트 통과 확인 필수",
         'review': "✅ 리뷰: 품질 규칙 준수 여부 확인",

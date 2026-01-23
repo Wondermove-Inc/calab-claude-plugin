@@ -36,7 +36,7 @@ GitHub Pages, Vercel, Netlify를 지원합니다.
 
 ```
 확인 항목:
-- docs-site/build 디렉토리 존재 (없으면 /docs build 먼저 실행)
+- .claude/docs-site/build 디렉토리 존재 (없으면 /docs build 먼저 실행)
 - Git 저장소 설정 (GitHub Pages의 경우)
 - 배포 도구 설치 여부
 ```
@@ -53,7 +53,7 @@ GitHub Pages, Vercel, Netlify를 지원합니다.
 
 ```bash
 # Docusaurus GitHub Pages 배포
-cd docs-site
+cd .claude/docs-site
 
 # docusaurus.config.ts 설정 확인
 # organizationName, projectName, deploymentBranch 필요
@@ -81,7 +81,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'docs-site/**'
+      - '.claude/docs-site/**'
 
 permissions:
   contents: read
@@ -97,13 +97,13 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: docs-site/package-lock.json
+          cache-dependency-path: .claude/docs-site/package-lock.json
 
       - name: Install dependencies
-        run: cd docs-site && npm ci
+        run: cd .claude/docs-site && npm ci
 
       - name: Build
-        run: cd docs-site && npm run build
+        run: cd .claude/docs-site && npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -111,7 +111,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs-site/build
+          path: .claude/docs-site/build
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
@@ -124,7 +124,7 @@ jobs:
 which vercel || npm install -g vercel
 
 # 배포
-cd docs-site
+cd .claude/docs-site
 
 # 프리뷰 배포
 vercel
@@ -149,7 +149,7 @@ vercel --prod
 which netlify || npm install -g netlify-cli
 
 # 배포
-cd docs-site
+cd .claude/docs-site
 
 # 프리뷰 배포
 netlify deploy --dir=build
@@ -161,7 +161,7 @@ netlify deploy --dir=build --prod
 **netlify.toml 설정** (선택사항):
 ```toml
 [build]
-  base = "docs-site"
+  base = ".claude/docs-site"
   command = "npm run build"
   publish = "build"
 
@@ -247,7 +247,7 @@ netlify deploy --dir=build --prod
    185.199.110.153
    185.199.111.153
    ```
-3. `docs-site/static/CNAME` 파일 생성:
+3. `.claude/docs-site/static/CNAME` 파일 생성:
    ```
    docs.yourdomain.com
    ```

@@ -71,7 +71,7 @@ $ARGUMENTS에서:
 
  타입: tutorial
  제목: 첫 API 호출
- 파일: docs-site/docs/tutorials/first-api-call.md
+ 파일: .claude/docs-site/docs/tutorials/first-api-call.md
 
  다음 단계:
  1. 생성된 파일 편집

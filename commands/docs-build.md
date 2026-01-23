@@ -17,7 +17,7 @@ Docusaurus 문서 사이트를 정적 HTML로 빌드합니다.
 
 | 옵션 | 설명 | 기본값 |
 |------|------|--------|
-| `--output` | 출력 디렉토리 | docs-site/build |
+| `--output` | 출력 디렉토리 | .claude/docs-site/build |
 
 ## 실행 단계
 
@@ -36,13 +36,13 @@ Docusaurus 문서 사이트를 정적 HTML로 빌드합니다.
 ### 2. 의존성 확인
 
 ```bash
-cd docs-site && npm install
+cd .claude/docs-site && npm install
 ```
 
 ### 3. 빌드 실행
 
 ```bash
-cd docs-site && npm run build
+cd .claude/docs-site && npm run build
 ```
 
 ### 4. 빌드 결과 검증
@@ -66,7 +66,7 @@ cd docs-site && npm run build
  ✅ 빌드 완료!
 ============================================
 
- 출력 디렉토리: docs-site/build/
+ 출력 디렉토리: .claude/docs-site/build/
 
  빌드 통계:
  - 총 HTML 파일: 15개
@@ -91,13 +91,13 @@ cd docs-site && npm run build
     - Branch: gh-pages, /root
 
  2. Vercel:
-    vercel deploy docs-site/build
+    vercel deploy .claude/docs-site/build
 
  3. Netlify:
-    netlify deploy --dir=docs-site/build
+    netlify deploy --dir=.claude/docs-site/build
 
  4. 정적 서버 테스트:
-    npx serve docs-site/build
+    npx serve .claude/docs-site/build
 
 ============================================
 ```
@@ -126,7 +126,7 @@ cd docs-site && npm run build
     - 또는 해당 문서 생성
 
  2. 이미지 추가:
-    - docs-site/static/img/ 에 이미지 추가
+    - .claude/docs-site/static/img/ 에 이미지 추가
 
  3. 일시적 무시 (권장하지 않음):
     docusaurus.config.ts에서:
@@ -145,7 +145,7 @@ cd docs-site && npm run build
 1. **Repository 설정**
    ```bash
    # gh-pages 브랜치에 배포
-   cd docs-site
+   cd .claude/docs-site
    npm run deploy
    ```
 
@@ -158,7 +158,7 @@ cd docs-site && npm run build
      push:
        branches: [main]
        paths:
-         - 'docs-site/**'
+         - '.claude/docs-site/**'
 
    jobs:
      deploy:
@@ -168,12 +168,12 @@ cd docs-site && npm run build
          - uses: actions/setup-node@v3
            with:
              node-version: 18
-         - run: cd docs-site && npm ci
-         - run: cd docs-site && npm run build
+         - run: cd .claude/docs-site && npm ci
+         - run: cd .claude/docs-site && npm run build
          - uses: peaceiris/actions-gh-pages@v3
            with:
              github_token: ${{ secrets.GITHUB_TOKEN }}
-             publish_dir: ./docs-site/build
+             publish_dir: ./.claude/docs-site/build
    ```
 
 ### Vercel
@@ -181,7 +181,7 @@ cd docs-site && npm run build
 ```bash
 # Vercel CLI 사용
 npm i -g vercel
-cd docs-site
+cd .claude/docs-site
 vercel --prod
 ```
 
@@ -190,7 +190,7 @@ vercel --prod
 ```bash
 # Netlify CLI 사용
 npm i -g netlify-cli
-cd docs-site
+cd .claude/docs-site
 netlify deploy --prod --dir=build
 ```
 
@@ -201,13 +201,13 @@ netlify deploy --prod --dir=build
 ```bash
 # 이미지 압축
 npm install -g imagemin-cli
-imagemin docs-site/static/img/* --out-dir=docs-site/static/img/
+imagemin .claude/docs-site/static/img/* --out-dir=.claude/docs-site/static/img/
 ```
 
 ### 2. 번들 분석
 
 ```bash
-cd docs-site
+cd .claude/docs-site
 npm run build -- --bundle-analyzer
 ```
 

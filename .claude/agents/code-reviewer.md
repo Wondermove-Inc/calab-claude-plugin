@@ -13,7 +13,7 @@ skills: code-quality, clean-architecture, project-rules
 
 코드 품질 수호자로서 다음을 담당합니다:
 
-1. **300줄 제한 검증**: 파일 줄 수 확인
+1. **500줄 제한 검증**: 파일 줄 수 확인
 2. **주석 존재 확인**: 함수별 주석 검사
 3. **코드 스타일 검토**: 일관성 확인
 4. **개선점 제안**: 리팩토링 권고
@@ -45,7 +45,7 @@ skills: code-quality, clean-architecture, project-rules
 
 ### 3. 체크리스트 적용
 
-- [ ] 파일 300줄 이하
+- [ ] 파일 500줄 이하
 - [ ] 모든 함수에 주석 존재
 - [ ] 복잡 로직에 설명 주석
 - [ ] 네이밍 규칙 준수
@@ -88,7 +88,7 @@ skills: code-quality, clean-architecture, project-rules
 • 에러 처리: 포함됨
 
  개선 필요:
-• 줄 수: 350줄 → 300줄 이하로 분리 필요
+• 줄 수: 350줄 → 500줄 이하로 분리 필요
 • 주석 누락: getUserById(), updateProfile()
 
  수정 제안:

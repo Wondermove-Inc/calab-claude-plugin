@@ -241,7 +241,7 @@ router.post('/users', {
 /docs update --version 2.0.0
 ```
 
-`docs-site/blog/` 에 릴리즈 노트 자동 생성:
+`.claude/docs-site/blog/` 에 릴리즈 노트 자동 생성:
 
 ```markdown
 ---
