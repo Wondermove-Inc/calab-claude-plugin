@@ -6,6 +6,19 @@
 
 ## Breaking Changes
 
+> ⚠️ **알려진 버그 (Claude Code 플러그인 시스템)**
+>
+> `/plugin uninstall`과 `/plugin marketplace remove` 명령어로는 **완전 제거가 안 됩니다**.
+> 재설치, 업데이트, 제거 시 **반드시 수동 파일 삭제가 필요**합니다.
+>
+> ```bash
+> # 완전 제거 필수 명령어 (Claude Code 종료 후 터미널에서)
+> rm -rf ~/.claude/plugins/cache
+> rm -f ~/.claude/plugins/installed_plugins.json
+> rm -f ~/.claude/plugins/known_marketplaces.json
+> rm -rf ~/.claude/calab-marketplace
+> ```
+
 **기존 v1.x 사용자는 마이그레이션 필수입니다:**
 
 | 항목 | v1.x (Old) | v2.1 (Current) |
