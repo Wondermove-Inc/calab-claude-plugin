@@ -73,7 +73,7 @@ rm -rf ~/.claude/calab-marketplace
 | **작업 추적 어려움** | 진행률 파악 불가 | Worktree 자동 추적 | `/calab-plugin:worktree` |
 | **JIRA 수동 업데이트** | 중복 작업 | 양방향 자동 동기화 | `/calab-plugin:jira-sync` |
 | **컨텍스트 손실** | Compact 후 작업 맥락 소실 | 자동 체크포인트 + 복원 | `/calab-plugin:restore-context` |
-| **문서화 필요** | 사용자 문서 수동 작성 | Docusaurus 자동 생성 | `/calab-plugin:docs` |
+| **문서화 필요** | 사용자 문서 수동 작성 | 고품질 문서 콘텐츠 자동 생성 | `/calab-plugin:docs` |
 
 ---
 
@@ -90,7 +90,7 @@ rm -rf ~/.claude/calab-marketplace
 - ✅ **JIRA 양방향 연동**: Worktree ↔ JIRA 자동 동기화
 - ✅ **작업 추적**: Worktree 실시간 진행률 관리
 - ✅ **컨텍스트 보존**: 자동 체크포인트 + Compact 복원
-- ✅ **문서 사이트 자동 생성**: Docusaurus 기반 docs.cast.ai 스타일 문서화
+- ✅ **문서 콘텐츠 자동 생성**: 프로젝트 분석 기반 고품질 기술 문서 자동 작성
 
 ### 자동 적용 기능 (패시브 스킬)
 
@@ -193,21 +193,34 @@ rm -rf ~/.claude/calab-marketplace
 
 ---
 
-### 9. 문서 사이트 (Documentation Site)
+### 9. 문서 콘텐츠 생성 (Documentation Content)
 
-> Docusaurus 기반 전문 문서 사이트 자동 생성 (docs.cast.ai 스타일)
+> 프로젝트 분석 기반 **극도로 상세한** 기술 문서 자동 생성
 
-| 명령어              | 적용 표준                    | 설명                                        |
-| ---------------- | ------------------------ | ----------------------------------------- |
-| **/docs init**   | Docusaurus + Diátaxis    | 문서 사이트 스켈레톤 생성<br>템플릿: saas, library, cli |
-| **/docs generate** | PRD/컨텍스트 기반 자동 생성     | 전체 문서 자동 생성<br>섹션별 병렬 처리               |
-| **/docs add**    | 6종 문서 타입                 | overview, quickstart, concept, tutorial, howto, api |
-| **/docs status** | 완성도 분석                   | 문서 현황 + 품질 점수<br>권장 작업 목록              |
-| **/docs preview** | Hot Reload 개발 서버        | 로컬 프리뷰<br>실시간 편집 확인                    |
-| **/docs build**  | 정적 사이트 빌드               | 빌드 + 링크 검증<br>배포 준비                     |
-| **/docs deploy** | GitHub Pages/Vercel/Netlify | 원클릭 배포<br>커스텀 도메인 설정                   |
-| **/docs validate** | 링크/형식/품질 검증            | 4종 검증 + 자동 수정<br>CI/CD 연동 가이드          |
-| **/docs update** | 코드 동기화                   | 코드 변경 → 문서 자동 반영<br>Changelog 생성       |
+| 명령어 | 설명 |
+|--------|------|
+| **/docs** | 하위 명령어 안내 |
+| **/docs generate** | 전체 문서 자동 생성 (API, 컴포넌트, 가이드 등) |
+| **/docs add [type]** | 특정 유형 문서 추가 |
+| **/docs update** | 코드 변경 → 문서 자동 반영 |
+| **/docs status** | 문서 현황 + 품질 점수 |
+| **/docs validate** | 구조/링크/코드/완성도 검증 + 자동 수정 |
+
+**문서 유형 (8종):** `getting-started`, `architecture`, `api`, `component`, `guide`, `config`, `faq`, `troubleshooting`
+
+**저장 위치:** `.claude/docs-site/`
+
+**품질 기준:**
+| 문서 유형 | 필수 항목 수 |
+|----------|-------------|
+| Getting Started | 15개 (설치, 환경별 설정, 오류 해결 등) |
+| Architecture | 12개 (다이어그램, 패턴, 확장 포인트 등) |
+| API Reference | 20개/엔드포인트 (인증, Rate Limit, 모든 응답 코드 등) |
+| Component | 18개/컴포넌트 (Props, 이벤트, CSS Variables, 접근성 등) |
+| Guide | 10개 (사전 요구사항, 단계별 절차, 검증 방법 등) |
+| Configuration | 8개/옵션 (환경별 권장값, 잘못 설정 시 문제 등) |
+
+**코드 예시 요구사항:** 기능당 최소 4개 (기본/실전/고급/에러처리), import문 필수, 예상 출력 포함
 
 ---
 
@@ -264,6 +277,7 @@ rm -rf ~/.claude/calab-marketplace
 | `프로젝트/.claude/project-context/` | 온보딩 문서 (5개) | `/onboard` |
 | `프로젝트/.claude/research/{topic}/` | 리서치 보고서 | `/research` |
 | `프로젝트/.claude/problem-solving/` | 문제 해결 보고서 | `/solve` |
+| `프로젝트/.claude/docs-site/` | 문서 사이트 콘텐츠 | `/docs generate` |
 
 ### 설치 스코프 비교
 
@@ -854,7 +868,7 @@ flowchart TB
     └── plugins/
         └── calab-plugin/        # 전체 복사됨
             ├── .claude-plugin/  # 플러그인 메타데이터
-            ├── commands/        # 슬래시 명령어 (35개)
+            ├── commands/        # 슬래시 명령어 (41개)
             └── skills/          # 자동 활성화 스킬 (11개)
 ```
 

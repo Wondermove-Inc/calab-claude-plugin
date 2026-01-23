@@ -1,259 +1,214 @@
----
-description: 문서를 검증합니다 (링크, 형식, 품질).
-allowed-tools: Read, Glob, Bash, Task
-argument-hint: [--fix] [--strict]
----
+# /docs validate - 문서 품질 검증
 
-# /docs-validate - 문서 검증
-
-> **🚨 중요**: 문서, 코드, 기타 확인 및 검증이 필요한 부분은 **전부 에이전트 사용 필수**.
-
-## 목적
-
-문서 사이트의 품질을 검증합니다.
-링크 유효성, 마크다운 형식, 이미지 참조, 메타데이터 등을 검사합니다.
-
-## 옵션
-
-| 옵션 | 설명 | 기본값 |
-|------|------|--------|
-| `--fix` | 자동 수정 가능한 문제 수정 | false |
-| `--strict` | 엄격 모드 (경고도 에러로 처리) | false |
+> 문서의 품질, 일관성, 완성도를 검증합니다.
 
 ## 사용법
 
 ```bash
-/docs validate              # 기본 검증
-/docs validate --fix        # 자동 수정 포함
-/docs validate --strict     # 엄격 모드
+/docs validate
+/docs validate [path]
+/docs validate --fix
 ```
 
 ## 검증 항목
 
-### 1. 링크 검증 (Links)
+### 1. 구조 검증
 
-| 검사 | 설명 | 심각도 |
-|------|------|--------|
-| 내부 링크 | docs 내 링크 유효성 | Error |
-| 외부 링크 | HTTP 응답 확인 | Warning |
-| 앵커 링크 | #heading 유효성 | Warning |
-| 이미지 링크 | 이미지 파일 존재 | Error |
+| 항목 | 검사 내용 |
+|------|----------|
+| 필수 섹션 | 제목, 개요, 본문 등 필수 섹션 포함 |
+| 제목 형식 | 일관된 제목 스타일 |
+| 섹션 순서 | 표준 섹션 순서 준수 |
 
-### 2. 마크다운 형식 (Format)
+### 2. 링크 검증
 
-| 검사 | 설명 | 심각도 |
-|------|------|--------|
-| Frontmatter | 필수 필드 존재 | Error |
-| 제목 구조 | H1 → H2 → H3 순서 | Warning |
-| 코드 블록 | 언어 지정 여부 | Warning |
-| 리스트 형식 | 일관된 마커 사용 | Info |
+| 항목 | 검사 내용 |
+|------|----------|
+| 내부 링크 | 다른 문서로의 링크 유효성 |
+| 외부 링크 | 외부 URL 접근 가능 여부 |
+| 앵커 링크 | 문서 내 앵커 링크 유효성 |
 
-### 3. 콘텐츠 품질 (Quality)
+### 3. 코드 검증
 
-| 검사 | 설명 | 심각도 |
-|------|------|--------|
-| 최소 길이 | 500자 이상 | Warning |
-| 제목 길이 | 10-70자 권장 | Info |
-| 코드 예제 | 기술 문서 코드 포함 | Warning |
-| alt 텍스트 | 이미지 alt 속재 | Warning |
+| 항목 | 검사 내용 |
+|------|----------|
+| 문법 | 코드 블록 문법 오류 |
+| import문 | import 경로 유효성 |
+| 타입 | TypeScript 타입 일치 |
 
-### 4. 메타데이터 (Metadata)
+### 4. 일관성 검증
 
-| 검사 | 설명 | 심각도 |
-|------|------|--------|
-| sidebar_position | 순서 지정 | Warning |
-| description | SEO 설명 | Info |
-| keywords | 검색 키워드 | Info |
-| slug | URL 경로 | Info |
+| 항목 | 검사 내용 |
+|------|----------|
+| 용어 | 일관된 용어 사용 |
+| 스타일 | 마크다운 스타일 일관성 |
+| 포맷 | 날짜, 숫자 포맷 일관성 |
 
-## 실행 단계
+### 5. 완성도 검증
 
-### 1. 파일 수집
+| 항목 | 검사 내용 |
+|------|----------|
+| TODO | 미완성 TODO 항목 |
+| 빈 섹션 | 내용 없는 섹션 |
+| 플레이스홀더 | 임시 텍스트 |
 
-에이전트를 사용하여 `.claude/docs-site/docs/` 내 모든 마크다운 파일 수집.
-
-### 2. 검증 실행
-
-각 검증 항목에 대해 병렬로 검사 실행.
-
-### 3. 자동 수정 (--fix 옵션)
-
-수정 가능한 항목:
-- 코드 블록 언어 추가 (추론 가능한 경우)
-- Frontmatter 필수 필드 추가
-- 상대 경로 정규화
-- trailing whitespace 제거
-
-### 4. 결과 리포트
+## 실행 결과
 
 ```
-============================================
- 🔍 문서 검증 결과
-============================================
+🔍 문서 검증 시작
 
- 검사한 파일: 15개
+═══════════════════════════════════════════════════════════
+📋 검증 결과
+═══════════════════════════════════════════════════════════
 
- ❌ Errors: 3
- ⚠️ Warnings: 7
- ℹ️ Info: 12
+검사 문서: 62개
+검사 항목: 5개 카테고리
 
- ─────────────────────────────────────────
+✅ 구조 검증     통과: 60/62  실패: 2
+✅ 링크 검증     통과: 62/62  실패: 0
+⚠️ 코드 검증    통과: 58/62  실패: 4
+✅ 일관성 검증   통과: 61/62  실패: 1
+⚠️ 완성도 검증  통과: 59/62  실패: 3
 
- ❌ ERRORS (수정 필요)
+═══════════════════════════════════════════════════════════
+❌ 오류 (반드시 수정)
+═══════════════════════════════════════════════════════════
 
- 1. [LINK] tutorials/first-project.md:25
-    깨진 내부 링크: /docs/concepts/missing.md
-    → 해결: 존재하는 경로로 수정 또는 문서 생성
+[구조] api-reference/endpoints/orders.md:1
+  └─ 필수 섹션 누락: "개요" 섹션이 없습니다.
+     + 해결: 문서 시작 부분에 "## 개요" 섹션을 추가하세요.
 
- 2. [LINK] guides/configuration.md:42
-    이미지 누락: /img/config-screenshot.png
-    → 해결: 이미지 파일 추가
+[구조] components/modal.md:1
+  └─ 필수 섹션 누락: "Props" 섹션이 없습니다.
+     + 해결: Props 테이블을 추가하세요.
 
- 3. [META] api/reference.md:1
-    Frontmatter 누락: sidebar_position
-    → --fix 옵션으로 자동 수정 가능
+[코드] api-reference/endpoints/users.md:45
+  └─ import 경로 오류: '@/types/user'를 찾을 수 없습니다.
+     + 해결: import { User } from '@/types/User' (대소문자 확인)
 
- ─────────────────────────────────────────
+[코드] components/button.md:23
+  └─ 타입 불일치: 'variant' prop이 'primary' | 'secondary'이지만
+     예시에서 'default' 사용
+     + 해결: 예시 코드를 유효한 값으로 수정하세요.
 
- ⚠️ WARNINGS (권장 수정)
+═══════════════════════════════════════════════════════════
+⚠️ 경고 (권장 수정)
+═══════════════════════════════════════════════════════════
 
- 1. [QUALITY] tutorials/first-project.md
-    콘텐츠 길이 부족: 320자 (최소 500자 권장)
+[코드] guides/authentication.md:78
+  └─ 하드코딩된 값: API 키가 하드코딩되어 있습니다.
+     + 권장: 환경 변수 사용 예시로 변경
 
- 2. [FORMAT] concepts/key-concepts.md:15
-    코드 블록 언어 미지정
-    → --fix 옵션으로 자동 수정 가능
+[코드] api-reference/overview.md:34
+  └─ 오래된 URL: 'localhost:3000' 사용
+     + 권장: 실제 API URL 또는 변수 사용
 
- 3. [LINK] getting-started/overview.md:50
-    외부 링크 응답 없음: https://old-docs.example.com
-    (HTTP 404)
+[일관성] getting-started/installation.md:12
+  └─ 용어 불일치: 'npm install'과 'npm i' 혼용
+     + 권장: 일관된 명령어 사용
 
- 4. [FORMAT] guides/deployment.md
-    제목 구조 스킵: H1 → H3 (H2 누락)
+[완성도] architecture/data-flow.md:45
+  └─ TODO 발견: "TODO: 다이어그램 추가"
+     + 권장: TODO 항목 완료 또는 제거
 
- ─────────────────────────────────────────
+[완성도] components/drawer.md:1
+  └─ 빈 섹션: "예시" 섹션이 비어있습니다.
+     + 권장: 코드 예시 추가
 
- ℹ️ INFO (선택 개선)
+[완성도] faq.md:89
+  └─ 플레이스홀더: "[답변 작성 필요]" 발견
+     + 권장: 실제 내용으로 대체
 
- 1. [META] 5개 파일에 description 누락
- 2. [QUALITY] 3개 파일에 alt 텍스트 누락
+═══════════════════════════════════════════════════════════
+📊 검증 요약
+═══════════════════════════════════════════════════════════
 
- ─────────────────────────────────────────
+총 문서:    62개
+오류:       4개 (반드시 수정)
+경고:       6개 (권장 수정)
+통과:       52개
 
- 📊 요약
+품질 점수:  84/100
 
- ┌────────────────┬───────┬─────────┬──────┐
- │ 카테고리       │ Pass  │ Fail    │ 비율 │
- ├────────────────┼───────┼─────────┼──────┤
- │ 내부 링크      │ 45    │ 2       │ 96%  │
- │ 외부 링크      │ 12    │ 1       │ 92%  │
- │ 이미지         │ 8     │ 1       │ 89%  │
- │ Frontmatter    │ 14    │ 1       │ 93%  │
- │ 콘텐츠 품질    │ 12    │ 3       │ 80%  │
- └────────────────┴───────┴─────────┴──────┘
-
- 전체 점수: 85/100 ⭐⭐⭐⭐☆
-
- ─────────────────────────────────────────
-
- 💡 권장 작업
-
- 1. /docs validate --fix 로 자동 수정 (2개 항목)
- 2. tutorials/first-project.md 콘텐츠 보강
- 3. 누락된 이미지 추가: /img/config-screenshot.png
-
-============================================
+💡 다음 단계:
+  /docs validate --fix  # 자동 수정 가능한 항목 수정
 ```
 
-## --fix 옵션 결과
+## 자동 수정
 
-```
-============================================
- 🔧 자동 수정 완료
-============================================
-
- 수정된 항목: 5개
-
- ✅ api/reference.md
-    - sidebar_position: 1 추가
-
- ✅ concepts/key-concepts.md
-    - 코드 블록 언어 추가: javascript
-
- ✅ guides/deployment.md
-    - trailing whitespace 제거
-
- ✅ tutorials/first-project.md
-    - 상대 경로 정규화: ../concepts → /concepts
-
- ✅ getting-started/quickstart.md
-    - description 필드 추가
-
- 수정 불가 항목: 3개 (수동 수정 필요)
-
- ❌ 깨진 링크 2개 - 수동으로 경로 수정 필요
- ❌ 누락된 이미지 1개 - 파일 추가 필요
-
-============================================
+```bash
+/docs validate --fix
 ```
 
-## CI/CD 연동
+자동으로 수정 가능한 항목:
 
-### GitHub Actions
+| 항목 | 자동 수정 |
+|------|----------|
+| 빈 섹션 | 기본 템플릿 삽입 |
+| 링크 대소문자 | 올바른 경로로 수정 |
+| 포맷 불일치 | 표준 포맷으로 통일 |
+| 마크다운 문법 | 문법 오류 수정 |
 
-```yaml
-# .github/workflows/docs-validate.yml
-name: Validate Docs
+```
+🔧 자동 수정 실행
 
-on:
-  pull_request:
-    paths:
-      - '.claude/docs-site/docs/**'
+수정된 항목:
+  ✓ api-reference/endpoints/users.md - import 경로 수정
+  ✓ getting-started/installation.md - 명령어 통일
 
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+수동 수정 필요:
+  ✗ api-reference/endpoints/orders.md - "개요" 섹션 추가 필요
+  ✗ components/button.md - 예시 코드 수정 필요
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: cd .claude/docs-site && npm ci
-
-      - name: Build (link check)
-        run: cd .claude/docs-site && npm run build
-        env:
-          NODE_OPTIONS: --max_old_space_size=4096
+자동 수정: 2개
+수동 수정 필요: 2개
 ```
 
-## 검증 규칙 커스터마이징
+## 옵션
 
-`.claude/docs-site/.docsvalidate.json`:
+| 옵션 | 설명 |
+|------|------|
+| `--fix` | 자동 수정 가능한 항목 수정 |
+| `--strict` | 경고도 오류로 처리 |
+| `--json` | JSON 형식 출력 |
+| `--quiet` | 오류만 출력 |
+| `--ignore=[rule]` | 특정 규칙 무시 |
+
+## 검증 규칙 설정
+
+`.claude/docs-site/.docsrc.json`에서 규칙을 커스터마이징할 수 있습니다:
 
 ```json
 {
   "rules": {
-    "min-content-length": 500,
-    "require-code-language": true,
-    "require-alt-text": true,
+    "require-overview": true,
+    "require-examples": true,
     "check-external-links": false,
-    "heading-structure": "strict"
+    "max-heading-depth": 4,
+    "terminology": {
+      "preferred": {
+        "npm i": "npm install",
+        "utilize": "use"
+      }
+    }
   },
   "ignore": [
-    "drafts/**",
-    "**/CHANGELOG.md"
+    "**/drafts/**",
+    "**/archive/**"
   ]
 }
 ```
 
-## 관련 명령어
+## CI/CD 통합
 
-| 명령어 | 설명 |
-|--------|------|
-| `/docs status` | 문서 현황 확인 |
-| `/docs build` | 빌드 시 링크 체크 |
-| `/docs deploy` | 배포 전 검증 권장 |
+GitHub Actions 예시:
+
+```yaml
+- name: Validate Documentation
+  run: |
+    claude /docs validate --strict --json > docs-report.json
+    if [ $(jq '.errors | length' docs-report.json) -gt 0 ]; then
+      echo "Documentation validation failed"
+      exit 1
+    fi
+```

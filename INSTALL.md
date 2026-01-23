@@ -19,7 +19,7 @@
 │  ├── problem-solving/       # 문제 해결 방법론               │
 │  └── calab-marketplace/     # 마켓플레이스                   │
 │      └── plugins/calab-plugin/  # 전체 복사됨                │
-│          ├── commands/          # 35개 슬래시 명령어          │
+│          ├── commands/          # 41개 슬래시 명령어          │
 │          ├── skills/            # 11개 자동 스킬             │
 │          └── .claude-plugin/                                │
 └─────────────────────────────────────────────────────────────┘
@@ -77,7 +77,7 @@
 └── calab-marketplace/     # 마켓플레이스 (명령어/스킬 로드)
     └── plugins/
         └── calab-plugin/  # 전체 복사 (심볼릭 링크 아님)
-            ├── commands/  # 35개 슬래시 명령어
+            ├── commands/  # 41개 슬래시 명령어
             ├── skills/    # 11개 자동 활성화 스킬
             └── .claude-plugin/
 ```

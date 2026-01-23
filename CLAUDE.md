@@ -197,7 +197,7 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 | `/check-quality` | "품질 검사" | 코드 품질 검사 |
 | `/save-progress` | "저장해줘" | 체크포인트 저장 |
 
-**전체 명령어 (35개):** [COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) 참조
+**전체 명령어 (41개):** [COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) 참조
 
 ---
 
