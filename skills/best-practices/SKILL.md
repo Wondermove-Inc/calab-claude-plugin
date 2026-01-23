@@ -129,8 +129,30 @@ allowed-tools: Read, Glob
 - [ ] 타입 정의 완전성
 - [ ] **금지 사항 미적용 확인**
 
+## 🚨 Anthropic 공식 가이드라인 (필수 적용)
+
+> 출처: docs.anthropic.com, console.anthropic.com
+
+### 코드 작업 전 필수 행동
+
+```
+1. 관련 파일 먼저 읽고 이해 (추측 금지)
+2. 코드베이스의 스타일, 컨벤션, 추상화 파악
+3. 충분한 컨텍스트 확보 후 답변/수정 제안
+```
+
+### 할루시네이션 방지 규칙
+
+- **열어보지 않은 파일 추측 금지**
+- **사용자가 언급한 파일 반드시 먼저 읽기**
+- **확실하지 않으면 "확인 필요" 인정**
+- **근거 없는 주장 절대 금지**
+
+**상세 가이드**: `.claude/best-practices/anthropic-official.md`
+
 ## 참조 파일
 
+- `.claude/best-practices/anthropic-official.md` - **Anthropic 공식 가이드라인 (최우선)**
 - `.claude/best-practices/` - 기술별 베스트 프랙티스 (15개)
 - `.claude/memory/TECH_STACK.md` - 기술 스택 설정
 - `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙
