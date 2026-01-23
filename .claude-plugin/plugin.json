@@ -1,6 +1,6 @@
 {
   "name": "calab-plugin",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build",
   "author": {
     "name": "Wonder Move Lab",
@@ -17,5 +17,7 @@
     "qa",
     "jira",
     "problem-solving"
-  ]
+  ],
+  "commands": ["./commands/"],
+  "skills": ["./skills/"]
 }

@@ -108,29 +108,41 @@
 
 ## 제거
 
-### 방법 1: 스크립트 사용
+### ⚠️ 알려진 버그
+
+> **중요**: `/plugin uninstall`과 `/plugin marketplace remove` 명령어로는 **완전 제거가 안 됩니다**.
+> 반드시 수동으로 파일을 삭제해야 합니다.
+
+### 방법 1: 완전 제거 스크립트 (권장)
 
 ```bash
 ./uninstall-plugin.sh
 ```
 
 스크립트가 다음을 수행합니다:
-1. Claude 플러그인 시스템에서 제거 안내
+1. 플러그인 캐시 및 설정 파일 완전 삭제 (버그 대응)
 2. `~/.claude/`에 설치된 파일 제거
 3. 마켓플레이스 디렉토리 제거
+4. 잔여 파일 확인
 
-### 방법 2: 수동 제거
+### 방법 2: 수동 완전 제거
+
+**Claude Code 종료 후** 터미널에서 실행:
 
 ```bash
-# 1. 플러그인 언설치 (Claude Code 내부에서)
-/plugin uninstall calab-plugin
+# 1. 플러그인 캐시 삭제 (필수)
+rm -rf ~/.claude/plugins/cache
 
-# 2. 마켓플레이스 제거 (Claude Code 내부에서)
-/plugin marketplace remove calab-marketplace
+# 2. 플러그인 설정 파일 삭제 (필수)
+rm -f ~/.claude/plugins/installed_plugins.json
+rm -f ~/.claude/plugins/known_marketplaces.json
+
+# 3. 마켓플레이스 폴더 삭제
+rm -rf ~/.claude/calab-marketplace
 ```
 
 ```bash
-# 3. 글로벌 파일 제거 (터미널에서)
+# 4. 글로벌 파일 제거 (터미널에서)
 rm ~/.claude/CLAUDE.md
 rm ~/.claude/settings.json
 rm -rf ~/.claude/hooks/
@@ -140,11 +152,28 @@ rm -rf ~/.claude/agents/
 rm -rf ~/.claude/integrations/
 rm -rf ~/.claude/memory/
 rm -rf ~/.claude/problem-solving/
-rm -rf ~/.claude/calab-marketplace/
+rm -rf ~/.claude/project-context/
 
-# 4. (선택) 프로젝트별 파일 제거
+# 5. (선택) 프로젝트별 파일 제거
 # rm -rf 프로젝트경로/.claude-state/   # 런타임 상태
 # rm -rf 프로젝트경로/.claude/docs/    # 기능 문서
+```
+
+### 원클릭 완전 초기화 (재설치 전)
+
+```bash
+# Claude Code 종료 후 실행
+rm -rf ~/.claude/plugins/cache
+rm -f ~/.claude/plugins/installed_plugins.json
+rm -f ~/.claude/plugins/known_marketplaces.json
+rm -rf ~/.claude/calab-marketplace
+
+# 재설치
+cd ~/claude-projects/calab-claude-plugin && ./install-plugin.sh
+
+# Claude Code 시작 후 내부에서 실행
+/plugin marketplace add ~/.claude/calab-marketplace
+/plugin install calab-plugin@calab-marketplace --scope user
 ```
 
 ---

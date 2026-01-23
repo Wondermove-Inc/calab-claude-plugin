@@ -7,9 +7,10 @@
 # ============================================================
 #
 # 📁 글로벌 (~/.claude/) - 이 스크립트가 제거
-#    ├── CLAUDE.md, settings.json
+#    ├── CLAUDE.md, settings.json, statusline-command.sh
 #    ├── hooks/, best-practices/, templates/
 #    ├── agents/, integrations/, memory/, problem-solving/
+#    ├── project-context/
 #    └── calab-marketplace/
 #
 # 📁 프로젝트별 (수동 제거 필요)
@@ -34,24 +35,48 @@ echo "   • 프로젝트별 (.claude-state/, .claude/docs/): 수동 제거 필�
 echo ""
 
 # ============================================================
-# Step 1: Claude 플러그인 시스템에서 제거 안내
+# Step 1: 플러그인 캐시 및 설정 파일 완전 삭제 (버그 대응)
 # ============================================================
-echo "📋 1/4: 플러그인 시스템에서 제거하기"
+echo "📋 1/4: 플러그인 캐시 및 설정 완전 삭제"
 echo ""
-echo "   Claude Code 내부에서 다음 명령어를 먼저 실행하세요:"
+echo "   ⚠️ 알려진 버그: /plugin uninstall, /plugin marketplace remove 명령어로는"
+echo "      완전 제거가 안 됩니다. 수동 파일 삭제가 필요합니다."
 echo ""
-echo "   /plugin uninstall $PLUGIN_NAME"
-echo "   /plugin marketplace remove calab-marketplace"
-echo ""
-echo "   (터미널이 아닌 Claude Code 내부에서 슬래시 명령어로 입력)"
-echo ""
-read -p "   위 명령어를 실행했나요? (y/N) " -n 1 -r
+echo "   삭제할 파일:"
+echo "   - ~/.claude/plugins/cache/"
+echo "   - ~/.claude/plugins/installed_plugins.json"
+echo "   - ~/.claude/plugins/known_marketplaces.json"
 echo ""
 
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo ""
-    echo "   ⚠️ 먼저 위 명령어를 실행한 후 다시 시도하세요."
-    exit 1
+read -p "   플러그인 캐시와 설정 파일을 삭제하시겠습니까? (Y/n) " -n 1 -r
+echo ""
+
+if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    # 캐시 삭제
+    if [ -d "$CLAUDE_HOME/plugins/cache" ]; then
+        rm -rf "$CLAUDE_HOME/plugins/cache"
+        echo "   ✅ plugins/cache/ 삭제 완료"
+    else
+        echo "   ⏭️ plugins/cache/ 없음"
+    fi
+
+    # installed_plugins.json 삭제
+    if [ -f "$CLAUDE_HOME/plugins/installed_plugins.json" ]; then
+        rm -f "$CLAUDE_HOME/plugins/installed_plugins.json"
+        echo "   ✅ installed_plugins.json 삭제 완료"
+    else
+        echo "   ⏭️ installed_plugins.json 없음"
+    fi
+
+    # known_marketplaces.json 삭제
+    if [ -f "$CLAUDE_HOME/plugins/known_marketplaces.json" ]; then
+        rm -f "$CLAUDE_HOME/plugins/known_marketplaces.json"
+        echo "   ✅ known_marketplaces.json 삭제 완료"
+    else
+        echo "   ⏭️ known_marketplaces.json 없음"
+    fi
+else
+    echo "   ⏭️ 캐시/설정 파일 유지"
 fi
 
 echo ""
@@ -130,6 +155,18 @@ if [ -d "$CLAUDE_HOME/problem-solving" ]; then
     echo "   ✅ problem-solving/ 제거 완료"
 fi
 
+# project-context/ 제거
+if [ -d "$CLAUDE_HOME/project-context" ]; then
+    rm -rf "$CLAUDE_HOME/project-context"
+    echo "   ✅ project-context/ 제거 완료"
+fi
+
+# statusline-command.sh 제거
+if [ -f "$CLAUDE_HOME/statusline-command.sh" ]; then
+    rm "$CLAUDE_HOME/statusline-command.sh"
+    echo "   ✅ statusline-command.sh 제거 완료"
+fi
+
 echo ""
 
 # ============================================================
@@ -147,41 +184,30 @@ fi
 echo ""
 
 # ============================================================
-# Step 4: 플러그인 캐시 제거
+# Step 4: 완료 확인
 # ============================================================
-echo "🔧 4/4: 플러그인 캐시 제거 중..."
+echo "🔧 4/4: 제거 완료 확인 중..."
 
-PLUGIN_CACHE="$CLAUDE_HOME/plugins/cache/calab-marketplace"
-if [ -d "$PLUGIN_CACHE" ]; then
-    rm -rf "$PLUGIN_CACHE"
-    echo "   ✅ 플러그인 캐시 제거 완료: $PLUGIN_CACHE"
-else
-    echo "   ⏭️ 플러그인 캐시 없음"
+# 잔여 파일 확인
+REMAINING_FILES=false
+
+if [ -d "$CLAUDE_HOME/plugins/cache" ]; then
+    echo "   ⚠️ plugins/cache/ 아직 존재 (수동 삭제 필요)"
+    REMAINING_FILES=true
 fi
 
-# installed_plugins.json, known_marketplaces.json 정리 안내
-INSTALLED_PLUGINS="$CLAUDE_HOME/plugins/installed_plugins.json"
-KNOWN_MARKETPLACES="$CLAUDE_HOME/plugins/known_marketplaces.json"
-
-CLEANUP_NEEDED=false
-
-if [ -f "$INSTALLED_PLUGINS" ]; then
-    if grep -q "calab-plugin" "$INSTALLED_PLUGINS"; then
-        CLEANUP_NEEDED=true
-    fi
+if [ -f "$CLAUDE_HOME/plugins/installed_plugins.json" ]; then
+    echo "   ⚠️ installed_plugins.json 아직 존재 (수동 삭제 필요)"
+    REMAINING_FILES=true
 fi
 
-if [ -f "$KNOWN_MARKETPLACES" ]; then
-    if grep -q "calab-marketplace" "$KNOWN_MARKETPLACES"; then
-        CLEANUP_NEEDED=true
-    fi
+if [ -f "$CLAUDE_HOME/plugins/known_marketplaces.json" ]; then
+    echo "   ⚠️ known_marketplaces.json 아직 존재 (수동 삭제 필요)"
+    REMAINING_FILES=true
 fi
 
-if [ "$CLEANUP_NEEDED" = true ]; then
-    echo ""
-    echo "   ⚠️ 플러그인 설정 파일에 잔여 항목이 있을 수 있습니다."
-    echo "   Claude Code 재시작 후 자동으로 정리되거나,"
-    echo "   /plugin 명령어로 정리된 상태를 확인하세요."
+if [ "$REMAINING_FILES" = false ]; then
+    echo "   ✅ 모든 플러그인 관련 파일 제거 완료"
 fi
 
 echo ""
@@ -194,8 +220,12 @@ echo " ✅ 제거 완료!"
 echo "=================================================="
 echo ""
 echo "📁 제거된 항목:"
+echo "   ~/.claude/plugins/cache/               # 플러그인 캐시"
+echo "   ~/.claude/plugins/installed_plugins.json"
+echo "   ~/.claude/plugins/known_marketplaces.json"
 echo "   ~/.claude/CLAUDE.md"
 echo "   ~/.claude/settings.json (선택)"
+echo "   ~/.claude/statusline-command.sh"
 echo "   ~/.claude/hooks/"
 echo "   ~/.claude/best-practices/"
 echo "   ~/.claude/templates/"
@@ -203,8 +233,8 @@ echo "   ~/.claude/agents/"
 echo "   ~/.claude/integrations/"
 echo "   ~/.claude/memory/ (선택)"
 echo "   ~/.claude/problem-solving/"
+echo "   ~/.claude/project-context/"
 echo "   ~/.claude/calab-marketplace/"
-echo "   ~/.claude/plugins/cache/calab-marketplace/"
 echo ""
 echo "⚠️ 프로젝트별 파일은 수동 제거 필요:"
 echo "   rm -rf 프로젝트경로/.claude-state/   # 런타임 상태"

@@ -9,6 +9,7 @@
 # 📁 글로벌 (~/.claude/) - 이 스크립트가 설치
 #    ├── CLAUDE.md              # 마스터 지침
 #    ├── settings.json          # 훅 설정
+#    ├── statusline-command.sh  # 상태바 스크립트
 #    ├── hooks/                 # 자동 실행 훅
 #    ├── best-practices/        # 언어별 베스트 프랙티스
 #    ├── templates/             # 문서 템플릿
@@ -16,6 +17,7 @@
 #    ├── integrations/          # 외부 연동 설정
 #    ├── memory/                # 메모리 템플릿
 #    ├── problem-solving/       # 문제 해결 방법론
+#    ├── project-context/       # 온보딩 결과 템플릿
 #    └── calab-marketplace/     # 명령어/스킬 마켓플레이스
 #        └── plugins/
 #            └── calab-plugin/  # 전체 복사 (심볼릭 링크 아님)
@@ -136,6 +138,20 @@ if [ -d "$PLUGIN_DIR/.claude/problem-solving" ]; then
     echo "   ✅ problem-solving/ 복사 완료"
 fi
 
+# project-context/ 복사 (온보딩 결과 템플릿)
+if [ -d "$PLUGIN_DIR/.claude/project-context" ]; then
+    mkdir -p "$CLAUDE_HOME/project-context"
+    cp -r "$PLUGIN_DIR/.claude/project-context/"* "$CLAUDE_HOME/project-context/"
+    echo "   ✅ project-context/ 복사 완료"
+fi
+
+# statusline-command.sh 복사
+if [ -f "$PLUGIN_DIR/.claude/statusline-command.sh" ]; then
+    cp "$PLUGIN_DIR/.claude/statusline-command.sh" "$CLAUDE_HOME/statusline-command.sh"
+    chmod +x "$CLAUDE_HOME/statusline-command.sh"
+    echo "   ✅ statusline-command.sh 복사 완료"
+fi
+
 echo ""
 
 # ============================================================
@@ -220,6 +236,7 @@ echo ""
 echo "📁 글로벌 설치 파일 (~/.claude/):"
 echo "   ├── CLAUDE.md              # 마스터 지침"
 echo "   ├── settings.json          # 훅 설정"
+echo "   ├── statusline-command.sh  # 상태바 스크립트"
 echo "   ├── hooks/                 # 자동 실행 훅"
 echo "   ├── best-practices/        # 언어별 베스트 프랙티스"
 echo "   ├── templates/             # 문서 템플릿"
@@ -227,6 +244,7 @@ echo "   ├── agents/                # 서브에이전트"
 echo "   ├── integrations/          # 외부 연동"
 echo "   ├── memory/                # 메모리 템플릿"
 echo "   ├── problem-solving/       # 문제 해결 방법론"
+echo "   ├── project-context/       # 온보딩 결과 템플릿"
 echo "   └── calab-marketplace/     # 마켓플레이스"
 echo "       └── plugins/calab-plugin/"
 echo "           ├── commands/      # 35개 슬래시 명령어"
@@ -251,14 +269,20 @@ echo ""
 echo "   ※ 터미널이 아닌 Claude Code를 실행한 후 내부에서 입력하세요"
 echo ""
 echo "🔄 재설치/업데이트 시:"
-echo "   # Claude Code 내부에서 먼저 제거"
-echo "   /plugin uninstall $PLUGIN_NAME"
-echo "   /plugin marketplace remove calab-marketplace"
 echo ""
-echo "   # 터미널에서 다시 설치"
-echo "   ./install-plugin.sh  # 캐시 삭제 권장"
+echo "   ⚠️ 알려진 버그: /plugin uninstall, /plugin marketplace remove 명령어로는"
+echo "      완전 제거가 안 됩니다. 반드시 수동 파일 삭제가 필요합니다."
 echo ""
-echo "   # Claude Code 내부에서 다시 등록"
+echo "   # Step 1: Claude Code 종료 후 터미널에서 잔여 파일 삭제"
+echo "   rm -rf ~/.claude/plugins/cache"
+echo "   rm -f ~/.claude/plugins/installed_plugins.json"
+echo "   rm -f ~/.claude/plugins/known_marketplaces.json"
+echo "   rm -rf ~/.claude/calab-marketplace"
+echo ""
+echo "   # Step 2: 마켓플레이스 재생성"
+echo "   ./install-plugin.sh"
+echo ""
+echo "   # Step 3: Claude Code 시작 후 내부에서 다시 등록"
 echo "   /plugin marketplace add $MARKETPLACE_DIR"
 echo "   /plugin install $PLUGIN_NAME@calab-marketplace --scope user"
 echo ""
