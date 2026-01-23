@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/pre_compact.py\""
+            "command": "python3 \"$HOME/.claude/hooks/pre_compact.py\""
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session_start.py\""
+            "command": "python3 \"$HOME/.claude/hooks/session_start.py\""
           }
         ]
       }
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session_end.py\""
+            "command": "python3 \"$HOME/.claude/hooks/session_end.py\""
           }
         ]
       }
@@ -50,19 +50,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/track_changes.py\""
+            "command": "python3 \"$HOME/.claude/hooks/track_changes.py\""
           },
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/code_quality_validator.py\""
+            "command": "python3 \"$HOME/.claude/hooks/code_quality_validator.py\""
           },
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/jira_auto_sync.py\""
+            "command": "python3 \"$HOME/.claude/hooks/jira_auto_sync.py\""
           },
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/worktree_auto_update.py\""
+            "command": "python3 \"$HOME/.claude/hooks/worktree_auto_update.py\""
           }
         ]
       }
@@ -73,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/user_prompt_submit.py\""
+            "command": "python3 \"$HOME/.claude/hooks/user_prompt_submit.py\""
           }
         ]
       }
@@ -84,7 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/notification_handler.py\""
+            "command": "python3 \"$HOME/.claude/hooks/notification_handler.py\""
           }
         ]
       }
@@ -95,7 +95,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session_stop.py\""
+            "command": "python3 \"$HOME/.claude/hooks/session_stop.py\""
           }
         ]
       }
@@ -106,7 +106,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"event_type\": \"start\", \"agent_name\": \"$AGENT_NAME\", \"agent_id\": \"$AGENT_ID\"}' | python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/subagent_tracker.py\""
+            "command": "echo '{\"event_type\": \"start\", \"agent_name\": \"$AGENT_NAME\", \"agent_id\": \"$AGENT_ID\"}' | python3 \"$HOME/.claude/hooks/subagent_tracker.py\""
           }
         ]
       }
@@ -117,10 +117,14 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"event_type\": \"stop\", \"agent_id\": \"$AGENT_ID\", \"result\": \"$RESULT\"}' | python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/subagent_tracker.py\""
+            "command": "echo '{\"event_type\": \"stop\", \"agent_id\": \"$AGENT_ID\", \"result\": \"$RESULT\"}' | python3 \"$HOME/.claude/hooks/subagent_tracker.py\""
           }
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash $HOME/.claude/statusline-command.sh"
   }
 }
