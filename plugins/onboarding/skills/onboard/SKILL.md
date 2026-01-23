@@ -1,4 +1,5 @@
 ---
+name: onboard
 description: 프로젝트를 전체 분석하여 5개 컨텍스트 문서를 생성합니다. 기존 프로젝트 분석, 코드베이스 학습, 온보딩 시 사용합니다.
 allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint: [--skip-domain]
@@ -1133,7 +1134,7 @@ Closes #123
 └── .claude/memory/DOMAIN_KNOWLEDGE.md
 
 💡 다음 단계:
-   /dev plan [아이디어]  → 새 기능 개발 시작
+   /process [아이디어]   → 새 기능 개발 시작
    /learn <path>        → 특정 영역 심층 학습
    /context-show        → 컨텍스트 확인
 ```

@@ -1,4 +1,5 @@
 ---
+name: help
 description: Onboarding 플러그인 도움말을 표시합니다. 모든 명령어와 사용 예시를 확인할 수 있습니다.
 allowed-tools: Read
 ---
@@ -12,7 +13,7 @@ Onboarding 플러그인의 모든 명령어와 사용 예시를 안내합니다.
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║          📚 Onboarding Plugin v2.3.0                   ║
+║              📚 Onboarding Plugin                      ║
 ║  Project Analysis & Onboarding (5 Context Docs)        ║
 ╚════════════════════════════════════════════════════════╝
 
@@ -30,36 +31,36 @@ Onboarding 플러그인의 모든 명령어와 사용 예시를 안내합니다.
 
 📌 명령어
 ───────────────────────────────────────────────────────────────
-  /onboarding:onboard
+  /onboard
       전체 프로젝트 분석 + 5개 컨텍스트 문서 생성
       옵션: --skip-domain (도메인 지식 수집 생략)
-      예시: /onboarding:onboard
-            /onboarding:onboard --skip-domain
+      예시: /onboard
+            /onboard --skip-domain
 
-  /onboarding:onboard-quick
+  /onboard-quick
       핵심만 빠르게 분석 (최소 컨텍스트 구축)
-      예시: /onboarding:onboard-quick
+      예시: /onboard-quick
 
-  /onboarding:learn [path]
+  /learn [path]
       특정 영역 심층 학습 (폴더/파일 분석)
-      예시: /onboarding:learn src/services
-            /onboarding:learn src/components/auth
+      예시: /learn src/services
+            /learn src/components/auth
 
-  /onboarding:context-show
+  /context-show
       현재 컨텍스트 문서 표시
-      예시: /onboarding:context-show
+      예시: /context-show
 
-  /onboarding:context-refresh
+  /context-refresh
       컨텍스트 문서 갱신 (코드 변경 후 사용)
-      예시: /onboarding:context-refresh
+      예시: /context-refresh
 
 🔄 자연어 사용 예시
 ───────────────────────────────────────────────────────────────
-  "프로젝트 분석해줘"      → /onboarding:onboard
-  "빠르게 파악해줘"        → /onboarding:onboard-quick
-  "서비스 폴더 분석해줘"   → /onboarding:learn src/services
-  "컨텍스트 보여줘"        → /onboarding:context-show
-  "컨텍스트 업데이트해줘"  → /onboarding:context-refresh
+  "프로젝트 분석해줘"      → /onboard
+  "빠르게 파악해줘"        → /onboard-quick
+  "서비스 폴더 분석해줘"   → /learn src/services
+  "컨텍스트 보여줘"        → /context-show
+  "컨텍스트 업데이트해줘"  → /context-refresh
 
 📊 분석 프로세스
 ───────────────────────────────────────────────────────────────
@@ -101,10 +102,10 @@ Onboarding 플러그인의 모든 명령어와 사용 예시를 안내합니다.
 
 💡 팁
 ───────────────────────────────────────────────────────────────
-  • 기존 프로젝트에 처음 투입될 때 /onboarding:onboard 실행
-  • 시간이 촉박하면 /onboarding:onboard-quick으로 빠르게 파악
-  • 특정 모듈을 집중 학습할 때 /onboarding:learn [path] 사용
-  • 코드 변경 후 /onboarding:context-refresh로 문서 동기화
+  • 기존 프로젝트에 처음 투입될 때 /onboard 실행
+  • 시간이 촉박하면 /onboard-quick으로 빠르게 파악
+  • 특정 모듈을 집중 학습할 때 /learn [path] 사용
+  • 코드 변경 후 /context-refresh로 문서 동기화
 ```
 
 ## 실행 방식

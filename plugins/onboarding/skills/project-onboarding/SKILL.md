@@ -326,7 +326,7 @@ flowchart TD
 
 ## 참조 문서
 
-- `commands/onboard.md` - 전체 온보딩 명령어
-- `commands/onboard-quick.md` - 빠른 온보딩 명령어
+- `skills/onboard/SKILL.md` - 전체 온보딩 스킬
+- `skills/onboard-quick/SKILL.md` - 빠른 온보딩 스킬
 - `best-practices/project-onboarding.md` - 온보딩 베스트 프랙티스
 - [C4 Model](https://c4model.com/) - 아키텍처 문서화 표준
