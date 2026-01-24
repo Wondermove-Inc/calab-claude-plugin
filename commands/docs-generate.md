@@ -9,6 +9,59 @@
 - 모든 파라미터, 옵션, 반환값, 에러 케이스 문서화
 - 기능당 최소 4개 코드 예시 (기본, 실전, 고급, 에러처리)
 - 모든 코드는 복사-붙여넣기로 즉시 실행 가능
+- **Mermaid 다이어그램**으로 복잡한 구조/흐름 시각화 필수
+- **이미지 플레이스홀더**로 스크린샷 필요 위치 명시
+
+---
+
+## 시각화 규칙 (필수)
+
+### Mermaid 다이어그램
+
+> **복잡한 개념은 반드시 다이어그램으로 시각화합니다.**
+
+**필수 다이어그램:**
+| 문서 | 필수 다이어그램 |
+|------|----------------|
+| Architecture | 시스템 개요, 컴포넌트 의존성, 데이터 흐름, 시퀀스 |
+| API | 인증 흐름, 요청-응답 시퀀스 |
+| Guide | 프로세스 흐름, 상태 전이 |
+| Component | 컴포넌트 계층, 상태 머신 |
+
+**가독성 규칙 (필수 준수):**
+```
+🎨 색상 대비 원칙:
+- 어두운 배경 → 밝은 글자 (#ffffff, #fef3c7, #e0f2fe)
+- 밝은 배경 → 어두운 글자 (#1e293b, #166534, #92400e)
+```
+
+**권장 스타일:**
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#4f46e5',
+  'primaryTextColor': '#ffffff',
+  'secondaryColor': '#f0fdf4',
+  'tertiaryColor': '#fef3c7'
+}}}%%
+```
+
+### 이미지 플레이스홀더
+
+> **실제 스크린샷이 필요한 위치에 명시적으로 표기합니다.**
+
+**플레이스홀더 형식:**
+```markdown
+<!-- 📸 스크린샷 필요: [설명] -->
+![스크린샷: 설명](./images/category/filename.png)
+*캡션: [상세 설명]*
+```
+
+**필수 스크린샷:**
+- 설치 완료 화면
+- 초기 실행 화면
+- UI 컴포넌트 변형들
+- 에러 메시지 화면
+- 대시보드/메인 화면
 
 ---
 
@@ -42,33 +95,38 @@
 
 ```
 .claude/docs-site/
+├── images/                      # 📸 스크린샷 저장 폴더
+│   ├── getting-started/         # 시작하기 관련 이미지
+│   ├── architecture/            # 아키텍처 관련 이미지
+│   ├── components/              # 컴포넌트 관련 이미지
+│   └── guides/                  # 가이드 관련 이미지
 ├── getting-started/
-│   ├── introduction.md      # 프로젝트 소개 (필수 15개 항목)
-│   ├── installation.md      # 설치 가이드
-│   ├── quick-start.md       # 빠른 시작
-│   └── basic-usage.md       # 기본 사용법
+│   ├── introduction.md          # 프로젝트 소개 (필수 15개 항목)
+│   ├── installation.md          # 설치 가이드 + 📸 설치 결과 스크린샷
+│   ├── quick-start.md           # 빠른 시작 + 📸 실행 결과 스크린샷
+│   └── basic-usage.md           # 기본 사용법
 ├── architecture/
-│   ├── overview.md          # 시스템 개요 (필수 12개 항목)
-│   ├── components.md        # 컴포넌트 구조
-│   ├── data-flow.md         # 데이터 흐름
-│   └── diagrams.md          # 아키텍처 다이어그램
+│   ├── overview.md              # 시스템 개요 (필수 12개 항목) + Mermaid 필수
+│   ├── components.md            # 컴포넌트 구조 + Mermaid 의존성 다이어그램
+│   ├── data-flow.md             # 데이터 흐름 + Mermaid 시퀀스 다이어그램
+│   └── diagrams.md              # 아키텍처 다이어그램 모음
 ├── api-reference/
-│   ├── overview.md          # API 개요
-│   ├── authentication.md    # 인증 상세
-│   ├── endpoints/           # 엔드포인트별 문서 (필수 20개 항목/엔드포인트)
+│   ├── overview.md              # API 개요 + Mermaid 인증 흐름
+│   ├── authentication.md        # 인증 상세 + Mermaid 시퀀스
+│   ├── endpoints/               # 엔드포인트별 문서 (필수 20개 항목/엔드포인트)
 │   │   └── [resource].md
-│   ├── types.md             # 타입 정의
-│   └── errors.md            # 에러 코드 전체
+│   ├── types.md                 # 타입 정의
+│   └── errors.md                # 에러 코드 전체
 ├── components/
-│   └── [component-name].md  # 컴포넌트별 문서 (필수 18개 항목/컴포넌트)
+│   └── [component-name].md      # 컴포넌트별 문서 (필수 18개 항목) + 📸 UI 스크린샷
 ├── guides/
-│   └── [guide-name].md      # 기능별 가이드 (필수 10개 항목/가이드)
+│   └── [guide-name].md          # 기능별 가이드 (필수 10개 항목) + Mermaid 흐름도
 ├── configuration/
-│   ├── environment.md       # 환경 변수 (필수 8개 항목/옵션)
-│   └── options.md           # 설정 옵션
-├── faq.md                   # 자주 묻는 질문
-├── troubleshooting.md       # 문제 해결
-└── index.md                 # 문서 인덱스
+│   ├── environment.md           # 환경 변수 (필수 8개 항목/옵션)
+│   └── options.md               # 설정 옵션
+├── faq.md                       # 자주 묻는 질문
+├── troubleshooting.md           # 문제 해결 + 📸 에러 화면 스크린샷
+└── index.md                     # 문서 인덱스
 ```
 
 ---

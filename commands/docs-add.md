@@ -6,6 +6,18 @@
 
 > **각 문서 유형에는 필수 포함 항목이 있습니다. 모든 항목이 충족되어야 완성입니다.**
 
+### 시각화 필수 규칙
+
+**Mermaid 다이어그램:**
+- 어두운 배경 → 밝은 글자 (`#ffffff`, `#fef3c7`)
+- 밝은 배경 → 어두운 글자 (`#1e293b`, `#166534`)
+
+**이미지 플레이스홀더:**
+```markdown
+<!-- 📸 스크린샷 필요: [설명] -->
+![스크린샷: 설명](./images/filename.png)
+```
+
 ## 사용법
 
 ```bash
@@ -15,16 +27,18 @@
 
 ## 문서 유형
 
-| 유형 | 설명 | 필수 항목 수 | 저장 위치 |
-|------|------|-------------|----------|
-| `getting-started` | 시작 가이드 | **15개** | `.claude/docs-site/getting-started/` |
-| `architecture` | 아키텍처 문서 | **12개** | `.claude/docs-site/architecture/` |
-| `api` | API 레퍼런스 | **20개/엔드포인트** | `.claude/docs-site/api-reference/` |
-| `component` | 컴포넌트 문서 | **18개/컴포넌트** | `.claude/docs-site/components/` |
-| `guide` | How-to 가이드 | **10개** | `.claude/docs-site/guides/` |
-| `config` | 설정 문서 | **8개/옵션** | `.claude/docs-site/configuration/` |
-| `faq` | 자주 묻는 질문 | **5개/질문** | `.claude/docs-site/faq.md` |
-| `troubleshooting` | 문제 해결 | **6개/이슈** | `.claude/docs-site/troubleshooting.md` |
+| 유형 | 설명 | 필수 항목 수 | Mermaid | 📸 스크린샷 |
+|------|------|-------------|---------|------------|
+| `getting-started` | 시작 가이드 | **15개** | - | ✅ 설치/실행 결과 |
+| `architecture` | 아키텍처 문서 | **12개** | ✅ 필수 (4개+) | 선택 |
+| `api` | API 레퍼런스 | **20개/엔드포인트** | ✅ 인증/흐름 | - |
+| `component` | 컴포넌트 문서 | **18개/컴포넌트** | 선택 | ✅ UI 변형들 |
+| `guide` | How-to 가이드 | **10개** | ✅ 프로세스 흐름 | 단계별 결과 |
+| `config` | 설정 문서 | **8개/옵션** | - | 설정 화면 |
+| `faq` | 자주 묻는 질문 | **5개/질문** | - | - |
+| `troubleshooting` | 문제 해결 | **6개/이슈** | - | ✅ 에러 화면 |
+
+**저장 위치:** `.claude/docs-site/[유형]/`
 
 ## 실행 예시
 
@@ -67,6 +81,8 @@
 
 ### 1. getting-started - 필수 15개 항목
 
+> ⚠️ **스크린샷 3개 이상 필수** - 설치/실행 결과 화면
+
 ```
 □ 프로젝트 한 줄 소개
 □ 프로젝트가 해결하는 문제
@@ -76,13 +92,25 @@
 □ 환경별 설정 (Development, Staging, Production)
 □ 첫 번째 실행까지의 단계별 가이드
 □ 기본 사용 예시 (3개 이상)
-□ 예상 결과/출력 스크린샷
+□ 예상 결과/출력 스크린샷 📸 ← 필수!
 □ 흔한 설치 오류 및 해결책 (5개 이상)
 □ 프록시/방화벽 환경 설정
 □ 오프라인 설치 방법
 □ 업그레이드 가이드
 □ 롤백 방법
 □ 다음 단계 안내
+```
+
+**필수 스크린샷 플레이스홀더:**
+```markdown
+<!-- 📸 스크린샷 필요: 설치 성공 터미널 출력 -->
+![스크린샷: 설치 완료](./images/getting-started/installation-success.png)
+
+<!-- 📸 스크린샷 필요: 첫 실행 화면 -->
+![스크린샷: 첫 실행](./images/getting-started/first-run.png)
+
+<!-- 📸 스크린샷 필요: 대시보드/메인 화면 -->
+![스크린샷: 메인 화면](./images/getting-started/main-screen.png)
 ```
 
 **생성 파일:**
@@ -103,12 +131,14 @@
 
 ### 2. architecture - 필수 12개 항목
 
+> ⚠️ **Mermaid 다이어그램 4개 이상 필수** - 가독성 규칙 준수
+
 ```
-□ 시스템 전체 개요 다이어그램 (Mermaid)
+□ 시스템 전체 개요 다이어그램 (Mermaid flowchart) 🎨
 □ 핵심 컴포넌트 설명 (각각 상세히)
-□ 컴포넌트 간 의존성 다이어그램
-□ 데이터 흐름 다이어그램
-□ 요청-응답 시퀀스 다이어그램
+□ 컴포넌트 간 의존성 다이어그램 (Mermaid flowchart) 🎨
+□ 데이터 흐름 다이어그램 (Mermaid flowchart) 🎨
+□ 요청-응답 시퀀스 다이어그램 (Mermaid sequence) 🎨
 □ 디렉토리 구조 및 각 폴더 역할
 □ 핵심 디자인 패턴 설명
 □ 확장 포인트 (어디서 커스터마이징 가능한지)
@@ -116,6 +146,12 @@
 □ 보안 아키텍처
 □ 배포 아키텍처 (선택적)
 □ 기술 선택 이유 (Why 문서)
+```
+
+**Mermaid 가독성 규칙:**
+```
+style 어두운노드 fill:#4f46e5,color:#ffffff  # 어두운 배경 → 흰 글자
+style 밝은노드 fill:#f0fdf4,color:#166534    # 밝은 배경 → 어두운 글자
 ```
 
 **생성 파일:**
@@ -246,6 +282,8 @@ const user = await createUser({
 
 ### 4. component - 필수 18개 항목 (컴포넌트당)
 
+> ⚠️ **UI 스크린샷 필수** - 모든 Variant/상태별 캡처
+
 ```
 □ 컴포넌트 이름 및 한 줄 설명
 □ 언제 사용하는지 (Use Cases)
@@ -260,11 +298,22 @@ const user = await createUser({
 □ Ref로 접근 가능한 메서드
 □ CSS Variables 목록
 □ 커스텀 Class Names
-□ 테마/변형(Variants) 예시
+□ 테마/변형(Variants) 예시 📸 ← 스크린샷 필수!
 □ 제어/비제어 컴포넌트 패턴
 □ 접근성(a11y) 정보 (ARIA, 키보드 내비게이션)
 □ 성능 최적화 팁 (memo, useCallback 등)
 □ 관련 컴포넌트 링크
+```
+
+**필수 스크린샷 플레이스홀더:**
+```markdown
+<!-- 📸 스크린샷 필요: 모든 Variant 한눈에 보기 -->
+![스크린샷: Button Variants](./images/components/button-variants.png)
+*캡션: default, destructive, outline, ghost 버튼 변형*
+
+<!-- 📸 스크린샷 필요: 상태별 모습 (hover, disabled, loading) -->
+![스크린샷: Button States](./images/components/button-states.png)
+*캡션: normal, hover, disabled, loading 상태*
 ```
 
 **생성 파일:**
@@ -584,13 +633,22 @@ TypeScript 사용을 강력히 권장합니다.
 
 ### 8. troubleshooting - 필수 6개 항목 (이슈당)
 
+> ⚠️ **에러 화면 스크린샷 필수** - 실제 에러 메시지 캡처
+
 ```
-□ 에러 메시지/증상
+□ 에러 메시지/증상 📸 ← 에러 화면 스크린샷 필수!
 □ 발생 원인 (가능한 모든 원인)
 □ 진단 방법
 □ 해결 방법 (단계별)
 □ 해결 코드 예시
 □ 예방 방법
+```
+
+**필수 스크린샷 플레이스홀더:**
+```markdown
+<!-- 📸 스크린샷 필요: 실제 에러 메시지 화면 -->
+![스크린샷: EACCES 에러](./images/troubleshooting/error-eacces.png)
+*캡션: npm install 시 발생하는 권한 오류 화면*
 ```
 
 **생성 파일:**

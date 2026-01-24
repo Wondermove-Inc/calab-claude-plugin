@@ -19,6 +19,193 @@
 | **예시 다양성** | 기본 + 고급 + 에지케이스 + 에러처리 (최소 4개) |
 | **실행 가능성** | 모든 코드 예시는 복사-붙여넣기로 즉시 실행 가능 |
 | **맥락 제공** | 왜 필요한지, 언제 사용하는지, 대안은 무엇인지 |
+| **시각화** | Mermaid 다이어그램으로 구조/흐름을 시각화 |
+| **스크린샷** | UI/결과물은 이미지 플레이스홀더로 명시 |
+
+---
+
+## Mermaid 다이어그램 가이드
+
+> **복잡한 개념은 다이어그램으로 시각화하여 이해를 돕습니다.**
+
+### 적극 활용 필수 상황
+
+| 문서 유형 | 필수 다이어그램 |
+|----------|----------------|
+| **Architecture** | 시스템 개요, 컴포넌트 의존성, 데이터 흐름 |
+| **API** | 요청-응답 시퀀스, 인증 흐름 |
+| **Guide** | 프로세스 흐름, 상태 전이 |
+| **Component** | 컴포넌트 계층 구조, 상태 머신 |
+
+### 가독성 규칙 (필수)
+
+> **배경색과 텍스트색의 대비를 확보하여 가독성을 보장합니다.**
+
+```
+🎨 색상 대비 원칙:
+- 어두운 배경 → 밝은 글자 (흰색, 밝은 노랑, 밝은 하늘색)
+- 밝은 배경 → 어두운 글자 (검정, 진한 파랑, 진한 회색)
+```
+
+### 권장 색상 팔레트
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#3730a3', 'lineColor': '#6366f1', 'secondaryColor': '#f0fdf4', 'tertiaryColor': '#fef3c7'}}}%%
+```
+
+**어두운 배경 노드 (권장):**
+```
+style NodeA fill:#4f46e5,stroke:#3730a3,color:#ffffff
+style NodeB fill:#059669,stroke:#047857,color:#ffffff
+style NodeC fill:#dc2626,stroke:#b91c1c,color:#ffffff
+style NodeD fill:#7c3aed,stroke:#6d28d9,color:#ffffff
+```
+
+**밝은 배경 노드 (권장):**
+```
+style NodeE fill:#f0fdf4,stroke:#86efac,color:#166534
+style NodeF fill:#fef3c7,stroke:#fcd34d,color:#92400e
+style NodeG fill:#f1f5f9,stroke:#cbd5e1,color:#1e293b
+```
+
+### 다이어그램 유형별 예시
+
+**1. 시스템 아키텍처 (flowchart)**
+```mermaid
+flowchart TB
+    subgraph Client["🖥️ Client Layer"]
+        A[Web App]
+        B[Mobile App]
+    end
+
+    subgraph Server["⚙️ Server Layer"]
+        C[API Gateway]
+        D[Auth Service]
+        E[Core Service]
+    end
+
+    subgraph Data["💾 Data Layer"]
+        F[(PostgreSQL)]
+        G[(Redis)]
+    end
+
+    A --> C
+    B --> C
+    C --> D
+    C --> E
+    E --> F
+    E --> G
+
+    style A fill:#4f46e5,stroke:#3730a3,color:#ffffff
+    style B fill:#4f46e5,stroke:#3730a3,color:#ffffff
+    style C fill:#059669,stroke:#047857,color:#ffffff
+    style D fill:#7c3aed,stroke:#6d28d9,color:#ffffff
+    style E fill:#7c3aed,stroke:#6d28d9,color:#ffffff
+    style F fill:#f0fdf4,stroke:#86efac,color:#166534
+    style G fill:#fef3c7,stroke:#fcd34d,color:#92400e
+```
+
+**2. 시퀀스 다이어그램 (sequence)**
+```mermaid
+sequenceDiagram
+    participant U as 👤 User
+    participant C as 🖥️ Client
+    participant A as 🔐 Auth
+    participant S as ⚙️ Server
+
+    U->>C: 로그인 요청
+    C->>A: 인증 요청
+    A->>A: 토큰 생성
+    A-->>C: JWT 토큰
+    C->>S: API 요청 + 토큰
+    S-->>C: 응답 데이터
+    C-->>U: 화면 표시
+```
+
+**3. 상태 다이어그램 (stateDiagram)**
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Loading: fetch()
+    Loading --> Success: 200 OK
+    Loading --> Error: 4xx/5xx
+    Success --> Idle: reset()
+    Error --> Loading: retry()
+    Error --> Idle: dismiss()
+```
+
+---
+
+## 이미지 플레이스홀더 가이드
+
+> **실제 스크린샷이 필요한 위치에 명시적으로 표기합니다.**
+
+### 플레이스홀더 형식
+
+```markdown
+<!-- 📸 스크린샷 필요: [설명] -->
+![스크린샷: 설명](./images/placeholder-screenshot-name.png)
+*캡션: [상세 설명]*
+```
+
+### 스크린샷 필수 포함 상황
+
+| 상황 | 필수 여부 | 예시 |
+|------|----------|------|
+| **설치 결과 화면** | ✅ 필수 | 터미널 출력, 성공 메시지 |
+| **UI 컴포넌트** | ✅ 필수 | 버튼 변형, 모달 등 |
+| **설정 화면** | ✅ 필수 | 환경 설정, 옵션 패널 |
+| **에러 화면** | ✅ 필수 | 에러 메시지, 디버깅 화면 |
+| **대시보드** | ✅ 필수 | 메인 화면, 통계 |
+| **워크플로우** | 권장 | 단계별 진행 화면 |
+
+### 플레이스홀더 예시
+
+```markdown
+## 설치 확인
+
+설치가 완료되면 다음과 같은 화면이 표시됩니다:
+
+<!-- 📸 스크린샷 필요: 설치 완료 후 터미널 출력 화면 -->
+![스크린샷: 설치 성공 메시지](./images/installation-success.png)
+*캡션: npm install 완료 후 터미널 출력*
+
+## 대시보드 접속
+
+브라우저에서 `http://localhost:3000`에 접속하면:
+
+<!-- 📸 스크린샷 필요: 메인 대시보드 초기 화면 -->
+![스크린샷: 대시보드 메인](./images/dashboard-main.png)
+*캡션: 초기 접속 시 표시되는 대시보드 메인 화면*
+
+## 에러 발생 시
+
+인증 실패 시 다음과 같은 에러가 표시됩니다:
+
+<!-- 📸 스크린샷 필요: 인증 실패 에러 화면 -->
+![스크린샷: 인증 에러](./images/auth-error.png)
+*캡션: JWT 토큰 만료 시 표시되는 에러 메시지*
+```
+
+### 이미지 파일 구조
+
+```
+.claude/docs-site/
+├── images/                    # 📁 이미지 저장 폴더
+│   ├── getting-started/       # 시작하기 관련
+│   │   ├── installation-success.png
+│   │   └── first-run.png
+│   ├── architecture/          # 아키텍처 관련
+│   │   └── system-overview.png
+│   ├── components/            # 컴포넌트 관련
+│   │   ├── button-variants.png
+│   │   └── modal-example.png
+│   └── guides/                # 가이드 관련
+│       └── auth-flow.png
+├── getting-started/
+├── architecture/
+...
+```
 
 ## 하위 명령어
 
