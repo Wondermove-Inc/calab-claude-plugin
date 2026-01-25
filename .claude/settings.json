@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "python3 -c \"import json, sys; data=json.load(sys.stdin); path=data.get('tool_input',{}).get('file_path',''); sys.exit(2 if any(p in path for p in ['.env', 'credentials', 'secret', '.pem', '.key']) else 0)\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/suggest_compact.py\""
           }
         ]
       }
@@ -29,6 +33,10 @@
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/session_start.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/detect_package_manager.py\""
           }
         ]
       }
@@ -40,6 +48,10 @@
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/session_end.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/continuous_learning.py\""
           }
         ]
       }
@@ -55,6 +67,10 @@
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/code_quality_validator.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/auto_format.py\""
           },
           {
             "type": "command",
@@ -96,6 +112,10 @@
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/session_stop.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/continuous_learning.py\""
           }
         ]
       }

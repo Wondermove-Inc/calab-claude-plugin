@@ -1,7 +1,7 @@
 {
   "name": "calab-plugin",
-  "version": "2.1.1",
-  "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build",
+  "version": "2.3.0",
+  "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build + Security + TDD",
   "author": {
     "name": "Wonder Move Lab",
     "email": "support@wondermovelab.com"
@@ -16,7 +16,11 @@
     "best-practices",
     "qa",
     "jira",
-    "problem-solving"
+    "problem-solving",
+    "security",
+    "tdd",
+    "continuous-learning",
+    "auto-format"
   ],
   "commands": ["./commands/"],
   "skills": ["./skills/"]

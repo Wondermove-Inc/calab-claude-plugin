@@ -196,8 +196,10 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 | `/qa` | "QA 시작" | E2E 테스트 |
 | `/check-quality` | "품질 검사" | 코드 품질 검사 |
 | `/save-progress` | "저장해줘" | 체크포인트 저장 |
+| `/security-review` | "보안 검사" | OWASP Top 10 취약점 검사 |
+| `/dev-build --tdd` | "TDD로 구현" | 테스트 주도 개발 |
 
-**전체 명령어 (41개):** [COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) 참조
+**전체 명령어 (42개):** [COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) 참조
 
 ---
 
@@ -205,23 +207,39 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 
 | 트리거 | 자동 동작 |
 |--------|----------|
-| 코드 작성 | 품질 검사 + 베스트 프랙티스 적용 |
-| 파일 수정 | 변경 이력 기록 + worktree 업데이트 |
-| 세션 시작 | 이전 컨텍스트 안내 |
-| Compact | 체크포인트 자동 저장 |
+| 코드 작성 | 품질 검사 + 베스트 프랙티스 적용 + **자동 포맷팅** |
+| 파일 수정 | 변경 이력 기록 + worktree 업데이트 + **console.log 경고** |
+| 세션 시작 | 이전 컨텍스트 안내 + **패키지 매니저 감지** |
+| 세션 종료 | **연속 학습 (패턴 자동 추출)** |
+| Compact | 체크포인트 자동 저장 + **컴팩션 사전 제안** |
 | 민감 파일 | `.env`, `credentials` 자동 차단 |
+| 빌드 오류 | **build-error-resolver 에이전트 자동 호출** |
+| 보안 이슈 | **security-reviewer 에이전트 자동 호출** |
 
 ---
 
-## 자동 활성화 스킬 (11개)
+## 자동 활성화 스킬 (13개)
 
 - **코드 작성**: clean-architecture, best-practices, code-quality
 - **에러/버그**: problem-solving
+- **보안 검사**: **security-review** (NEW)
+- **TDD/테스트**: **tdd-workflow** (NEW), qa-testing
 - **JIRA/이슈**: jira-integration
-- **QA/테스트**: qa-testing
 - **작업 관리**: work-tracker, dev-workflow
 - **프로젝트 분석**: project-onboarding, research-skill
 - **규칙 준수**: project-rules
+
+## 특화 에이전트 (7개)
+
+| 에이전트 | 역할 | 자동 호출 조건 |
+|----------|------|---------------|
+| **code-reviewer** | 코드 품질 검토 | 코드 리뷰 요청 시 |
+| **project-guardian** | 규칙 준수 검증 | 규칙 확인 요청 시 |
+| **security-reviewer** | 보안 취약점 분석 | 보안 검사 요청 시 |
+| **build-error-resolver** | 빌드 오류 해결 | 빌드 실패 시 |
+| **refactor-cleaner** (NEW) | 데드 코드/미사용 코드 정리 | 리팩토링, 클린업 요청 시 |
+| **e2e-runner** (NEW) | E2E 테스트 실행/디버깅 | E2E, 통합 테스트 요청 시 |
+| **doc-updater** (NEW) | 문서 자동 업데이트 | 문서 업데이트, 동기화 요청 시 |
 
 ---
 
