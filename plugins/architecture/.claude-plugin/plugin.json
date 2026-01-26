@@ -1,6 +1,6 @@
 {
   "name": "architecture",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "클린 아키텍처 설계 및 검증 (TypeScript, Go 지원)",
   "author": {
     "name": "wondermove lab",
@@ -15,5 +15,9 @@
     "design",
     "golang",
     "typescript"
+  ],
+  "skills": [
+    "./skills/clean-architecture-go",
+    "./skills/clean-architecture-ts"
   ]
 }

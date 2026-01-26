@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "리서치 및 문제 해결 도구 - 웹 검색, 체계적 문제 분석",
   "author": {
     "name": "wondermove lab",
@@ -13,5 +13,9 @@
     "problem-solving",
     "analysis",
     "web-search"
+  ],
+  "skills": [
+    "./skills/problem-solving",
+    "./skills/research-skill"
   ]
 }

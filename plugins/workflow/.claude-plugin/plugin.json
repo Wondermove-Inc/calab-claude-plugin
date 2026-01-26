@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
     "name": "wondermove lab",
@@ -16,6 +16,15 @@
     "jira",
     "testing",
     "qa"
+  ],
+  "skills": [
+    "./skills/best-practices",
+    "./skills/code-quality",
+    "./skills/jira-integration",
+    "./skills/process",
+    "./skills/project-rules",
+    "./skills/qa-testing",
+    "./skills/work-tracker"
   ],
   "hooks": {
     "SessionStart": [
