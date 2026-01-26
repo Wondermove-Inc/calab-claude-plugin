@@ -15,7 +15,7 @@
     "configuration"
   ],
   "skills": [
-    "./skills/setup",
-    "./skills/restore"
+    "./skills/statusline",
+    "./skills/help"
   ]
 }
