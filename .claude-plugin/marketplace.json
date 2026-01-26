@@ -62,6 +62,17 @@
         "./skills/problem-solving",
         "./skills/research-skill"
       ]
+    },
+    {
+      "name": "cli-tools",
+      "source": "./plugins/cli-tools",
+      "description": "Claude Code CLI 환경 설정 (statusline)",
+      "category": "utilities",
+      "tags": ["cli", "terminal", "statusline", "config"],
+      "skills": [
+        "./skills/setup",
+        "./skills/restore"
+      ]
     }
   ]
 }
