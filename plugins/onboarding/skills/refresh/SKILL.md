@@ -1,5 +1,5 @@
 ---
-name: refresh
+name: onboarding:refresh
 description: 프로젝트 컨텍스트 문서를 갱신합니다. 코드 변경 후 컨텍스트 동기화가 필요할 때 사용합니다.
 allowed-tools: Read, Write, Glob, Grep
 argument-hint: [patterns | architecture | domain]

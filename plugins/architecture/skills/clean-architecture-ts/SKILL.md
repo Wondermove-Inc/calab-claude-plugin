@@ -1,5 +1,5 @@
 ---
-name: clean-architecture-ts
+name: architecture:clean-architecture-ts
 description: TypeScript 클린 아키텍처를 강제합니다. TypeScript/JavaScript 파일(.ts, .tsx, .js, .jsx) 생성, 레이어, 도메인, 엔티티, 유스케이스 언급 시 자동 활성화. 의존성 규칙을 엄격하게 검사합니다.
 allowed-tools: Read, Glob, Grep
 ---

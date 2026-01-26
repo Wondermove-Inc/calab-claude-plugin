@@ -1,5 +1,5 @@
 ---
-name: start
+name: onboarding:start
 description: 프로젝트를 전체 분석하여 5개 컨텍스트 문서를 생성합니다. 기존 프로젝트 분석, 코드베이스 학습, 온보딩 시 사용합니다.
 allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint: [--skip-domain]

@@ -1,5 +1,5 @@
 ---
-name: clean-architecture-go
+name: architecture:clean-architecture-go
 description: Go 프로젝트용 클린 아키텍처를 강제합니다. Go 파일(.go) 생성, 구현, 레이어, 도메인, 엔티티, 유스케이스 언급 시 자동 활성화. 의존성 규칙을 엄격하게 검사합니다.
 allowed-tools: Read, Glob, Grep
 ---

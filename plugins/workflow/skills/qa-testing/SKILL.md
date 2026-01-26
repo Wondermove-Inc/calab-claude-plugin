@@ -1,5 +1,5 @@
 ---
-name: qa-testing
+name: workflow:qa-testing
 description: 프론트엔드 기능 QA를 수행합니다. QA 계획서 작성, 테스트 실행, 보고서 생성을 담당합니다. QA, 테스트, 검증, 품질 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Glob, Grep, Bash, mcp__puppeteer__*
 ---

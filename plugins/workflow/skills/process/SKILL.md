@@ -1,5 +1,5 @@
 ---
-name: process
+name: workflow:process
 description: 구조화된 개발 프로세스를 관리합니다. 새 기능 개발, 프로젝트 시작, 설계, 아키텍처, PRD, 요구사항, 기획 요청 시 자동 활성화. Plan → Design → Tasks → Build 프로세스를 안내합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---

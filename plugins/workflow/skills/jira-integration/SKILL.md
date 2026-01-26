@@ -1,5 +1,5 @@
 ---
-name: jira-integration
+name: workflow:jira-integration
 description: JIRA 연동 기능을 제공합니다. JIRA, 지라, 이슈, 티켓, 동기화, 프로젝트 관리 언급 시 자동 활성화. Worktree와 JIRA 간 양방향 동기화를 지원합니다.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---

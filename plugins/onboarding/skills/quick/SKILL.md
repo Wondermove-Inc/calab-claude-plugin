@@ -1,5 +1,5 @@
 ---
-name: quick
+name: onboarding:quick
 description: 빠른 프로젝트 온보딩을 실행합니다. 핵심 정보만 분석하여 최소 컨텍스트를 구축합니다.
 allowed-tools: Read, Write, Glob, Bash
 ---

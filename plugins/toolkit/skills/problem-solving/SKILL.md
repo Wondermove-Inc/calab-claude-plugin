@@ -1,5 +1,5 @@
 ---
-name: problem-solving
+name: toolkit:problem-solving
 description: 문제 해결 방법론을 적용합니다. 에러, 버그, 문제, 디버깅, 해결 키워드 시 자동 활성화. 5 Whys, RCA, 가설 기반 접근을 사용합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch
 ---

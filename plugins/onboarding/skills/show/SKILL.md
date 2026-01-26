@@ -1,5 +1,5 @@
 ---
-name: show
+name: onboarding:show
 description: 현재 프로젝트 컨텍스트를 표시합니다. 기술 스택, 패턴, 아키텍처, 도메인 정보를 확인합니다.
 allowed-tools: Read, Glob
 argument-hint: [tech | patterns | architecture | domain]

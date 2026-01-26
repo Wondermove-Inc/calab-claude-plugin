@@ -1,5 +1,5 @@
 ---
-name: best-practices
+name: workflow:best-practices
 description: 기술별 베스트 프랙티스를 적용합니다. 코드 작성, 구현, 개발, React, Node.js, TypeScript, 데이터베이스, API 요청 시 자동 활성화. 검증된 패턴과 방법론을 사용합니다.
 allowed-tools: Read, Glob
 ---

@@ -1,5 +1,5 @@
 ---
-name: work-tracker
+name: workflow:work-tracker
 description: 작업 진행 상태를 추적하고 관리합니다. 새 작업 시작, 작업 전환, 완료, 다음 단계, 이제, 그 다음 키워드 사용 시 자동 활성화. 맥락 유실 방지에 필수입니다.
 allowed-tools: Read, Write, Edit
 ---
