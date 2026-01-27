@@ -211,3 +211,73 @@
 [2026-01-27 12:25:44] [DecisionContext] 일반 요청 - Core Rules 출력
 [2026-01-27 12:26:08] [DecisionContext] 프롬프트 길이: 29자
 [2026-01-27 12:26:08] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:27:20] [DecisionContext] 프롬프트 길이: 37자
+[2026-01-27 12:27:20] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:28:11] [PreCompact] PreCompact hook triggered (v4)
+[2026-01-27 12:28:11] [PreCompact] Session ID: b21f649c-9c99-4925-898b-95b932c8458c
+[2026-01-27 12:28:11] [PreCompact] Transcript path: /home/wondermove/.claude/projects/-home-wondermove-claude-projects-calab-claude-plugin/b21f649c-9c99-4925-898b-95b932c8458c.jsonl
+[2026-01-27 12:28:11] [PreCompact] Trigger: auto
+[2026-01-27 12:28:11] [PreCompact] No active plan found, creating minimal checkpoint
+[2026-01-27 12:28:11] [PreCompact] Minimal checkpoint added to FIFO: /home/wondermove/claude-projects/calab-claude-plugin/.claude/checkpoints.json
+[2026-01-27 12:28:38] [SessionStart] SessionStart hook triggered (v4)
+[2026-01-27 12:28:38] [SessionStart] Session: b21f649c-9c99-4925-898b-95b932c8458c, Resume: False
+[2026-01-27 12:28:38] [SessionStart] Checkpoint version: 4.0
+[2026-01-27 12:28:38] [SessionStart] v4 display complete: 4 checkpoints, latest=(목표 설정 대기)
+[2026-01-27 12:30:36] [DecisionContext] 프롬프트 길이: 143자
+[2026-01-27 12:30:36] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:32:15] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/scripts/setup-statusline.sh
+[2026-01-27 12:32:15] [SensitiveFileGuard] 통과
+[2026-01-27 12:33:57] [DecisionContext] 프롬프트 길이: 118자
+[2026-01-27 12:33:57] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:34:23] [DecisionContext] 프롬프트 길이: 31자
+[2026-01-27 12:34:23] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:34:56] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/.claude/settings.json
+[2026-01-27 12:34:56] [SensitiveFileGuard] 통과
+[2026-01-27 12:35:36] [DecisionContext] 프롬프트 길이: 75자
+[2026-01-27 12:35:36] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:36:03] [DecisionContext] 프롬프트 길이: 2자
+[2026-01-27 12:36:03] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:37:12] [DecisionContext] 프롬프트 길이: 76자
+[2026-01-27 12:37:12] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:40:39] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/.claude-plugin/plugin.json
+[2026-01-27 12:40:39] [SensitiveFileGuard] 통과
+[2026-01-27 12:41:35] [DecisionContext] 프롬프트 길이: 4자
+[2026-01-27 12:41:35] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:42:22] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/install.sh
+[2026-01-27 12:42:22] [SensitiveFileGuard] 통과
+[2026-01-27 12:42:29] [PreCompact] PreCompact hook triggered (v4)
+[2026-01-27 12:42:29] [PreCompact] Session ID: b21f649c-9c99-4925-898b-95b932c8458c
+[2026-01-27 12:42:29] [PreCompact] Transcript path: /home/wondermove/.claude/projects/-home-wondermove-claude-projects-calab-claude-plugin/b21f649c-9c99-4925-898b-95b932c8458c.jsonl
+[2026-01-27 12:42:29] [PreCompact] Trigger: auto
+[2026-01-27 12:42:29] [PreCompact] No active plan found, creating minimal checkpoint
+[2026-01-27 12:42:29] [PreCompact] Minimal checkpoint added to FIFO: /home/wondermove/claude-projects/calab-claude-plugin/.claude/checkpoints.json
+[2026-01-27 12:43:16] [SessionStart] SessionStart hook triggered (v4)
+[2026-01-27 12:43:16] [SessionStart] Session: b21f649c-9c99-4925-898b-95b932c8458c, Resume: False
+[2026-01-27 12:43:16] [SessionStart] Checkpoint version: 4.0
+[2026-01-27 12:43:16] [SessionStart] v4 display complete: 5 checkpoints, latest=(목표 설정 대기)
+[2026-01-27 12:43:58] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/uninstall.sh
+[2026-01-27 12:43:58] [SensitiveFileGuard] 통과
+[2026-01-27 12:44:34] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/update.sh
+[2026-01-27 12:44:34] [SensitiveFileGuard] 통과
+[2026-01-27 12:44:54] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/README.md
+[2026-01-27 12:44:54] [SensitiveFileGuard] 통과
+[2026-01-27 12:45:07] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/README.md
+[2026-01-27 12:45:07] [SensitiveFileGuard] 통과
+[2026-01-27 12:45:12] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/README.md
+[2026-01-27 12:45:12] [SensitiveFileGuard] 통과
+[2026-01-27 12:45:17] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/README.md
+[2026-01-27 12:45:17] [SensitiveFileGuard] 통과
+[2026-01-27 12:45:23] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/README.md
+[2026-01-27 12:45:23] [SensitiveFileGuard] 통과
+[2026-01-27 12:45:28] [SensitiveFileGuard] 파일 검사: /home/wondermove/claude-projects/calab-claude-plugin/.claude-plugin/plugin.json
+[2026-01-27 12:45:28] [SensitiveFileGuard] 통과
+[2026-01-27 12:46:07] [DecisionContext] 프롬프트 길이: 156자
+[2026-01-27 12:46:07] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:46:58] [DecisionContext] 프롬프트 길이: 69자
+[2026-01-27 12:46:58] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:51:02] [DecisionContext] 프롬프트 길이: 27자
+[2026-01-27 12:51:02] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:52:19] [DecisionContext] 프롬프트 길이: 29자
+[2026-01-27 12:52:19] [DecisionContext] 일반 요청 - Core Rules 출력
+[2026-01-27 12:54:07] [DecisionContext] 프롬프트 길이: 42자
+[2026-01-27 12:54:07] [DecisionContext] 일반 요청 - Core Rules 출력
