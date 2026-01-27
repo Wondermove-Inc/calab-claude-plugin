@@ -141,7 +141,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"event_type\": \"start\", \"agent_name\": \"$AGENT_NAME\", \"agent_id\": \"$AGENT_ID\"}' | python3 \"$HOME/.claude/hooks/subagent_tracker.py\""
+            "command": "python3 \"$HOME/.claude/hooks/subagent_tracker.py\" start"
           }
         ]
       }
@@ -152,7 +152,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"event_type\": \"stop\", \"agent_id\": \"$AGENT_ID\", \"result\": \"$RESULT\"}' | python3 \"$HOME/.claude/hooks/subagent_tracker.py\""
+            "command": "python3 \"$HOME/.claude/hooks/subagent_tracker.py\" stop"
           }
         ]
       }
