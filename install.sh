@@ -77,12 +77,28 @@ check_environment() {
         warning "Git이 없습니다 (일부 기능 제한)"
     fi
 
-    # plugin.json 확인
+    # plugin.json 확인 (.claude-plugin/ 폴더 안에 있어야 함)
     if [ -f "$PLUGIN_DIR/.claude-plugin/plugin.json" ]; then
-        success "플러그인 파일 확인됨"
+        success "플러그인 매니페스트 확인됨 (.claude-plugin/plugin.json)"
     else
-        error "plugin.json을 찾을 수 없습니다"
+        error ".claude-plugin/plugin.json을 찾을 수 없습니다"
         errors=$((errors + 1))
+    fi
+
+    # commands 폴더 확인
+    if [ -d "$PLUGIN_DIR/commands" ]; then
+        local cmd_count=$(ls -1 "$PLUGIN_DIR/commands"/*.md 2>/dev/null | wc -l)
+        success "commands 폴더 확인됨 ($cmd_count개 명령)"
+    else
+        warning "commands 폴더가 없습니다"
+    fi
+
+    # skills 폴더 확인
+    if [ -d "$PLUGIN_DIR/skills" ]; then
+        local skill_count=$(ls -1d "$PLUGIN_DIR/skills"/*/ 2>/dev/null | wc -l)
+        success "skills 폴더 확인됨 ($skill_count개 스킬)"
+    else
+        warning "skills 폴더가 없습니다"
     fi
 
     if [ $errors -gt 0 ]; then
@@ -103,29 +119,39 @@ clean_previous() {
         success "이전 캐시 삭제됨"
     fi
 
-    # installed_plugins.json에서 제거
+    # installed_plugins.json에서 calab-plugin만 제거 (다른 플러그인 보호)
     local installed_file="$CLAUDE_HOME/plugins/installed_plugins.json"
     if [ -f "$installed_file" ]; then
         if command -v jq &> /dev/null; then
             local tmp=$(mktemp)
             # JSON 구조: {"version": 2, "plugins": {"calab-plugin@calab-marketplace": [...]}}
-            jq 'del(.plugins["calab-plugin@calab-marketplace"])' "$installed_file" > "$tmp" 2>/dev/null && \
-            mv "$tmp" "$installed_file" || rm -f "$tmp"
+            if jq 'del(.plugins["calab-plugin@calab-marketplace"])' "$installed_file" > "$tmp" 2>/dev/null; then
+                mv "$tmp" "$installed_file"
+                success "installed_plugins.json에서 이전 항목 제거됨"
+            else
+                rm -f "$tmp"
+                info "installed_plugins.json 처리 건너뜀"
+            fi
         else
-            rm -f "$installed_file"
+            info "jq 없음 - installed_plugins.json 유지"
         fi
     fi
 
-    # known_marketplaces.json에서 제거
+    # known_marketplaces.json에서 calab-marketplace만 제거 (다른 마켓플레이스 보호)
     local marketplaces_file="$CLAUDE_HOME/plugins/known_marketplaces.json"
     if [ -f "$marketplaces_file" ]; then
         if command -v jq &> /dev/null; then
             local tmp=$(mktemp)
             # JSON 구조: {"calab-marketplace": {...}}
-            jq 'del(.["calab-marketplace"])' "$marketplaces_file" > "$tmp" 2>/dev/null && \
-            mv "$tmp" "$marketplaces_file" || rm -f "$tmp"
+            if jq 'del(.["calab-marketplace"])' "$marketplaces_file" > "$tmp" 2>/dev/null; then
+                mv "$tmp" "$marketplaces_file"
+                success "known_marketplaces.json에서 이전 항목 제거됨"
+            else
+                rm -f "$tmp"
+                info "known_marketplaces.json 처리 건너뜀"
+            fi
         else
-            rm -f "$marketplaces_file"
+            info "jq 없음 - known_marketplaces.json 유지"
         fi
     fi
 
@@ -205,11 +231,33 @@ install_settings() {
 create_marketplace() {
     step "5/5" "마켓플레이스 생성"
 
-    mkdir -p "$MARKETPLACE_DIR/.claude-plugin"
-    mkdir -p "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME"
+    local PLUGIN_DEST="$MARKETPLACE_DIR/plugins/$PLUGIN_NAME"
 
-    # 플러그인 파일 복사 (.claude-plugin 안에 commands, skills 포함)
-    [ -d "$PLUGIN_DIR/.claude-plugin" ] && cp -r "$PLUGIN_DIR/.claude-plugin" "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/"
+    # 마켓플레이스 디렉토리 구조 생성
+    mkdir -p "$MARKETPLACE_DIR/.claude-plugin"
+    mkdir -p "$PLUGIN_DEST/.claude-plugin"
+    mkdir -p "$PLUGIN_DEST/commands"
+    mkdir -p "$PLUGIN_DEST/skills"
+
+    # 1. plugin.json 복사 (.claude-plugin/ 안에)
+    if [ -f "$PLUGIN_DIR/.claude-plugin/plugin.json" ]; then
+        cp "$PLUGIN_DIR/.claude-plugin/plugin.json" "$PLUGIN_DEST/.claude-plugin/"
+        success "plugin.json 복사됨"
+    fi
+
+    # 2. commands 폴더 복사 (플러그인 루트에)
+    if [ -d "$PLUGIN_DIR/commands" ]; then
+        cp -r "$PLUGIN_DIR/commands/"* "$PLUGIN_DEST/commands/" 2>/dev/null || true
+        local cmd_count=$(ls -1 "$PLUGIN_DEST/commands"/*.md 2>/dev/null | wc -l)
+        success "commands 복사됨 ($cmd_count개)"
+    fi
+
+    # 3. skills 폴더 복사 (플러그인 루트에)
+    if [ -d "$PLUGIN_DIR/skills" ]; then
+        cp -r "$PLUGIN_DIR/skills/"* "$PLUGIN_DEST/skills/" 2>/dev/null || true
+        local skill_count=$(ls -1d "$PLUGIN_DEST/skills"/*/ 2>/dev/null | wc -l)
+        success "skills 복사됨 ($skill_count개)"
+    fi
 
     # marketplace.json 생성
     cat > "$MARKETPLACE_DIR/.claude-plugin/marketplace.json" <<EOF
@@ -264,12 +312,12 @@ verify_installation() {
         fi
     done
 
-    # 디렉토리 확인
+    # 디렉토리 확인 (commands와 skills는 플러그인 루트에 있어야 함)
     local dirs=(
         "$CLAUDE_HOME/hooks"
         "$CLAUDE_HOME/best-practices"
-        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/.claude-plugin/commands"
-        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/.claude-plugin/skills"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/commands"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/skills"
     )
 
     for dir in "${dirs[@]}"; do

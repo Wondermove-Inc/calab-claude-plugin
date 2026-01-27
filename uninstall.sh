@@ -83,7 +83,7 @@ remove_plugin_cache() {
         info "플러그인 캐시 디렉토리 없음"
     fi
 
-    # installed_plugins.json에서 제거
+    # installed_plugins.json에서 제거 (우리 플러그인만!)
     local installed_file="$CLAUDE_HOME/plugins/installed_plugins.json"
     if [ -f "$installed_file" ]; then
         if command -v jq &> /dev/null; then
@@ -91,21 +91,19 @@ remove_plugin_cache() {
             # JSON 구조: {"version": 2, "plugins": {"calab-plugin@calab-marketplace": [...]}}
             if jq 'del(.plugins["calab-plugin@calab-marketplace"])' "$installed_file" > "$tmp" 2>/dev/null; then
                 mv "$tmp" "$installed_file"
-                success "installed_plugins.json에서 제거됨"
+                success "installed_plugins.json에서 calab-plugin 제거됨"
             else
                 rm -f "$tmp"
-                warning "jq 처리 실패 - 수동 삭제"
-                rm -f "$installed_file"
-                success "installed_plugins.json 삭제됨"
+                warning "jq 처리 실패 - 파일 유지 (다른 플러그인 보호)"
+                info "수동으로 calab-plugin@calab-marketplace 항목을 제거하세요"
             fi
         else
-            # jq 없으면 파일 자체 삭제
-            rm -f "$installed_file"
-            success "installed_plugins.json 삭제됨 (jq 없음)"
+            warning "jq가 없음 - 파일 유지 (다른 플러그인 보호)"
+            info "수동으로 calab-plugin@calab-marketplace 항목을 제거하세요"
         fi
     fi
 
-    # known_marketplaces.json에서 제거
+    # known_marketplaces.json에서 제거 (calab-marketplace만!)
     local marketplaces_file="$CLAUDE_HOME/plugins/known_marketplaces.json"
     if [ -f "$marketplaces_file" ]; then
         if command -v jq &> /dev/null; then
@@ -113,17 +111,15 @@ remove_plugin_cache() {
             # JSON 구조: {"calab-marketplace": {...}}
             if jq 'del(.["calab-marketplace"])' "$marketplaces_file" > "$tmp" 2>/dev/null; then
                 mv "$tmp" "$marketplaces_file"
-                success "known_marketplaces.json에서 제거됨"
+                success "known_marketplaces.json에서 calab-marketplace 제거됨"
             else
                 rm -f "$tmp"
-                warning "jq 처리 실패 - 수동 삭제"
-                rm -f "$marketplaces_file"
-                success "known_marketplaces.json 삭제됨"
+                warning "jq 처리 실패 - 파일 유지 (다른 마켓플레이스 보호)"
+                info "수동으로 calab-marketplace 항목을 제거하세요"
             fi
         else
-            # jq 없으면 파일 자체 삭제
-            rm -f "$marketplaces_file"
-            success "known_marketplaces.json 삭제됨 (jq 없음)"
+            warning "jq가 없음 - 파일 유지 (다른 마켓플레이스 보호)"
+            info "수동으로 calab-marketplace 항목을 제거하세요"
         fi
     fi
 }

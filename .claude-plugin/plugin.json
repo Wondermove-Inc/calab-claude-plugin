@@ -21,7 +21,5 @@
     "tdd",
     "continuous-learning",
     "auto-format"
-  ],
-  "commands": ["commands"],
-  "skills": ["skills"]
+  ]
 }
