@@ -132,7 +132,7 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 
 | 요청 타입 | 로드 파일 | 토큰 |
 |----------|----------|------|
-| **새 기능 구현** (`/dev build`, 엔티티) | clean-architecture + best-practices + code-quality + PROJECT_RULES | ~1,800 |
+| **새 기능 구현** (`/calab-plugin:dev-build`, 엔티티) | clean-architecture + best-practices + code-quality + PROJECT_RULES | ~1,800 |
 | **기존 파일 수정** (함수 수정, 변수 변경) | code-quality + {기술}.md | ~1,000 |
 | **포맷/주석만** (주석 추가, 정렬) | code-quality만 | ~500 |
 | **버그 해결** (에러 수정) | problem-solving | ~1,200 |
@@ -186,18 +186,18 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 
 | 명령어 | 자연어 | 설명 |
 |--------|--------|------|
-| `/dev plan [기능]` | "기획해줘" | 브레인스토밍 + PRD |
-| `/dev build [task]` | "구현해줘" | 태스크 구현 |
-| `/onboard` | "프로젝트 분석해줘" | 컨텍스트 문서 생성 |
-| `/restore-context` | "복원해줘" | 규칙 + 작업 상태 복원 |
-| `/solve [문제]` | "해결해줘" | 체계적 문제 해결 |
-| `/research [주제]` | "조사해줘" | 검색 + 핵심 요약 |
-| `/worktree` | "작업 트리" | 진행률 확인 |
-| `/qa` | "QA 시작" | E2E 테스트 |
-| `/check-quality` | "품질 검사" | 코드 품질 검사 |
-| `/save-progress` | "저장해줘" | 체크포인트 저장 |
-| `/security-review` | "보안 검사" | OWASP Top 10 취약점 검사 |
-| `/dev-build --tdd` | "TDD로 구현" | 테스트 주도 개발 |
+| `/calab-plugin:dev-plan [기능]` | "기획해줘" | 브레인스토밍 + PRD |
+| `/calab-plugin:dev-build [task]` | "구현해줘" | 태스크 구현 |
+| `/calab-plugin:onboard` | "프로젝트 분석해줘" | 컨텍스트 문서 생성 |
+| `/calab-plugin:restore-context` | "복원해줘" | 규칙 + 작업 상태 복원 |
+| `/calab-plugin:solve [문제]` | "해결해줘" | 체계적 문제 해결 |
+| `/calab-plugin:research [주제]` | "조사해줘" | 검색 + 핵심 요약 |
+| `/calab-plugin:worktree` | "작업 트리" | 진행률 확인 |
+| `/calab-plugin:qa` | "QA 시작" | E2E 테스트 |
+| `/calab-plugin:check-quality` | "품질 검사" | 코드 품질 검사 |
+| `/calab-plugin:save-progress` | "저장해줘" | 체크포인트 저장 |
+| `/calab-plugin:security-review` | "보안 검사" | OWASP Top 10 취약점 검사 |
+| `/calab-plugin:dev-build --tdd` | "TDD로 구현" | 테스트 주도 개발 |
 
 **전체 명령어 (42개):** [COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) 참조
 
@@ -248,7 +248,7 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 
 ## Compact 발생 시
 
-1. `/restore-context` 실행
+1. `/calab-plugin:restore-context` 실행
 2. 복원된 규칙과 작업 상태 확인
 3. 작업 재개
 

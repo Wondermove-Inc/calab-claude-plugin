@@ -39,11 +39,11 @@ Plan → Design → Tasks → Build → QA
 
 | 단계 | 명령어 | 적용 표준 | 설명 |
 |------|--------|----------|------|
-| 기획 | `/dev-plan` | PRD 템플릿 | 브레인스토밍 + 요구사항 문서 |
-| 설계 | `/dev-design` | C4 Model + Layered Architecture | 아키텍처 + ERD (3NF 정규화) |
-| 분해 | `/dev-tasks` | Epic-Story-Task + AC | 작업 분해 + 우선순위(P0~P3) |
-| 구현 | `/dev-build` | Clean Architecture + Best Practices | 4-Layer + TDD 지원 |
-| 검증 | `/qa` | 7단계 QA 프로세스 | E2E 테스트 자동화 |
+| 기획 | `/calab-plugin:dev-plan` | PRD 템플릿 | 브레인스토밍 + 요구사항 문서 |
+| 설계 | `/calab-plugin:dev-design` | C4 Model + Layered Architecture | 아키텍처 + ERD (3NF 정규화) |
+| 분해 | `/calab-plugin:dev-tasks` | Epic-Story-Task + AC | 작업 분해 + 우선순위(P0~P3) |
+| 구현 | `/calab-plugin:dev-build` | Clean Architecture + Best Practices | 4-Layer + TDD 지원 |
+| 검증 | `/calab-plugin:qa` | 7단계 QA 프로세스 | E2E 테스트 자동화 |
 
 ### 자동 활성화 스킬 (16개)
 
@@ -136,35 +136,35 @@ Plan → Design → Tasks → Build → QA
 
 | 상황 | 자연어 | 명령어 |
 |------|--------|--------|
-| 새 프로젝트 시작 | "기획해줘" | `/dev-plan [기능명]` |
-| 기존 프로젝트 투입 | "프로젝트 분석해줘" | `/onboard` |
-| 세션/Compact 후 | "복원해줘" | `/restore-context` |
-| 버그 해결 | "해결해줘" | `/solve [문제]` |
-| 기술 조사 | "조사해줘" | `/research [주제]` |
-| QA 테스트 | "테스트해줘" | `/qa` |
-| 보안 검사 | "보안 검사해줘" | `/security-review` |
-| 코드 정리 | "리팩토링해줘" | `/check-quality` |
+| 새 프로젝트 시작 | "기획해줘" | `/calab-plugin:dev-plan [기능명]` |
+| 기존 프로젝트 투입 | "프로젝트 분석해줘" | `/calab-plugin:onboard` |
+| 세션/Compact 후 | "복원해줘" | `/calab-plugin:restore-context` |
+| 버그 해결 | "해결해줘" | `/calab-plugin:solve [문제]` |
+| 기술 조사 | "조사해줘" | `/calab-plugin:research [주제]` |
+| QA 테스트 | "테스트해줘" | `/calab-plugin:qa` |
+| 보안 검사 | "보안 검사해줘" | `/calab-plugin:security-review` |
+| 코드 정리 | "리팩토링해줘" | `/calab-plugin:check-quality` |
 
 ### 개발 워크플로우 예시
 
 ```bash
 # 1. 기획 (브레인스토밍 + PRD)
-/dev-plan 사용자 인증 시스템
+/calab-plugin:dev-plan 사용자 인증 시스템
 
 # 2. 설계 (아키텍처 + ERD)
-/dev-design
+/calab-plugin:dev-design
 
 # 3. 태스크 분해
-/dev-tasks
+/calab-plugin:dev-tasks
 
 # 4. TDD로 구현
-/dev-build TASK-001 --tdd
+/calab-plugin:dev-build TASK-001 --tdd
 
 # 5. 진행 상황 확인
-/worktree
+/calab-plugin:worktree
 
 # 6. QA 테스트
-/qa --from-worktree
+/calab-plugin:qa --from-worktree
 ```
 
 ---
@@ -175,90 +175,90 @@ Plan → Design → Tasks → Build → QA
 
 | 명령어 | 옵션 | 적용 표준 | 설명 |
 |--------|------|----------|------|
-| `/dev-plan [기능]` | `--brainstorm`, `--prd` | PRD 템플릿 | 브레인스토밍 + PRD |
-| `/dev-design` | `--arch`, `--erd` | C4 Model, 3NF | 아키텍처 + ERD |
-| `/dev-tasks` | - | Epic-Story-Task | 태스크 분해 + AC |
-| `/dev-build [task]` | `--tdd` | Clean Architecture | 태스크 구현 |
-| `/dev-status` | - | Worktree 추적 | 진행률 확인 |
+| `/calab-plugin:dev-plan [기능]` | `--brainstorm`, `--prd` | PRD 템플릿 | 브레인스토밍 + PRD |
+| `/calab-plugin:dev-design` | `--arch`, `--erd` | C4 Model, 3NF | 아키텍처 + ERD |
+| `/calab-plugin:dev-tasks` | - | Epic-Story-Task | 태스크 분해 + AC |
+| `/calab-plugin:dev-build [task]` | `--tdd` | Clean Architecture | 태스크 구현 |
+| `/calab-plugin:dev-status` | - | Worktree 추적 | 진행률 확인 |
 
 ### 클린 아키텍처
 
 | 명령어 | 적용 표준 | 설명 |
 |--------|----------|------|
-| `/clean-init` | 4-Layer Clean Architecture | Domain/Application/Adapters/Infrastructure |
-| `/clean-entity [name]` | Domain Layer 규칙 | 외부 import 금지, 순수 TypeScript |
-| `/clean-usecase [name]` | Application Layer 규칙 | Domain만 import, Interface 의존 |
-| `/clean-validate` | 의존성 규칙 검증 | 내부→외부 참조 금지, 순환 의존성 탐지 |
+| `/calab-plugin:clean-init` | 4-Layer Clean Architecture | Domain/Application/Adapters/Infrastructure |
+| `/calab-plugin:clean-entity [name]` | Domain Layer 규칙 | 외부 import 금지, 순수 TypeScript |
+| `/calab-plugin:clean-usecase [name]` | Application Layer 규칙 | Domain만 import, Interface 의존 |
+| `/calab-plugin:clean-validate` | 의존성 규칙 검증 | 내부→외부 참조 금지, 순환 의존성 탐지 |
 
 ### 온보딩 & 컨텍스트
 
 | 명령어 | 설명 |
 |--------|------|
-| `/onboard` | 5개 컨텍스트 문서 생성 (기술스택, 패턴, 아키텍처, 도메인, 주요파일) |
-| `/onboard-quick` | 핵심만 빠른 분석 |
-| `/learn [path]` | 특정 영역 심층 학습 |
-| `/context-show` | 컨텍스트 표시 |
-| `/context-refresh` | 컨텍스트 갱신 |
-| `/restore-context` | 규칙 + 작업 상태 복원 |
-| `/save-progress` | 체크포인트 저장 |
+| `/calab-plugin:onboard` | 5개 컨텍스트 문서 생성 (기술스택, 패턴, 아키텍처, 도메인, 주요파일) |
+| `/calab-plugin:onboard-quick` | 핵심만 빠른 분석 |
+| `/calab-plugin:learn [path]` | 특정 영역 심층 학습 |
+| `/calab-plugin:context-show` | 컨텍스트 표시 |
+| `/calab-plugin:context-refresh` | 컨텍스트 갱신 |
+| `/calab-plugin:restore-context` | 규칙 + 작업 상태 복원 |
+| `/calab-plugin:save-progress` | 체크포인트 저장 |
 
 ### 리서치
 
 | 명령어 | 옵션 | 적용 표준 | 설명 |
 |--------|------|----------|------|
-| `/research [주제]` | `--quick`, `--deep` | 체계적 리서치 프로토콜 | 5-10회 검색 + 핵심 요약 + 출처 검증 |
+| `/calab-plugin:research [주제]` | `--quick`, `--deep` | 체계적 리서치 프로토콜 | 5-10회 검색 + 핵심 요약 + 출처 검증 |
 
 ### 문제 해결
 
 | 명령어 | 옵션 | 적용 표준 | 설명 |
 |--------|------|----------|------|
-| `/solve [문제]` | `--5whys` | 5 Whys | "왜?"를 5번 반복하여 근본 원인 추적 |
-| `/solve [문제]` | `--rca` | Root Cause Analysis | 8단계 RCA + Fishbone 다이어그램 |
-| `/solve [문제]` | `--hypothesis` | 가설 기반 접근 | 가설 → 예측 → 실험 → 검증 |
-| `/solve [문제]` | `--binary` | Binary Search | 코드 이분 탐색으로 문제 위치 특정 |
-| `/solve-log` | - | - | 진행 중 분석 로그 |
-| `/solve-history` | `--recent`, `--keyword` | - | 과거 해결 사례 검색 |
-| `/solve-report [id]` | `--full`, `--summary` | - | 해결 보고서 생성 |
+| `/calab-plugin:solve [문제]` | `--5whys` | 5 Whys | "왜?"를 5번 반복하여 근본 원인 추적 |
+| `/calab-plugin:solve [문제]` | `--rca` | Root Cause Analysis | 8단계 RCA + Fishbone 다이어그램 |
+| `/calab-plugin:solve [문제]` | `--hypothesis` | 가설 기반 접근 | 가설 → 예측 → 실험 → 검증 |
+| `/calab-plugin:solve [문제]` | `--binary` | Binary Search | 코드 이분 탐색으로 문제 위치 특정 |
+| `/calab-plugin:solve-log` | - | - | 진행 중 분석 로그 |
+| `/calab-plugin:solve-history` | `--recent`, `--keyword` | - | 과거 해결 사례 검색 |
+| `/calab-plugin:solve-report [id]` | `--full`, `--summary` | - | 해결 보고서 생성 |
 
 ### QA & 테스트
 
 | 명령어 | 옵션 | 적용 표준 | 설명 |
 |--------|------|----------|------|
-| `/qa` | `--from-prd`, `--from-worktree` | 7단계 QA 프로세스 | QA 시작 |
-| `/qa-plan` | `--edit` | 테스트 피라미드 | Unit 70%, Integration 20%, E2E 10% |
-| `/qa-run [tc]` | `--all`, `--failed` | MCP Puppeteer + BDD | Given-When-Then 테스트 |
-| `/qa-report` | `--summary`, `--full` | 표준 QA 보고서 | 통과율, 버그 목록, 권장사항 |
-| `/qa-status` | - | - | 테스트 진행률 |
+| `/calab-plugin:qa` | `--from-prd`, `--from-worktree` | 7단계 QA 프로세스 | QA 시작 |
+| `/calab-plugin:qa-plan` | `--edit` | 테스트 피라미드 | Unit 70%, Integration 20%, E2E 10% |
+| `/calab-plugin:qa-run [tc]` | `--all`, `--failed` | MCP Puppeteer + BDD | Given-When-Then 테스트 |
+| `/calab-plugin:qa-report` | `--summary`, `--full` | 표준 QA 보고서 | 통과율, 버그 목록, 권장사항 |
+| `/calab-plugin:qa-status` | - | - | 테스트 진행률 |
 
 ### 보안 & 품질
 
 | 명령어 | 적용 표준 | 설명 |
 |--------|----------|------|
-| `/security-review` | OWASP Top 10 | SQL Injection, XSS, 시크릿 탐지 |
-| `/check-quality` | 코드 품질 규칙 | 500줄 초과, 주석 누락 검사 |
+| `/calab-plugin:security-review` | OWASP Top 10 | SQL Injection, XSS, 시크릿 탐지 |
+| `/calab-plugin:check-quality` | 코드 품질 규칙 | 500줄 초과, 주석 누락 검사 |
 
 ### Worktree & JIRA
 
 | 명령어 | 설명 |
 |--------|------|
-| `/worktree` | Epic-Story-Task 트리 시각화 |
-| `/worktree start [id]` | 태스크 시작 |
-| `/worktree done [id]` | 태스크 완료 |
-| `/worktree block [id] [사유]` | 블로커 등록 |
-| `/jira-init [key]` | JIRA 연동 초기화 |
-| `/jira-sync` | 양방향 동기화 |
-| `/jira-push` | Worktree → JIRA |
-| `/jira-pull` | JIRA → Worktree |
+| `/calab-plugin:worktree` | Epic-Story-Task 트리 시각화 |
+| `/calab-plugin:worktree start [id]` | 태스크 시작 |
+| `/calab-plugin:worktree done [id]` | 태스크 완료 |
+| `/calab-plugin:worktree block [id] [사유]` | 블로커 등록 |
+| `/calab-plugin:jira-init [key]` | JIRA 연동 초기화 |
+| `/calab-plugin:jira-sync` | 양방향 동기화 |
+| `/calab-plugin:jira-push` | Worktree → JIRA |
+| `/calab-plugin:jira-pull` | JIRA → Worktree |
 
 ### 문서 생성
 
 | 명령어 | 설명 |
 |--------|------|
-| `/docs generate` | 전체 문서 생성 (API, 컴포넌트, 가이드 등) |
-| `/docs add [type]` | 특정 유형 문서 추가 |
-| `/docs update` | 코드 변경 → 문서 자동 반영 |
-| `/docs status` | 문서 현황 + 품질 점수 |
-| `/docs validate` | 구조/링크/완성도 검증 |
+| `/calab-plugin:docs generate` | 전체 문서 생성 (API, 컴포넌트, 가이드 등) |
+| `/calab-plugin:docs add [type]` | 특정 유형 문서 추가 |
+| `/calab-plugin:docs update` | 코드 변경 → 문서 자동 반영 |
+| `/calab-plugin:docs status` | 문서 현황 + 품질 점수 |
+| `/calab-plugin:docs validate` | 구조/링크/완성도 검증 |
 
 **문서 유형**: `getting-started`, `architecture`, `api`, `component`, `guide`, `config`, `faq`, `troubleshooting`
 
@@ -280,19 +280,19 @@ flowchart LR
 
 ```bash
 # 1. 기획 - 브레인스토밍만
-/dev-plan 사용자 인증 --brainstorm
+/calab-plugin:dev-plan 사용자 인증 --brainstorm
 
 # 2. 기획 - PRD만
-/dev-plan 사용자 인증 --prd
+/calab-plugin:dev-plan 사용자 인증 --prd
 
 # 3. 설계 - 아키텍처만
-/dev-design --arch
+/calab-plugin:dev-design --arch
 
 # 4. 설계 - ERD만
-/dev-design --erd
+/calab-plugin:dev-design --erd
 
 # 5. TDD 모드로 구현
-/dev-build TASK-001 --tdd
+/calab-plugin:dev-build TASK-001 --tdd
 ```
 
 ### 2. 클린 아키텍처
@@ -310,16 +310,16 @@ flowchart LR
 
 ```bash
 # 1. 구조 초기화
-/clean-init
+/calab-plugin:clean-init
 
 # 2. 엔티티 생성
-/clean-entity User --with-repository
+/calab-plugin:clean-entity User --with-repository
 
 # 3. 유스케이스 생성
-/clean-usecase CreateUser --entity User
+/calab-plugin:clean-usecase CreateUser --entity User
 
 # 4. 의존성 검증
-/clean-validate --fix
+/calab-plugin:clean-validate --fix
 ```
 
 ### 3. 프로젝트 온보딩
@@ -338,17 +338,17 @@ flowchart LR
 
 ```bash
 # 전체 분석 (5-10분)
-/onboard
+/calab-plugin:onboard
 
 # 빠른 분석 (1-2분)
-/onboard-quick
+/calab-plugin:onboard-quick
 
 # 특정 영역 심층 학습
-/learn src/services
+/calab-plugin:learn src/services
 
 # 컨텍스트 확인
-/context-show tech
-/context-show patterns
+/calab-plugin:context-show tech
+/calab-plugin:context-show patterns
 ```
 
 ### 4. 리서치
@@ -357,13 +357,13 @@ flowchart LR
 
 ```bash
 # 기본 리서치 (5회 검색)
-/research OAuth 2.0
+/calab-plugin:research OAuth 2.0
 
 # 빠른 리서치 (3회 검색)
-/research JWT --quick
+/calab-plugin:research JWT --quick
 
 # 심층 리서치 (10회 검색)
-/research 클린 아키텍처 --deep
+/calab-plugin:research 클린 아키텍처 --deep
 ```
 
 **결과 저장 위치:** `.claude/research/[주제]/RESEARCH.md`
@@ -383,14 +383,14 @@ flowchart LR
 
 ```bash
 # 5 Whys 방법론
-/solve "로그인 시 500 에러" --5whys
+/calab-plugin:solve "로그인 시 500 에러" --5whys
 
 # RCA (Root Cause Analysis)
-/solve "성능 저하" --rca
+/calab-plugin:solve "성능 저하" --rca
 
 # 과거 해결 사례 검색
-/solve-history 데이터베이스
-/solve-history --recent
+/calab-plugin:solve-history 데이터베이스
+/calab-plugin:solve-history --recent
 ```
 
 **지식 베이스:** `.claude/problem-solving/kb/solved/[문제ID]/`
@@ -411,19 +411,19 @@ flowchart LR
 
 ```bash
 # PRD 기반 테스트 케이스 생성
-/qa --from-prd
+/calab-plugin:qa --from-prd
 
 # Worktree 기반 테스트 케이스 생성
-/qa --from-worktree
+/calab-plugin:qa --from-worktree
 
 # 전체 테스트 실행
-/qa-run --all
+/calab-plugin:qa-run --all
 
 # 실패한 테스트만 재실행
-/qa-run --failed
+/calab-plugin:qa-run --failed
 
 # QA 보고서 생성
-/qa-report --full
+/calab-plugin:qa-report --full
 ```
 
 **주요 기능:**
@@ -444,13 +444,13 @@ export JIRA_API_TOKEN='your-api-token'
 
 ```bash
 # JIRA 연동 초기화
-/jira-init AUTH
+/calab-plugin:jira-init AUTH
 
 # 양방향 동기화
-/jira-sync
+/calab-plugin:jira-sync
 
 # 상태 확인
-/jira-status --detailed
+/calab-plugin:jira-status --detailed
 ```
 
 **자동 동기화:**
@@ -611,7 +611,7 @@ flowchart TB
 ### Compact 후 컨텍스트 손실
 
 ```bash
-/restore-context
+/calab-plugin:restore-context
 ```
 
 ### Claude Code 버전 확인
