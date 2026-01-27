@@ -1,5 +1,5 @@
 ---
-name: cli-tools:help
+name: help
 description: cli-tools 플러그인 사용법을 안내합니다. 도구별 상세 가이드를 제공합니다.
 allowed-tools: Read
 ---

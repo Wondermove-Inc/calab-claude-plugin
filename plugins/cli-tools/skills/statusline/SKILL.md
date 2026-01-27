@@ -1,5 +1,5 @@
 ---
-name: cli-tools:statusline
+name: statusline
 description: Claude Code statusline 설치 및 관리. 설치, 롤백 기능을 제공합니다.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
