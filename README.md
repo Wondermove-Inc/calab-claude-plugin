@@ -629,6 +629,102 @@ claude update      # 업데이트
 
 ---
 
+## 전체 명령어 레퍼런스 (42개)
+
+### 개발 워크플로우 (5개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:dev-plan` | 새 기능 기획 시작 | `/calab-plugin:dev-plan 사용자 인증 시스템` |
+| `/calab-plugin:dev-design` | 아키텍처/ERD 설계 | `/calab-plugin:dev-design --arch` |
+| `/calab-plugin:dev-tasks` | 태스크 분해 | `/calab-plugin:dev-tasks` |
+| `/calab-plugin:dev-build` | 태스크 구현 | `/calab-plugin:dev-build TASK-001 --tdd` |
+| `/calab-plugin:dev-status` | 진행 상황 확인 | `/calab-plugin:dev-status` |
+
+### 클린 아키텍처 (4개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:clean-init` | 4-Layer 구조 초기화 | `/calab-plugin:clean-init` |
+| `/calab-plugin:clean-entity` | 도메인 엔티티 생성 | `/calab-plugin:clean-entity User --with-repository` |
+| `/calab-plugin:clean-usecase` | 유스케이스 생성 | `/calab-plugin:clean-usecase CreateUser --entity User` |
+| `/calab-plugin:clean-validate` | 의존성 규칙 검증 | `/calab-plugin:clean-validate --fix` |
+
+### 온보딩 & 컨텍스트 (7개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:onboard` | 새 프로젝트 분석 | `/calab-plugin:onboard` |
+| `/calab-plugin:onboard-quick` | 빠른 프로젝트 분석 | `/calab-plugin:onboard-quick` |
+| `/calab-plugin:learn` | 특정 영역 학습 | `/calab-plugin:learn src/services` |
+| `/calab-plugin:context-show` | 컨텍스트 확인 | `/calab-plugin:context-show tech` |
+| `/calab-plugin:context-refresh` | 컨텍스트 갱신 | `/calab-plugin:context-refresh` |
+| `/calab-plugin:restore-context` | Compact 후 복원 | `/calab-plugin:restore-context` |
+| `/calab-plugin:save-progress` | 체크포인트 저장 | `/calab-plugin:save-progress` |
+
+### 리서치 (1개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:research` | 기술/주제 조사 | `/calab-plugin:research OAuth 2.0 --deep` |
+
+### 문제 해결 (4개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:solve` | 버그/에러 해결 | `/calab-plugin:solve "로그인 500 에러" --5whys` |
+| `/calab-plugin:solve-log` | 해결 과정 확인 | `/calab-plugin:solve-log` |
+| `/calab-plugin:solve-history` | 과거 사례 검색 | `/calab-plugin:solve-history 데이터베이스` |
+| `/calab-plugin:solve-report` | 해결 보고서 생성 | `/calab-plugin:solve-report PROB-001 --full` |
+
+### QA & 테스트 (5개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:qa` | QA 테스트 시작 | `/calab-plugin:qa --from-worktree` |
+| `/calab-plugin:qa-plan` | 테스트 계획 작성 | `/calab-plugin:qa-plan --edit` |
+| `/calab-plugin:qa-run` | 테스트 실행 | `/calab-plugin:qa-run --all` |
+| `/calab-plugin:qa-report` | QA 보고서 생성 | `/calab-plugin:qa-report --full` |
+| `/calab-plugin:qa-status` | 테스트 진행률 | `/calab-plugin:qa-status` |
+
+### 보안 & 품질 (3개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:security-review` | 보안 취약점 검사 | `/calab-plugin:security-review` |
+| `/calab-plugin:check-quality` | 코드 품질 검사 | `/calab-plugin:check-quality` |
+| `/calab-plugin:show-rules` | 프로젝트 규칙 확인 | `/calab-plugin:show-rules` |
+
+### Worktree (1개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:worktree` | 작업 트리 관리 | `/calab-plugin:worktree start TASK-001` |
+
+### JIRA 연동 (6개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:jira-init` | JIRA 연동 초기화 | `/calab-plugin:jira-init AUTH` |
+| `/calab-plugin:jira-sync` | 양방향 동기화 | `/calab-plugin:jira-sync` |
+| `/calab-plugin:jira-push` | Worktree → JIRA | `/calab-plugin:jira-push` |
+| `/calab-plugin:jira-pull` | JIRA → Worktree | `/calab-plugin:jira-pull` |
+| `/calab-plugin:jira-status` | 연동 상태 확인 | `/calab-plugin:jira-status --detailed` |
+| `/calab-plugin:jira-link` | 이슈 링크 | `/calab-plugin:jira-link TASK-001 AUTH-123` |
+
+### 문서 생성 (6개)
+
+| 명령어 | 언제 사용? | 사용 예시 |
+|--------|-----------|----------|
+| `/calab-plugin:docs` | 문서 메뉴 | `/calab-plugin:docs` |
+| `/calab-plugin:docs-generate` | 전체 문서 생성 | `/calab-plugin:docs-generate` |
+| `/calab-plugin:docs-add` | 문서 추가 | `/calab-plugin:docs-add api` |
+| `/calab-plugin:docs-update` | 문서 업데이트 | `/calab-plugin:docs-update` |
+| `/calab-plugin:docs-status` | 문서 현황 | `/calab-plugin:docs-status` |
+| `/calab-plugin:docs-validate` | 문서 검증 | `/calab-plugin:docs-validate` |
+
+---
+
 ## 버전 히스토리
 
 ### v2.3.1 (2026-01-27)
