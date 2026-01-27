@@ -208,9 +208,7 @@ create_marketplace() {
     mkdir -p "$MARKETPLACE_DIR/.claude-plugin"
     mkdir -p "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME"
 
-    # 플러그인 파일 복사
-    [ -d "$PLUGIN_DIR/commands" ] && cp -r "$PLUGIN_DIR/commands" "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/"
-    [ -d "$PLUGIN_DIR/skills" ] && cp -r "$PLUGIN_DIR/skills" "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/"
+    # 플러그인 파일 복사 (.claude-plugin 안에 commands, skills 포함)
     [ -d "$PLUGIN_DIR/.claude-plugin" ] && cp -r "$PLUGIN_DIR/.claude-plugin" "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/"
 
     # marketplace.json 생성
@@ -270,8 +268,8 @@ verify_installation() {
     local dirs=(
         "$CLAUDE_HOME/hooks"
         "$CLAUDE_HOME/best-practices"
-        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/commands"
-        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/skills"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/.claude-plugin/commands"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/.claude-plugin/skills"
     )
 
     for dir in "${dirs[@]}"; do
