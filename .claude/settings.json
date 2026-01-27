@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/sensitive_file_guard.py"
+            "command": "python3 \"$HOME/.claude/hooks/sensitive_file_guard.py\""
           },
           {
             "type": "command",
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/precompact_save_state.py"
+            "command": "python3 \"$HOME/.claude/hooks/precompact_save_state.py\""
           },
           {
             "type": "command",
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/session_start_restore_hint.py"
+            "command": "python3 \"$HOME/.claude/hooks/session_start_restore_hint.py\""
           },
           {
             "type": "command",
@@ -100,7 +100,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/decision_context.py"
+            "command": "python3 \"$HOME/.claude/hooks/decision_context.py\""
           },
           {
             "type": "command",
