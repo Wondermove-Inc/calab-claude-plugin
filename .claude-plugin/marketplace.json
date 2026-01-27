@@ -14,65 +14,35 @@
       "source": "./plugins/workflow",
       "description": "개발 워크플로우 자동화 + JIRA 연동 + QA 테스트 통합",
       "category": "development",
-      "tags": ["workflow", "jira", "qa", "automation"],
-      "skills": [
-        "./skills/best-practices",
-        "./skills/code-quality",
-        "./skills/jira-integration",
-        "./skills/process",
-        "./skills/project-rules",
-        "./skills/qa-testing",
-        "./skills/work-tracker"
-      ]
+      "tags": ["workflow", "jira", "qa", "automation"]
     },
     {
       "name": "onboarding",
       "source": "./plugins/onboarding",
       "description": "프로젝트 분석 및 온보딩 자동화",
       "category": "productivity",
-      "tags": ["onboarding", "analysis", "context"],
-      "skills": [
-        "./skills/help",
-        "./skills/learn",
-        "./skills/project",
-        "./skills/quick",
-        "./skills/refresh",
-        "./skills/show",
-        "./skills/start"
-      ]
+      "tags": ["onboarding", "analysis", "context"]
     },
     {
       "name": "architecture",
       "source": "./plugins/architecture",
       "description": "클린 아키텍처 설계 및 검증",
       "category": "development",
-      "tags": ["architecture", "clean-architecture", "design"],
-      "skills": [
-        "./skills/clean-architecture-go",
-        "./skills/clean-architecture-ts"
-      ]
+      "tags": ["architecture", "clean-architecture", "design"]
     },
     {
       "name": "toolkit",
       "source": "./plugins/toolkit",
       "description": "리서치 및 문제 해결 (웹 검색, 5 Whys, RCA)",
       "category": "productivity",
-      "tags": ["research", "problem-solving", "rca"],
-      "skills": [
-        "./skills/problem-solving",
-        "./skills/research-skill"
-      ]
+      "tags": ["research", "problem-solving", "rca"]
     },
     {
       "name": "cli-tools",
       "source": "./plugins/cli-tools",
       "description": "Claude Code CLI 환경 설정 (statusline)",
       "category": "utilities",
-      "tags": ["cli", "terminal", "statusline", "config"],
-      "skills": [
-        "./skills/setup",
-        "./skills/restore"
-      ]
+      "tags": ["cli", "terminal", "statusline", "config"]
     }
   ]
 }
