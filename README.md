@@ -1,4 +1,4 @@
-# Calab Claude Plugin v2.3.0
+# Calab Claude Plugin v2.3.1
 
 > **어떤 상황에서든 동일한 개발 품질을 보장하는** Claude Code 공식 플러그인
 
@@ -84,17 +84,14 @@ Plan → Design → Tasks → Build → QA
 
 ## 설치
 
-### Step 1: 글로벌 파일 설치 (터미널)
+### 원클릭 설치 (터미널)
 
 ```bash
-./install-plugin.sh
-```
+# 1. 설치 스크립트 실행
+./install.sh
 
-### Step 2: 플러그인 등록 (Claude Code 내부)
-
-```bash
-/plugin marketplace add ~/.claude/calab-marketplace
-/plugin install calab-plugin@calab-marketplace --scope user
+# 2. Claude Code 내부에서 플러그인 등록 (출력된 명령어 복사)
+/plugin marketplace add ~/.claude/calab-marketplace && /plugin install calab-plugin@calab-marketplace --scope user
 ```
 
 ### 설치 확인
@@ -111,21 +108,24 @@ Plan → Design → Tasks → Build → QA
 | `project` | `.claude/plugins/` | 팀 협업, Git 공유 |
 | `local` | 세션 메모리 | 테스트, 임시 사용 |
 
-### 재설치/업데이트
+### 업데이트
 
 ```bash
-# 1. Claude Code 종료 후 캐시 삭제
-rm -rf ~/.claude/plugins/cache
-rm -f ~/.claude/plugins/installed_plugins.json
-rm -f ~/.claude/plugins/known_marketplaces.json
-rm -rf ~/.claude/calab-marketplace
+# 자동 업데이트 (Git pull + 재설치)
+./update.sh
 
-# 2. 재설치
-./install-plugin.sh
+# 강제 업데이트 (동일 버전이어도 재설치)
+./update.sh --force
+```
 
-# 3. Claude Code에서 재등록
-/plugin marketplace add ~/.claude/calab-marketplace
-/plugin install calab-plugin@calab-marketplace --scope user
+### 삭제
+
+```bash
+# 완전 삭제
+./uninstall.sh
+
+# 설정 파일 유지하고 삭제
+./uninstall.sh --keep-settings
 ```
 
 ---
@@ -600,18 +600,12 @@ flowchart TB
 ### 플러그인이 작동하지 않음
 
 ```bash
-# Claude Code 종료 후 실행
-rm -rf ~/.claude/plugins/cache
-rm -f ~/.claude/plugins/installed_plugins.json
-rm -f ~/.claude/plugins/known_marketplaces.json
-rm -rf ~/.claude/calab-marketplace
-
-# 재설치
-./install-plugin.sh
+# 완전 삭제 후 재설치
+./uninstall.sh
+./install.sh
 
 # Claude Code에서 재등록
-/plugin marketplace add ~/.claude/calab-marketplace
-/plugin install calab-plugin@calab-marketplace --scope user
+/plugin marketplace add ~/.claude/calab-marketplace && /plugin install calab-plugin@calab-marketplace --scope user
 ```
 
 ### Compact 후 컨텍스트 손실
@@ -630,21 +624,17 @@ claude update      # 업데이트
 ### 완전 제거
 
 ```bash
-# 방법 1: 스크립트
-./uninstall-plugin.sh
-
-# 방법 2: 수동
-rm -rf ~/.claude/plugins/cache
-rm -f ~/.claude/plugins/installed_plugins.json
-rm -f ~/.claude/plugins/known_marketplaces.json
-rm -rf ~/.claude/calab-marketplace
-rm ~/.claude/CLAUDE.md ~/.claude/settings.json
-rm -rf ~/.claude/hooks ~/.claude/best-practices ~/.claude/agents
+./uninstall.sh
 ```
 
 ---
 
 ## 버전 히스토리
+
+### v2.3.1 (2026-01-27)
+- **설치 시스템 개선**: 원클릭 install.sh, uninstall.sh, update.sh
+- **경로 오류 수정**: plugin.json commands/skills 경로
+- **자동 검증**: 설치 완료 후 필수 파일 자동 검증
 
 ### v2.3.0 (2026-01-25)
 - **신규 에이전트 3개**: refactor-cleaner, e2e-runner, doc-updater
