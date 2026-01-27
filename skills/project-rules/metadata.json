@@ -1,0 +1,13 @@
+{
+  "name": "project-rules",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "프로젝트 핵심 규칙을 참조합니다.",
+  "abstract": "코드 작성, 수정, 리뷰, 아키텍처 결정 시 자동으로 활성화됩니다.",
+  "allowed-tools": ["Read", "Glob", "Grep"],
+  "triggers": ["규칙", "컨벤션", "스타일", "코딩 표준", "코드 작성", "수정", "리뷰", "아키텍처"],
+  "rule_files": ["PROJECT_RULES.md", "CURRENT_CONTEXT.md"],
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

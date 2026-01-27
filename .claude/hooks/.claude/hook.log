@@ -1,0 +1,13 @@
+[2026-01-27 09:55:02] [DecisionContext] JSON 파싱 실패
+[2026-01-27 09:55:03] [Test] hook_utils.py 테스트 완료
+[2026-01-27 09:55:03] [PreCompact] JSON 파싱 실패
+[2026-01-27 09:55:03] [SensitiveFileGuard] JSON 파싱 실패 - 통과
+[2026-01-27 09:55:03] [SessionStart] JSON 파싱 실패
+[2026-01-27 11:01:44] [DecisionContext] JSON 파싱 실패
+[2026-01-27 11:01:44] [PreCompact] JSON 파싱 실패
+[2026-01-27 11:01:44] [SensitiveFileGuard] JSON 파싱 실패 - 통과
+[2026-01-27 11:01:44] [SessionStart] JSON 파싱 실패
+[2026-01-27 11:01:53] [DecisionContext] JSON 파싱 실패
+[2026-01-27 11:01:53] [PreCompact] JSON 파싱 실패
+[2026-01-27 11:01:53] [SensitiveFileGuard] JSON 파싱 실패 - 통과
+[2026-01-27 11:01:53] [SessionStart] JSON 파싱 실패

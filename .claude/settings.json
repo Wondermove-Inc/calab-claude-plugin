@@ -1,12 +1,15 @@
 {
+  "env": {
+    "MAX_THINKING_TOKENS": "31999"
+  },
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"import json, sys; data=json.load(sys.stdin); path=data.get('tool_input',{}).get('file_path',''); sys.exit(2 if any(p in path for p in ['.env', 'credentials', 'secret', '.pem', '.key']) else 0)\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/sensitive_file_guard.py"
           },
           {
             "type": "command",
@@ -21,6 +24,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/precompact_save_state.py"
+          },
+          {
+            "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/pre_compact.py\""
           }
         ]
@@ -30,6 +37,10 @@
       {
         "matcher": "",
         "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session_start_restore_hint.py"
+          },
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/session_start.py\""
@@ -89,6 +100,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/decision_context.py"
+          },
+          {
+            "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/user_prompt_submit.py\""
           }
         ]
@@ -145,6 +160,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash $HOME/.claude/statusline-command.sh"
-  }
+    "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/scripts/statusline_command.py"
+  },
+  "plansDirectory": ".claude/plans"
 }

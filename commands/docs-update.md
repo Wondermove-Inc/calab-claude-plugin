@@ -1,3 +1,9 @@
+---
+description: 코드 변경 사항을 반영하여 기존 문서를 업데이트합니다.
+allowed-tools: Read, Write, Edit, Glob, Grep
+argument-hint: [type] [--since="YYYY-MM-DD"]
+---
+
 # /docs update - 기존 문서 업데이트
 
 > 코드 변경 사항을 반영하여 기존 문서를 업데이트합니다.

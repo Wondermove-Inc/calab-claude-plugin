@@ -1,0 +1,20 @@
+{
+  "name": "code-quality",
+  "version": "2.0.0",
+  "organization": "project-team",
+  "date": "January 2026",
+  "abstract": "Code quality analysis and improvement. Detects code smells, provides refactoring guidance, and enforces architecture rules. Includes complexity metrics, coverage targets, and systematic review workflows.",
+  "structure": "skill-based",
+  "features": [
+    "code-smell-detection",
+    "refactoring-patterns",
+    "quality-metrics",
+    "architecture-review"
+  ],
+  "references": [
+    "best-practices",
+    "clean-architecture"
+  ],
+  "source": "claude-monitoring-main",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "e2e-runner",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 디버깅합니다.",
+  "abstract": "E2E, 통합 테스트, 브라우저 테스트 키워드 시 자동 활성화.",
+  "allowed-tools": ["Read", "Write", "Edit", "Grep", "Glob", "Bash", "mcp__puppeteer__*"],
+  "triggers": ["E2E", "e2e", "통합 테스트", "브라우저 테스트", "Playwright", "Puppeteer", "자동화 테스트"],
+  "frameworks": ["playwright", "puppeteer", "cypress"],
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "work-tracker",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "작업 진행 상태를 추적하고 관리합니다.",
+  "abstract": "새 작업 시작, 작업 전환, 완료, 다음 단계 키워드 사용 시 자동 활성화.",
+  "allowed-tools": ["Read", "Write", "Edit", "Glob", "Grep"],
+  "triggers": ["새 작업 시작", "작업 전환", "완료", "다음 단계", "이제", "그 다음"],
+  "state_file": ".claude-state/worktree.json",
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

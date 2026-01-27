@@ -18,6 +18,8 @@
 #    ├── memory/                # 메모리 템플릿
 #    ├── problem-solving/       # 문제 해결 방법론
 #    ├── project-context/       # 온보딩 결과 템플릿
+#    ├── rules/                 # 테스트/코드 규칙
+#    ├── scripts/               # 유틸리티 스크립트
 #    └── calab-marketplace/     # 명령어/스킬 마켓플레이스
 #        └── plugins/
 #            └── calab-plugin/  # 전체 복사 (심볼릭 링크 아님)
@@ -145,6 +147,22 @@ if [ -d "$PLUGIN_DIR/.claude/project-context" ]; then
     echo "   ✅ project-context/ 복사 완료"
 fi
 
+# rules/ 복사 (테스트 규칙 등)
+if [ -d "$PLUGIN_DIR/.claude/rules" ]; then
+    mkdir -p "$CLAUDE_HOME/rules"
+    cp -r "$PLUGIN_DIR/.claude/rules/"* "$CLAUDE_HOME/rules/"
+    echo "   ✅ rules/ 복사 완료"
+fi
+
+# scripts/ 복사 (statusline Python 스크립트 등)
+if [ -d "$PLUGIN_DIR/.claude/scripts" ]; then
+    mkdir -p "$CLAUDE_HOME/scripts"
+    cp -r "$PLUGIN_DIR/.claude/scripts/"* "$CLAUDE_HOME/scripts/"
+    chmod +x "$CLAUDE_HOME/scripts/"*.sh 2>/dev/null || true
+    chmod +x "$CLAUDE_HOME/scripts/"*.py 2>/dev/null || true
+    echo "   ✅ scripts/ 복사 완료"
+fi
+
 # statusline-command.sh 복사
 if [ -f "$PLUGIN_DIR/.claude/statusline-command.sh" ]; then
     cp "$PLUGIN_DIR/.claude/statusline-command.sh" "$CLAUDE_HOME/statusline-command.sh"
@@ -210,7 +228,7 @@ cat > "$MARKETPLACE_DIR/.claude-plugin/marketplace.json" <<MARKETPLACE
     {
       "name": "$PLUGIN_NAME",
       "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build",
-      "version": "2.1.0",
+      "version": "2.3.0",
       "author": {
         "name": "Wondermove CALAB",
         "email": "captain@wondermove.net"
@@ -247,8 +265,8 @@ echo "   ├── problem-solving/       # 문제 해결 방법론"
 echo "   ├── project-context/       # 온보딩 결과 템플릿"
 echo "   └── calab-marketplace/     # 마켓플레이스"
 echo "       └── plugins/calab-plugin/"
-echo "           ├── commands/      # 35개 슬래시 명령어"
-echo "           ├── skills/        # 11개 자동 활성화 스킬"
+echo "           ├── commands/      # 42개 슬래시 명령어"
+echo "           ├── skills/        # 16개 자동 활성화 스킬"
 echo "           └── .claude-plugin/"
 echo ""
 echo "📁 프로젝트별 (사용 시 자동 생성):"

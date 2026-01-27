@@ -1,3 +1,9 @@
+---
+description: 문서 커버리지, 품질, 최신성을 확인합니다. 문서화 현황을 한눈에 파악할 수 있습니다.
+allowed-tools: Read, Glob, Grep
+argument-hint: [--detailed]
+---
+
 # /docs status - 문서 현황 확인
 
 > 문서 커버리지, 품질, 최신성을 확인합니다.

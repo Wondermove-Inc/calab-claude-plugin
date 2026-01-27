@@ -1,3 +1,9 @@
+---
+description: 문서의 품질, 일관성, 완성도를 검증합니다. 문제 발견 시 자동 수정 옵션 제공.
+allowed-tools: Read, Write, Edit, Glob, Grep
+argument-hint: [path] [--fix]
+---
+
 # /docs validate - 문서 품질 검증
 
 > 문서의 품질, 일관성, 완성도를 검증합니다.

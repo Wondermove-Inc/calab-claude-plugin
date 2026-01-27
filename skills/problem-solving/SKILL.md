@@ -295,5 +295,4 @@ Why 2: {질문}
 - `skills/problem-solving/methods/hypothesis.md`
 - `skills/problem-solving/methods/binary-search.md`
 - `skills/problem-solving/methods/fishbone.md`
-- `~/.claude/templates/problem-definition.md` (글로벌)
-- `~/.claude/templates/solution-report.md` (글로벌)
+- `.claude/solve/` - 문제 해결 로그 저장 디렉토리

@@ -9,9 +9,9 @@
 | 항목 | 수량 | 설명 |
 |------|------|------|
 | **명령어** | 42개 | 개발 워크플로우, 클린 아키텍처, QA 등 |
-| **스킬** | 13개 | 자동 활성화되는 패시브 스킬 |
+| **스킬** | 16개 | 자동 활성화되는 패시브 스킬 |
 | **에이전트** | 7개 | 특화된 작업 수행 서브에이전트 |
-| **베스트 프랙티스** | 15개 | 언어별 코드 품질 규칙 |
+| **베스트 프랙티스** | 17개 | 언어별 코드 품질 규칙 |
 
 ---
 
@@ -45,14 +45,14 @@ Plan → Design → Tasks → Build → QA
 | 구현 | `/dev-build` | Clean Architecture + Best Practices | 4-Layer + TDD 지원 |
 | 검증 | `/qa` | 7단계 QA 프로세스 | E2E 테스트 자동화 |
 
-### 자동 활성화 스킬 (13개)
+### 자동 활성화 스킬 (16개)
 
 코드 작성 시 **자동으로 적용**되는 기능:
 
 | 스킬 | 트리거 | 효과 |
 |------|--------|------|
 | `clean-architecture` | 코드 구현 시 | 4-레이어 의존성 규칙 강제 |
-| `best-practices` | 기술 감지 시 | 15개 언어별 베스트 프랙티스 |
+| `best-practices` | 기술 감지 시 | 17개 언어별 베스트 프랙티스 |
 | `code-quality` | 코드 생성 시 | 500줄 제한, 주석 필수, 타입 완전성 |
 | `security-review` | 보안 키워드 시 | OWASP Top 10 취약점 검사 |
 | `tdd-workflow` | TDD 키워드 시 | Red-Green-Refactor, 80% 커버리지 |
@@ -64,6 +64,9 @@ Plan → Design → Tasks → Build → QA
 | `project-onboarding` | 분석 요청 시 | 5개 컨텍스트 문서 생성 |
 | `research-skill` | 조사 요청 시 | 5-10회 검색 + 요약 |
 | `dev-workflow` | 개발 시작 시 | 워크플로우 가이드 |
+| `refactor-cleaner` | 리팩토링 시 | 데드 코드, 미사용 import 정리 |
+| `e2e-runner` | E2E 테스트 시 | Playwright/Puppeteer 테스트 실행 |
+| `doc-updater` | 문서 동기화 시 | 코드 변경 기반 문서 업데이트 |
 
 ### 특화 에이전트 (7개)
 
@@ -535,15 +538,16 @@ flowchart TB
 │   ├── refactor-cleaner.md
 │   ├── e2e-runner.md
 │   └── doc-updater.md
-├── best-practices/              # 베스트 프랙티스 (15개)
+├── best-practices/              # 베스트 프랙티스 (17개)
 ├── templates/                   # 문서 템플릿
 ├── memory/                      # 메모리 템플릿
 ├── rules/                       # 규칙 (testing.md 등)
+├── scripts/                     # 유틸리티 스크립트
 └── calab-marketplace/           # 마켓플레이스
     └── plugins/calab-plugin/
         ├── .claude-plugin/      # 플러그인 메타데이터
         ├── commands/            # 슬래시 명령어 (42개)
-        └── skills/              # 자동 활성화 스킬 (13개)
+        └── skills/              # 자동 활성화 스킬 (16개)
 ```
 
 ### 프로젝트별 자동 생성

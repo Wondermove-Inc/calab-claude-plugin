@@ -1,0 +1,13 @@
+{
+  "name": "problem-solving",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "문제 해결 방법론을 적용합니다.",
+  "abstract": "5 Whys, RCA, 가설 기반 접근을 사용합니다.",
+  "allowed-tools": ["Read", "Write", "Edit", "Glob", "Grep", "Bash", "WebSearch"],
+  "triggers": ["에러", "버그", "문제", "디버깅", "해결"],
+  "methods": ["five-whys", "rca", "hypothesis", "binary-search", "fishbone"],
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

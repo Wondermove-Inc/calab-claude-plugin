@@ -1,0 +1,17 @@
+{
+  "name": "code-quality",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "코드 품질 규칙을 강제합니다.",
+  "abstract": "500줄 제한과 주석 필수 규칙을 적용합니다.",
+  "allowed-tools": ["Read", "Glob", "Grep"],
+  "triggers": ["코드 작성", "생성", "수정", "함수 추가", "클래스 작성", "새 파일 생성", "구현", "만들기"],
+  "rules": {
+    "maxLinesPerFile": 500,
+    "requireComments": true,
+    "requireTypes": true
+  },
+  "source": "claude-monitoring-main",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

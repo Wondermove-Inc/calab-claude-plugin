@@ -1,3 +1,9 @@
+---
+description: 전체 문서를 자동 생성합니다. 프로젝트를 분석하여 극도로 상세한 문서 콘텐츠를 생성합니다.
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+argument-hint: [--all | --api | --components | --architecture]
+---
+
 # /docs generate - 전체 문서 자동 생성
 
 > 프로젝트를 분석하여 **극도로 상세한** 전체 문서 콘텐츠를 자동으로 생성합니다.

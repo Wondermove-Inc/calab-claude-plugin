@@ -1,4 +1,4 @@
-# Calab Plugin 설치/제거 가이드
+# Calab Plugin 설치/제거 가이드 (v2.3.0)
 
 ## 글로벌 vs 프로젝트 구조
 
@@ -17,10 +17,13 @@
 │  ├── integrations/          # 외부 연동                     │
 │  ├── memory/                # 메모리 템플릿                  │
 │  ├── problem-solving/       # 문제 해결 방법론               │
+│  ├── project-context/       # 온보딩 결과 템플릿             │
+│  ├── rules/                 # 테스트/코드 규칙               │
+│  ├── scripts/               # 유틸리티 스크립트              │
 │  └── calab-marketplace/     # 마켓플레이스                   │
 │      └── plugins/calab-plugin/  # 전체 복사됨                │
-│          ├── commands/          # 41개 슬래시 명령어          │
-│          ├── skills/            # 11개 자동 스킬             │
+│          ├── commands/          # 42개 슬래시 명령어          │
+│          ├── skills/            # 16개 자동 스킬             │
 │          └── .claude-plugin/                                │
 └─────────────────────────────────────────────────────────────┘
 
@@ -64,21 +67,24 @@
 │   ├── code_quality_validator.py
 │   ├── track_changes.py
 │   └── ...
-├── best-practices/        # 15개 언어별 베스트 프랙티스
+├── best-practices/        # 17개 언어별 베스트 프랙티스
 │   ├── python.md
 │   ├── react.md
 │   ├── go.md
 │   └── ...
 ├── templates/             # 문서 템플릿
-├── agents/                # 서브에이전트
+├── agents/                # 7개 서브에이전트
 ├── integrations/          # JIRA 등 외부 연동
 ├── memory/                # 메모리 템플릿
 ├── problem-solving/       # 문제 해결 방법론
+├── project-context/       # 온보딩 결과 템플릿
+├── rules/                 # 테스트/코드 규칙
+├── scripts/               # 유틸리티 스크립트
 └── calab-marketplace/     # 마켓플레이스 (명령어/스킬 로드)
     └── plugins/
         └── calab-plugin/  # 전체 복사 (심볼릭 링크 아님)
-            ├── commands/  # 41개 슬래시 명령어
-            ├── skills/    # 11개 자동 활성화 스킬
+            ├── commands/  # 42개 슬래시 명령어
+            ├── skills/    # 16개 자동 활성화 스킬
             └── .claude-plugin/
 ```
 
@@ -153,6 +159,8 @@ rm -rf ~/.claude/integrations/
 rm -rf ~/.claude/memory/
 rm -rf ~/.claude/problem-solving/
 rm -rf ~/.claude/project-context/
+rm -rf ~/.claude/rules/
+rm -rf ~/.claude/scripts/
 
 # 5. (선택) 프로젝트별 파일 제거
 # rm -rf 프로젝트경로/.claude-state/   # 런타임 상태

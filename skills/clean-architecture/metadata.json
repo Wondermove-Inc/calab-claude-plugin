@@ -1,0 +1,13 @@
+{
+  "name": "clean-architecture",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "클린 아키텍처를 강제합니다.",
+  "abstract": "코드 구현 시 의존성 규칙을 엄격하게 검사합니다.",
+  "allowed-tools": ["Read", "Glob", "Grep"],
+  "triggers": ["코드 구현", "클래스 생성", "레이어", "도메인", "엔티티", "유스케이스"],
+  "layers": ["domain", "application", "adapter", "infrastructure"],
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

@@ -1,3 +1,8 @@
+---
+description: 온보딩 Phase 3 - C4 Model 기반 아키텍처 분석 단계입니다.
+allowed-tools: Read, Glob, Grep
+---
+
 # Phase 3: 아키텍처 분석 (C4 Model)
 
 > **🚨 중요**: 문서, 코드, 기타 확인 및 검증이 필요한 부분은 **전부 에이전트 사용 필수**. 에이전트를 적극 활용하고, 파일이 크면 분할해서 읽어라.

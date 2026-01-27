@@ -218,7 +218,7 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 
 ---
 
-## 자동 활성화 스킬 (13개)
+## 자동 활성화 스킬 (16개)
 
 - **코드 작성**: clean-architecture, best-practices, code-quality
 - **에러/버그**: problem-solving
@@ -228,6 +228,9 @@ Task(subagent_type=general-purpose, "설정 파일 검증")
 - **작업 관리**: work-tracker, dev-workflow
 - **프로젝트 분석**: project-onboarding, research-skill
 - **규칙 준수**: project-rules
+- **리팩토링**: **refactor-cleaner** (NEW)
+- **E2E 테스트**: **e2e-runner** (NEW)
+- **문서 동기화**: **doc-updater** (NEW)
 
 ## 특화 에이전트 (7개)
 

@@ -1,3 +1,9 @@
+---
+description: 문서 콘텐츠 자동 생성 시스템입니다. 프로젝트를 분석하여 전문적인 기술 문서를 자동 생성합니다.
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+argument-hint: [generate | add | update | status | validate]
+---
+
 # /docs - 문서 콘텐츠 자동 생성 시스템
 
 > 프로젝트를 분석하여 **매우 상세한** 전문적인 기술 문서 콘텐츠를 자동 생성합니다.

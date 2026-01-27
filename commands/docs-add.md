@@ -1,3 +1,9 @@
+---
+description: 특정 유형의 문서를 개별적으로 추가합니다. api, component, architecture 등 다양한 유형 지원.
+allowed-tools: Read, Write, Edit, Glob, Grep
+argument-hint: [api | component | architecture | getting-started | guide | reference]
+---
+
 # /docs add - 특정 유형 문서 추가
 
 > 특정 유형의 문서를 개별적으로 추가합니다.

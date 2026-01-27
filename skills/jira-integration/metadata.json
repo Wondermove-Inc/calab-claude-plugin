@@ -1,0 +1,13 @@
+{
+  "name": "jira-integration",
+  "version": "2.0.0",
+  "organization": "calab-plugin",
+  "date": "January 2026",
+  "description": "JIRA 연동 기능을 제공합니다.",
+  "abstract": "Worktree와 JIRA 간 양방향 동기화를 지원합니다.",
+  "allowed-tools": ["Read", "Write", "Edit", "Bash", "WebFetch"],
+  "triggers": ["JIRA", "지라", "이슈", "티켓", "동기화", "프로젝트 관리"],
+  "features": ["pull", "push", "sync", "link", "status"],
+  "source": "calab-claude-plugin",
+  "applied": "calab-claude-plugin v2.3.0+"
+}

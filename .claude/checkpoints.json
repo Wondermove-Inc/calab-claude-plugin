@@ -1,0 +1,31 @@
+{
+  "version": "4.0",
+  "checkpoints": [
+    {
+      "timestamp": "2026-01-26T10:00:00Z",
+      "session_id": "old-session",
+      "current_work": {
+        "plan_path": ".claude/plans/user-auth.md",
+        "status": "completed"
+      },
+      "completed_phases": [],
+      "summary": "user-auth (완료)"
+    },
+    {
+      "timestamp": "2026-01-27T00:34:53Z",
+      "session_id": "current-session",
+      "current_work": {
+        "plan_path": ".claude/plans/feature-dashboard.md",
+        "status": "in_progress",
+        "last_agent": "Build"
+      },
+      "completed_phases": [
+        {
+          "name": "user-auth",
+          "completed_at": "2026-01-25"
+        }
+      ],
+      "summary": "feature-dashboard (Build)"
+    }
+  ]
+}
