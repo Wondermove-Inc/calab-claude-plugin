@@ -68,6 +68,41 @@ Plan → Design → Tasks → Build → QA
 | `e2e-runner` | E2E 테스트 시 | Playwright/Puppeteer 테스트 실행 |
 | `doc-updater` | 문서 동기화 시 | 코드 변경 기반 문서 업데이트 |
 
+### Commands vs Skills 차이점
+
+| 구분 | Commands | Skills |
+|------|----------|--------|
+| **호출 형식** | `/calab-plugin:명령어` | `/skill-name` |
+| **동작 방식** | 사용자가 명시적으로 실행 | 자동 활성화 + 수동 호출 가능 |
+| **용도** | 특정 작업 실행 (onboard, dev-build 등) | 맥락에 따라 규칙/가이드 적용 |
+| **예시** | `/calab-plugin:dev-plan` | `/work-tracker`, `/code-quality` |
+
+**스킬 동작 모드:**
+
+1. **패시브 (자동)**: 키워드 감지 시 자동 활성화
+   - 예: "버그 수정해줘" → `problem-solving` 스킬 자동 로드
+
+2. **액티브 (수동)**: 슬래시 명령어로 직접 호출
+   - 예: `/security-review` → 보안 검사 스킬 즉시 실행
+
+**스킬별 Auto-trigger 키워드:**
+
+| 스킬 | 트리거 키워드 |
+|------|--------------|
+| `work-tracker` | "다음", "완료", "시작", "이제", "진행" |
+| `problem-solving` | "에러", "버그", "문제", "오류", "해결" |
+| `code-quality` | 코드 작성/생성 시 항상 |
+| `best-practices` | 코드 작성 시 + 기술명 감지 |
+| `clean-architecture` | "레이어", "도메인", "엔티티", "유스케이스" |
+| `security-review` | "보안", "취약점", "XSS", "인젝션" |
+| `tdd-workflow` | "TDD", "테스트 먼저", "--tdd" |
+| `qa-testing` | "QA", "테스트", "검증" |
+| `jira-integration` | "JIRA", "지라", "이슈", "티켓" |
+| `research-skill` | "조사", "알아봐", "찾아봐", "리서치" |
+| `refactor-cleaner` | "리팩토링", "정리", "클린업" |
+| `e2e-runner` | "E2E", "통합 테스트", "브라우저 테스트" |
+| `doc-updater` | "문서 업데이트", "동기화" |
+
 ### 특화 에이전트 (7개)
 
 | 에이전트 | 역할 | 자동 호출 조건 |
