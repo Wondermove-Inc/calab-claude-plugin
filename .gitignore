@@ -1,5 +1,7 @@
 # Claude 런타임 상태 (자동 생성됨)
 .claude-state/
+hook.log
+checkpoints.json
 
 # Python 캐시
 __pycache__/
@@ -11,6 +13,22 @@ __pycache__/
 .claude/memory/CURRENT_CONTEXT.md
 .claude/memory/WORK_HISTORY.md
 
+# Claude 작업 디렉토리
+.claude/research/
+.claude/problem-solving/
+
+# IDE 설정
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS 임시 파일
+.DS_Store
+Thumbs.db
+
+# 프로젝트 관리 파일
 AGENTS.md
 CLAUDE.md
 .beads

@@ -12,8 +12,9 @@ SessionStart Hook: 세션 시작 시 컨텍스트 자동 복원 안내
 import json
 import os
 import shutil
-from datetime import datetime
 from pathlib import Path
+
+from utils import format_time_ago, load_json_file
 
 
 def setup_project_files(project_dir: Path, home_dir: Path) -> list:
@@ -57,27 +58,6 @@ def setup_project_files(project_dir: Path, home_dir: Path) -> list:
     return messages
 
 
-def format_time_ago(timestamp_str):
-    """타임스탬프를 '몇 분/시간 전' 형식으로 변환"""
-    try:
-        timestamp = datetime.fromisoformat(timestamp_str)
-        now = datetime.now()
-        diff = now - timestamp
-
-        if diff.days > 0:
-            return f"{diff.days}일 전"
-        elif diff.seconds >= 3600:
-            hours = diff.seconds // 3600
-            return f"{hours}시간 전"
-        elif diff.seconds >= 60:
-            minutes = diff.seconds // 60
-            return f"{minutes}분 전"
-        else:
-            return "방금 전"
-    except Exception:
-        return timestamp_str
-
-
 def main():
     project_dir = Path(os.environ.get('CLAUDE_PROJECT_DIR', '.'))
     home_dir = os.environ.get('HOME', '')
@@ -96,26 +76,29 @@ def main():
     messages = setup_messages  # 자동 복사 메시지 포함
     has_context = False
 
-    # 체크포인트 확인
-    checkpoint_file = state_dir / 'checkpoint.json'
-    if checkpoint_file.exists():
-        try:
-            with open(checkpoint_file, 'r', encoding='utf-8') as f:
-                checkpoint = json.load(f)
+    # 체크포인트 확인 (새 형식: checkpoints.json)
+    checkpoints_file = state_dir / 'checkpoints.json'
+    checkpoints = load_json_file(checkpoints_file, default=[])
 
-            timestamp = checkpoint.get('timestamp', '')
-            time_ago = format_time_ago(timestamp)
-            event = checkpoint.get('event', 'unknown')
+    # 구버전 호환: checkpoint.json
+    if not checkpoints:
+        old_checkpoint_file = state_dir / 'checkpoint.json'
+        old_checkpoint = load_json_file(old_checkpoint_file)
+        if old_checkpoint:
+            checkpoints = [old_checkpoint]
 
-            messages.append(f" 마지막 체크포인트: {time_ago}")
-            messages.append(f"   이벤트: {event}")
+    if checkpoints:
+        has_context = True
+        latest = checkpoints[-1]
+        time_ago = format_time_ago(latest.get('timestamp', ''))
 
-            if checkpoint.get('current_task'):
-                messages.append(f"   작업: {checkpoint['current_task']}")
+        messages.append(f" 체크포인트 {len(checkpoints)}개 발견 (최신: {time_ago})")
 
-            has_context = True
-        except Exception:
-            pass
+        if latest.get('summary'):
+            messages.append(f"   요약: {latest['summary'][:50]}")
+
+        if latest.get('current_task'):
+            messages.append(f"   작업: {latest['current_task']}")
 
     # 현재 컨텍스트 파일 확인
     context_file = memory_dir / 'CURRENT_CONTEXT.md'
@@ -161,14 +144,33 @@ def main():
                 print(msg)
             print("")
             if has_context:
-                print(" '/restore-context' 명령으로")
-                print("   이전 작업을 이어갈 수 있습니다.")
+                print(" 복원 방법:")
+                print("   /restore-context        → 체크포인트 목록 확인")
+                print("   /restore-context [N]    → 슬롯 N 복원")
+
+                # 체크포인트 목록 미리보기
+                if checkpoints:
+                    print("")
+                    print(" 저장된 체크포인트:")
+                    for cp in reversed(checkpoints[-3:]):
+                        slot = cp.get('slot', '?')
+                        time_display = cp.get('time_display', format_time_ago(cp.get('timestamp', '')))
+                        summary = cp.get('summary', '요약 없음')[:35]
+                        print(f"   #{slot} {time_display} - {summary}")
+
+                    if len(checkpoints) > 3:
+                        print(f"   ... 외 {len(checkpoints) - 3}개")
+
             print("=" * 50)
             print("")
     else:
         # Silent 모드: 한 줄 요약
         if has_context:
-            print("[Session] 이전 컨텍스트 존재 → /restore-context로 복원 가능")
+            cp_count = len(checkpoints) if checkpoints else 0
+            if cp_count > 0:
+                print(f"[Session] 체크포인트 {cp_count}개 → /restore-context [슬롯]으로 복원")
+            else:
+                print("[Session] 이전 컨텍스트 존재 → /restore-context로 복원 가능")
 
 
 if __name__ == "__main__":
