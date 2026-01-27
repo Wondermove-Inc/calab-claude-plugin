@@ -8,7 +8,7 @@
 set -e
 
 # 버전 및 경로 설정
-PLUGIN_VERSION="2.3.1"
+PLUGIN_VERSION="2.4.0"
 PLUGIN_NAME="calab-plugin"
 PLUGIN_DIR="$(cd "$(dirname "$0")" && pwd)"
 CLAUDE_HOME="$HOME/.claude"

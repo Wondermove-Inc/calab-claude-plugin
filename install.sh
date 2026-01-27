@@ -8,7 +8,7 @@
 set -e
 
 # 버전 및 경로 설정
-PLUGIN_VERSION="2.3.1"
+PLUGIN_VERSION="2.4.0"
 PLUGIN_NAME="calab-plugin"
 PLUGIN_DIR="$(cd "$(dirname "$0")" && pwd)"
 CLAUDE_HOME="$HOME/.claude"
@@ -85,7 +85,7 @@ check_environment() {
         errors=$((errors + 1))
     fi
 
-    # commands 폴더 확인
+    # commands 폴더 확인 (루트에 위치)
     if [ -d "$PLUGIN_DIR/commands" ]; then
         local cmd_count=$(ls -1 "$PLUGIN_DIR/commands"/*.md 2>/dev/null | wc -l)
         success "commands 폴더 확인됨 ($cmd_count개 명령)"
@@ -93,12 +93,31 @@ check_environment() {
         warning "commands 폴더가 없습니다"
     fi
 
-    # skills 폴더 확인
+    # skills 폴더 확인 (루트에 위치)
     if [ -d "$PLUGIN_DIR/skills" ]; then
         local skill_count=$(ls -1d "$PLUGIN_DIR/skills"/*/ 2>/dev/null | wc -l)
         success "skills 폴더 확인됨 ($skill_count개 스킬)"
     else
         warning "skills 폴더가 없습니다"
+    fi
+
+    # agents 폴더 확인 (루트에 위치 - 공식 스펙)
+    if [ -d "$PLUGIN_DIR/agents" ]; then
+        local agent_count=$(ls -1 "$PLUGIN_DIR/agents"/*.md 2>/dev/null | wc -l)
+        success "agents 폴더 확인됨 ($agent_count개 에이전트)"
+    else
+        warning "agents 폴더가 없습니다"
+    fi
+
+    # hooks 폴더 확인 (루트에 위치 - 공식 스펙)
+    if [ -d "$PLUGIN_DIR/hooks" ]; then
+        if [ -f "$PLUGIN_DIR/hooks/hooks.json" ]; then
+            success "hooks 폴더 확인됨 (hooks.json 포함)"
+        else
+            warning "hooks 폴더는 있지만 hooks.json이 없습니다"
+        fi
+    else
+        warning "hooks 폴더가 없습니다"
     fi
 
     if [ $errors -gt 0 ]; then
@@ -259,6 +278,22 @@ create_marketplace() {
         success "skills 복사됨 ($skill_count개)"
     fi
 
+    # 4. agents 폴더 복사 (플러그인 루트에 - 공식 스펙 v2.4.0)
+    if [ -d "$PLUGIN_DIR/agents" ]; then
+        mkdir -p "$PLUGIN_DEST/agents"
+        cp -r "$PLUGIN_DIR/agents/"* "$PLUGIN_DEST/agents/" 2>/dev/null || true
+        local agent_count=$(ls -1 "$PLUGIN_DEST/agents"/*.md 2>/dev/null | wc -l)
+        success "agents 복사됨 ($agent_count개)"
+    fi
+
+    # 5. hooks 폴더 복사 (플러그인 루트에 - 공식 스펙 v2.4.0)
+    if [ -d "$PLUGIN_DIR/hooks" ]; then
+        mkdir -p "$PLUGIN_DEST/hooks"
+        cp -r "$PLUGIN_DIR/hooks/"* "$PLUGIN_DEST/hooks/" 2>/dev/null || true
+        local hook_count=$(ls -1 "$PLUGIN_DEST/hooks"/*.py 2>/dev/null | wc -l)
+        success "hooks 복사됨 ($hook_count개 스크립트 + hooks.json)"
+    fi
+
     # marketplace.json 생성
     cat > "$MARKETPLACE_DIR/.claude-plugin/marketplace.json" <<EOF
 {
@@ -312,12 +347,14 @@ verify_installation() {
         fi
     done
 
-    # 디렉토리 확인 (commands와 skills는 플러그인 루트에 있어야 함)
+    # 디렉토리 확인 (공식 스펙에 따라 플러그인 루트에 위치)
     local dirs=(
         "$CLAUDE_HOME/hooks"
         "$CLAUDE_HOME/best-practices"
         "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/commands"
         "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/skills"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/agents"
+        "$MARKETPLACE_DIR/plugins/$PLUGIN_NAME/hooks"
     )
 
     for dir in "${dirs[@]}"; do
