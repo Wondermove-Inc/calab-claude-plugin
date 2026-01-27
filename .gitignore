@@ -1,16 +1,49 @@
 # Claude 런타임 상태 (자동 생성됨)
 .claude-state/
 
+# Claude 자동 생성 파일
+.claude/hook.log
+.claude/checkpoints.json
+.claude/history.jsonl
+
+# 세션별 메모리 (자동 생성됨)
+.claude/memory/CURRENT_CONTEXT.md
+.claude/memory/WORK_HISTORY.md
+
+# 프로젝트 컨텍스트 (온보딩 시 생성됨)
+.claude/project-context/
+
+# 리서치 결과 (자동 생성됨)
+.claude/research/
+
+# 문제 해결 로그 (자동 생성됨)
+.claude/problem-solving/active/
+.claude/problem-solving/kb/
+
 # Python 캐시
 __pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
 
-# 생성된 문서 (PRD, 아키텍처, 태스크)
+# 로그 파일
+*.log
+logs/
+
+# 생성된 문서 폴더
 docs/
-.claude/project-context
-.claude/memory/CURRENT_CONTEXT.md
-.claude/memory/WORK_HISTORY.md
-.claude/research
-# Install/Update logs
-install.log
-update.log
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 임시 파일
+*.tmp
+*.bak
+*~
