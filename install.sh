@@ -104,17 +104,29 @@ clean_previous() {
     fi
 
     # installed_plugins.json에서 제거
-    if [ -f "$CLAUDE_HOME/plugins/installed_plugins.json" ] && command -v jq &> /dev/null; then
-        local tmp=$(mktemp)
-        jq 'del(.[] | select(.name == "calab-plugin"))' "$CLAUDE_HOME/plugins/installed_plugins.json" > "$tmp" 2>/dev/null && \
-        mv "$tmp" "$CLAUDE_HOME/plugins/installed_plugins.json" || rm -f "$tmp"
+    local installed_file="$CLAUDE_HOME/plugins/installed_plugins.json"
+    if [ -f "$installed_file" ]; then
+        if command -v jq &> /dev/null; then
+            local tmp=$(mktemp)
+            # JSON 구조: {"version": 2, "plugins": {"calab-plugin@calab-marketplace": [...]}}
+            jq 'del(.plugins["calab-plugin@calab-marketplace"])' "$installed_file" > "$tmp" 2>/dev/null && \
+            mv "$tmp" "$installed_file" || rm -f "$tmp"
+        else
+            rm -f "$installed_file"
+        fi
     fi
 
     # known_marketplaces.json에서 제거
-    if [ -f "$CLAUDE_HOME/plugins/known_marketplaces.json" ] && command -v jq &> /dev/null; then
-        local tmp=$(mktemp)
-        jq 'del(.[] | select(.name == "calab-marketplace"))' "$CLAUDE_HOME/plugins/known_marketplaces.json" > "$tmp" 2>/dev/null && \
-        mv "$tmp" "$CLAUDE_HOME/plugins/known_marketplaces.json" || rm -f "$tmp"
+    local marketplaces_file="$CLAUDE_HOME/plugins/known_marketplaces.json"
+    if [ -f "$marketplaces_file" ]; then
+        if command -v jq &> /dev/null; then
+            local tmp=$(mktemp)
+            # JSON 구조: {"calab-marketplace": {...}}
+            jq 'del(.["calab-marketplace"])' "$marketplaces_file" > "$tmp" 2>/dev/null && \
+            mv "$tmp" "$marketplaces_file" || rm -f "$tmp"
+        else
+            rm -f "$marketplaces_file"
+        fi
     fi
 
     # 이전 마켓플레이스 삭제

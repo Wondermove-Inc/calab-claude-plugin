@@ -75,33 +75,55 @@ confirm_uninstall() {
 remove_plugin_cache() {
     step "1/4" "플러그인 캐시 삭제"
 
-    # 플러그인 캐시
+    # 플러그인 캐시 디렉토리 삭제
     if [ -d "$CLAUDE_HOME/plugins/cache/calab-marketplace" ]; then
         rm -rf "$CLAUDE_HOME/plugins/cache/calab-marketplace"
-        success "플러그인 캐시 삭제됨"
+        success "플러그인 캐시 디렉토리 삭제됨"
     else
-        info "플러그인 캐시 없음"
+        info "플러그인 캐시 디렉토리 없음"
     fi
 
     # installed_plugins.json에서 제거
-    if [ -f "$CLAUDE_HOME/plugins/installed_plugins.json" ] && command -v jq &> /dev/null; then
-        local tmp=$(mktemp)
-        if jq 'del(.[] | select(.name == "calab-plugin"))' "$CLAUDE_HOME/plugins/installed_plugins.json" > "$tmp" 2>/dev/null; then
-            mv "$tmp" "$CLAUDE_HOME/plugins/installed_plugins.json"
-            success "installed_plugins.json에서 제거됨"
+    local installed_file="$CLAUDE_HOME/plugins/installed_plugins.json"
+    if [ -f "$installed_file" ]; then
+        if command -v jq &> /dev/null; then
+            local tmp=$(mktemp)
+            # JSON 구조: {"version": 2, "plugins": {"calab-plugin@calab-marketplace": [...]}}
+            if jq 'del(.plugins["calab-plugin@calab-marketplace"])' "$installed_file" > "$tmp" 2>/dev/null; then
+                mv "$tmp" "$installed_file"
+                success "installed_plugins.json에서 제거됨"
+            else
+                rm -f "$tmp"
+                warning "jq 처리 실패 - 수동 삭제"
+                rm -f "$installed_file"
+                success "installed_plugins.json 삭제됨"
+            fi
         else
-            rm -f "$tmp"
+            # jq 없으면 파일 자체 삭제
+            rm -f "$installed_file"
+            success "installed_plugins.json 삭제됨 (jq 없음)"
         fi
     fi
 
     # known_marketplaces.json에서 제거
-    if [ -f "$CLAUDE_HOME/plugins/known_marketplaces.json" ] && command -v jq &> /dev/null; then
-        local tmp=$(mktemp)
-        if jq 'del(.[] | select(.name == "calab-marketplace"))' "$CLAUDE_HOME/plugins/known_marketplaces.json" > "$tmp" 2>/dev/null; then
-            mv "$tmp" "$CLAUDE_HOME/plugins/known_marketplaces.json"
-            success "known_marketplaces.json에서 제거됨"
+    local marketplaces_file="$CLAUDE_HOME/plugins/known_marketplaces.json"
+    if [ -f "$marketplaces_file" ]; then
+        if command -v jq &> /dev/null; then
+            local tmp=$(mktemp)
+            # JSON 구조: {"calab-marketplace": {...}}
+            if jq 'del(.["calab-marketplace"])' "$marketplaces_file" > "$tmp" 2>/dev/null; then
+                mv "$tmp" "$marketplaces_file"
+                success "known_marketplaces.json에서 제거됨"
+            else
+                rm -f "$tmp"
+                warning "jq 처리 실패 - 수동 삭제"
+                rm -f "$marketplaces_file"
+                success "known_marketplaces.json 삭제됨"
+            fi
         else
-            rm -f "$tmp"
+            # jq 없으면 파일 자체 삭제
+            rm -f "$marketplaces_file"
+            success "known_marketplaces.json 삭제됨 (jq 없음)"
         fi
     fi
 }
