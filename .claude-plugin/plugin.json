@@ -1,6 +1,6 @@
 {
   "name": "calab-plugin",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build + Security + TDD",
   "author": {
     "name": "Wonder Move Lab",
@@ -20,7 +20,7 @@
     "security",
     "tdd",
     "continuous-learning",
-    "auto-format"
-  ],
-  "agents": "./.claude/agents"
+    "auto-format",
+    "hooks"
+  ]
 }
