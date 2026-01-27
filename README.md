@@ -1,4 +1,4 @@
-# Calab Claude Plugin v2.3.1
+# Calab Claude Plugin v2.4.0
 
 > **어떤 상황에서든 동일한 개발 품질을 보장하는** Claude Code 공식 플러그인
 

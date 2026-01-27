@@ -1,20 +1,7 @@
 ---
 name: doc-updater
 description: 코드 변경 사항을 감지하여 문서를 자동으로 업데이트합니다. 문서 업데이트, 동기화, API 문서, 컴포넌트 문서 키워드 시 자동 활성화.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - Bash
-triggers:
-  - 문서 업데이트
-  - 문서 동기화
-  - API 문서
-  - 컴포넌트 문서
-  - README 업데이트
-  - CHANGELOG
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # Doc Updater

@@ -1,20 +1,7 @@
 ---
 name: refactor-cleaner
 description: 데드 코드, 미사용 import, 중복 코드를 자동으로 정리합니다. 리팩토링, 정리, 클린업, 미사용 코드 키워드 시 자동 활성화.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - Bash
-triggers:
-  - 리팩토링
-  - 정리
-  - 클린업
-  - 미사용 코드
-  - 데드 코드
-  - 중복 제거
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # Refactor Cleaner

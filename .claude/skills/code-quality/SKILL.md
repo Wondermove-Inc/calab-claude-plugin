@@ -3,14 +3,7 @@
 # 적용: calab-claude-plugin v2.3.0+
 name: code-quality
 description: 코드 품질 분석 및 개선. 코드 스멜 탐지, 리팩토링 가이드, 아키텍처 검토를 수행합니다.
-allowed-tools:
-  - Read
-  - Grep
-  - Glob
-  - LSP
-  - mcp__plugin_serena_serena__get_symbols_overview
-  - mcp__plugin_serena_serena__find_symbol
-  - mcp__plugin_serena_serena__find_referencing_symbols
+allowed-tools: Read, Grep, Glob, LSP, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols
 ---
 
 # Code Quality

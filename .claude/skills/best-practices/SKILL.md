@@ -3,10 +3,7 @@
 # 적용: calab-claude-plugin v2.3.0+
 name: best-practices
 description: 기술별 코딩 베스트 프랙티스. TypeScript, React, Python, Go, Rust의 검증된 패턴과 안티패턴을 제공합니다.
-allowed-tools:
-  - Read
-  - Grep
-  - Glob
+allowed-tools: Read, Grep, Glob
 ---
 
 # Best Practices
