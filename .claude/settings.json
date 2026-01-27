@@ -160,7 +160,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/scripts/statusline_command.py"
+    "command": "python3 \"$HOME/.claude/scripts/statusline_command.py\""
   },
   "plansDirectory": ".claude/plans"
 }
