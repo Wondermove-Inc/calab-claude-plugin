@@ -6,13 +6,13 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "2.3.0"
+    "version": "2.5.0"
   },
   "plugins": [
     {
-      "name": "workflow",
-      "source": "./plugins/workflow",
-      "description": "개발 워크플로우 자동화 + JIRA 연동 + QA 테스트 통합",
+      "name": "dev-process",
+      "source": "./plugins/dev-process",
+      "description": "개발 프로세스 자동화 + JIRA 연동 + QA 테스트 통합",
       "category": "development",
       "tags": ["workflow", "jira", "qa", "automation"]
     },

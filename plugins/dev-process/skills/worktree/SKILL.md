@@ -202,7 +202,7 @@ user-invocable: true
  • qa/
 
  다음 단계:
- • /workflow:process-plan [새 기능] - 새로운 기능 개발 시작
+ • /dev-process:process-plan [새 기능] - 새로운 기능 개발 시작
  • /qa - QA 진행 (선택)
 
 ============================================
@@ -348,8 +348,8 @@ work-tracker 스킬이 다음 키워드 감지 시 자동으로 worktree 업데�
 
 ## 자동 동기화
 
-1. `/workflow:process-tasks` 실행 시 → `worktree.json` 자동 생성
-2. `/workflow:process-build` 실행 시 → 해당 태스크 자동 시작
+1. `/dev-process:process-tasks` 실행 시 → `worktree.json` 자동 생성
+2. `/dev-process:process-build` 실행 시 → 해당 태스크 자동 시작
 3. 태스크 완료 감지 시 → 자동으로 done 처리
 
 ## JIRA 연동

@@ -15,6 +15,7 @@
     "technical-writing"
   ],
   "skills": [
+    "./skills/help",
     "./skills/docs",
     "./skills/add",
     "./skills/generate",

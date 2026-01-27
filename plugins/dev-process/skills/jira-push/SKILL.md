@@ -154,7 +154,7 @@ save_mapping(mapping)
 
 ## 연계 동작
 
-- `/workflow:process-tasks` 완료 후 자동 호출 가능 (설정 시)
+- `/dev-process:process-tasks` 완료 후 자동 호출 가능 (설정 시)
 - `/worktree done` 실행 시 자동 상태 동기화 (훅)
 
 ## 다음 단계

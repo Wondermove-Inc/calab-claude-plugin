@@ -234,7 +234,7 @@ Go 클린 아키텍처 검증 실패
 | 위반 자동 수정 | `/architecture:clean-validate-go --fix` |
 | 새 엔티티 생성 | `/architecture:clean-entity-go <name>` |
 | 새 유스케이스 생성 | `/architecture:clean-usecase-go <name>` |
-| 구현 진행 | `/workflow:dev-build TASK-XXX` |
+| 구현 진행 | `/dev-process:dev-build TASK-XXX` |
 
 ## 참조
 

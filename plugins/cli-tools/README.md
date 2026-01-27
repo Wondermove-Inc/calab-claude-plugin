@@ -1,46 +1,36 @@
-# cli-tools
+# cli-tools 플러그인
 
-Claude Code CLI 환경 설정 플러그인
+> Claude Code CLI 환경 설정 - Statusline 자동 설치
 
-## 개요
+## 스킬 목록
 
-터미널에서 Claude Code 사용 경험을 개선하는 CLI 도구 모음입니다.
+| 스킬 | 설명 |
+|------|------|
+| `/cli-tools:statusline` | Statusline 설정 및 설치 |
+| `/cli-tools:help` | 플러그인 도움말 |
 
-## 기능
+## 빠른 시작
 
-### Statusline
+```bash
+# Statusline 설정
+/cli-tools:statusline
+```
+
+## Statusline 기능
+
 터미널 프롬프트에 유용한 정보를 표시합니다:
 - 현재 Claude 모델명 (Opus, Sonnet, Haiku)
 - 컨텍스트 윈도우 사용량 (진행바 + 백분율)
 - 현재 작업 디렉토리
 - Git 브랜치 및 변경 상태
 
-## 설치
-
-```bash
-# 마켓플레이스에서 설치
-claude plugin install cli-tools
-```
-
-## 스킬
-
-| 스킬 | 설명 |
-|------|------|
-| `/cli-tools:setup` | Statusline 자동 설치 |
-| `/cli-tools:restore` | 백업에서 설정 복원 |
-
-## 빠른 시작
-
-```bash
-# 자동 설치
-bash ~/.claude/plugins/cli-tools/scripts/setup-statusline.sh
-```
-
-## Statusline 예시
+### 표시 예시
 
 ```
 [Opus 4.5] ██████░░░░ 60% | ➜ my-project git:(main)
 ```
+
+### 색상 안내
 
 컨텍스트 사용량에 따른 색상:
 - 50% 미만: 녹색
@@ -52,6 +42,14 @@ bash ~/.claude/plugins/cli-tools/scripts/setup-statusline.sh
 - `jq`: JSON 파싱
 - `bc`: 수학 계산 (macOS 기본 포함)
 
-## 라이선스
+## 플러그인 구조
 
-MIT
+```
+plugins/cli-tools/
+├── .claude-plugin/
+│   └── plugin.json
+├── skills/
+│   ├── statusline/SKILL.md
+│   └── help/SKILL.md
+└── README.md
+```

@@ -187,7 +187,7 @@ DTO 사용: 정상
 | 위반 자동 수정 | `/architecture:clean-validate-ts --fix` |
 | 새 엔티티 생성 | `/architecture:clean-entity-ts <name>` |
 | 새 유스케이스 생성 | `/architecture:clean-usecase-ts <name>` |
-| 구현 진행 | `/workflow:dev-build TASK-XXX` |
+| 구현 진행 | `/dev-process:dev-build TASK-XXX` |
 
 ## 참조
 

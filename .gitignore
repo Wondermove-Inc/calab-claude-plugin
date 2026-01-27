@@ -28,6 +28,13 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Node.js
+node_modules/
+*.log
+
+# 테스트 출력
+coverage/
+
 # 프로젝트 관리 파일
 AGENTS.md
 CLAUDE.md

@@ -1,6 +1,6 @@
-# Workflow Plugin
+# dev-process 플러그인
 
-> **체계적 개발 워크플로우**: Plan → Design → Tasks → Build + JIRA 연동 + QA 테스트
+> 개발 프로세스 자동화: Plan → Design → Tasks → Build + JIRA 연동 + QA 테스트
 
 ---
 
@@ -8,11 +8,11 @@
 
 | 상황 | 문제점 | 솔루션 | 명령어 |
 |------|--------|--------|--------|
-| **새 프로젝트 시작** | 어떻게 시작할지 막막함 | 체계적 워크플로우 제공 | `/workflow:process` |
-| **QA 누락** | 수동 테스트 반복 | E2E 자동화 | `/workflow:qa` |
-| **작업 추적 어려움** | 진행률 파악 불가 | Worktree 자동 추적 | `/workflow:worktree` |
-| **JIRA 수동 업데이트** | 중복 작업 | 양방향 자동 동기화 | `/workflow:jira-sync` |
-| **컨텍스트 손실** | Compact 후 작업 맥락 소실 | 자동 체크포인트 + 복원 | `/workflow:restore-context` |
+| **새 프로젝트 시작** | 어떻게 시작할지 막막함 | 체계적 워크플로우 제공 | `/dev-process:process` |
+| **QA 누락** | 수동 테스트 반복 | E2E 자동화 | `/dev-process:qa` |
+| **작업 추적 어려움** | 진행률 파악 불가 | Worktree 자동 추적 | `/dev-process:worktree` |
+| **JIRA 수동 업데이트** | 중복 작업 | 양방향 자동 동기화 | `/dev-process:jira-sync` |
+| **컨텍스트 손실** | Compact 후 작업 맥락 소실 | 자동 체크포인트 + 복원 | `/dev-process:restore-context` |
 
 ---
 
@@ -22,60 +22,60 @@
 
 | 명령어 | 옵션 | 자연어 | 설명 |
 |--------|------|--------|------|
-| `/workflow:process` | `--from=plan\|design\|tasks\|build` | "개발 시작해줘" | 전체 프로세스 실행 |
-| `/workflow:process-plan [기능]` | `--brainstorm`, `--prd` | "기획해줘" | 브레인스토밍 + PRD |
-| `/workflow:process-design` | `--arch`, `--erd` | "설계해줘" | 아키텍처 + ERD |
-| `/workflow:process-tasks` | - | "태스크 분해해줘" | 태스크 목록 생성 |
-| `/workflow:process-build [task-id]` | `--tdd` | "구현해줘" | 태스크 구현 |
-| `/workflow:process-status` | - | "진행 상황 보여줘" | 진행률 확인 |
+| `/dev-process:process` | `--from=plan\|design\|tasks\|build` | "개발 시작해줘" | 전체 프로세스 실행 |
+| `/dev-process:process-plan [기능]` | `--brainstorm`, `--prd` | "기획해줘" | 브레인스토밍 + PRD |
+| `/dev-process:process-design` | `--arch`, `--erd` | "설계해줘" | 아키텍처 + ERD |
+| `/dev-process:process-tasks` | - | "태스크 분해해줘" | 태스크 목록 생성 |
+| `/dev-process:process-build [task-id]` | `--tdd` | "구현해줘" | 태스크 구현 |
+| `/dev-process:process-status` | - | "진행 상황 보여줘" | 진행률 확인 |
 
 ### Worktree (작업 추적)
 
 | 명령어 | 자연어 | 설명 |
 |--------|--------|------|
-| `/workflow:worktree` | "작업 트리 보여줘" | 트리 구조 시각화 |
-| `/workflow:worktree status` | "진행률 보여줘" | 상태 요약 |
-| `/workflow:worktree start [id]` | "시작해줘" | 태스크 시작 |
-| `/workflow:worktree done [id]` | "완료" | 태스크 완료 |
-| `/workflow:worktree block [id] [사유]` | "블로킹됨" | 블로커 등록 |
-| `/workflow:worktree reset` | "작업 초기화해줘" | 트리 초기화 |
+| `/dev-process:worktree` | "작업 트리 보여줘" | 트리 구조 시각화 |
+| `/dev-process:worktree status` | "진행률 보여줘" | 상태 요약 |
+| `/dev-process:worktree start [id]` | "시작해줘" | 태스크 시작 |
+| `/dev-process:worktree done [id]` | "완료" | 태스크 완료 |
+| `/dev-process:worktree block [id] [사유]` | "블로킹됨" | 블로커 등록 |
+| `/dev-process:worktree reset` | "작업 초기화해줘" | 트리 초기화 |
 
 ### 컨텍스트 관리
 
 | 명령어 | 자연어 | 설명 |
 |--------|--------|------|
-| `/workflow:restore-context` | "컨텍스트 복원해줘" | 규칙 + 작업 상태 복원 |
-| `/workflow:save-progress [메시지]` | "저장해줘" | 체크포인트 저장 |
-| `/workflow:show-rules` | "규칙 보여줘" | 전체 규칙 표시 |
-| `/workflow:context-refresh` | "컨텍스트 업데이트해줘" | 문서 갱신 |
-| `/workflow:context-show` | "컨텍스트 보여줘" | 컨텍스트 표시 |
+| `/dev-process:restore-context` | "컨텍스트 복원해줘" | 규칙 + 작업 상태 복원 |
+| `/dev-process:save-progress [메시지]` | "저장해줘" | 체크포인트 저장 |
+| `/dev-process:show-rules` | "규칙 보여줘" | 전체 규칙 표시 |
+| `/dev-process:context-refresh` | "컨텍스트 업데이트해줘" | 문서 갱신 |
+| `/dev-process:context-show` | "컨텍스트 보여줘" | 컨텍스트 표시 |
 
 ### 코드 품질
 
 | 명령어 | 자연어 | 설명 |
 |--------|--------|------|
-| `/workflow:check-quality` | "품질 검사해줘" | 전체 프로젝트 검사 |
+| `/dev-process:check-quality` | "품질 검사해줘" | 전체 프로젝트 검사 |
 
 ### JIRA 연동
 
 | 명령어 | 자연어 | 설명 |
 |--------|--------|------|
-| `/workflow:jira-init [key]` | "JIRA 연결해줘" | 연동 초기화 |
-| `/workflow:jira-push` | "JIRA로 동기화해줘" | Worktree → JIRA |
-| `/workflow:jira-pull` | "JIRA에서 가져와줘" | JIRA → Worktree |
-| `/workflow:jira-sync` | "양방향 동기화해줘" | 양방향 동기화 |
-| `/workflow:jira-link [id] [key]` | "JIRA에 연결해줘" | 수동 매핑 |
-| `/workflow:jira-status` | "JIRA 상태 보여줘" | 상태 확인 |
+| `/dev-process:jira-init [key]` | "JIRA 연결해줘" | 연동 초기화 |
+| `/dev-process:jira-push` | "JIRA로 동기화해줘" | Worktree → JIRA |
+| `/dev-process:jira-pull` | "JIRA에서 가져와줘" | JIRA → Worktree |
+| `/dev-process:jira-sync` | "양방향 동기화해줘" | 양방향 동기화 |
+| `/dev-process:jira-link [id] [key]` | "JIRA에 연결해줘" | 수동 매핑 |
+| `/dev-process:jira-status` | "JIRA 상태 보여줘" | 상태 확인 |
 
 ### QA 테스트
 
 | 명령어 | 옵션 | 자연어 | 설명 |
 |--------|------|--------|------|
-| `/workflow:qa` | `--from-prd`, `--from-worktree` | "QA 시작해줘" | QA 프로세스 시작 |
-| `/workflow:qa-plan` | `--edit` | "QA 계획서 만들어줘" | QA 계획서 생성 |
-| `/workflow:qa-run [tc-id]` | `--all`, `--failed`, `--continue` | "테스트 실행해줘" | 테스트 실행 |
-| `/workflow:qa-report` | `--summary`, `--full` | "QA 보고서 만들어줘" | 테스트 결과 보고서 |
-| `/workflow:qa-status` | - | "QA 진행 상태" | 테스트 진행률 확인 |
+| `/dev-process:qa` | `--from-prd`, `--from-worktree` | "QA 시작해줘" | QA 프로세스 시작 |
+| `/dev-process:qa-plan` | `--edit` | "QA 계획서 만들어줘" | QA 계획서 생성 |
+| `/dev-process:qa-run [tc-id]` | `--all`, `--failed`, `--continue` | "테스트 실행해줘" | 테스트 실행 |
+| `/dev-process:qa-report` | `--summary`, `--full` | "QA 보고서 만들어줘" | 테스트 결과 보고서 |
+| `/dev-process:qa-status` | - | "QA 진행 상태" | 테스트 진행률 확인 |
 
 ---
 
@@ -96,23 +96,23 @@ flowchart LR
 
 ```bash
 # 전체 프로세스 한번에 실행
-/workflow:process 사용자 인증 시스템
+/dev-process:process 사용자 인증 시스템
 
 # 또는 단계별 실행
 # 1. 기획
-/workflow:process-plan 사용자 인증 시스템
+/dev-process:process-plan 사용자 인증 시스템
 
 # 2. 설계
-/workflow:process-design
+/dev-process:process-design
 
 # 3. 태스크 분해
-/workflow:process-tasks
+/dev-process:process-tasks
 
 # 4. 구현
-/workflow:process-build TASK-001 --tdd
+/dev-process:process-build TASK-001 --tdd
 
 # 5. 진행 상황 확인
-/workflow:process-status
+/dev-process:process-status
 ```
 
 ### 2. Worktree (작업 추적)
@@ -121,7 +121,7 @@ flowchart LR
 
 ```bash
 # 트리 구조 시각화
-/workflow:worktree
+/dev-process:worktree
 
 # 예시 출력:
 # 📦 사용자 인증 시스템 (0/3)
@@ -202,15 +202,15 @@ flowchart LR
 ├── docs/
 │   ├── active/                    # 진행 중인 기능
 │   │   └── {feature-name}/
-│   │       ├── 01-brainstorm.md   # /workflow:process-plan (브레인스토밍)
-│   │       ├── 02-prd.md          # /workflow:process-plan (PRD)
-│   │       ├── 03-architecture.md # /workflow:process-design
-│   │       ├── 04-erd.md          # /workflow:process-design
-│   │       ├── 05-tasks.md        # /workflow:process-tasks
+│   │       ├── 01-brainstorm.md   # /dev-process:process-plan (브레인스토밍)
+│   │       ├── 02-prd.md          # /dev-process:process-plan (PRD)
+│   │       ├── 03-architecture.md # /dev-process:process-design
+│   │       ├── 04-erd.md          # /dev-process:process-design
+│   │       ├── 05-tasks.md        # /dev-process:process-tasks
 │   │       └── qa/
-│   │           ├── QA_PLAN.md     # /workflow:qa-plan
-│   │           ├── TEST_CASES.md  # /workflow:qa
-│   │           └── QA_REPORT.md   # /workflow:qa-report
+│   │           ├── QA_PLAN.md     # /dev-process:qa-plan
+│   │           ├── TEST_CASES.md  # /dev-process:qa
+│   │           └── QA_REPORT.md   # /dev-process:qa-report
 │   │
 │   └── complete/                  # 완료된 기능 (worktree 100% 시 자동 이동)
 │

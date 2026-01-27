@@ -1,7 +1,7 @@
 {
-  "name": "workflow",
-  "version": "2.3.1",
-  "description": "개발 워크플로우 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
+  "name": "dev-process",
+  "version": "2.4.0",
+  "description": "개발 프로세스 자동화 - Plan, Design, Build, JIRA 연동, QA 테스트 통합",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -9,7 +9,7 @@
   "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
-    "workflow",
+    "dev-process",
     "development",
     "planning",
     "automation",

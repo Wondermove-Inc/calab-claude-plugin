@@ -15,7 +15,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 - "새 기능", "프로젝트 시작", "개발 시작" 요청 시
 - "설계해줘", "아키텍처", "PRD", "요구사항" 언급 시
 - "기획", "브레인스토밍", "아이디어" 언급 시
-- `/workflow:process` 명령어 사용 시
+- `/dev-process:process` 명령어 사용 시
 
 ## 폴더 구조
 
@@ -23,11 +23,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 .claude/docs/
 ├── active/                          ← 진행 중인 기능
 │   └── {feature-name}/
-│       ├── 01-brainstorm.md         ← /workflow:process-plan
-│       ├── 02-prd.md                ← /workflow:process-plan
-│       ├── 03-architecture.md       ← /workflow:process-design
-│       ├── 04-erd.md                ← /workflow:process-design
-│       ├── 05-tasks.md              ← /workflow:process-tasks
+│       ├── 01-brainstorm.md         ← /dev-process:process-plan
+│       ├── 02-prd.md                ← /dev-process:process-plan
+│       ├── 03-architecture.md       ← /dev-process:process-design
+│       ├── 04-erd.md                ← /dev-process:process-design
+│       ├── 05-tasks.md              ← /dev-process:process-tasks
 │       └── qa/                      ← /qa
 │
 └── complete/                        ← worktree 100% 완료 시 자동 이동
@@ -38,9 +38,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ```mermaid
 flowchart LR
-    A["/workflow:process-plan"] --> B["/workflow:process-design"]
-    B --> C["/workflow:process-tasks"]
-    C --> D["/workflow:process-build"]
+    A["/dev-process:process-plan"] --> B["/dev-process:process-design"]
+    B --> C["/dev-process:process-tasks"]
+    C --> D["/dev-process:process-build"]
     D --> E["완료 → complete/"]
 ```
 
@@ -50,9 +50,9 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/workflow:process-plan [아이디어]` | 전체 실행 |
-| `/workflow:process-plan --brainstorm` | 브레인스토밍만 |
-| `/workflow:process-plan --prd` | PRD만 |
+| `/dev-process:process-plan [아이디어]` | 전체 실행 |
+| `/dev-process:process-plan --brainstorm` | 브레인스토밍만 |
+| `/dev-process:process-plan --prd` | PRD만 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/01-brainstorm.md`
@@ -64,9 +64,9 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/workflow:process-design` | 전체 실행 |
-| `/workflow:process-design --arch` | 아키텍처만 |
-| `/workflow:process-design --erd` | ERD만 |
+| `/dev-process:process-design` | 전체 실행 |
+| `/dev-process:process-design --arch` | 아키텍처만 |
+| `/dev-process:process-design --erd` | ERD만 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/03-architecture.md`
@@ -78,7 +78,7 @@ flowchart LR
 
 | 명령어 | 설명 |
 |--------|------|
-| `/workflow:process-tasks` | 태스크 분해 + worktree.json 생성 |
+| `/dev-process:process-tasks` | 태스크 분해 + worktree.json 생성 |
 
 **산출물**:
 - `.claude/docs/active/{feature}/05-tasks.md`
@@ -90,8 +90,8 @@ flowchart LR
 
 | 옵션 | 설명 |
 |------|------|
-| `/workflow:process-build [task-id]` | 일반 구현 |
-| `/workflow:process-build [task-id] --tdd` | TDD 모드 (RED→GREEN→REFACTOR) |
+| `/dev-process:process-build [task-id]` | 일반 구현 |
+| `/dev-process:process-build [task-id] --tdd` | TDD 모드 (RED→GREEN→REFACTOR) |
 
 ## 활성화 시 프로토콜
 
@@ -115,24 +115,24 @@ flowchart LR
  사용 가능한 명령어:
 
  기획:
-• /workflow:process-plan [아이디어]      - 브레인스토밍 + PRD
-• /workflow:process-plan --brainstorm   - 브레인스토밍만
-• /workflow:process-plan --prd          - PRD만
+• /dev-process:process-plan [아이디어]      - 브레인스토밍 + PRD
+• /dev-process:process-plan --brainstorm   - 브레인스토밍만
+• /dev-process:process-plan --prd          - PRD만
 
  설계:
-• /workflow:process-design              - 아키텍처 + ERD
-• /workflow:process-design --arch       - 아키텍처만
-• /workflow:process-design --erd        - ERD만
+• /dev-process:process-design              - 아키텍처 + ERD
+• /dev-process:process-design --arch       - 아키텍처만
+• /dev-process:process-design --erd        - ERD만
 
  태스크:
-• /workflow:process-tasks               - 태스크 분해
+• /dev-process:process-tasks               - 태스크 분해
 
  구현:
-• /workflow:process-build [task-id]     - 구현
-• /workflow:process-build [task-id] --tdd - TDD 모드
+• /dev-process:process-build [task-id]     - 구현
+• /dev-process:process-build [task-id] --tdd - TDD 모드
 
  상태:
-• /workflow:process-status              - 진행 상황 확인
+• /dev-process:process-status              - 진행 상황 확인
 
 ============================================
 ```

@@ -18,9 +18,9 @@ user-invocable: true
 │   └── {feature-name}/              ← 기능별 폴더 (이 명령어에서 생성)
 │       ├── 01-brainstorm.md
 │       ├── 02-prd.md
-│       ├── 03-architecture.md       ← /workflow:process-design에서 생성
-│       ├── 04-erd.md                ← /workflow:process-design에서 생성
-│       ├── 05-tasks.md              ← /workflow:process-tasks에서 생성
+│       ├── 03-architecture.md       ← /dev-process:process-design에서 생성
+│       ├── 04-erd.md                ← /dev-process:process-design에서 생성
+│       ├── 05-tasks.md              ← /dev-process:process-tasks에서 생성
 │       └── qa/                      ← /qa에서 생성
 │
 └── complete/                        ← worktree 완료 시 자동 이동
@@ -31,12 +31,12 @@ user-invocable: true
 
 ```mermaid
 flowchart LR
-    subgraph Plan["📋 /workflow:process-plan"]
+    subgraph Plan["📋 /dev-process:process-plan"]
         A[브레인스토밍] --> B[PRD 작성]
     end
 
     R["/research"] -.->|자동 반영| B
-    B --> C["/workflow:process-design"]
+    B --> C["/dev-process:process-design"]
 
     style Plan fill:#e3f2fd
     style R fill:#fff3e0
@@ -44,7 +44,7 @@ flowchart LR
 
 **자동 연계:**
 - `/research` 결과가 있으면 PRD 작성 시 자동 참조
-- 완료 후 `/workflow:process-design` 으로 자연스럽게 이어짐
+- 완료 후 `/dev-process:process-design` 으로 자연스럽게 이어짐
 
 ## 옵션
 

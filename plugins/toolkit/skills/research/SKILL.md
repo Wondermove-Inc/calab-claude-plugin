@@ -228,14 +228,14 @@ argument-hint: <주제> [--quick | --deep]
 
 ## PRD 자동 연계
 
-리서치 결과는 `/workflow:process-plan` 실행 시 자동으로 참조됩니다:
+리서치 결과는 `/dev-process:process-plan` 실행 시 자동으로 참조됩니다:
 
 ```
 /toolkit:research "JWT 인증 방식"
     ↓
 .claude/research/jwt-authentication/report.md 생성
     ↓
-/workflow:process-plan 실행 시 자동 검색
+/dev-process:process-plan 실행 시 자동 검색
     ↓
 PRD에 리서치 인사이트 반영
 ```
@@ -245,4 +245,4 @@ PRD에 리서치 인사이트 반영
 | 스킬 | 설명 |
 |--------|------|
 | `/toolkit:solve` | 문제 해결 시작 |
-| `/workflow:process-plan` | PRD 문서 생성 |
+| `/dev-process:process-plan` | PRD 문서 생성 |

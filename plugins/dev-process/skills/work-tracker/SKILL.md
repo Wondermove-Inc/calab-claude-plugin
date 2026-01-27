@@ -173,8 +173,8 @@ Hook은 파일 변경만 감지할 수 있고, Claude가 실제로 무슨 작업
 
 | 상황 | 즉시 수행할 작업 |
 |------|-----------------|
-| `/workflow:process-build` 시작 시 | 1. worktree.json 읽기 → 2. status를 "in_progress"로 Edit → 3. started_at 추가 |
-| `/workflow:process-build` 완료 시 | 1. worktree.json 읽기 → 2. status를 "done"으로 Edit → 3. completed_at 추가 → 4. progress 업데이트 |
+| `/dev-process:process-build` 시작 시 | 1. worktree.json 읽기 → 2. status를 "in_progress"로 Edit → 3. started_at 추가 |
+| `/dev-process:process-build` 완료 시 | 1. worktree.json 읽기 → 2. status를 "done"으로 Edit → 3. completed_at 추가 → 4. progress 업데이트 |
 | "TASK-XXX 시작" 언급 시 | 즉시 status → "in_progress" Edit |
 | "TASK-XXX 완료" 언급 시 | 즉시 status → "done" Edit |
 | "블로커", "막힘" 언급 시 | 즉시 status → "blocked" Edit |

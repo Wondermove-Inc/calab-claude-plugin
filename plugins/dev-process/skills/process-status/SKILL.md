@@ -94,7 +94,7 @@ user-invocable: true
 ============================================
 
  사용 가능한 명령어:
-• /workflow:process-build TASK-011  - 다음 태스크 구현
+• /dev-process:process-build TASK-011  - 다음 태스크 구현
 • /worktree            - 작업 트리 보기
 
 ============================================
@@ -116,7 +116,7 @@ user-invocable: true
  진행 중인 워크플로우가 없습니다.
 
  새 워크플로우 시작:
-  /workflow:process-plan "기능 아이디어"
+  /dev-process:process-plan "기능 아이디어"
 
  완료된 기능:
 • .claude/docs/complete/user-auth/

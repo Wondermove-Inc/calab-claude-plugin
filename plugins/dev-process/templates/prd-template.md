@@ -452,4 +452,4 @@ Then {예상 결과}
 
 ---
 
-*다음 단계: /workflow:process-design*
+*다음 단계: /dev-process:process-design*
