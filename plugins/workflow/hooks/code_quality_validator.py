@@ -6,7 +6,7 @@ PostToolUse Hook: 코드 품질 검증
 코드 품질 규칙 준수 여부를 검증합니다.
 
 검증 항목:
-1. 파일 줄 수 (300줄 제한)
+1. 파일 줄 수 (일반: 300줄, 훅/스크립트: 500줄)
 2. 함수 주석 존재 여부
 """
 
@@ -18,9 +18,14 @@ from pathlib import Path
 from datetime import datetime
 
 
-# 설정
-MAX_FILE_LINES = 300
-WARNING_THRESHOLD = 250
+# 설정 - 파일 유형별 줄 수 제한
+FILE_LIMITS = {
+    'default': {'max': 300, 'warn': 250},
+    'hook': {'max': 500, 'warn': 400}  # 훅/스크립트는 더 유연하게
+}
+
+# 훅/스크립트 디렉토리 패턴
+HOOK_DIRS = {'hooks', 'scripts', 'bin'}
 
 # 검사 대상 확장자
 CODE_EXTENSIONS = {
@@ -41,6 +46,15 @@ def should_skip_file(file_path):
     path_parts = Path(file_path).parts
     for exclude_dir in EXCLUDE_DIRS:
         if exclude_dir in path_parts:
+            return True
+    return False
+
+
+def is_hook_or_script(file_path):
+    """훅 또는 스크립트 파일인지 확인합니다."""
+    path_parts = Path(file_path).parts
+    for hook_dir in HOOK_DIRS:
+        if hook_dir in path_parts:
             return True
     return False
 
@@ -120,6 +134,18 @@ def check_function_comments(content, file_ext):
     return missing_comments
 
 
+def print_quality_message(verbose, silent_msg, verbose_lines=None):
+    """품질 메시지 출력 (verbose/silent 모드 자동 처리)"""
+    if verbose and verbose_lines:
+        print("")
+        print("=" * 60)
+        for line in verbose_lines:
+            print(line)
+        print("=" * 60)
+    else:
+        print(silent_msg)
+
+
 def log_violation(project_dir, violation):
     """품질 위반을 기록합니다."""
     state_dir = Path(project_dir) / '.claude-state'
@@ -186,47 +212,42 @@ def main():
     issues = []
     file_name = os.path.basename(file_path)
 
-    # 1. 줄 수 검사
+    # 1. 줄 수 검사 - 파일 유형별 제한 적용
     line_count = count_lines(file_path)
 
-    if line_count > MAX_FILE_LINES:
+    # 훅/스크립트 파일은 더 유연한 제한 적용
+    limits = FILE_LIMITS['hook'] if is_hook_or_script(file_path) else FILE_LIMITS['default']
+    max_lines = limits['max']
+    warn_threshold = limits['warn']
+
+    # Silent Mode: 간결한 출력
+    verbose = os.environ.get('CLAUDE_HOOKS_VERBOSE', '') == '1'
+
+    if line_count > max_lines:
         issue = {
             'type': 'line_count_exceeded',
             'file': file_path,
             'lines': line_count,
-            'max': MAX_FILE_LINES,
+            'max': max_lines,
             'severity': 'error'
         }
         issues.append(issue)
         log_violation(project_dir, issue)
 
-        print("")
-        print("=" * 60)
-        print("[CODE QUALITY] 파일 줄 수 초과!")
-        print("=" * 60)
-        print(f"  파일: {file_name}")
-        print(f"  현재: {line_count}줄")
-        print(f"  최대: {MAX_FILE_LINES}줄")
-        print(f"  초과: {line_count - MAX_FILE_LINES}줄")
-        print("")
-        print("  파일을 분리해야 합니다!")
-        print("  이 파일을 논리적 단위로 분리하는 것을 권장합니다.")
-        print("=" * 60)
-        print("")
+        print_quality_message(
+            verbose,
+            f"[Quality] ❌ {file_name}: {line_count}줄 (최대 {max_lines}줄) → 분리 필요",
+            [
+                "[CODE QUALITY] 파일 줄 수 초과!",
+                f"  파일: {file_name}",
+                f"  현재: {line_count}줄 / 최대: {max_lines}줄",
+                "  → 파일 분리 필요"
+            ]
+        )
 
-    elif line_count > WARNING_THRESHOLD:
-        print("")
-        print("=" * 60)
-        print("[CODE QUALITY] 줄 수 경고")
-        print("=" * 60)
-        print(f"  파일: {file_name}")
-        print(f"  현재: {line_count}줄")
-        print(f"  최대: {MAX_FILE_LINES}줄")
-        print(f"  여유: {MAX_FILE_LINES - line_count}줄")
-        print("")
-        print("  파일 분리를 고려하세요.")
-        print("=" * 60)
-        print("")
+    elif line_count > warn_threshold:
+        if verbose:
+            print(f"[Quality] ⚠️ {file_name}: {line_count}/{max_lines}줄 (분리 고려)")
 
     # 2. 함수 주석 검사
     missing_comments = check_function_comments(content, file_ext)
@@ -241,21 +262,24 @@ def main():
         issues.append(issue)
         log_violation(project_dir, issue)
 
-        print("")
-        print("=" * 60)
-        print("[CODE QUALITY] 함수 주석 누락!")
-        print("=" * 60)
-        print(f"  파일: {file_name}")
-        print("")
-        print("  주석이 없는 함수:")
-        for mc in missing_comments[:5]:  # 최대 5개만 표시
-            print(f"    - {mc['function']}() (line {mc['line']})")
+        funcs = [mc['function'] for mc in missing_comments[:3]]
+        extra = f" 외 {len(missing_comments) - 3}개" if len(missing_comments) > 3 else ""
+
+        verbose_lines = [
+            "[CODE QUALITY] 함수 주석 누락!",
+            f"  파일: {file_name}",
+            "  주석이 없는 함수:"
+        ]
+        for mc in missing_comments[:5]:
+            verbose_lines.append(f"    - {mc['function']}() (line {mc['line']})")
         if len(missing_comments) > 5:
-            print(f"    ... 외 {len(missing_comments) - 5}개")
-        print("")
-        print("  각 함수에 JSDoc/Docstring을 추가하세요.")
-        print("=" * 60)
-        print("")
+            verbose_lines.append(f"    ... 외 {len(missing_comments) - 5}개")
+
+        print_quality_message(
+            verbose,
+            f"[Quality] ⚠️ {file_name}: 주석 누락 함수 {', '.join(funcs)}{extra}",
+            verbose_lines
+        )
 
 
 if __name__ == "__main__":

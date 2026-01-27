@@ -15,7 +15,11 @@
     "web-search"
   ],
   "skills": [
-    "./skills/problem-solving",
-    "./skills/research-skill"
+    "./skills/research",
+    "./skills/solve",
+    "./skills/solve-report",
+    "./skills/solve-log",
+    "./skills/solve-history",
+    "./skills/help"
   ]
 }

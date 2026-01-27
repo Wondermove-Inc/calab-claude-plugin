@@ -305,8 +305,17 @@ export class CreateUserUseCase {
   - erd-template.md (ERD 템플릿)
   - api-spec-template.md (API 스펙 템플릿)
 - **skills/**:
-  - clean-architecture-ts/ (TypeScript 클린 아키텍처 스킬)
-  - clean-architecture-go/ (Go 클린 아키텍처 스킬)
+  - clean-architecture-ts/ (TypeScript 클린 아키텍처 패시브 스킬)
+  - clean-architecture-go/ (Go 클린 아키텍처 패시브 스킬)
+  - clean-init-ts/ (TypeScript 구조 초기화)
+  - clean-init-go/ (Go 구조 초기화)
+  - clean-entity-ts/ (TypeScript 엔티티 생성)
+  - clean-entity-go/ (Go 엔티티 생성)
+  - clean-usecase-ts/ (TypeScript 유스케이스 생성)
+  - clean-usecase-go/ (Go 유스케이스 생성)
+  - clean-validate-ts/ (TypeScript 검증)
+  - clean-validate-go/ (Go 검증)
+  - help/ (도움말)
 
 ---
 

@@ -43,6 +43,13 @@
       "description": "Claude Code CLI 환경 설정 (statusline)",
       "category": "utilities",
       "tags": ["cli", "terminal", "statusline", "config"]
+    },
+    {
+      "name": "docs",
+      "source": "./plugins/docs",
+      "description": "문서 콘텐츠 자동 생성 (Docusaurus)",
+      "category": "documentation",
+      "tags": ["docs", "docusaurus", "documentation"]
     }
   ]
 }

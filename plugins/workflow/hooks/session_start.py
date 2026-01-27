@@ -3,8 +3,10 @@
 SessionStart Hook: 세션 시작 시 컨텍스트 자동 복원 안내
 
 이 스크립트는 Claude Code 세션이 시작될 때 실행되어:
-1. CLAUDE.md가 없으면 글로벌에서 자동 복사
+1. 메모리 템플릿 자동 복사 (없는 경우)
 2. 이전 작업 컨텍스트가 있으면 사용자에게 안내
+
+참고: CLAUDE.md는 글로벌(~/.claude/CLAUDE.md)에서 자동 로드되므로 복사하지 않음
 """
 
 import json
@@ -19,26 +21,16 @@ def setup_project_files(project_dir: Path, home_dir: Path) -> list:
     프로젝트에 필요한 파일들을 글로벌에서 자동 복사
 
     복사 대상:
-    - CLAUDE.md: 플러그인 메인 설명서
-    - .claude/.claude/memory/: 메모리 템플릿 (없는 경우)
+    - .claude/memory/: 메모리 템플릿 (없는 경우)
+
+    참고: CLAUDE.md는 글로벌에서 자동 로드되므로 복사하지 않음
     """
     messages = []
 
     global_claude_dir = Path(home_dir) / '.claude'
     project_claude_dir = project_dir / '.claude'
 
-    # 1. CLAUDE.md 복사 (프로젝트에 없고 글로벌에 있는 경우)
-    project_claude_md = project_dir / 'CLAUDE.md'
-    global_claude_md = global_claude_dir / 'CLAUDE.md'
-
-    if not project_claude_md.exists() and global_claude_md.exists():
-        try:
-            shutil.copy(global_claude_md, project_claude_md)
-            messages.append(" ✅ CLAUDE.md 자동 복사됨 (글로벌 → 프로젝트)")
-        except Exception as e:
-            messages.append(f" ⚠️ CLAUDE.md 복사 실패: {e}")
-
-    # 2. .claude/.claude/memory/ 디렉토리 및 템플릿 복사
+    # 1. .claude/memory/ 디렉토리 및 템플릿 복사
     project_memory = project_claude_dir / 'memory'
     global_memory = global_claude_dir / 'memory'
 
@@ -54,7 +46,7 @@ def setup_project_files(project_dir: Path, home_dir: Path) -> list:
         except Exception as e:
             messages.append(f" ⚠️ 메모리 복사 실패: {e}")
 
-    # 3. .claude-state 디렉토리 생성
+    # 2. .claude-state 디렉토리 생성
     state_dir = project_dir / '.claude-state'
     if not state_dir.exists():
         try:
@@ -154,20 +146,29 @@ def main():
     if rules_file.exists():
         messages.append(" 프로젝트 규칙 파일이 존재합니다.")
 
-    # 출력
-    if messages:
-        print("")
-        print("=" * 50)
-        print(" [SESSION START] 컨텍스트 복원 안내")
-        print("=" * 50)
-        for msg in messages:
-            print(msg)
-        print("")
+    # Silent Mode: 간결한 출력
+    # 환경 변수로 VERBOSE 모드 지원 (CLAUDE_HOOKS_VERBOSE=1)
+    verbose = os.environ.get('CLAUDE_HOOKS_VERBOSE', '') == '1'
+
+    if verbose:
+        # Verbose 모드: 전체 출력
+        if messages:
+            print("")
+            print("=" * 50)
+            print(" [SESSION START] 컨텍스트 복원 안내")
+            print("=" * 50)
+            for msg in messages:
+                print(msg)
+            print("")
+            if has_context:
+                print(" '/restore-context' 명령으로")
+                print("   이전 작업을 이어갈 수 있습니다.")
+            print("=" * 50)
+            print("")
+    else:
+        # Silent 모드: 한 줄 요약
         if has_context:
-            print(" '/restore-context' 명령으로")
-            print("   이전 작업을 이어갈 수 있습니다.")
-        print("=" * 50)
-        print("")
+            print("[Session] 이전 컨텍스트 존재 → /restore-context로 복원 가능")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ __pycache__/
 *.pyc
 
 # 생성된 문서 (PRD, 아키텍처, 태스크)
-docs/
+!plugins/docs/
 .claude/project-context
 .claude/memory/CURRENT_CONTEXT.md
 .claude/memory/WORK_HISTORY.md

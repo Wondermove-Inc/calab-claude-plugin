@@ -198,12 +198,12 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
 
 | 스킬 | 활성화 조건 | 효과 |
 |------|------------|------|
-| `research-skill` | 조사/리서치 요청 시 | 다중 검색 + 핵심 요약 |
-| `problem-solving` | 에러/버그 언급 시 | 5 Whys, RCA 방법론 자동 적용 |
+| `research` | 조사/리서치 요청 시 | 다중 검색 + 핵심 요약 |
+| `solve` | 에러/버그 언급 시 | 5 Whys, RCA 방법론 자동 적용 |
 
 **자동 적용 내용:**
-- "~에 대해 알아봐줘" → 리서치 스킬 활성화
-- "에러가 발생해요" → 문제 해결 스킬 활성화
+- "~에 대해 알아봐줘" → research 스킬 활성화
+- "에러가 발생해요" → solve 스킬 활성화
 - 과거 유사 문제 자동 검색 및 참조
 
 ---
@@ -254,9 +254,13 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
 ## 포함 리소스
 
 - **skills/**:
-  - research-skill (웹 검색 기반 정보 수집 및 분석)
-  - problem-solving (체계적 문제 해결 방법론)
-- **methods/**:
+  - `research/` - 웹 검색 기반 정보 수집 및 분석
+  - `solve/` - 체계적 문제 해결 방법론
+  - `solve-report/` - 해결 보고서 생성
+  - `solve-log/` - 진행 상황 확인
+  - `solve-history/` - 과거 이력 조회
+  - `help/` - 플러그인 도움말
+- **skills/solve/methods/**:
   - five-whys.md
   - fishbone.md
   - binary-search.md

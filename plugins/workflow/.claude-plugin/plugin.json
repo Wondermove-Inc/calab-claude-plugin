@@ -19,12 +19,38 @@
   ],
   "skills": [
     "./skills/best-practices",
+    "./skills/check-quality",
     "./skills/code-quality",
+    "./skills/context-refresh",
+    "./skills/context-show",
+    "./skills/help",
+    "./skills/jira-init",
     "./skills/jira-integration",
+    "./skills/jira-link",
+    "./skills/jira-pull",
+    "./skills/jira-push",
+    "./skills/jira-status",
+    "./skills/jira-sync",
     "./skills/process",
+    "./skills/process-build",
+    "./skills/process-design",
+    "./skills/process-plan",
+    "./skills/process-status",
+    "./skills/process-tasks",
     "./skills/project-rules",
+    "./skills/qa",
+    "./skills/qa-plan",
+    "./skills/qa-report",
+    "./skills/qa-run",
+    "./skills/qa-status",
     "./skills/qa-testing",
-    "./skills/work-tracker"
+    "./skills/restore-context",
+    "./skills/save-progress",
+    "./skills/security-review",
+    "./skills/show-rules",
+    "./skills/tdd-workflow",
+    "./skills/work-tracker",
+    "./skills/worktree"
   ],
   "hooks": {
     "SessionStart": [
@@ -34,6 +60,11 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session_start.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect_package_manager.py",
             "timeout": 10
           }
         ]
@@ -47,6 +78,11 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session_end.py",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/continuous_learning.py",
+            "timeout": 15
           }
         ]
       }
@@ -71,6 +107,11 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/track_changes.py",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/auto_format.py",
+            "timeout": 15
           }
         ]
       }
@@ -94,6 +135,18 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/subagent_tracker.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/suggest_compact.py",
             "timeout": 10
           }
         ]

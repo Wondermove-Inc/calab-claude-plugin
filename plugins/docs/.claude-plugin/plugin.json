@@ -1,0 +1,25 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "문서 콘텐츠 자동 생성 - Docusaurus 기반",
+  "author": {
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
+  },
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "docs",
+    "documentation",
+    "docusaurus",
+    "technical-writing"
+  ],
+  "skills": [
+    "./skills/docs",
+    "./skills/add",
+    "./skills/generate",
+    "./skills/status",
+    "./skills/update",
+    "./skills/validate"
+  ]
+}
