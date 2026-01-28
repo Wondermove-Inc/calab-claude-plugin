@@ -40,73 +40,67 @@ agents:
 /solve --help                   # 도움말
 ```
 
-## 🤖 에이전트 호출 (필수)
+## 🤖 에이전트 실행 (필수)
 
-> **이 스킬은 단계별로 적절한 에이전트를 호출해야 합니다.**
+**⚠️ 이 스킬이 로드되면 아래 지침을 따라 즉시 Task 도구를 호출하세요.**
 
 ### 1. 탐색 단계 (문제 파악)
 
+**지금 바로 Task 도구를 호출**하세요:
+- `subagent_type`: `"Explore"`
+- `description`: `"문제 관련 코드 탐색"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="Explore",
-  description="문제 관련 코드 탐색",
-  prompt="""
-  **역할**: 코드 탐색 전문가
+**역할**: 코드 탐색 전문가
 
-  **목표**: {문제 설명}과 관련된 코드 및 로그 탐색
+**목표**: {문제 설명}과 관련된 코드 및 로그 탐색
 
-  **탐색 대상**:
-  - 에러 발생 파일/라인
-  - 관련 함수 호출 체인
-  - 최근 변경 사항 (git log)
-  """
-)
+**탐색 대상**:
+- 에러 발생 파일/라인
+- 관련 함수 호출 체인
+- 최근 변경 사항 (git log)
 ```
 
 ### 2. 분석 단계
 
+**Task 도구 호출**:
+- `subagent_type`: `"calab-plugin:build-error-resolver"`
+- `description`: `"문제 원인 분석"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="calab-plugin:build-error-resolver",
-  description="문제 원인 분석",
-  prompt="""
-  **역할**: 문제 해결 전문가
+**역할**: 문제 해결 전문가
 
-  **목표**: 근본 원인 분석
+**목표**: 근본 원인 분석
 
-  **방법론**: {--5whys | --rca | --hypothesis | --binary}
+**방법론**: {--5whys | --rca | --hypothesis | --binary}
 
-  **출력**:
-  - 근본 원인 식별
-  - 해결 방안 제시
-  """
-)
+**출력**:
+- 근본 원인 식별
+- 해결 방안 제시
 ```
 
 ### 3. 수정 및 검증 단계
 
-```
-// 수정
-Task(
-  subagent_type="calab-plugin:build-error-resolver",
-  description="문제 수정",
-  prompt="..."
-)
+**3-1. 수정 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:build-error-resolver"`
+- `description`: `"문제 수정"`
+- `prompt`: `"..."`
 
-// 검증 (필수)
-Task(
-  subagent_type="calab-plugin:validator",
-  description="수정 검증",
-  prompt="해결 완전성 확인, 재발 방지 확인..."
-)
+**3-2. 검증 필수 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:validator"`
+- `description`: `"수정 검증"`
+- `prompt`: `"해결 완전성 확인, 재발 방지 확인..."`
 
-// 검증 실패 시
-Task(
-  subagent_type="calab-plugin:reinforcer",
-  description="추가 수정",
-  prompt="..."
-)
-```
+**3-3. 검증 실패 시 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:reinforcer"`
+- `description`: `"추가 수정"`
+- `prompt`: `"..."`
+
+**⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
 ---
 

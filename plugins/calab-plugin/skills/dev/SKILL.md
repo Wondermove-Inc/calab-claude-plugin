@@ -40,72 +40,66 @@ agents:
 /dev --help                # 도움말
 ```
 
-## 🤖 에이전트 호출 (필수)
+## 🤖 에이전트 실행 (필수)
 
-> **이 스킬은 단계별로 적절한 에이전트를 호출해야 합니다.**
+**⚠️ 이 스킬이 로드되면 아래 지침을 따라 즉시 Task 도구를 호출하세요.**
 
 ### --plan 단계
 
+**지금 바로 Task 도구를 호출**하세요:
+- `subagent_type`: `"Plan"`
+- `description`: `"기능 기획: {기능명}"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="Plan",
-  description="기능 기획: {기능명}",
-  prompt="""
-  **역할**: 소프트웨어 아키텍트
+**역할**: 소프트웨어 아키텍트
 
-  **목표**: {기능명}에 대한 PRD 및 브레인스토밍
+**목표**: {기능명}에 대한 PRD 및 브레인스토밍
 
-  **산출물**:
-  1. 브레인스토밍 결과 (.claude/docs/active/{feature}/01-brainstorm.md)
-  2. PRD 문서 (.claude/docs/active/{feature}/02-prd.md)
+**산출물**:
+1. 브레인스토밍 결과 (.claude/docs/active/{feature}/01-brainstorm.md)
+2. PRD 문서 (.claude/docs/active/{feature}/02-prd.md)
 
-  **템플릿**: templates/prd-template.md 사용
-  """
-)
+**템플릿**: templates/prd-template.md 사용
 ```
 
 ### --design 단계
 
+**Task 도구 호출**:
+- `subagent_type`: `"Plan"`
+- `description`: `"아키텍처 설계: {기능명}"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="Plan",
-  description="아키텍처 설계: {기능명}",
-  prompt="""
-  **역할**: 시스템 아키텍트
+**역할**: 시스템 아키텍트
 
-  **목표**: 상세 아키텍처 및 ERD 설계
+**목표**: 상세 아키텍처 및 ERD 설계
 
-  **산출물**:
-  1. 아키텍처 문서 (.claude/docs/active/{feature}/03-architecture.md)
-  2. ERD (.claude/docs/active/{feature}/04-erd.md)
-  """
-)
+**산출물**:
+1. 아키텍처 문서 (.claude/docs/active/{feature}/03-architecture.md)
+2. ERD (.claude/docs/active/{feature}/04-erd.md)
 ```
 
 ### --build 단계 (완료 후 검증 필수)
 
-```
-// 1. 구현
-Task(
-  subagent_type="calab-plugin:dev-workflow",
-  description="TASK-{ID} 구현",
-  prompt="AC 기반 코드 구현..."
-)
+**1단계 - 구현 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:dev-workflow"`
+- `description`: `"TASK-{ID} 구현"`
+- `prompt`: `"AC 기반 코드 구현..."`
 
-// 2. 검증 (필수)
-Task(
-  subagent_type="calab-plugin:validator",
-  description="TASK-{ID} 검증",
-  prompt="AC 100% 충족 확인..."
-)
+**2단계 - 검증 필수 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:validator"`
+- `description`: `"TASK-{ID} 검증"`
+- `prompt`: `"AC 100% 충족 확인..."`
 
-// 3. 검증 실패 시 보강
-Task(
-  subagent_type="calab-plugin:reinforcer",
-  description="TASK-{ID} 보강",
-  prompt="누락 항목 수정..."
-)
-```
+**3단계 - 검증 실패 시 보강 (Task 도구 호출)**:
+- `subagent_type`: `"calab-plugin:reinforcer"`
+- `description`: `"TASK-{ID} 보강"`
+- `prompt`: `"누락 항목 수정..."`
+
+**⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
 ---
 

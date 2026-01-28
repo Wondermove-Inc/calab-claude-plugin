@@ -8,53 +8,55 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash, mcp__puppeteer__puppeteer_na
 
 Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 디버깅하는 스킬.
 
-## 🤖 에이전트 호출 (필수)
+## 🤖 에이전트 실행 (필수)
 
-> **이 스킬은 반드시 e2e-runner 에이전트를 통해 실행해야 합니다.**
+**⚠️ 이 스킬이 로드되면 아래 지침을 따라 즉시 Task 도구를 호출하세요.**
 
-스킬이 로드되면 즉시 다음 에이전트를 호출하세요:
+이 스킬은 e2e-runner 에이전트를 통해 실행됩니다. **지금 바로 Task 도구를 호출**하세요.
 
+**호출 파라미터:**
+- `subagent_type`: `"calab-plugin:e2e-runner"`
+- `description`: `"E2E 테스트 실행 및 분석"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="calab-plugin:e2e-runner",
-  description="E2E 테스트 실행 및 분석",
-  prompt="""
-  **역할**: E2E 테스트 전문가
+**역할**: E2E 테스트 전문가
 
-  **목표**: Playwright/Puppeteer 기반 E2E 테스트 실행 및 결과 분석
+**목표**: Playwright/Puppeteer 기반 E2E 테스트 실행 및 결과 분석
 
-  **수행 단계**:
-  1. 테스트 프레임워크 감지 (Playwright, Puppeteer, Cypress)
-  2. 의존성 및 브라우저 설치 확인
-  3. 테스트 실행
-  4. 결과 분석 및 실패 원인 파악
-  5. 스크린샷/트레이스 확인
+**수행 단계**:
+1. 테스트 프레임워크 감지 (Playwright, Puppeteer, Cypress)
+2. 의존성 및 브라우저 설치 확인
+3. 테스트 실행
+4. 결과 분석 및 실패 원인 파악
+5. 스크린샷/트레이스 확인
 
-  **실행 명령**:
-  - Playwright: npx playwright test --reporter=list
-  - Puppeteer: npx jest --config=jest.e2e.config.js
-  - Cypress: npx cypress run
+**실행 명령**:
+- Playwright: npx playwright test --reporter=list
+- Puppeteer: npx jest --config=jest.e2e.config.js
+- Cypress: npx cypress run
 
-  **출력 형식**:
-  ## E2E 테스트 결과
-  - 총 테스트: N개
-  - 성공: N개 ✅
-  - 실패: N개 ❌
+**출력 형식**:
+## E2E 테스트 결과
+- 총 테스트: N개
+- 성공: N개 ✅
+- 실패: N개 ❌
 
-  ### 실패한 테스트
-  | 테스트 | 파일 | 오류 |
-  |--------|------|------|
+### 실패한 테스트
+| 테스트 | 파일 | 오류 |
+|--------|------|------|
 
-  ### 권장 조치
-  1. [파일]: [수정 제안]
+### 권장 조치
+1. [파일]: [수정 제안]
 
-  **제약 조건**:
-  - ❌ 테스트 코드 자동 수정 금지 (제안만)
-  - ✅ 실패 원인 상세 분석 필수
-  - ✅ 스크린샷 경로 포함
-  """
-)
+**제약 조건**:
+- ❌ 테스트 코드 자동 수정 금지 (제안만)
+- ✅ 실패 원인 상세 분석 필수
+- ✅ 스크린샷 경로 포함
 ```
+
+**⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
 ---
 

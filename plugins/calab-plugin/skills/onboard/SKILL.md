@@ -38,56 +38,58 @@ agents:
 /onboard --help            # 도움말
 ```
 
-## 🤖 에이전트 호출 (필수)
+## 🤖 에이전트 실행 (필수)
 
-> **이 스킬은 반드시 project-onboarder 에이전트를 통해 실행해야 합니다.**
+**⚠️ 이 스킬이 로드되면 아래 지침을 따라 즉시 Task 도구를 호출하세요.**
 
 ### --quick 또는 Phase 1-2
 
+**지금 바로 Task 도구를 호출**하세요:
+- `subagent_type`: `"Explore"`
+- `description`: `"프로젝트 탐색 및 기술 스택 분석"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="Explore",
-  description="프로젝트 탐색 및 기술 스택 분석",
-  prompt="""
-  **역할**: 프로젝트 탐색 전문가
+**역할**: 프로젝트 탐색 전문가
 
-  **목표**: 프로젝트 구조 및 기술 스택 빠른 파악
+**목표**: 프로젝트 구조 및 기술 스택 빠른 파악
 
-  **탐색 대상**:
-  - package.json, tsconfig.json, 설정 파일
-  - 디렉토리 구조
-  - 주요 패턴
+**탐색 대상**:
+- package.json, tsconfig.json, 설정 파일
+- 디렉토리 구조
+- 주요 패턴
 
-  **출력**: PROJECT_SUMMARY.md 초안
-  """
-)
+**출력**: PROJECT_SUMMARY.md 초안
 ```
 
 ### Phase 3-4: 아키텍처 및 컨텍스트 생성
 
+**Task 도구 호출**:
+- `subagent_type`: `"calab-plugin:project-onboarder"`
+- `description`: `"프로젝트 온보딩 및 컨텍스트 생성"`
+- `prompt`: 아래 프롬프트 내용 사용
+
+**프롬프트 내용:**
 ```
-Task(
-  subagent_type="calab-plugin:project-onboarder",
-  description="프로젝트 온보딩 및 컨텍스트 생성",
-  prompt="""
-  **역할**: 프로젝트 온보딩 전문가
+**역할**: 프로젝트 온보딩 전문가
 
-  **목표**: 5개 컨텍스트 문서 생성
+**목표**: 5개 컨텍스트 문서 생성
 
-  **산출물**:
-  - .claude/project-context/PROJECT_SUMMARY.md
-  - .claude/project-context/ARCHITECTURE.md (C4 다이어그램)
-  - .claude/project-context/CODE_PATTERNS.md
-  - .claude/project-context/CONVENTIONS.md
-  - .claude/project-context/DOMAIN_KNOWLEDGE.md (선택)
+**산출물**:
+- .claude/project-context/PROJECT_SUMMARY.md
+- .claude/project-context/ARCHITECTURE.md (C4 다이어그램)
+- .claude/project-context/CODE_PATTERNS.md
+- .claude/project-context/CONVENTIONS.md
+- .claude/project-context/DOMAIN_KNOWLEDGE.md (선택)
 
-  **C4 Model**:
-  - Level 1: System Context
-  - Level 2: Container Diagram
-  - Level 3: Component Diagram
-  """
-)
+**C4 Model**:
+- Level 1: System Context
+- Level 2: Container Diagram
+- Level 3: Component Diagram
 ```
+
+**⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
 ---
 
