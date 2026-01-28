@@ -57,13 +57,22 @@
 # calab-plugin이 목록에 표시되어야 함
 ```
 
-### 4. 프로젝트 온보딩
+### 4. CLAUDE.md 적용 (선택)
+
+글로벌 지침을 적용하려면 CLAUDE.md를 복사합니다:
+
+```bash
+# 설치된 플러그인에서 CLAUDE.md 복사
+curl -o ~/.claude/CLAUDE.md https://raw.githubusercontent.com/Wondermove-Inc/calab-claude-plugin/main/plugins/calab-plugin/CLAUDE.md
+```
+
+### 5. 프로젝트 온보딩
 
 ```bash
 /onboard
 ```
 
-### 5. 개발 시작
+### 6. 개발 시작
 
 ```bash
 /dev --plan 사용자 인증 시스템
@@ -170,31 +179,32 @@
 ```
 calab-claude-plugin/
 ├── .claude-plugin/
-│   └── marketplace.json   # 마켓플레이스 정의 (필수)
+│   └── marketplace.json       # 마켓플레이스 정의
 │
-├── CLAUDE.md              # Claude 지침 (핵심)
-├── plugin.json            # 플러그인 메타데이터
+├── README.md
 │
-├── skills/                # 23개 스킬
-│   ├── dev/              # 개발 워크플로우
-│   ├── clean/            # 클린 아키텍처
-│   ├── docs/             # 문서화
-│   ├── qa/               # QA 테스트
-│   ├── solve/            # 문제 해결
-│   ├── security/         # 보안 검사
-│   └── ...
-│
-├── agents/                # 15개 에이전트
-│   ├── web-researcher.md # 웹 리서치 (Tavily)
-│   ├── validator.md      # 완전성 검증
-│   ├── reinforcer.md     # 보강/수정
-│   ├── code-reviewer.md  # 코드 리뷰
-│   └── ...
-│
-└── hooks/                 # 20개 훅 스크립트
-    ├── pre_tool_use/     # 도구 사용 전
-    ├── post_tool_use/    # 도구 사용 후
-    └── session/          # 세션 이벤트
+└── plugins/
+    └── calab-plugin/          # 플러그인 본체
+        ├── .claude-plugin/
+        │   └── plugin.json    # 플러그인 메타데이터
+        │
+        ├── CLAUDE.md          # Claude 지침 (핵심)
+        │
+        ├── skills/            # 23개 스킬
+        │   ├── dev/          # 개발 워크플로우
+        │   ├── clean/        # 클린 아키텍처
+        │   ├── qa/           # QA 테스트
+        │   ├── solve/        # 문제 해결
+        │   ├── security/     # 보안 검사
+        │   └── ...
+        │
+        ├── agents/            # 15개 에이전트
+        │   ├── web-researcher.md
+        │   ├── validator.md
+        │   ├── reinforcer.md
+        │   └── ...
+        │
+        └── hooks/             # 20개 훅 스크립트
 ```
 
 ---
