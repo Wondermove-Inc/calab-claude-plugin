@@ -1,0 +1,28 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "개발 전반에 범용적으로 사용할 수 있는 기본 가이드라인 플러그인 - 코드 품질 원칙, 언어별 개발 가이드, 코드 리뷰/커밋 워크플로우",
+  "author": {
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
+  },
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "code-quality",
+    "solid",
+    "clean-code",
+    "go",
+    "typescript",
+    "react",
+    "python",
+    "code-review",
+    "code-commit"
+  ],
+  "skills": [
+    "./skills/coding-principles",
+    "./skills/code-review",
+    "./skills/code-commit",
+    "./skills/help"
+  ]
+}
