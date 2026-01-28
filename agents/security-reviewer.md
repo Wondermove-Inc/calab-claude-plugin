@@ -1,10 +1,11 @@
 ---
 name: security-reviewer
-description: 코드 보안 취약점을 분석합니다. OWASP Top 10, 시크릿 탐지, SQL Injection, XSS 등을 검사합니다.
-tools: Read, Grep, Glob
-model: haiku
-permissionMode: default
-skills: security-review, code-quality
+description: 코드 보안 취약점을 분석합니다. OWASP Top 10, 시크릿 탐지, SQL Injection, XSS, 의존성 취약점 등을 검사합니다.
+tools: Read, Grep, Glob, Bash
+disallowedTools: Write, Edit
+model: sonnet
+permissionMode: plan
+skills: security, code-quality, best-practices
 ---
 
 # Security Reviewer Agent
@@ -22,7 +23,7 @@ skills: security-review, code-quality
 ## 활성화 조건
 
 다음 상황에서 **자동 호출**:
-- `/security-review` 명령어 실행 시
+- `/security` 명령어 실행 시
 - "보안 검사", "취약점 분석", "시크릿 확인" 요청 시
 - PR 리뷰에서 보안 관련 요청 시
 - 민감한 코드 (인증, 결제, 개인정보) 수정 시
@@ -122,6 +123,6 @@ document\.write\(
 
 ## 참조 파일
 
-- `skills/security-review/SKILL.md` - 상세 검사 규칙
-- `commands/security-review.md` - 명령어 사용법
+- `skills/security/SKILL.md` - 상세 검사 규칙
+- `commands/security.md` - 명령어 사용법
 - `.claude/best-practices/security.md` - 보안 베스트 프랙티스 (추가 예정)

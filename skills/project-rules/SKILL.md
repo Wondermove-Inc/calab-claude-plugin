@@ -2,6 +2,7 @@
 name: project-rules
 description: 프로젝트 핵심 규칙을 참조합니다. 코드 작성, 수정, 리뷰, 아키텍처 결정 시 자동으로 활성화됩니다. 규칙, 컨벤션, 스타일, 코딩 표준 언급 시 사용하세요.
 allowed-tools: Read, Grep, Glob
+agent: project-guardian
 ---
 
 # Project Rules Skill

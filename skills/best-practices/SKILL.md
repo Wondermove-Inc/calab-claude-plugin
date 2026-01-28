@@ -1,7 +1,16 @@
 ---
 name: best-practices
 description: 기술별 베스트 프랙티스를 적용합니다. 코드 작성, 구현, 개발, React, Node.js, TypeScript, 데이터베이스, API 요청 시 자동 활성화. 검증된 패턴과 방법론을 사용합니다.
-allowed-tools: Read, Glob
+allowed-tools: [Read, Glob, Grep, mcp__tavily__tavily-search]
+agent: code-reviewer
+agents:
+  primary: code-reviewer
+  orchestration:
+    analyze: [code-reviewer, Explore]
+    research: [deep-researcher]
+    apply: [code-reviewer]
+    validate: [validator]
+    fix: [reinforcer]
 ---
 
 # Best Practices Skill
@@ -72,7 +81,7 @@ allowed-tools: Read, Glob
 ### 2. 베스트 프랙티스 로드 (필수)
 
 ```
-.claude/best-practices/{technology}.md 읽기
+references/{language}/{technology}.md 읽기
 → 패턴, 규칙, 예시 코드 확인
 → 금지 사항 확인
 → 체크리스트 확인
@@ -148,11 +157,43 @@ allowed-tools: Read, Glob
 - **확실하지 않으면 "확인 필요" 인정**
 - **근거 없는 주장 절대 금지**
 
-**상세 가이드**: `.claude/best-practices/anthropic-official.md`
+**상세 가이드**: `references/common/anthropic-official.md`
 
 ## 참조 파일
 
-- `.claude/best-practices/anthropic-official.md` - **Anthropic 공식 가이드라인 (최우선)**
-- `.claude/best-practices/` - 기술별 베스트 프랙티스 (15개)
-- `.claude/memory/TECH_STACK.md` - 기술 스택 설정
-- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙
+### 폴더 구조 (스킬 내부 - 언어별 분류)
+
+```
+skills/best-practices/references/
+├── _sections.md    # 전체 섹션 정의
+├── _template.md    # 새 규칙 템플릿
+├── typescript/     # 27개 (통합 + 세부 규칙)
+├── react/          # 44개 (통합 + 세부 규칙)
+├── python/         # 20개 (통합 + 세부 규칙)
+├── go/             # 21개 (통합 + 세부 규칙)
+├── rust/           # 21개 (통합 + 세부 규칙)
+└── common/         # 12개 (공통 가이드)
+```
+
+### 참조 예시 (스킬 내부 경로)
+
+```bash
+# 전체 구조 확인
+Read references/_sections.md
+
+# 언어별 통합 가이드
+Read references/typescript/typescript.md
+Read references/react/react.md
+
+# 기술별 인덱스
+Read references/react/react-index.md
+Read references/typescript/ts-index.md
+
+# 세부 규칙
+Read references/react/react-async-defer-await.md
+Read references/typescript/ts-error-result-pattern.md
+
+# 공통 가이드
+Read references/common/api-design.md
+Read references/common/security.md
+```

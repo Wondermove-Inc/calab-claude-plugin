@@ -1,10 +1,10 @@
 ---
 name: build-error-resolver
 description: 빌드 오류를 분석하고 해결합니다. TypeScript, ESLint, 번들러, 테스트 실패 등 모든 빌드 관련 오류를 처리합니다.
-tools: Read, Grep, Glob, Bash
-model: haiku
-permissionMode: default
-skills: problem-solving, code-quality
+tools: Read, Grep, Glob, Bash, Write, Edit
+model: sonnet
+permissionMode: acceptEdits
+skills: solve, code-quality, best-practices
 ---
 
 # Build Error Resolver Agent
@@ -230,6 +230,6 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 ## 참조 파일
 
-- `skills/problem-solving/SKILL.md` - 문제 해결 방법론
+- `skills/solve/SKILL.md` - 문제 해결 방법론
 - `commands/solve.md` - 일반 문제 해결 명령어
 - `.claude/best-practices/typescript.md` - TypeScript 베스트 프랙티스

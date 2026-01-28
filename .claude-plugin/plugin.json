@@ -1,12 +1,13 @@
 {
   "name": "calab-plugin",
-  "version": "2.4.0",
-  "description": "개발 워크플로우 자동화 플러그인 - Plan → Design → Tasks → Build + Security + TDD",
+  "version": "2.5.0",
+  "description": "개발 워크플로우 자동화 플러그인 - 16개 명령어 + 7개 패시브 스킬 + 15개 에이전트",
   "author": {
-    "name": "Wonder Move Lab",
-    "email": "support@wondermovelab.com"
+    "name": "Wondermove CALab",
+    "email": "captain@wondermove.net"
   },
-  "homepage": "https://github.com/wondermovelab/calab-claude-plugin",
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
+  "repository": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
     "workflow",
@@ -18,9 +19,6 @@
     "jira",
     "problem-solving",
     "security",
-    "tdd",
-    "continuous-learning",
-    "auto-format",
-    "hooks"
+    "tdd"
   ]
 }

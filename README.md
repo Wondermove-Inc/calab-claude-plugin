@@ -1,804 +1,349 @@
-# Calab Claude Plugin v2.4.0
+# Calab Claude Plugin
 
-> **어떤 상황에서든 동일한 개발 품질을 보장하는** Claude Code 공식 플러그인
+[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple.svg)](https://claude.ai/code)
+
+> **일관된 개발 품질을 보장하는** Claude Code 워크플로우 자동화 플러그인
+
+---
+
+## 왜 Calab Plugin인가?
+
+| 문제 | Calab Plugin 해결책 |
+|------|---------------------|
+| 매번 다른 코드 품질 | 자동 품질 검사 + 베스트 프랙티스 강제 |
+| 컨텍스트 유실 (Compact) | 자동 저장/복원으로 작업 연속성 보장 |
+| 반복적인 보일러플레이트 | 클린 아키텍처 자동 생성 |
+| 문서화 누락 | 코드 변경 시 자동 문서 동기화 |
+| 할루시네이션 | validator/reinforcer 에이전트로 검증 |
 
 ---
 
 ## 한눈에 보기
 
-| 항목 | 수량 | 설명 |
-|------|------|------|
-| **명령어** | 42개 | 개발 워크플로우, 클린 아키텍처, QA 등 |
-| **스킬** | 16개 | 자동 활성화되는 패시브 스킬 |
-| **에이전트** | 7개 | 특화된 작업 수행 서브에이전트 |
-| **베스트 프랙티스** | 17개 | 언어별 코드 품질 규칙 |
-
----
-
-## 목차
-
-1. [핵심 기능](#핵심-기능)
-2. [설치](#설치)
-3. [빠른 시작](#빠른-시작)
-4. [명령어 레퍼런스](#명령어-레퍼런스)
-5. [주요 기능 상세](#주요-기능-상세)
-6. [자동화 시스템](#자동화-시스템)
-7. [프로젝트 구조](#프로젝트-구조)
-8. [문제 해결](#문제-해결)
-9. [버전 히스토리](#버전-히스토리)
-
----
-
-## 핵심 기능
-
-### 개발 워크플로우
-
 ```
-Plan → Design → Tasks → Build → QA
-```
-
-| 단계 | 명령어 | 적용 표준 | 설명 |
-|------|--------|----------|------|
-| 기획 | `/calab-plugin:dev-plan` | PRD 템플릿 | 브레인스토밍 + 요구사항 문서 |
-| 설계 | `/calab-plugin:dev-design` | C4 Model + Layered Architecture | 아키텍처 + ERD (3NF 정규화) |
-| 분해 | `/calab-plugin:dev-tasks` | Epic-Story-Task + AC | 작업 분해 + 우선순위(P0~P3) |
-| 구현 | `/calab-plugin:dev-build` | Clean Architecture + Best Practices | 4-Layer + TDD 지원 |
-| 검증 | `/calab-plugin:qa` | 7단계 QA 프로세스 | E2E 테스트 자동화 |
-
-### 자동 활성화 스킬 (16개)
-
-코드 작성 시 **자동으로 적용**되는 기능:
-
-| 스킬 | 트리거 | 효과 |
-|------|--------|------|
-| `clean-architecture` | 코드 구현 시 | 4-레이어 의존성 규칙 강제 |
-| `best-practices` | 기술 감지 시 | 17개 언어별 베스트 프랙티스 |
-| `code-quality` | 코드 생성 시 | 500줄 제한, 주석 필수, 타입 완전성 |
-| `security-review` | 보안 키워드 시 | OWASP Top 10 취약점 검사 |
-| `tdd-workflow` | TDD 키워드 시 | Red-Green-Refactor, 80% 커버리지 |
-| `problem-solving` | 에러/버그 시 | 5 Whys, RCA 방법론 |
-| `qa-testing` | QA/테스트 시 | E2E + MCP Puppeteer |
-| `jira-integration` | JIRA 언급 시 | 양방향 자동 동기화 |
-| `work-tracker` | 소스 수정 시 | Worktree 자동 추적 |
-| `project-rules` | 코드 작성 시 | 프로젝트 규칙 참조 |
-| `project-onboarding` | 분석 요청 시 | 5개 컨텍스트 문서 생성 |
-| `research-skill` | 조사 요청 시 | 5-10회 검색 + 요약 |
-| `dev-workflow` | 개발 시작 시 | 워크플로우 가이드 |
-| `refactor-cleaner` | 리팩토링 시 | 데드 코드, 미사용 import 정리 |
-| `e2e-runner` | E2E 테스트 시 | Playwright/Puppeteer 테스트 실행 |
-| `doc-updater` | 문서 동기화 시 | 코드 변경 기반 문서 업데이트 |
-
-### Commands vs Skills 차이점
-
-| 구분 | Commands | Skills |
-|------|----------|--------|
-| **호출 형식** | `/calab-plugin:명령어` | `/skill-name` |
-| **동작 방식** | 사용자가 명시적으로 실행 | 자동 활성화 + 수동 호출 가능 |
-| **용도** | 특정 작업 실행 (onboard, dev-build 등) | 맥락에 따라 규칙/가이드 적용 |
-| **예시** | `/calab-plugin:dev-plan` | `/work-tracker`, `/code-quality` |
-
-**스킬 동작 모드:**
-
-1. **패시브 (자동)**: 키워드 감지 시 자동 활성화
-   - 예: "버그 수정해줘" → `problem-solving` 스킬 자동 로드
-
-2. **액티브 (수동)**: 슬래시 명령어로 직접 호출
-   - 예: `/security-review` → 보안 검사 스킬 즉시 실행
-
-**스킬별 Auto-trigger 키워드:**
-
-| 스킬 | 트리거 키워드 |
-|------|--------------|
-| `work-tracker` | "다음", "완료", "시작", "이제", "진행" |
-| `problem-solving` | "에러", "버그", "문제", "오류", "해결" |
-| `code-quality` | 코드 작성/생성 시 항상 |
-| `best-practices` | 코드 작성 시 + 기술명 감지 |
-| `clean-architecture` | "레이어", "도메인", "엔티티", "유스케이스" |
-| `security-review` | "보안", "취약점", "XSS", "인젝션" |
-| `tdd-workflow` | "TDD", "테스트 먼저", "--tdd" |
-| `qa-testing` | "QA", "테스트", "검증" |
-| `jira-integration` | "JIRA", "지라", "이슈", "티켓" |
-| `research-skill` | "조사", "알아봐", "찾아봐", "리서치" |
-| `refactor-cleaner` | "리팩토링", "정리", "클린업" |
-| `e2e-runner` | "E2E", "통합 테스트", "브라우저 테스트" |
-| `doc-updater` | "문서 업데이트", "동기화" |
-
-### 특화 에이전트 (7개)
-
-| 에이전트 | 역할 | 자동 호출 조건 |
-|----------|------|---------------|
-| `code-reviewer` | 코드 품질 검토, 개선점 제안 | 리뷰 요청 시 |
-| `project-guardian` | 규칙 준수 검증, 작업 맥락 유지 | 규칙 확인 시 |
-| `security-reviewer` | OWASP Top 10, SQL Injection, XSS 검사 | 보안 검사 시 |
-| `build-error-resolver` | TypeScript, ESLint, 번들러 오류 해결 | 빌드 실패 시 |
-| `refactor-cleaner` | 데드 코드, 미사용 import, 중복 코드 정리 | 리팩토링 요청 시 |
-| `e2e-runner` | Playwright/Puppeteer E2E 테스트 실행 | 통합 테스트 시 |
-| `doc-updater` | 코드 변경 기반 문서 자동 업데이트 | 문서 동기화 시 |
-
----
-
-## 설치
-
-### 원클릭 설치 (터미널)
-
-```bash
-# 1. 설치 스크립트 실행
-./install.sh
-
-# 2. Claude Code 내부에서 플러그인 등록 (출력된 명령어 복사)
-/plugin marketplace add ~/.claude/calab-marketplace && /plugin install calab-plugin@calab-marketplace --scope user
-```
-
-### 설치 확인
-
-```bash
-/calab-plugin:onboard
-```
-
-### 설치 스코프
-
-| 스코프 | 위치 | 용도 |
-|--------|------|------|
-| `user` | `~/.claude/plugins/user/` | **개인 개발 환경 (권장)** |
-| `project` | `.claude/plugins/` | 팀 협업, Git 공유 |
-| `local` | 세션 메모리 | 테스트, 임시 사용 |
-
-### 업데이트
-
-```bash
-# 자동 업데이트 (Git pull + 재설치)
-./update.sh
-
-# 강제 업데이트 (동일 버전이어도 재설치)
-./update.sh --force
-```
-
-### 삭제
-
-```bash
-# 완전 삭제
-./uninstall.sh
-
-# 설정 파일 유지하고 삭제
-./uninstall.sh --keep-settings
+┌─────────────────────────────────────────────────────────────┐
+│  16개 명령어  │  7개 패시브 스킬  │  15개 에이전트  │  20개 훅  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 빠른 시작
 
-### 상황별 사용법
-
-| 상황 | 자연어 | 명령어 |
-|------|--------|--------|
-| 새 프로젝트 시작 | "기획해줘" | `/calab-plugin:dev-plan [기능명]` |
-| 기존 프로젝트 투입 | "프로젝트 분석해줘" | `/calab-plugin:onboard` |
-| 세션/Compact 후 | "복원해줘" | `/calab-plugin:restore-context` |
-| 버그 해결 | "해결해줘" | `/calab-plugin:solve [문제]` |
-| 기술 조사 | "조사해줘" | `/calab-plugin:research [주제]` |
-| QA 테스트 | "테스트해줘" | `/calab-plugin:qa` |
-| 보안 검사 | "보안 검사해줘" | `/calab-plugin:security-review` |
-| 코드 정리 | "리팩토링해줘" | `/calab-plugin:check-quality` |
-
-### 개발 워크플로우 예시
+### 1. 마켓플레이스 추가
 
 ```bash
-# 1. 기획 (브레인스토밍 + PRD)
-/calab-plugin:dev-plan 사용자 인증 시스템
+# Claude Code 실행 후
+/plugin marketplace add Wondermove-Inc/calab-claude-plugin
+```
 
-# 2. 설계 (아키텍처 + ERD)
-/calab-plugin:dev-design
+### 2. 플러그인 설치
 
-# 3. 태스크 분해
-/calab-plugin:dev-tasks
+```bash
+# 브라우징으로 설치 (권장)
+/plugin
+# → Discover 탭에서 calab-plugin 선택
 
-# 4. TDD로 구현
-/calab-plugin:dev-build TASK-001 --tdd
+# 또는 직접 설치
+/plugin install calab-plugin@calab-marketplace
+```
 
-# 5. 진행 상황 확인
-/calab-plugin:worktree
+### 3. 설치 확인
 
-# 6. QA 테스트
-/calab-plugin:qa --from-worktree
+```bash
+/plugins
+# calab-plugin이 목록에 표시되어야 함
+```
+
+### 4. 프로젝트 온보딩
+
+```bash
+/onboard
+```
+
+### 5. 개발 시작
+
+```bash
+/dev --plan 사용자 인증 시스템
 ```
 
 ---
 
-## 명령어 레퍼런스
+## 명령어
 
-### 개발 워크플로우
+### 메타커맨드 (8개)
 
-| 명령어 | 옵션 | 적용 표준 | 설명 |
-|--------|------|----------|------|
-| `/calab-plugin:dev-plan [기능]` | `--brainstorm`, `--prd` | PRD 템플릿 | 브레인스토밍 + PRD |
-| `/calab-plugin:dev-design` | `--arch`, `--erd` | C4 Model, 3NF | 아키텍처 + ERD |
-| `/calab-plugin:dev-tasks` | - | Epic-Story-Task | 태스크 분해 + AC |
-| `/calab-plugin:dev-build [task]` | `--tdd` | Clean Architecture | 태스크 구현 |
-| `/calab-plugin:dev-status` | - | Worktree 추적 | 진행률 확인 |
+하나의 명령어로 여러 서브 기능을 제어합니다.
 
-### 클린 아키텍처
+| 명령어 | 옵션 | 설명 |
+|--------|------|------|
+| `/dev` | `--plan` `--design` `--tasks` `--build` `--status` | 개발 워크플로우 전체 관리 |
+| `/clean` | `--init` `--entity` `--usecase` `--validate` | 클린 아키텍처 4-Layer 생성 |
+| `/docs` | `--generate` `--add` `--update` `--validate` | 문서 자동 생성/동기화 |
+| `/jira` | `--init` `--pull` `--push` `--link` `--sync` | JIRA 양방향 연동 |
+| `/qa` | `--plan` `--run` `--report` `--status` | E2E/통합 테스트 관리 |
+| `/solve` | `--5whys` `--rca` `--hypothesis` | 체계적 문제 해결 |
+| `/onboard` | `--quick` `--phases` | 프로젝트 분석 및 컨텍스트 생성 |
+| `/context` | `--show` `--refresh` | 프로젝트 컨텍스트 관리 |
 
-| 명령어 | 적용 표준 | 설명 |
-|--------|----------|------|
-| `/calab-plugin:clean-init` | 4-Layer Clean Architecture | Domain/Application/Adapters/Infrastructure |
-| `/calab-plugin:clean-entity [name]` | Domain Layer 규칙 | 외부 import 금지, 순수 TypeScript |
-| `/calab-plugin:clean-usecase [name]` | Application Layer 규칙 | Domain만 import, Interface 의존 |
-| `/calab-plugin:clean-validate` | 의존성 규칙 검증 | 내부→외부 참조 금지, 순환 의존성 탐지 |
+### 독립 명령어 (8개)
 
-### 온보딩 & 컨텍스트
-
-| 명령어 | 설명 |
-|--------|------|
-| `/calab-plugin:onboard` | 5개 컨텍스트 문서 생성 (기술스택, 패턴, 아키텍처, 도메인, 주요파일) |
-| `/calab-plugin:onboard-quick` | 핵심만 빠른 분석 |
-| `/calab-plugin:learn [path]` | 특정 영역 심층 학습 |
-| `/calab-plugin:context-show` | 컨텍스트 표시 |
-| `/calab-plugin:context-refresh` | 컨텍스트 갱신 |
-| `/calab-plugin:restore-context` | 규칙 + 작업 상태 복원 |
-| `/calab-plugin:save-progress` | 체크포인트 저장 |
-
-### 리서치
-
-| 명령어 | 옵션 | 적용 표준 | 설명 |
-|--------|------|----------|------|
-| `/calab-plugin:research [주제]` | `--quick`, `--deep` | 체계적 리서치 프로토콜 | 5-10회 검색 + 핵심 요약 + 출처 검증 |
-
-### 문제 해결
-
-| 명령어 | 옵션 | 적용 표준 | 설명 |
-|--------|------|----------|------|
-| `/calab-plugin:solve [문제]` | `--5whys` | 5 Whys | "왜?"를 5번 반복하여 근본 원인 추적 |
-| `/calab-plugin:solve [문제]` | `--rca` | Root Cause Analysis | 8단계 RCA + Fishbone 다이어그램 |
-| `/calab-plugin:solve [문제]` | `--hypothesis` | 가설 기반 접근 | 가설 → 예측 → 실험 → 검증 |
-| `/calab-plugin:solve [문제]` | `--binary` | Binary Search | 코드 이분 탐색으로 문제 위치 특정 |
-| `/calab-plugin:solve-log` | - | - | 진행 중 분석 로그 |
-| `/calab-plugin:solve-history` | `--recent`, `--keyword` | - | 과거 해결 사례 검색 |
-| `/calab-plugin:solve-report [id]` | `--full`, `--summary` | - | 해결 보고서 생성 |
-
-### QA & 테스트
-
-| 명령어 | 옵션 | 적용 표준 | 설명 |
-|--------|------|----------|------|
-| `/calab-plugin:qa` | `--from-prd`, `--from-worktree` | 7단계 QA 프로세스 | QA 시작 |
-| `/calab-plugin:qa-plan` | `--edit` | 테스트 피라미드 | Unit 70%, Integration 20%, E2E 10% |
-| `/calab-plugin:qa-run [tc]` | `--all`, `--failed` | MCP Puppeteer + BDD | Given-When-Then 테스트 |
-| `/calab-plugin:qa-report` | `--summary`, `--full` | 표준 QA 보고서 | 통과율, 버그 목록, 권장사항 |
-| `/calab-plugin:qa-status` | - | - | 테스트 진행률 |
-
-### 보안 & 품질
-
-| 명령어 | 적용 표준 | 설명 |
-|--------|----------|------|
-| `/calab-plugin:security-review` | OWASP Top 10 | SQL Injection, XSS, 시크릿 탐지 |
-| `/calab-plugin:check-quality` | 코드 품질 규칙 | 500줄 초과, 주석 누락 검사 |
-
-### Worktree & JIRA
-
-| 명령어 | 설명 |
-|--------|------|
-| `/calab-plugin:worktree` | Epic-Story-Task 트리 시각화 |
-| `/calab-plugin:worktree start [id]` | 태스크 시작 |
-| `/calab-plugin:worktree done [id]` | 태스크 완료 |
-| `/calab-plugin:worktree block [id] [사유]` | 블로커 등록 |
-| `/calab-plugin:jira-init [key]` | JIRA 연동 초기화 |
-| `/calab-plugin:jira-sync` | 양방향 동기화 |
-| `/calab-plugin:jira-push` | Worktree → JIRA |
-| `/calab-plugin:jira-pull` | JIRA → Worktree |
-
-### 문서 생성
-
-| 명령어 | 설명 |
-|--------|------|
-| `/calab-plugin:docs generate` | 전체 문서 생성 (API, 컴포넌트, 가이드 등) |
-| `/calab-plugin:docs add [type]` | 특정 유형 문서 추가 |
-| `/calab-plugin:docs update` | 코드 변경 → 문서 자동 반영 |
-| `/calab-plugin:docs status` | 문서 현황 + 품질 점수 |
-| `/calab-plugin:docs validate` | 구조/링크/완성도 검증 |
-
-**문서 유형**: `getting-started`, `architecture`, `api`, `component`, `guide`, `config`, `faq`, `troubleshooting`
-
----
-
-## 주요 기능 상세
-
-### 1. 개발 워크플로우
-
-```mermaid
-flowchart LR
-    A["기획"] --> B["설계"]
-    B --> C["태스크 분해"]
-    C --> D["구현"]
-    D --> E["QA"]
-```
-
-**사용 예시:**
-
-```bash
-# 1. 기획 - 브레인스토밍만
-/calab-plugin:dev-plan 사용자 인증 --brainstorm
-
-# 2. 기획 - PRD만
-/calab-plugin:dev-plan 사용자 인증 --prd
-
-# 3. 설계 - 아키텍처만
-/calab-plugin:dev-design --arch
-
-# 4. 설계 - ERD만
-/calab-plugin:dev-design --erd
-
-# 5. TDD 모드로 구현
-/calab-plugin:dev-build TASK-001 --tdd
-```
-
-### 2. 클린 아키텍처
-
-**4-레이어 구조:**
-
-| 레이어 | 역할 | 의존성 규칙 |
-|--------|------|------------|
-| Domain | 엔티티, 값 객체, 리포지토리 인터페이스 | 외부 의존 금지 |
-| Application | 유스케이스, DTO, 포트 | Domain만 의존 |
-| Adapter | 컨트롤러, 프레젠터, 리포지토리 구현 | Application, Domain 의존 |
-| Infrastructure | 외부 의존성, 설정 | 모든 레이어 의존 가능 |
-
-**사용 예시:**
-
-```bash
-# 1. 구조 초기화
-/calab-plugin:clean-init
-
-# 2. 엔티티 생성
-/calab-plugin:clean-entity User --with-repository
-
-# 3. 유스케이스 생성
-/calab-plugin:clean-usecase CreateUser --entity User
-
-# 4. 의존성 검증
-/calab-plugin:clean-validate --fix
-```
-
-### 3. 프로젝트 온보딩
-
-**5개 컨텍스트 문서 자동 생성:**
-
-| 문서 | 내용 |
-|------|------|
-| `PROJECT_SUMMARY.md` | 프로젝트 개요, 목적, 주요 기능 |
-| `ARCHITECTURE.md` | 시스템 구조, 레이어, 데이터 흐름 |
-| `CODE_PATTERNS.md` | 디자인 패턴, 코딩 컨벤션 |
-| `CONVENTIONS.md` | 네이밍 규칙, 파일 구조 |
-| `DOMAIN_KNOWLEDGE.md` | 비즈니스 규칙, 도메인 용어 |
-
-**사용 예시:**
-
-```bash
-# 전체 분석 (5-10분)
-/calab-plugin:onboard
-
-# 빠른 분석 (1-2분)
-/calab-plugin:onboard-quick
-
-# 특정 영역 심층 학습
-/calab-plugin:learn src/services
-
-# 컨텍스트 확인
-/calab-plugin:context-show tech
-/calab-plugin:context-show patterns
-```
-
-### 4. 리서치
-
-**체계적 리서치 프로토콜:**
-
-```bash
-# 기본 리서치 (5회 검색)
-/calab-plugin:research OAuth 2.0
-
-# 빠른 리서치 (3회 검색)
-/calab-plugin:research JWT --quick
-
-# 심층 리서치 (10회 검색)
-/calab-plugin:research 클린 아키텍처 --deep
-```
-
-**결과 저장 위치:** `.claude/research/[주제]/RESEARCH.md`
-
-### 5. 문제 해결
-
-```mermaid
-flowchart LR
-    A["문제 정의"] --> B["정보 수집"]
-    B --> C["원인 분석"]
-    C --> D["가설 검증"]
-    D --> E["해결"]
-    E --> F["문서화"]
-```
-
-**사용 예시:**
-
-```bash
-# 5 Whys 방법론
-/calab-plugin:solve "로그인 시 500 에러" --5whys
-
-# RCA (Root Cause Analysis)
-/calab-plugin:solve "성능 저하" --rca
-
-# 과거 해결 사례 검색
-/calab-plugin:solve-history 데이터베이스
-/calab-plugin:solve-history --recent
-```
-
-**지식 베이스:** `.claude/problem-solving/kb/solved/[문제ID]/`
-
-### 6. QA 테스트
-
-```mermaid
-flowchart LR
-    A["QA 계획"] --> B["테스트 케이스"]
-    B --> C["테스트 실행"]
-    C --> D["결과 기록"]
-    D --> E{100% 완료?}
-    E -->|No| C
-    E -->|Yes| F["보고서"]
-```
-
-**사용 예시:**
-
-```bash
-# PRD 기반 테스트 케이스 생성
-/calab-plugin:qa --from-prd
-
-# Worktree 기반 테스트 케이스 생성
-/calab-plugin:qa --from-worktree
-
-# 전체 테스트 실행
-/calab-plugin:qa-run --all
-
-# 실패한 테스트만 재실행
-/calab-plugin:qa-run --failed
-
-# QA 보고서 생성
-/calab-plugin:qa-report --full
-```
-
-**주요 기능:**
-- MCP Puppeteer로 실제 브라우저 테스트
-- 자동 스크린샷 캡처
-- 버그 자동 기록 및 분류
-
-### 7. JIRA 연동
-
-**사전 설정:**
-
-```bash
-export JIRA_EMAIL='your-email@company.com'
-export JIRA_API_TOKEN='your-api-token'
-```
-
-**사용 예시:**
-
-```bash
-# JIRA 연동 초기화
-/calab-plugin:jira-init AUTH
-
-# 양방향 동기화
-/calab-plugin:jira-sync
-
-# 상태 확인
-/calab-plugin:jira-status --detailed
-```
-
-**자동 동기화:**
-- Worktree 태스크 시작 → JIRA "In Progress"
-- Worktree 태스크 완료 → JIRA "Done"
-
----
-
-## 자동화 시스템
-
-### Hooks (자동 실행)
-
-| 트리거 | 동작 | 저장 위치 |
+| 명령어 | 설명 | 사용 예시 |
 |--------|------|----------|
-| **사용자 입력** | 작업 의도 감지 → 현재 목표 업데이트 | `.claude/memory/CURRENT_CONTEXT.md` |
-| **파일 수정** | 품질 검사 + 변경 추적 + 자동 포맷팅 | `.claude-state/recent_changes.json` |
-| **소스 코드 수정** | Worktree 자동 업데이트 + JIRA 동기화 | `.claude-state/worktree.json` |
-| **세션 시작** | 패키지 매니저 감지 + 이전 컨텍스트 안내 | 콘솔 출력 |
-| **세션 종료** | 연속 학습 (패턴 자동 추출) | `.claude/learned-patterns/` |
-| **Context Compact** | 전략적 컴팩트 제안 (80% 사용 시) + 체크포인트 저장 | `.claude-state/checkpoint.json` |
-| **민감 파일 접근** | `.env`, `credentials` 자동 차단 | - |
+| `/security` | OWASP Top 10 보안 취약점 검사 | `/security` |
+| `/quality` | 코드 품질 전체 검사 (500줄, 주석, 타입) | `/quality` |
+| `/restore` | Compact 후 컨텍스트 복원 | `/restore` |
+| `/save` | 작업 체크포인트 저장 | `/save "기능 구현 완료"` |
+| `/rules` | 프로젝트 규칙 표시 | `/rules` |
+| `/worktree` | 작업 트리 및 진행률 확인 | `/worktree status` |
+| `/learn` | 특정 코드 영역 심층 학습 | `/learn src/components/` |
+| `/research` | 웹 검색 + 핵심 요약 | `/research Next.js 15 변경사항` |
 
-### 통합 플로우
+---
 
-```mermaid
-flowchart TB
-    U["사용자 요청"] --> C["Claude"]
+## 패시브 스킬 (7개)
 
-    C --> R["리서치"]
-    R -.->|자동 반영| D1
+코드 작성 시 **자동으로 활성화**되어 품질을 보장합니다.
 
-    C --> D1["기획"]
-    D1 --> D2["설계"]
-    D2 --> D3["태스크 분해"]
-    D3 -->|자동 생성| W["worktree.json"]
-    D3 --> D4["구현"]
-    W -.->|자동 업데이트| D4
-    W -.->|자동 동기화| J["JIRA"]
-    D4 --> Code["코드 생성"]
-    Code --> QA["QA 테스트"]
-    QA -->|버그 발견| SV["문제 해결"]
-    QA -->|100% 통과| Done["완료"]
+| 스킬 | 트리거 | 효과 |
+|------|--------|------|
+| `best-practices` | React, TypeScript 등 기술 감지 | 해당 기술 베스트 프랙티스 자동 적용 |
+| `code-quality` | 코드 생성/수정 시 | 500줄 제한, 함수 주석, 타입 강제 |
+| `tdd-workflow` | `--tdd` 옵션 또는 테스트 키워드 | Red-Green-Refactor 강제 |
+| `work-tracker` | 소스 파일 수정 시 | Worktree 자동 업데이트 |
+| `project-rules` | 모든 코드 작성 시 | PROJECT_RULES.md 규칙 적용 |
+| `e2e-runner` | E2E/Playwright 키워드 | 자동 테스트 실행 |
+| `refactor-cleaner` | 리팩토링 요청 시 | 데드 코드 탐지 및 정리 |
 
-    subgraph Auto["자동 적용"]
-        S1["스킬: clean-architecture, best-practices, code-quality"]
-        H1["훅: 품질 검사, 변경 추적, 보안 차단"]
-    end
+---
 
-    Auto -.-> Code
-```
+## 에이전트 (15개)
 
-**핵심 자동 연동:**
+특화된 작업을 수행하는 서브에이전트입니다.
 
-| 트리거 | 자동 동작 |
-|--------|----------|
-| 리서치 완료 | PRD 작성 시 자동 반영 |
-| 태스크 분해 | `worktree.json` 자동 생성 |
-| Worktree 변경 | JIRA 이슈 상태 자동 동기화 |
-| 코드 작성 | 품질 검사 + 베스트 프랙티스 자동 적용 |
-| 구현 완료 | QA 테스트 연계 |
-| QA 버그 발견 | 문제 해결 프로세스 자동 연계 |
+### 워크플로우 에이전트
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `dev-workflow` | Plan → Design → Tasks → Build | `/dev` 실행 |
+| `docs-generator` | 문서 자동 생성/업데이트 | `/docs` 실행 |
+| `jira-connector` | JIRA 이슈 동기화 | `/jira` 실행 |
+| `project-onboarder` | 프로젝트 분석 | `/onboard` 실행 |
+| `deep-researcher` | 5-10회 검색 심층 리서치 | `/research` 실행 |
+
+### 웹 리서치 에이전트
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `web-researcher` | Tavily MCP 기반 실시간 웹 검색/분석 | 검색, 조사, 최신 정보 요청 시 |
+
+### 품질 에이전트
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `code-reviewer` | 코드 품질/스타일 검토 | 리뷰 요청 시 |
+| `security-reviewer` | OWASP Top 10 검사 | 보안 검사 시 |
+| `project-guardian` | 프로젝트 규칙 준수 검증 | 규칙 확인 시 |
+| `build-error-resolver` | 빌드/타입 오류 해결 | 빌드 실패 시 |
+
+### 검증/보강 에이전트
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `validator` | AC/완전성/엣지케이스 검증 | 구현 완료 후 **필수** |
+| `reinforcer` | 검증 실패 항목 자동 수정 | validator 실패 시 |
+
+### 자동화 에이전트
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `refactor-cleaner` | 데드 코드/미사용 import 정리 | 리팩토링 시 |
+| `e2e-runner` | Playwright/Puppeteer 테스트 | E2E 테스트 시 |
+| `doc-updater` | 코드 변경 감지 문서 업데이트 | 문서 동기화 시 |
 
 ---
 
 ## 프로젝트 구조
 
-### 글로벌 설치 (`~/.claude/`)
-
 ```
-~/.claude/
-├── CLAUDE.md                    # 마스터 지침
-├── settings.json                # 훅 설정
-├── hooks/                       # Python 훅
-│   ├── suggest_compact.py       # 전략적 컴팩트 제안
-│   ├── continuous_learning.py   # 연속 학습
-│   ├── detect_package_manager.py# 패키지 매니저 감지
-│   ├── auto_format.py           # 자동 포맷팅
-│   ├── code_quality_validator.py# 품질 검사
-│   └── ...
-├── agents/                      # 서브에이전트 (7개)
-│   ├── code-reviewer.md
-│   ├── project-guardian.md
-│   ├── security-reviewer.md
-│   ├── build-error-resolver.md
-│   ├── refactor-cleaner.md
-│   ├── e2e-runner.md
-│   └── doc-updater.md
-├── best-practices/              # 베스트 프랙티스 (17개)
-├── templates/                   # 문서 템플릿
-├── memory/                      # 메모리 템플릿
-├── rules/                       # 규칙 (testing.md 등)
-├── scripts/                     # 유틸리티 스크립트
-└── calab-marketplace/           # 마켓플레이스
-    └── plugins/calab-plugin/
-        ├── .claude-plugin/      # 플러그인 메타데이터
-        ├── commands/            # 슬래시 명령어 (42개)
-        └── skills/              # 자동 활성화 스킬 (16개)
-```
-
-### 프로젝트별 자동 생성
-
-```
-프로젝트/
-├── .claude-state/               # 런타임 상태 (.gitignore 권장)
-│   ├── worktree.json            # 작업 트리 상태
-│   ├── checkpoint.json          # 체크포인트
-│   ├── jira_mapping.json        # JIRA ID 매핑
-│   ├── recent_changes.json      # 최근 변경 이력
-│   ├── quality_violations.json  # 코드 품질 위반
-│   └── qa/                      # QA 런타임
-│       ├── test-results.json
-│       ├── bugs.json
-│       └── screenshots/
+calab-claude-plugin/
+├── .claude-plugin/
+│   └── marketplace.json   # 마켓플레이스 정의 (필수)
 │
-└── .claude/
-    ├── docs/                    # 기능별 문서 (/dev-plan)
-    │   ├── active/              # 진행 중인 기능
-    │   │   └── {feature-name}/
-    │   │       ├── 01-brainstorm.md
-    │   │       ├── 02-prd.md
-    │   │       ├── 03-architecture.md
-    │   │       ├── 04-erd.md
-    │   │       ├── 05-tasks.md
-    │   │       └── qa/
-    │   └── complete/            # 완료된 기능
-    │
-    ├── project-context/         # 온보딩 문서 (/onboard)
-    │   ├── PROJECT_SUMMARY.md
-    │   ├── ARCHITECTURE.md
-    │   ├── CODE_PATTERNS.md
-    │   ├── CONVENTIONS.md
-    │   └── DOMAIN_KNOWLEDGE.md
-    │
-    ├── research/                # 리서치 결과 (/research)
-    │   └── {topic}/
-    │       └── RESEARCH.md
-    │
-    └── problem-solving/         # 문제 해결 (/solve)
-        ├── active/
-        └── resolved/
+├── CLAUDE.md              # Claude 지침 (핵심)
+├── plugin.json            # 플러그인 메타데이터
+│
+├── skills/                # 23개 스킬
+│   ├── dev/              # 개발 워크플로우
+│   ├── clean/            # 클린 아키텍처
+│   ├── docs/             # 문서화
+│   ├── qa/               # QA 테스트
+│   ├── solve/            # 문제 해결
+│   ├── security/         # 보안 검사
+│   └── ...
+│
+├── agents/                # 15개 에이전트
+│   ├── web-researcher.md # 웹 리서치 (Tavily)
+│   ├── validator.md      # 완전성 검증
+│   ├── reinforcer.md     # 보강/수정
+│   ├── code-reviewer.md  # 코드 리뷰
+│   └── ...
+│
+└── hooks/                 # 20개 훅 스크립트
+    ├── pre_tool_use/     # 도구 사용 전
+    ├── post_tool_use/    # 도구 사용 후
+    └── session/          # 세션 이벤트
 ```
 
 ---
 
-## 문제 해결
+## 워크플로우 예시
 
-### 플러그인이 작동하지 않음
+### 새 기능 개발
 
 ```bash
-# 완전 삭제 후 재설치
-./uninstall.sh
-./install.sh
+# 1. 기획
+/dev --plan 사용자 인증 시스템
 
-# Claude Code에서 재등록
-/plugin marketplace add ~/.claude/calab-marketplace && /plugin install calab-plugin@calab-marketplace --scope user
+# 2. 설계
+/dev --design
+
+# 3. 태스크 분해
+/dev --tasks
+
+# 4. 구현 (태스크별)
+/dev --build TASK-001
+/dev --build TASK-002
+
+# 5. QA
+/qa --run
+
+# 6. 보안 검사
+/security
 ```
 
-### Compact 후 컨텍스트 손실
+### 버그 수정
 
 ```bash
-/calab-plugin:restore-context
+# 에러 메시지와 함께 실행
+/solve TypeError: Cannot read property 'id' of undefined
+
+# 또는 특정 방법론 선택
+/solve --5whys      # 반복 문제
+/solve --rca        # 시스템 문제
+/solve --hypothesis # 불명확한 원인
 ```
 
-### Claude Code 버전 확인
+### Compact 후 복구
 
 ```bash
-claude --version   # 2.x 이상 필요
-claude update      # 업데이트
-```
-
-### 완전 제거
-
-```bash
-./uninstall.sh
+# 이전 작업 컨텍스트 복원
+/restore
 ```
 
 ---
 
-## 전체 명령어 레퍼런스 (42개)
+## 설치 옵션
 
-### 개발 워크플로우 (5개)
+### 옵션 1: 마켓플레이스 설치 (권장)
 
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:dev-plan` | 새 기능 기획 시작 | `/calab-plugin:dev-plan 사용자 인증 시스템` |
-| `/calab-plugin:dev-design` | 아키텍처/ERD 설계 | `/calab-plugin:dev-design --arch` |
-| `/calab-plugin:dev-tasks` | 태스크 분해 | `/calab-plugin:dev-tasks` |
-| `/calab-plugin:dev-build` | 태스크 구현 | `/calab-plugin:dev-build TASK-001 --tdd` |
-| `/calab-plugin:dev-status` | 진행 상황 확인 | `/calab-plugin:dev-status` |
+```bash
+# 1. 마켓플레이스 추가 (GitHub에서 자동 다운로드)
+/plugin marketplace add Wondermove-Inc/calab-claude-plugin
 
-### 클린 아키텍처 (4개)
+# 2. 플러그인 설치
+/plugin install calab-plugin@calab-marketplace
 
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:clean-init` | 4-Layer 구조 초기화 | `/calab-plugin:clean-init` |
-| `/calab-plugin:clean-entity` | 도메인 엔티티 생성 | `/calab-plugin:clean-entity User --with-repository` |
-| `/calab-plugin:clean-usecase` | 유스케이스 생성 | `/calab-plugin:clean-usecase CreateUser --entity User` |
-| `/calab-plugin:clean-validate` | 의존성 규칙 검증 | `/calab-plugin:clean-validate --fix` |
+# 3. 설치 확인
+/plugins
+```
 
-### 온보딩 & 컨텍스트 (7개)
+### 옵션 2: 인터랙티브 설치
 
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:onboard` | 새 프로젝트 분석 | `/calab-plugin:onboard` |
-| `/calab-plugin:onboard-quick` | 빠른 프로젝트 분석 | `/calab-plugin:onboard-quick` |
-| `/calab-plugin:learn` | 특정 영역 학습 | `/calab-plugin:learn src/services` |
-| `/calab-plugin:context-show` | 컨텍스트 확인 | `/calab-plugin:context-show tech` |
-| `/calab-plugin:context-refresh` | 컨텍스트 갱신 | `/calab-plugin:context-refresh` |
-| `/calab-plugin:restore-context` | Compact 후 복원 | `/calab-plugin:restore-context` |
-| `/calab-plugin:save-progress` | 체크포인트 저장 | `/calab-plugin:save-progress` |
+```bash
+# 플러그인 브라우저 열기
+/plugin
 
-### 리서치 (1개)
+# → "Add Marketplace" 선택
+# → "Wondermove-Inc/calab-claude-plugin" 입력
+# → "Discover" 탭에서 calab-plugin 선택하여 설치
+```
 
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:research` | 기술/주제 조사 | `/calab-plugin:research OAuth 2.0 --deep` |
+### 옵션 3: 로컬 개발용
 
-### 문제 해결 (4개)
+```bash
+# 리포지토리 클론
+git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
 
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:solve` | 버그/에러 해결 | `/calab-plugin:solve "로그인 500 에러" --5whys` |
-| `/calab-plugin:solve-log` | 해결 과정 확인 | `/calab-plugin:solve-log` |
-| `/calab-plugin:solve-history` | 과거 사례 검색 | `/calab-plugin:solve-history 데이터베이스` |
-| `/calab-plugin:solve-report` | 해결 보고서 생성 | `/calab-plugin:solve-report PROB-001 --full` |
-
-### QA & 테스트 (5개)
-
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:qa` | QA 테스트 시작 | `/calab-plugin:qa --from-worktree` |
-| `/calab-plugin:qa-plan` | 테스트 계획 작성 | `/calab-plugin:qa-plan --edit` |
-| `/calab-plugin:qa-run` | 테스트 실행 | `/calab-plugin:qa-run --all` |
-| `/calab-plugin:qa-report` | QA 보고서 생성 | `/calab-plugin:qa-report --full` |
-| `/calab-plugin:qa-status` | 테스트 진행률 | `/calab-plugin:qa-status` |
-
-### 보안 & 품질 (3개)
-
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:security-review` | 보안 취약점 검사 | `/calab-plugin:security-review` |
-| `/calab-plugin:check-quality` | 코드 품질 검사 | `/calab-plugin:check-quality` |
-| `/calab-plugin:show-rules` | 프로젝트 규칙 확인 | `/calab-plugin:show-rules` |
-
-### Worktree (1개)
-
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:worktree` | 작업 트리 관리 | `/calab-plugin:worktree start TASK-001` |
-
-### JIRA 연동 (6개)
-
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:jira-init` | JIRA 연동 초기화 | `/calab-plugin:jira-init AUTH` |
-| `/calab-plugin:jira-sync` | 양방향 동기화 | `/calab-plugin:jira-sync` |
-| `/calab-plugin:jira-push` | Worktree → JIRA | `/calab-plugin:jira-push` |
-| `/calab-plugin:jira-pull` | JIRA → Worktree | `/calab-plugin:jira-pull` |
-| `/calab-plugin:jira-status` | 연동 상태 확인 | `/calab-plugin:jira-status --detailed` |
-| `/calab-plugin:jira-link` | 이슈 링크 | `/calab-plugin:jira-link TASK-001 AUTH-123` |
-
-### 문서 생성 (6개)
-
-| 명령어 | 언제 사용? | 사용 예시 |
-|--------|-----------|----------|
-| `/calab-plugin:docs` | 문서 메뉴 | `/calab-plugin:docs` |
-| `/calab-plugin:docs-generate` | 전체 문서 생성 | `/calab-plugin:docs-generate` |
-| `/calab-plugin:docs-add` | 문서 추가 | `/calab-plugin:docs-add api` |
-| `/calab-plugin:docs-update` | 문서 업데이트 | `/calab-plugin:docs-update` |
-| `/calab-plugin:docs-status` | 문서 현황 | `/calab-plugin:docs-status` |
-| `/calab-plugin:docs-validate` | 문서 검증 | `/calab-plugin:docs-validate` |
+# 로컬 마켓플레이스로 추가
+/plugin marketplace add /path/to/calab-claude-plugin
+```
 
 ---
 
-## 버전 히스토리
+## 설정
 
-### v2.3.1 (2026-01-27)
-- **설치 시스템 개선**: 원클릭 install.sh, uninstall.sh, update.sh
-- **경로 오류 수정**: plugin.json commands/skills 경로
-- **자동 검증**: 설치 완료 후 필수 파일 자동 검증
+### settings.json
 
-### v2.3.0 (2026-01-25)
-- **신규 에이전트 3개**: refactor-cleaner, e2e-runner, doc-updater
-- 총 7개 에이전트 구성 완료
+```json
+{
+  "permissions": {
+    "allow": ["Read", "Glob", "Grep", "Write", "Edit"],
+    "deny": []
+  },
+  "hooks": {
+    "enabled": true
+  }
+}
+```
 
-### v2.2.0 (2026-01-24)
-- **보안 기능**: security-reviewer 에이전트, OWASP Top 10 검사
-- **TDD 워크플로우**: Red-Green-Refactor, 80% 커버리지 요구
-- **전략적 Compact**: 80% 컨텍스트 사용 시 제안
-- **연속 학습**: 세션 종료 시 패턴 자동 추출
-- **패키지 매니저 감지**: npm/pnpm/yarn/bun 자동 감지
-- **자동 포맷팅**: Prettier/Black/gofmt + console.log 경고
-- build-error-resolver 에이전트 추가
+### 필수 디렉토리
 
-### v2.1.0 (2026-01-10)
-- 글로벌/프로젝트 경로 명확화
-- 설치 안정성 개선 (심볼릭 링크 → 전체 복사)
+플러그인이 사용하는 디렉토리:
 
-### v2.0.0 (2026-01-02)
-- 공식 플러그인 시스템으로 전환
-- 명령어 네임스페이스 적용
+```
+.claude/
+├── memory/                # 컨텍스트 저장
+│   ├── CURRENT_CONTEXT.md
+│   └── PROJECT_RULES.md
+├── project-context/       # 프로젝트 분석 결과
+│   ├── PROJECT_SUMMARY.md
+│   ├── CODE_PATTERNS.md
+│   └── ARCHITECTURE.md
+└── docs/                  # 생성된 문서
+    ├── active/           # 진행 중 기능
+    └── complete/         # 완료된 기능
+```
 
 ---
 
-## 상세 문서
+## 요구사항
 
-- [INSTALL.md](INSTALL.md) - 설치/제거 상세 가이드
-- [CLAUDE.md](CLAUDE.md) - 핵심 사용법 및 규칙
-- [docs/COMMANDS_REFERENCE.md](docs/COMMANDS_REFERENCE.md) - 전체 명령어
-- [docs/FEATURES_GUIDE.md](docs/FEATURES_GUIDE.md) - 기능 상세
+- **Claude Code CLI** v1.0.0 이상
+- **Node.js** 18+ (일부 훅에서 사용)
+- **Python** 3.8+ (일부 훅에서 사용)
+
+---
+
+## 기여하기
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 라이선스
 
-MIT License - Wonder Move Lab
+MIT License - [Wondermove CALab](https://wondermove.net)
+
+---
+
+## 문의
+
+- **Issues**: [GitHub Issues](https://github.com/Wondermove-Inc/calab-claude-plugin/issues)
+- **Email**: captain@wondermove.net

@@ -2,9 +2,9 @@
 name: e2e-runner
 description: Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 디버깅합니다. E2E, 통합 테스트, 브라우저 테스트 키워드 시 자동 활성화.
 tools: Read, Write, Edit, Grep, Glob, Bash, mcp__puppeteer__puppeteer_navigate, mcp__puppeteer__puppeteer_screenshot, mcp__puppeteer__puppeteer_click, mcp__puppeteer__puppeteer_fill, mcp__puppeteer__puppeteer_evaluate
-model: haiku
-permissionMode: default
-skills: qa-testing
+model: sonnet
+permissionMode: acceptEdits
+skills: qa, code-quality, best-practices, tdd-workflow
 ---
 
 # E2E Runner Agent
@@ -261,6 +261,6 @@ await page.getByRole('button', { name: 'Submit' }).click();
 
 ## 참조 파일
 
-- `skills/qa-testing/SKILL.md` - QA 테스트 스킬
+- `skills/qa/SKILL.md` - QA 테스트 스킬
 - `commands/qa-run.md` - QA 실행 명령어
 - `.claude/best-practices/testing.md` - 테스트 베스트 프랙티스

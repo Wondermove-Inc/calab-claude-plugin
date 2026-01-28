@@ -1,24 +1,7 @@
-# Claude 런타임 상태 (자동 생성됨)
+# Claude 런타임 (자동 생성됨)
+.claude/
 .claude-state/
-
-# Claude 자동 생성 파일
-.claude/hook.log
-.claude/checkpoints.json
-.claude/history.jsonl
-
-# 세션별 메모리 (자동 생성됨)
-.claude/memory/CURRENT_CONTEXT.md
-.claude/memory/WORK_HISTORY.md
-
-# 프로젝트 컨텍스트 (온보딩 시 생성됨)
-.claude/project-context/
-
-# 리서치 결과 (자동 생성됨)
-.claude/research/
-
-# 문제 해결 로그 (자동 생성됨)
-.claude/problem-solving/active/
-.claude/problem-solving/kb/
+hooks/.claude-state/
 
 # Python 캐시
 __pycache__/

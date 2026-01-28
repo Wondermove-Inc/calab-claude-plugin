@@ -2,9 +2,10 @@
 name: code-reviewer
 description: 코드 품질을 검토하고 개선점을 제안합니다. 코드 리뷰, 품질 검사, PR 리뷰, 코드 검토, 리뷰해줘, 검토해줘 요청 시 활성화됩니다.
 tools: Read, Grep, Glob
-model: haiku
-permissionMode: default
-skills: code-quality, clean-architecture, project-rules
+disallowedTools: Write, Edit, Bash
+model: sonnet
+permissionMode: plan
+skills: code-quality, clean, project-rules, best-practices
 ---
 
 # Code Reviewer Agent

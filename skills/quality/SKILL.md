@@ -1,0 +1,110 @@
+---
+name: quality
+description: |
+  현재 프로젝트의 코드 품질을 전체 검사합니다. 500줄 초과 파일, 주석 누락 함수를 찾아 보고합니다.
+  USE WHEN: 품질 검사, 코드 스멜, 린트 요청 시
+argument-hint: "[경로]"
+allowed-tools: [Read, Grep, Glob, Bash]
+agent: code-reviewer
+agents:
+  primary: code-reviewer
+  orchestration:
+    analyze: [code-reviewer, validator]
+    fix: [reinforcer]
+---
+
+# /quality - 코드 품질 검사
+
+> **코드 품질 전체 검사 - 500줄 제한, 주석 필수**
+
+## 사용법
+
+```bash
+/quality                # 전체 프로젝트 검사
+/quality src/           # 특정 경로만 검사
+```
+
+## 검사 절차
+
+### 1. 소스 파일 수집
+
+프로젝트의 모든 소스 코드 파일을 찾습니다:
+- `**/*.ts`, `**/*.tsx`
+- `**/*.js`, `**/*.jsx`
+- `**/*.py`
+- `**/*.java`, `**/*.go`
+
+**제외 대상:**
+- `node_modules/`
+- `dist/`, `build/`
+- `.git/`
+- `__pycache__/`
+- `venv/`, `.venv/`
+
+### 2. 줄 수 검사
+
+각 파일의 줄 수를 확인하고:
+- 500줄 초과: 오류 (분리 필수)
+- 250줄 이상: 경고 (분리 권장)
+
+### 3. 주석 검사
+
+각 파일에서 주석 없는 함수를 찾습니다.
+
+### 4. 결과 보고
+
+다음 형식으로 검사 결과를 보고하세요:
+
+```
+============================================
+ 코드 품질 검사 결과
+============================================
+
+ 전체 통계:
+• 검사된 파일: N개
+• 통과: N개
+• 경고: N개
+• 오류: N개
+
+ 500줄 초과 파일 (분리 필요):
+1. src/services/user-service.ts - 450줄 (150줄 초과)
+2. src/utils/helpers.ts - 380줄 (80줄 초과)
+
+ 250줄 이상 파일 (주의):
+1. src/components/Dashboard.tsx - 280줄 (여유 20줄)
+
+ 주석 누락 함수:
+• src/services/api.ts:
+  - fetchData() (line 45)
+  - processResponse() (line 120)
+• src/utils/format.ts:
+  - formatDate() (line 12)
+
+============================================
+총 위반: N개
+즉시 수정이 필요한 항목: N개
+============================================
+```
+
+## 자동 수정 제안
+
+심각한 위반 발견 시:
+
+```
+============================================
+ 수정 제안
+============================================
+
+1. 500줄 초과 파일 분리:
+   • user-service.ts → user-auth.ts, user-profile.ts, user-types.ts
+
+2. 주석 추가 필요:
+   • 총 N개 함수에 JSDoc/Docstring 필요
+
+============================================
+자동 수정을 진행할까요? [Y/n]
+```
+
+## 레거시 명령어
+
+`/check-quality` → `/quality` (자동 매핑됨)
