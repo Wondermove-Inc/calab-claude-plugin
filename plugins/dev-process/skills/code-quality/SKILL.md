@@ -1,7 +1,7 @@
 ---
-name: workflow:code-quality
-description: 코드 품질 규칙을 강제합니다. 코드 작성, 생성, 수정, 함수 추가, 클래스 작성, 새 파일 생성, 구현, 만들기 요청 시 자동 활성화. 300줄 제한과 주석 필수 규칙을 적용합니다.
-allowed-tools: Read, Grep, Glob, Edit, Write
+name: dev-process:code-quality
+description: 프로젝트 코드 규칙을 강제합니다. 코드 작성, 생성, 수정, 함수 추가, 클래스 작성, 새 파일 생성, 구현, 만들기 요청 시 자동 활성화. 300줄 제한과 주석 필수 규칙을 적용합니다.
+user-invocable: false
 ---
 
 # Code Quality Skill

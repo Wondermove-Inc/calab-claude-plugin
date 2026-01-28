@@ -222,6 +222,16 @@ flowchart LR
 
 ---
 
+## 코드 리뷰 에이전트 역할 구분
+
+| 에이전트 | 역할 | 사용 시점 |
+|----------|------|-----------|
+| `core:code-review` | 범용 코드 리뷰 | 일반적인 코드 리뷰 |
+| `dev-process:code-reviewer` | 프로젝트 규칙 검증 | 300줄 제한, 주석 필수 검사 |
+| `dev-agents:reviewer` | 워크플로우 리뷰 | 설계+코드 종합 리뷰 |
+
+---
+
 ## 포함 리소스
 
 - **best-practices/**: Go, Java, Node.js, Python, React, Rust, Tailwind, TypeScript, Next.js
