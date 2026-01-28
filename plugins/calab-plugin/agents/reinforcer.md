@@ -220,18 +220,18 @@ validator 실패
 
 ```typescript
 // 1. 구현 후 검증
-const validationResult = Task(subagent_type=validator, "TASK-001 검증");
+const validationResult = Task(subagent_type="calab-plugin:validator", "TASK-001 검증");
 
 // 2. 실패 시 보강
 if (!validationResult.passed) {
-  Task(subagent_type=reinforcer, `
+  Task(subagent_type="calab-plugin:reinforcer", `
     validator 결과 기반 수정:
     ${validationResult.issues}
   `);
 }
 
 // 3. 재검증
-Task(subagent_type=validator, "수정 사항 재검증");
+Task(subagent_type="calab-plugin:validator", "수정 사항 재검증");
 ```
 
 ### 무한 루프 방지

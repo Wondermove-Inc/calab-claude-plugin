@@ -33,7 +33,7 @@
 ### 핵심 구성
 
 ```
-23개 스킬 + 12개 에이전트 + 20개 훅
+23개 스킬 + 15개 에이전트 + 21개 훅
 ```
 
 ### 설치 확인
@@ -68,14 +68,16 @@
 
 > **"Give each subagent one job, and let an orchestrator coordinate"** - Anthropic Engineering 2025
 
-| 작업 | 에이전트 | 이유 |
-|------|----------|------|
+| 작업 | 에이전트 (호출 시 이름) | 이유 |
+|------|------------------------|------|
 | 코드베이스 탐색 | `Explore` | 구조, 패턴, 의존성 파악 |
 | 복잡한 검색 | `general-purpose` | 다중 파일 키워드 검색 |
-| 코드 리뷰 | `code-reviewer` | 품질 검사, 버그 탐지 |
 | 구현 계획 | `Plan` | 아키텍처 설계 |
-| 보안 검사 | `security-reviewer` | OWASP 취약점 분석 |
-| 규칙 검증 | `project-guardian` | 프로젝트 규칙 준수 |
+| 코드 리뷰 | `calab-plugin:code-reviewer` | 품질 검사, 버그 탐지 |
+| 보안 검사 | `calab-plugin:security-reviewer` | OWASP 취약점 분석 |
+| 규칙 검증 | `calab-plugin:project-guardian` | 프로젝트 규칙 준수 |
+| 완전성 검증 | `calab-plugin:validator` | AC 충족, 누락 탐지 |
+| 웹 리서치 | `calab-plugin:web-researcher` | 최신 정보 검색 |
 
 ### 3. 🔴 Task 완료 검증 필수
 
@@ -138,24 +140,39 @@
 └─────────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
-### 사용 가능한 에이전트 (14개)
+### 사용 가능한 에이전트 (15개)
+
+> **🚨 중요: 에이전트 호출 시 네임스페이스 규칙**
+>
+> | 에이전트 유형 | 호출 방식 | 예시 |
+> |--------------|----------|------|
+> | **기본 에이전트** | prefix 없음 | `subagent_type="Explore"` |
+> | **플러그인 에이전트** | `calab-plugin:` 필수 | `subagent_type="calab-plugin:validator"` |
+
+#### 기본 에이전트 (3개) - prefix 없음
 
 | 에이전트 | 역할 | 허용 도구 | 자동 호출 조건 |
 |----------|------|----------|---------------|
 | **Explore** | 코드베이스 빠른 탐색 | Read, Glob, Grep | 구조/패턴 분석 요청 |
 | **Plan** | 구현 계획 수립 | Read, Glob, Grep | 아키텍처 설계 |
 | **general-purpose** | 범용 작업 수행 | All | 복잡한 멀티스텝 |
-| **code-reviewer** | 코드 품질 검토 | Read, Grep, Glob | 리뷰 요청 |
-| **security-reviewer** | 보안 취약점 분석 | Read, Grep, Glob | 보안 검사 |
-| **project-guardian** | 규칙 준수 검증 | Read, Grep, Glob | 규칙 확인 |
-| **build-error-resolver** | 빌드 오류 해결 | Read, Edit, Bash | 빌드 실패 |
-| **refactor-cleaner** | 데드 코드 정리 | Read, Write, Edit, Bash | 리팩토링 |
-| **e2e-runner** | E2E 테스트 실행 | All + Puppeteer | 통합 테스트 |
-| **doc-updater** | 문서 자동 업데이트 | Read, Write, Edit | 문서 동기화 |
-| **deep-researcher** | 심층 리서치 | Read, WebSearch, Tavily | `/research` |
-| **project-onboarder** | 프로젝트 온보딩 | Read, Glob, Grep | `/onboard` |
-| **validator** | 완전성/AC 검증 | Read, Grep, Glob | 구현 완료 후 필수 |
-| **reinforcer** | 검증 실패 항목 수정 | Read, Write, Edit | validator 실패 시 |
+
+#### 플러그인 에이전트 (12개) - `calab-plugin:` prefix 필수
+
+| 에이전트 | 호출 시 이름 | 역할 | 허용 도구 |
+|----------|-------------|------|----------|
+| **code-reviewer** | `calab-plugin:code-reviewer` | 코드 품질 검토 | Read, Grep, Glob |
+| **security-reviewer** | `calab-plugin:security-reviewer` | 보안 취약점 분석 | Read, Grep, Glob, Bash |
+| **project-guardian** | `calab-plugin:project-guardian` | 규칙 준수 검증 | Read, Grep, Glob |
+| **build-error-resolver** | `calab-plugin:build-error-resolver` | 빌드 오류 해결 | Read, Edit, Bash |
+| **refactor-cleaner** | `calab-plugin:refactor-cleaner` | 데드 코드 정리 | Read, Write, Edit, Bash |
+| **e2e-runner** | `calab-plugin:e2e-runner` | E2E 테스트 실행 | All + Puppeteer |
+| **doc-updater** | `calab-plugin:doc-updater` | 문서 자동 업데이트 | Read, Write, Edit |
+| **deep-researcher** | `calab-plugin:deep-researcher` | 심층 리서치 분석 | Read, WebSearch, Tavily |
+| **web-researcher** | `calab-plugin:web-researcher` | 웹 검색 및 수집 | Tavily MCP 도구 |
+| **project-onboarder** | `calab-plugin:project-onboarder` | 프로젝트 온보딩 | Read, Glob, Grep, Write |
+| **validator** | `calab-plugin:validator` | 완전성/AC 검증 | Read, Grep, Glob |
+| **reinforcer** | `calab-plugin:reinforcer` | 검증 실패 항목 수정 | Read, Write, Edit |
 
 ### 🚨 에이전트 프롬프트 작성 필수 규칙 (2025)
 
@@ -227,7 +244,7 @@
 
 ```
 Task(
-  subagent_type=security-reviewer,
+  subagent_type="calab-plugin:security-reviewer",
   description="인증 API 보안 취약점 분석",
   prompt="""
   **역할**: OWASP Top 10 전문 보안 분석가
@@ -320,7 +337,7 @@ Task(subagent_type=Explore,
      description="백엔드 분석",
      prompt="API 엔드포인트와 미들웨어 구조 분석...")
 
-Task(subagent_type=security-reviewer,
+Task(subagent_type="calab-plugin:security-reviewer",
      description="인증 보안 검토",
      prompt="인증/인가 로직 OWASP 기준 검토...")
 ```
@@ -429,7 +446,7 @@ Task(
 
 // 2단계: 검증 에이전트 (리뷰) ← 🚨 필수
 Task(
-  subagent_type=code-reviewer,
+  subagent_type="calab-plugin:code-reviewer",
   description="구현된 인증 API 검증",
   prompt="""
   **역할**: 코드 품질 검증 전문가
@@ -465,15 +482,15 @@ Task(
 
 > **모든 중요 작업은 아래 체인을 따라야 함**
 
-| 단계 | 에이전트 | 역할 | 필수 여부 |
-|------|----------|------|----------|
+| 단계 | 에이전트 (호출 시 이름) | 역할 | 필수 여부 |
+|------|------------------------|------|----------|
 | 1 | 구현 에이전트 | 코드/문서 작성 | ✅ |
-| 2 | `validator` | AC/완전성/엣지케이스 검증 | ✅ 필수 |
-| 3 | `code-reviewer` | 품질/스타일 검증 | ✅ |
-| 4 | `security-reviewer` | 보안 취약점 검사 | ⚠️ (API/인증) |
-| 5 | `project-guardian` | 프로젝트 규칙 준수 | ⚠️ |
-| 6 | `reinforcer` | 누락/문제 수정 | ✅ (실패 시) |
-| 7 | `validator` (재검증) | 수정 완료 확인 | ✅ |
+| 2 | `calab-plugin:validator` | AC/완전성/엣지케이스 검증 | ✅ 필수 |
+| 3 | `calab-plugin:code-reviewer` | 품질/스타일 검증 | ✅ |
+| 4 | `calab-plugin:security-reviewer` | 보안 취약점 검사 | ⚠️ (API/인증) |
+| 5 | `calab-plugin:project-guardian` | 프로젝트 규칙 준수 | ⚠️ |
+| 6 | `calab-plugin:reinforcer` | 누락/문제 수정 | ✅ (실패 시) |
+| 7 | `calab-plugin:validator` (재검증) | 수정 완료 확인 | ✅ |
 
 ### 자동 검증 프롬프트 템플릿
 
@@ -481,7 +498,7 @@ Task(
 
 ```
 Task(
-  subagent_type=validator,
+  subagent_type="calab-plugin:validator",
   description="[TASK-ID] 구현 완전성 검증",
   prompt="""
   **역할 (Role)**: 완전성 검증 전문가 - AC/기능/품질 검증 담당
@@ -557,7 +574,7 @@ Task(
 
 ```
 Task(
-  subagent_type=reinforcer,
+  subagent_type="calab-plugin:reinforcer",
   description="validator 결과 기반 [TASK-ID] 보강",
   prompt="""
   **역할 (Role)**: 품질 보강 전문가 - 누락/미흡 항목 수정 담당
@@ -635,15 +652,15 @@ Task(
 
 ```
 // 1. 구현 완료 후 필수 검증
-Task(subagent_type=validator, description="TASK-001 검증", ...)
+Task(subagent_type="calab-plugin:validator", description="TASK-001 검증", ...)
 
 // 2. 검증 실패 시 보강
 if (validator.result === "reinforcer 필요") {
-  Task(subagent_type=reinforcer, description="TASK-001 보강", ...)
+  Task(subagent_type="calab-plugin:reinforcer", description="TASK-001 보강", ...)
 }
 
 // 3. 보강 후 재검증 (필수)
-Task(subagent_type=validator, description="TASK-001 재검증", ...)
+Task(subagent_type="calab-plugin:validator", description="TASK-001 재검증", ...)
 
 // 4. 최대 2회 반복 후 사용자 확인
 ```
@@ -674,14 +691,15 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 
 > **🔴 아래 상황에서는 검증 에이전트 생략 절대 금지**
 
-| 상황 | 필수 검증 |
-|------|----------|
-| 새 파일 생성 | code-reviewer |
-| API 엔드포인트 추가 | code-reviewer + security-reviewer |
-| 인증/인가 로직 | security-reviewer 필수 |
-| 데이터베이스 스키마 변경 | code-reviewer + 마이그레이션 검증 |
-| 10줄 이상 코드 변경 | code-reviewer |
-| 사용자 입력 처리 | security-reviewer |
+| 상황 | 필수 검증 에이전트 |
+|------|-------------------|
+| 새 파일 생성 | `calab-plugin:code-reviewer` |
+| API 엔드포인트 추가 | `calab-plugin:code-reviewer` + `calab-plugin:security-reviewer` |
+| 인증/인가 로직 | `calab-plugin:security-reviewer` 필수 |
+| 데이터베이스 스키마 변경 | `calab-plugin:code-reviewer` + 마이그레이션 검증 |
+| 10줄 이상 코드 변경 | `calab-plugin:code-reviewer` |
+| 사용자 입력 처리 | `calab-plugin:security-reviewer` |
+| Task 완료 시 | `calab-plugin:validator` 필수 |
 | 외부 API 호출 | 에러 처리 검증 |
 
 ### 검증 결과 보고 형식
@@ -878,8 +896,9 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 | **파일 수정** | 변경 이력 기록 + worktree 업데이트 |
 | **세션 시작** | 이전 컨텍스트 안내 |
 | **Compact** | 체크포인트 자동 저장 |
-| **빌드 오류** | `build-error-resolver` 자동 호출 |
-| **보안 이슈** | `security-reviewer` 자동 호출 |
+| **빌드 오류** | `calab-plugin:build-error-resolver` 자동 호출 |
+| **보안 이슈** | `calab-plugin:security-reviewer` 자동 호출 |
+| **구현 완료** | `calab-plugin:validator` 검증 필수 |
 
 ---
 
@@ -929,22 +948,47 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 ### 에이전트 호출 Quick Reference
 
 ```
+// ========================================
+// 기본 에이전트 (prefix 없음)
+// ========================================
+
 // 코드베이스 탐색
-Task(subagent_type=Explore, "src/ 구조 분석, medium 깊이")
-
-// 보안 검사
-Task(subagent_type=security-reviewer, "OWASP Top 10 기준 인증 API 검사")
-
-// 코드 리뷰
-Task(subagent_type=code-reviewer, "성능 관점 PR 리뷰, 리렌더링 체크")
+Task(subagent_type="Explore", "src/ 구조 분석, medium 깊이")
 
 // 구현 계획
-Task(subagent_type=Plan, "사용자 인증 시스템, JWT 기반, Next.js 14")
+Task(subagent_type="Plan", "사용자 인증 시스템, JWT 기반, Next.js 14")
 
-// 병렬 리서치 (3개 동시)
-Task(subagent_type=Explore, "프론트엔드 분석")
-Task(subagent_type=Explore, "백엔드 분석")
-Task(subagent_type=Explore, "DB 스키마 분석")
+// 범용 작업
+Task(subagent_type="general-purpose", "복잡한 멀티스텝 작업...")
+
+// ========================================
+// 플러그인 에이전트 (calab-plugin: 필수)
+// ========================================
+
+// 보안 검사
+Task(subagent_type="calab-plugin:security-reviewer", "OWASP Top 10 기준 인증 API 검사")
+
+// 코드 리뷰
+Task(subagent_type="calab-plugin:code-reviewer", "성능 관점 PR 리뷰, 리렌더링 체크")
+
+// 완전성 검증 (구현 후 필수)
+Task(subagent_type="calab-plugin:validator", "TASK-001 AC 검증")
+
+// 보강 (검증 실패 시)
+Task(subagent_type="calab-plugin:reinforcer", "validator 결과 기반 수정")
+
+// 웹 리서치
+Task(subagent_type="calab-plugin:web-researcher", "React 19 변경사항 조사")
+
+// 심층 분석
+Task(subagent_type="calab-plugin:deep-researcher", "리서치 결과 종합 보고서")
+
+// ========================================
+// 병렬 실행 (의존성 없는 작업만)
+// ========================================
+Task(subagent_type="Explore", "프론트엔드 분석")
+Task(subagent_type="Explore", "백엔드 분석")
+Task(subagent_type="Explore", "DB 스키마 분석")
 ```
 
 ### 스킬 호출 Quick Reference

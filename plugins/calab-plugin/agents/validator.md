@@ -194,13 +194,13 @@ reinforcer 에이전트를 호출하시겠습니까? (Y/N)
 
 ```typescript
 // 구현 완료 후 필수 호출
-Task(subagent_type=validator, "TASK-001 구현 완료 검증")
+Task(subagent_type="calab-plugin:validator", "TASK-001 구현 완료 검증")
 
 // 검증 실패 시 reinforcer 호출
-Task(subagent_type=reinforcer, "validator 결과 기반 수정")
+Task(subagent_type="calab-plugin:reinforcer", "validator 결과 기반 수정")
 
 // 재검증
-Task(subagent_type=validator, "수정 사항 재검증")
+Task(subagent_type="calab-plugin:validator", "수정 사항 재검증")
 ```
 
 ## 검증 우선순위

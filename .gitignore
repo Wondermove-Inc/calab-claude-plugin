@@ -1,7 +1,6 @@
 # Claude 런타임 (자동 생성됨)
 .claude/
 .claude-state/
-hooks/.claude-state/
 
 # Python 캐시
 __pycache__/

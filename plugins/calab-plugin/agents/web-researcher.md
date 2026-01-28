@@ -135,7 +135,7 @@ permissionMode: plan
 ### 기본 리서치
 ```
 Task(
-  subagent_type=web-researcher,
+  subagent_type="calab-plugin:web-researcher",
   description="Next.js 15 변경사항 조사",
   prompt="""
   **목표**: Next.js 15의 주요 변경사항과 마이그레이션 가이드 조사
@@ -154,7 +154,7 @@ Task(
 ### 베스트 프랙티스 조사
 ```
 Task(
-  subagent_type=web-researcher,
+  subagent_type="calab-plugin:web-researcher",
   description="React 상태관리 베스트 프랙티스 2025",
   prompt="""
   **목표**: 2025년 React 상태관리 베스트 프랙티스 조사
