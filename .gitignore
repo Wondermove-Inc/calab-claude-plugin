@@ -13,9 +13,6 @@ __pycache__/
 *.log
 logs/
 
-# 생성된 문서 폴더
-docs/
-
 # OS 파일
 .DS_Store
 Thumbs.db
