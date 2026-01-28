@@ -40,6 +40,95 @@ agents:
 /jira --help               # 도움말
 ```
 
+## 🤖 에이전트 호출 (필수)
+
+> **이 스킬은 반드시 jira-connector 에이전트를 통해 실행해야 합니다.**
+
+### --init 단계
+
+```
+Task(
+  subagent_type="calab-plugin:jira-connector",
+  description="JIRA 연동 초기 설정",
+  prompt="""
+  **역할**: JIRA 연동 전문가
+
+  **목표**: JIRA 연결 설정 및 초기화
+
+  **수행 단계**:
+  1. 환경 변수 확인 (JIRA_EMAIL, JIRA_API_TOKEN)
+  2. jira_config.json 생성
+  3. 연결 테스트 실행
+  4. 프로젝트 키 확인
+
+  **산출물**:
+  - .claude/jira_config.json
+  - .claude/jira_mapping.json (초기)
+
+  **제약 조건**:
+  - ❌ API 토큰 로그 출력 금지
+  - ✅ 연결 실패 시 명확한 오류 메시지
+  """
+)
+```
+
+### --pull / --push / --sync 단계
+
+```
+Task(
+  subagent_type="calab-plugin:jira-connector",
+  description="JIRA {pull|push|sync} 동기화",
+  prompt="""
+  **역할**: JIRA 동기화 전문가
+
+  **목표**: {--pull: JIRA→Worktree | --push: Worktree→JIRA | --sync: 양방향}
+
+  **동기화 항목**:
+  - 이슈 상태 (To Do ↔ pending, In Progress ↔ in_progress, Done ↔ done)
+  - 이슈 제목/설명
+  - 담당자
+  - 코멘트
+
+  **충돌 해결**:
+  - --prefer-jira: JIRA 우선
+  - --prefer-worktree: Worktree 우선
+  - 기본: 최신 타임스탬프 우선
+
+  **출력 형식**:
+  | Worktree | JIRA | 방향 | 상태 |
+  |----------|------|------|------|
+  """
+)
+```
+
+### --status 단계
+
+```
+Task(
+  subagent_type="calab-plugin:jira-connector",
+  description="JIRA 연동 상태 확인",
+  prompt="""
+  **역할**: 연동 상태 분석가
+
+  **목표**: 현재 JIRA 연동 상태 보고
+
+  **확인 항목**:
+  - 연결 상태 (성공/실패)
+  - 매핑된 이슈 수
+  - 마지막 동기화 시간
+  - 동기화 대기 중인 항목
+
+  **출력 형식**:
+  연결 상태: ✅ 연결됨
+  프로젝트: AUTH
+  매핑: 12개 이슈
+  마지막 동기화: 2025-01-28 10:00
+  """
+)
+```
+
+---
+
 ## 인자 파싱
 
 입력: $ARGUMENTS

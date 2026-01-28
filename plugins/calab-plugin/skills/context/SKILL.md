@@ -29,6 +29,60 @@ agent: Explore
 /context --help            # 도움말
 ```
 
+## 🤖 에이전트 호출 (필수)
+
+> **이 스킬은 Explore 에이전트를 통해 실행해야 합니다.**
+
+### --show 단계
+
+```
+Task(
+  subagent_type="Explore",
+  description="프로젝트 컨텍스트 표시",
+  prompt="""
+  **역할**: 컨텍스트 탐색 전문가
+
+  **목표**: 저장된 컨텍스트 문서 읽고 요약 표시
+
+  **참조 파일**:
+  - .claude/project-context/PROJECT_SUMMARY.md
+  - .claude/project-context/ARCHITECTURE.md
+  - .claude/project-context/CODE_PATTERNS.md
+  - .claude/project-context/DOMAIN_KNOWLEDGE.md
+
+  **필터**: {tech | patterns | architecture | domain}
+
+  **출력**: 구조화된 컨텍스트 요약
+  """
+)
+```
+
+### --refresh 단계
+
+```
+Task(
+  subagent_type="Explore",
+  description="프로젝트 컨텍스트 갱신",
+  prompt="""
+  **역할**: 변경 감지 전문가
+
+  **목표**: 코드 변경 감지 후 컨텍스트 증분 업데이트
+
+  **비교 대상**:
+  - 현재 코드 상태 vs 기존 컨텍스트
+
+  **업데이트 항목**:
+  - 새로 추가된 패턴
+  - 삭제된 패턴
+  - 기술 스택 변경
+
+  **출력**: 업데이트된 컨텍스트 문서
+  """
+)
+```
+
+---
+
 ## 인자 파싱
 
 입력: $ARGUMENTS

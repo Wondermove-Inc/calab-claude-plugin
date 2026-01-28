@@ -37,6 +37,79 @@ agents:
 /clean --help              # 도움말
 ```
 
+## 🤖 에이전트 호출 (필수)
+
+> **이 스킬은 refactor-cleaner 에이전트를 통해 실행해야 합니다.**
+
+### --init 단계
+
+```
+Task(
+  subagent_type="calab-plugin:refactor-cleaner",
+  description="4-Layer 클린 아키텍처 초기화",
+  prompt="""
+  **역할**: 클린 아키텍처 전문가
+
+  **목표**: 4-Layer 디렉토리 구조 생성
+
+  **생성 대상**:
+  - src/domain/ (entities, value-objects, errors, interfaces)
+  - src/application/ (use-cases, dtos, ports, interfaces)
+  - src/adapters/ (controllers, presenters, repositories, gateways)
+  - src/infrastructure/ (http, database, config, di)
+  - src/shared/ (types, utils)
+
+  **기본 파일**:
+  - DomainError.ts, IUseCase.ts, IRepository.ts
+  """
+)
+```
+
+### --entity / --usecase 단계
+
+```
+Task(
+  subagent_type="calab-plugin:refactor-cleaner",
+  description="도메인 엔티티/유스케이스 생성: {이름}",
+  prompt="""
+  **역할**: 도메인 모델링 전문가
+
+  **목표**: {--entity: 엔티티 | --usecase: 유스케이스} 생성
+
+  **출력 위치**:
+  - Entity: src/domain/entities/{Name}.ts
+  - UseCase: src/application/use-cases/{Name}UseCase.ts
+
+  **포함 항목**:
+  - 타입 정의
+  - 검증 로직
+  - Repository 인터페이스 (entity)
+  - Input/Output DTO (usecase)
+  """
+)
+```
+
+### --validate 단계
+
+```
+Task(
+  subagent_type="calab-plugin:code-reviewer",
+  description="클린 아키텍처 규칙 검증",
+  prompt="""
+  **역할**: 아키텍처 검증 전문가
+
+  **검증 항목**:
+  1. 레이어 의존성 규칙 (Domain ← Application ← Adapters ← Infrastructure)
+  2. 금지된 의존성 없음 (Domain → Application 등)
+  3. 파일 위치 정확성
+
+  **출력**: 위반 사항 목록 + 수정 제안
+  """
+)
+```
+
+---
+
 ## 인자 파싱
 
 입력: $ARGUMENTS

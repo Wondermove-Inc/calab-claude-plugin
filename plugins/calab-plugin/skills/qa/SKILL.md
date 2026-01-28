@@ -38,6 +38,79 @@ agents:
 /qa --help                 # 도움말
 ```
 
+## 🤖 에이전트 호출 (필수)
+
+> **이 스킬은 반드시 e2e-runner 에이전트를 통해 실행해야 합니다.**
+
+### --plan 단계
+
+```
+Task(
+  subagent_type="Plan",
+  description="QA 계획 수립: {기능명}",
+  prompt="""
+  **역할**: QA 전문가
+
+  **목표**: 체계적인 QA 계획 수립
+
+  **산출물**:
+  - .claude/docs/active/{feature}/qa/QA_PLAN.md
+  - 테스트 케이스 목록
+
+  **포함 항목**:
+  1. 테스트 범위 정의
+  2. 우선순위 분류 (P0/P1/P2)
+  3. 성공 기준
+  """
+)
+```
+
+### --run 단계
+
+```
+Task(
+  subagent_type="calab-plugin:e2e-runner",
+  description="E2E 테스트 실행",
+  prompt="""
+  **역할**: E2E 테스트 전문가 (MCP Puppeteer)
+
+  **목표**: 모든 테스트 케이스 실행
+
+  **도구**:
+  - mcp__puppeteer__puppeteer_navigate
+  - mcp__puppeteer__puppeteer_screenshot
+  - mcp__puppeteer__puppeteer_click
+  - mcp__puppeteer__puppeteer_fill
+  - mcp__puppeteer__puppeteer_evaluate
+
+  **출력**:
+  - 각 케이스별 Pass/Fail
+  - 실패 시 스크린샷
+  - 버그 보고서
+  """
+)
+```
+
+### --report 단계
+
+```
+Task(
+  subagent_type="calab-plugin:code-reviewer",
+  description="QA 보고서 생성",
+  prompt="""
+  **역할**: QA 보고서 작성자
+
+  **입력**: 테스트 실행 결과
+
+  **출력**:
+  - .claude/docs/active/{feature}/qa/QA_REPORT.md
+  - 릴리스 권고 (Approved/Conditional/Not Approved)
+  """
+)
+```
+
+---
+
 ## 인자 파싱
 
 입력: $ARGUMENTS

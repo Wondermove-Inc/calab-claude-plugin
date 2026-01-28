@@ -35,6 +35,63 @@ agents:
 /research <주제> --deep       # 심층 리서치 (10회 검색)
 ```
 
+## 🤖 에이전트 호출 (필수)
+
+> **이 스킬은 반드시 web-researcher 에이전트를 통해 실행해야 합니다.**
+
+스킬이 로드되면 즉시 다음 에이전트를 호출하세요:
+
+```
+Task(
+  subagent_type="calab-plugin:web-researcher",
+  description="심층 리서치: {주제}",
+  prompt="""
+  **역할**: 웹 리서치 전문가 (Tavily MCP 활용)
+
+  **목표**: {주제}에 대한 체계적 리서치 수행
+
+  **검색 전략**:
+  1. 기본 개념 및 정의
+  2. 장점/단점 비교
+  3. 실제 적용 사례
+  4. 베스트 프랙티스
+  5. 최신 트렌드 (2024-2025)
+
+  **검색 횟수**: {--quick: 3회 | 기본: 5회 | --deep: 10회}
+
+  **출력 형식**:
+  각 검색 결과에서 핵심 포인트 추출 후 종합 보고서 작성
+
+  **제약 조건**:
+  - ✅ 모든 출처 URL 명시
+  - ✅ 신뢰도 평가 포함
+  - ✅ 실행 가능한 액션 아이템 도출
+  """
+)
+```
+
+**보고서 분석이 필요한 경우** (--deep 옵션):
+
+```
+Task(
+  subagent_type="calab-plugin:deep-researcher",
+  description="리서치 결과 분석 및 보고서 생성",
+  prompt="""
+  **역할**: 리서치 분석 전문가
+
+  **목표**: web-researcher 결과를 종합하여 구조화된 보고서 생성
+
+  **입력**: web-researcher 검색 결과
+
+  **출력**:
+  - .claude/research/{topic}/report.md (전체 보고서)
+  - .claude/research/{topic}/summary.md (핵심 요약)
+  """
+)
+```
+
+---
+
 ## 실행 절차
 
 ### Phase 1: 리서치 계획 수립
