@@ -1,8 +1,15 @@
 # Architecture Plugin
 
-> **클린 아키텍처 설계 및 검증**: 4-레이어 구조 자동 생성 + 의존성 규칙 강제 (TypeScript, Go 자동 감지)
+> **아키텍처 설계 및 검증**: Clean Architecture & Hexagonal Architecture 자동 생성 + 의존성 규칙 강제 (TypeScript, Go 자동 감지)
 
 ---
+
+## 지원 아키텍처
+
+| 아키텍처 | 설명 | 적합한 경우 |
+|----------|------|------------|
+| **Clean Architecture** | 4-레이어 동심원 구조 | 복잡한 도메인 로직 |
+| **Hexagonal Architecture** | Ports & Adapters 패턴 | 다양한 외부 시스템 연동 |
 
 ## 지원 언어
 
@@ -19,34 +26,47 @@
 
 | 상황 | 문제점 | 솔루션 | 명령어 |
 |------|--------|--------|--------|
-| **아키텍처 혼란** | 의존성 규칙 위반 | 클린 아키텍처 강제 | `/architecture:clean-init` |
-| **엔티티 생성** | 일관성 없는 도메인 모델 | 표준화된 엔티티 생성 | `/architecture:clean-entity` |
-| **유스케이스 작성** | 비즈니스 로직 분산 | 유스케이스 패턴 적용 | `/architecture:clean-usecase` |
-| **의존성 위반** | 레이어 간 잘못된 참조 | 자동 검증 + 수정 | `/architecture:clean-validate` |
+| **아키텍처 혼란** | 의존성 규칙 위반 | Clean Architecture 강제 | `/architecture:clean-init` |
+| **외부 시스템 연동** | 결합도 높음 | Hexagonal Architecture 적용 | `/architecture:hexa-init` |
+| **의존성 위반** | 레이어/포트 경계 침범 | 자동 검증 + 리팩토링 | `/architecture:validate` |
 
 ---
 
-## 명령어
+## 스킬 구조
 
-| 명령어 | 옵션 | 자연어 | 설명 |
-|--------|------|--------|------|
-| `/architecture:clean-init` | `--force` | "클린 아키텍처 만들어줘" | 4-레이어 구조 초기화 |
-| `/architecture:clean-entity <name>` | `--with-repository`, `--with-value-objects` | "엔티티 만들어줘" | 도메인 엔티티 생성 |
-| `/architecture:clean-usecase <name>` | `--entity=<name>` | "유스케이스 만들어줘" | 유스케이스 생성 |
-| `/architecture:clean-validate` | `--fix`, `--path=<dir>` | "아키텍처 검증해줘" | 의존성 규칙 검증 |
-| `/architecture:help` | - | "아키텍처 도움말" | 도움말 표시 |
+### Active Skills (명시적 호출)
+
+| 명령어 | 옵션 | 설명 |
+|--------|------|------|
+| `/architecture:clean-init` | `--force` | Clean Architecture 4-레이어 구조 초기화 |
+| `/architecture:hexa-init` | `--force` | Hexagonal Architecture 구조 초기화 |
+| `/architecture:validate` | `--fix`, `--path=<dir>`, `--type=clean\|hexa` | 아키텍처 검증 + 리팩토링 가이드 |
+| `/architecture:help` | - | 도움말 표시 |
+
+### Passive Skills (자동 활성화)
+
+| 스킬 | 활성화 조건 | 효과 |
+|------|------------|------|
+| `clean-architecture` | 코드 구현 시 (4-레이어 구조 감지) | 의존성 규칙 강제, 레이어 위치 검증 |
+| `hexagonal-architecture` | 코드 구현 시 (Port/Adapter 구조 감지) | 포트/어댑터 규칙 강제 |
 
 ---
 
-## 주요 기능 상세
+## Clean Architecture
 
-### 클린 아키텍처 4-레이어
+### 4-레이어 구조
 
 ```mermaid
+%%{init: {'layout': 'elk'}}%%
 flowchart TB
+    subgraph Infrastructure["Infrastructure Layer"]
+        HTTP["HTTP Server"]
+        DB["Database"]
+        DI["DI Container"]
+    end
+
     subgraph Adapters["Adapters Layer"]
         C["Controllers/Handlers"]
-        P["Presenters"]
         RI["Repository Impl"]
         GW["Gateways"]
     end
@@ -63,12 +83,6 @@ flowchart TB
         RepoI["Repository Interfaces"]
     end
 
-    subgraph Infrastructure["Infrastructure Layer"]
-        HTTP["HTTP Server"]
-        DB["Database"]
-        DI["DI Container"]
-    end
-
     Infrastructure --> Adapters
     Adapters --> Application
     Application --> Domain
@@ -79,44 +93,14 @@ flowchart TB
     style Infrastructure fill:#fce4ec
 ```
 
-**레이어별 역할:**
-
-| 레이어 | 역할 | 주요 컴포넌트 |
-|--------|------|-------------|
-| **Domain** | 핵심 비즈니스 규칙 | Entities, Value Objects, Repository Interfaces |
-| **Application** | 유스케이스 구현 | Use Cases, DTOs, Ports |
-| **Adapters** | 포트 구현 | Controllers/Handlers, Repository Impl, Gateways |
-| **Infrastructure** | 외부 의존성 | HTTP Server, Database, DI Container |
-
 ### 의존성 규칙
 
-```
-✅ 올바른 의존성:
-   Infrastructure → Adapters → Application → Domain
-
-❌ 잘못된 의존성:
-   Domain → Application (위반!)
-   Application → Adapters (위반!)
-   Domain → Infrastructure (위반!)
-```
-
----
-
-## 사용 예시
-
-```bash
-# 1. 4-레이어 구조 초기화
-/architecture:clean-init
-
-# 2. 도메인 엔티티 생성
-/architecture:clean-entity User --with-repository
-
-# 3. 유스케이스 생성
-/architecture:clean-usecase CreateUser --entity=User
-
-# 4. 의존성 규칙 검증
-/architecture:clean-validate --fix
-```
+| 레이어 | 허용된 Import | 금지된 Import |
+|--------|---------------|---------------|
+| **Domain** | 표준 라이브러리만 | Application, Adapters, Infrastructure |
+| **Application** | Domain | Adapters, Infrastructure |
+| **Adapters** | Domain, Application | Infrastructure |
+| **Infrastructure** | 모두 허용 | - |
 
 ### 프로젝트 구조 (clean-init 결과)
 
@@ -145,28 +129,141 @@ flowchart TB
     └── di/                       # 의존성 주입
 ```
 
-> **언어별 차이점**은 `best-practices/clean-architecture-{lang}.md` 참조
+---
+
+## Hexagonal Architecture
+
+### Ports & Adapters 구조
+
+```mermaid
+%%{init: {'layout': 'elk'}}%%
+flowchart TB
+    subgraph DrivingAdapters["Driving Adapters (Input)"]
+        HTTP["HTTP Handler"]
+        CLI["CLI"]
+        GRPC["gRPC"]
+    end
+
+    subgraph Core["Application Core"]
+        subgraph Ports["Ports"]
+            DP["Driving Ports"]
+            DRP["Driven Ports"]
+        end
+        subgraph Domain["Domain"]
+            E["Entities"]
+            VO["Value Objects"]
+        end
+        subgraph Service["Services"]
+            S["Application Services"]
+        end
+    end
+
+    subgraph DrivenAdapters["Driven Adapters (Output)"]
+        PG["PostgreSQL"]
+        Redis["Redis"]
+        SMTP["SMTP"]
+    end
+
+    DrivingAdapters --> DP
+    DP --> S
+    S --> Domain
+    S --> DRP
+    DRP --> DrivenAdapters
+
+    style Core fill:#e8f5e9
+    style DrivingAdapters fill:#e3f2fd
+    style DrivenAdapters fill:#fff3e0
+```
+
+### Port & Adapter 규칙
+
+| 포트 유형 | 방향 | 역할 | 예시 |
+|----------|------|------|------|
+| **Driving Port** | 외부 → Core | 애플리케이션이 제공하는 기능 | `UserService` |
+| **Driven Port** | Core → 외부 | 애플리케이션이 필요로 하는 기능 | `UserRepository`, `EmailSender` |
+
+| 어댑터 유형 | 역할 | 예시 |
+|------------|------|------|
+| **Driving Adapter** | Driving Port 호출 | HTTP Handler, CLI, gRPC Server |
+| **Driven Adapter** | Driven Port 구현 | PostgresRepository, SMTPEmailSender |
+
+### 프로젝트 구조 (hexa-init 결과)
+
+```
+[root]/                           # TypeScript: src/, Go: internal/
+├── core/                         # Application Core
+│   ├── domain/                   # 도메인 모델
+│   │   ├── entity/               # 엔티티
+│   │   ├── valueobject/          # 값 객체
+│   │   └── event/                # 도메인 이벤트
+│   │
+│   ├── service/                  # 애플리케이션 서비스
+│   │
+│   └── port/                     # 포트 정의
+│       ├── driving/              # Driving Ports (Input)
+│       └── driven/               # Driven Ports (Output)
+│
+├── adapter/                      # 어댑터
+│   ├── driving/                  # Driving Adapters (Input)
+│   │   └── http/                 # REST API
+│   │
+│   └── driven/                   # Driven Adapters (Output)
+│       └── persistence/          # 영속화
+│
+└── config/                       # 설정 및 DI
+```
 
 ---
 
-## 자동 적용 기능 (패시브 스킬)
+## 사용 예시
 
-| 스킬 | 활성화 조건 | 효과 |
-|------|------------|------|
-| `clean-architecture` | 코드 구현 시 (언어 자동 감지) | 4-레이어 구조 강제, 의존성 규칙 검증 |
+### Clean Architecture 시작하기
 
-**자동 적용 내용:**
-- 새 파일 생성 시 올바른 레이어 위치 제안
-- Import 문 작성 시 의존성 규칙 검증
-- 코드 리뷰 시 아키텍처 위반 감지
+```bash
+# 1. 4-레이어 구조 초기화
+/architecture:clean-init
+
+# 2. 코드 작성 (패시브 스킬이 자동으로 의존성 규칙 검증)
+
+# 3. 아키텍처 검증
+/architecture:validate --fix
+```
+
+### Hexagonal Architecture 시작하기
+
+```bash
+# 1. Ports & Adapters 구조 초기화
+/architecture:hexa-init
+
+# 2. 코드 작성 (패시브 스킬이 자동으로 포트/어댑터 규칙 검증)
+
+# 3. 아키텍처 검증
+/architecture:validate --type=hexa --fix
+```
+
+---
+
+## 아키텍처 선택 가이드
+
+### Clean Architecture 선택
+
+- 복잡한 도메인 로직이 핵심인 경우
+- 명확한 레이어 분리가 필요한 경우
+- 팀이 레이어 기반 구조에 익숙한 경우
+
+### Hexagonal Architecture 선택
+
+- 다양한 입력/출력 어댑터가 필요한 경우
+- 외부 시스템 교체가 빈번한 경우
+- 테스트 용이성이 중요한 경우
 
 ---
 
 ## 포함 리소스
 
 - **best-practices/**:
-  - `clean-architecture-ts.md` (TypeScript 의존성 규칙, 레이어 가이드)
-  - `clean-architecture-go.md` (Go 의존성 규칙, 레이어 가이드)
+  - `clean-architecture.md` (Clean Architecture 가이드 - Go/TypeScript 통합)
+  - `hexagonal-architecture.md` (Hexagonal Architecture 가이드)
   - `api-design.md` (REST API 설계 원칙)
   - `database.md` (데이터베이스 설계 원칙)
 - **templates/**:
@@ -174,9 +271,9 @@ flowchart TB
   - `erd-template.md` (ERD 템플릿)
   - `api-spec-template.md` (API 스펙 템플릿)
 - **skills/**:
-  - `clean-architecture/` (클린 아키텍처 패시브 스킬)
-  - `clean-init/` (구조 초기화)
-  - `clean-entity/` (엔티티 생성)
-  - `clean-usecase/` (유스케이스 생성)
-  - `clean-validate/` (검증)
+  - `clean-architecture/` (Clean Architecture 패시브 스킬)
+  - `clean-init/` (Clean Architecture 구조 초기화)
+  - `hexagonal-architecture/` (Hexagonal Architecture 패시브 스킬)
+  - `hexa-init/` (Hexagonal Architecture 구조 초기화)
+  - `validate/` (아키텍처 검증 + 리팩토링)
   - `help/` (도움말)

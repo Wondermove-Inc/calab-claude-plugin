@@ -1,7 +1,7 @@
 {
   "name": "architecture",
-  "version": "2.4.0",
-  "description": "클린 아키텍처 설계 및 검증 (TypeScript, Go 지원)",
+  "version": "3.0.0",
+  "description": "Clean Architecture & Hexagonal Architecture 설계 및 검증 (TypeScript, Go 지원)",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -10,23 +10,24 @@
   "license": "MIT",
   "keywords": [
     "clean-architecture",
-    "hexagonal",
+    "hexagonal-architecture",
+    "ports-and-adapters",
     "ddd",
     "design",
     "golang",
     "typescript"
   ],
+  "changelog": {
+    "3.0.0": "Hexagonal Architecture 지원 추가, 스킬 통합 (10→6개), 언어별 문서 통합",
+    "2.4.0": "Clean Architecture 언어별 best-practices 분리 (Go, TypeScript)",
+    "2.0.0": "Clean Architecture 스킬 추가 (clean-init, clean-entity, clean-usecase, clean-validate)"
+  },
   "skills": [
-    "./skills/clean-architecture-go",
-    "./skills/clean-architecture-ts",
-    "./skills/clean-init-go",
-    "./skills/clean-init-ts",
-    "./skills/clean-entity-go",
-    "./skills/clean-entity-ts",
-    "./skills/clean-usecase-go",
-    "./skills/clean-usecase-ts",
-    "./skills/clean-validate-go",
-    "./skills/clean-validate-ts",
+    "./skills/clean-architecture",
+    "./skills/clean-init",
+    "./skills/hexagonal-architecture",
+    "./skills/hexa-init",
+    "./skills/validate",
     "./skills/help"
   ]
 }

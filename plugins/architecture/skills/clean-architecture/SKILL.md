@@ -2,6 +2,7 @@
 name: architecture:clean-architecture
 description: 클린 아키텍처를 강제합니다. 코드 파일 생성, 레이어, 도메인, 엔티티, 유스케이스 언급 시 자동 활성화. 의존성 규칙을 엄격하게 검사합니다.
 allowed-tools: Read, Glob, Grep
+user-invocable: false
 ---
 
 # Clean Architecture Skill
@@ -143,18 +144,25 @@ Infrastructure → Adapters → Application → Domain
 | 명령어 | 설명 |
 |--------|------|
 | `/architecture:clean-init` | 프로젝트에 클린 아키텍처 구조 초기화 |
-| `/architecture:clean-entity <name>` | 새 도메인 엔티티 생성 |
-| `/architecture:clean-usecase <name>` | 새 유스케이스 생성 |
-| `/architecture:clean-validate` | 현재 코드의 클린 아키텍처 준수 검증 |
+| `/architecture:validate` | 현재 코드의 아키텍처 준수 검증 |
 
 ## 언어별 적용
 
-이 스킬은 **공통 구조**만 정의합니다.
-
 **언어별 구현 세부사항**은 반드시 다음 가이드를 따르세요:
-- `best-practices/clean-architecture-{lang}.md`
+- [Clean Architecture 가이드](../best-practices/clean-architecture.md)
 
 가이드에서 확인할 내용:
+- Go / TypeScript 디렉토리 구조
 - 파일명/디렉토리 네이밍 컨벤션
-- 언어별 문법 및 관용구
-- 프레임워크 통합 방법
+- 언어별 코드 예시
+
+### 지원 언어 및 자동 감지
+
+| 언어 | 감지 기준 |
+|------|----------|
+| Go | `go.mod` 존재 |
+| TypeScript | `tsconfig.json` 존재 |
+
+**언어 감지 규칙**:
+- 두 언어 파일이 모두 존재할 경우 (예: mono-repo), 각 언어 섹션 참조
+- 단일 언어만 감지되면 해당 언어 섹션만 적용

@@ -89,12 +89,10 @@ project/
 
 ## 언어별 적용
 
-이 스킬은 **공통 구조**만 정의합니다.
-
 **언어별 구현 세부사항**은 반드시 다음 가이드를 따르세요:
-- `best-practices/clean-architecture-{lang}.md`
+- [Clean Architecture 가이드](../best-practices/clean-architecture.md)
 
 가이드에서 확인할 내용:
+- Go / TypeScript 디렉토리 구조
 - 파일명/디렉토리 네이밍 컨벤션
-- 언어별 문법 및 관용구
-- 프레임워크 통합 방법
+- 언어별 코드 예시
