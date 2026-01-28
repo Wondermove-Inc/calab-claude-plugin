@@ -16,7 +16,7 @@
         "name": "Wondermove CALab",
         "email": "captain@wondermove.net"
       },
-      "source": "..",
+      "source": "./plugins/calab-plugin",
       "category": "development",
       "keywords": [
         "workflow",
