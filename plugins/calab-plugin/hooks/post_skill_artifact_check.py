@@ -71,7 +71,7 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{docs}/*/validation-report.md",
             "{docs}/**/validation-report.md",
         ],
-        "required": False,  # 검증 통과 시 생략 가능
+        "required": True,
         "description": "AC 검증 보고서"
     },
 
@@ -82,7 +82,7 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{docs}/*/reinforcer-report.md",
             "{docs}/**/reinforcer-report.md",
         ],
-        "required": False,  # 수정 완료 시 생략 가능
+        "required": True,
         "description": "reinforcer 수정 보고서"
     },
 
@@ -93,7 +93,7 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{docs}/*/build-error-report.md",
             "{docs}/**/build-error-report.md",
         ],
-        "required": False,
+        "required": True,
         "description": "빌드 오류 분석 및 해결 보고서"
     },
 
@@ -115,7 +115,7 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{root}/.claude/problem-solving/**/analysis.md",
             "{root}/.claude/problem-solving/**/report.md",
         ],
-        "required": False,
+        "required": True,
         "description": "5 Whys / RCA 분석 보고서"
     },
 
@@ -126,7 +126,7 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{docs}/**/research-report.md",
             "{root}/.claude/research/*.md",
         ],
-        "required": False,
+        "required": True,
         "description": "심층 리서치 분석 보고서"
     },
 
@@ -137,8 +137,74 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
             "{docs}/**/web-research.md",
             "{root}/.claude/research/*.md",
         ],
-        "required": False,
+        "required": True,
         "description": "웹 검색 및 분석 결과"
+    },
+
+    # qa: QA 검증 보고서
+    "calab-plugin:qa": {
+        "name": "QA 검증 보고서",
+        "patterns": [
+            "{docs}/*/qa-report.md",
+            "{docs}/**/qa-report.md",
+        ],
+        "required": True,
+        "description": "8단계 QA 검증 보고서"
+    },
+
+    # bug-fixer: 버그 수정 보고서
+    "calab-plugin:bug-fixer": {
+        "name": "버그 수정 보고서",
+        "patterns": [
+            "{root}/.claude/problem-solving/**/fix-report.md",
+            "{docs}/**/bug-fix-report.md",
+        ],
+        "required": True,
+        "description": "TDD 기반 버그 수정 보고서"
+    },
+
+    # code-reviewer: 코드 리뷰 보고서
+    "calab-plugin:code-reviewer": {
+        "name": "코드 리뷰 보고서",
+        "patterns": [
+            "{docs}/*/code-review.md",
+            "{docs}/**/code-review.md",
+        ],
+        "required": True,
+        "description": "코드 품질 검토 보고서"
+    },
+
+    # security-reviewer: 보안 검토 보고서
+    "calab-plugin:security-reviewer": {
+        "name": "보안 검토 보고서",
+        "patterns": [
+            "{docs}/*/security-review.md",
+            "{docs}/**/security-review.md",
+        ],
+        "required": True,
+        "description": "OWASP 기반 보안 취약점 분석 보고서"
+    },
+
+    # task-validator: Task 검증 보고서
+    "calab-plugin:task-validator": {
+        "name": "Task 검증 보고서",
+        "patterns": [
+            "{docs}/*/task-validation.md",
+            "{docs}/**/task-validation.md",
+        ],
+        "required": True,
+        "description": "Task 분해 검증 보고서"
+    },
+
+    # dev-executor: 구현 완료 보고서
+    "calab-plugin:dev-executor": {
+        "name": "구현 완료 보고서",
+        "patterns": [
+            "{docs}/*/implementation-report.md",
+            "{docs}/**/implementation-report.md",
+        ],
+        "required": True,
+        "description": "TDD 구현 완료 보고서"
     },
 }
 
