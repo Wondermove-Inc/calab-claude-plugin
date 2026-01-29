@@ -242,3 +242,43 @@ return {
 ### Recommendation
 {next steps}
 ```
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **Task 검증 완료 시 반드시 보고서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **검증 보고서** | `.claude/docs/validation/{feature}/task-validation.md` | ✅ |
+
+### 검증 보고서 필수 항목
+
+```markdown
+# Task 검증 보고서
+
+## 기본 정보
+- **Feature**: {feature_name}
+- **검증 일시**: {timestamp}
+- **Total Tasks**: {count}
+
+## 검증 결과
+| Check | Status | Details |
+|-------|--------|---------|
+| PHASE Coverage | ✅/❌ | {details} |
+| Objective Mapping | ✅/❌ | {details} |
+| Dependency Order | ✅/❌ | {details} |
+| Task Completeness | ✅/❌ | {details} |
+
+## 발견된 이슈
+[이슈 목록]
+
+## 권장 조치
+[조치 사항]
+```
+
+### 산출물 생성 필수 조건
+
+- 검증 완료 시 **반드시** 보고서 파일 생성
+- 산출물 미생성 시 **작업 실패로 간주**

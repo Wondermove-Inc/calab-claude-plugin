@@ -68,3 +68,40 @@ skills: project-rules, best-practices
 
 - `project-rules` - 프로젝트 규칙
 - `best-practices` - 기술별 베스트 프랙티스
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **온보딩 완료 시 반드시 5개 컨텍스트 문서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **프로젝트 요약** | `.claude/project-context/PROJECT_SUMMARY.md` | ✅ |
+| **아키텍처 문서** | `.claude/project-context/ARCHITECTURE.md` | ✅ |
+| **코드 패턴** | `.claude/project-context/CODE_PATTERNS.md` | ✅ |
+| **코딩 컨벤션** | `.claude/project-context/CONVENTIONS.md` | ✅ |
+| **도메인 지식** | `.claude/project-context/DOMAIN_KNOWLEDGE.md` | ✅ |
+
+### 각 문서 필수 항목
+
+**PROJECT_SUMMARY.md**:
+- 프로젝트명, 목적, 기술스택, 주요 기능
+
+**ARCHITECTURE.md**:
+- 폴더 구조, 레이어 설명, 의존성 다이어그램
+
+**CODE_PATTERNS.md**:
+- 사용 패턴 (Repository, Factory 등), 예시 코드
+
+**CONVENTIONS.md**:
+- 네이밍 규칙, 파일 구조 규칙, 코드 스타일
+
+**DOMAIN_KNOWLEDGE.md**:
+- 핵심 엔티티, 비즈니스 로직, 용어 사전
+
+### 산출물 생성 필수 조건
+
+- 온보딩 완료 시 **반드시** 5개 문서 모두 생성
+- 빈 문서 생성 금지 (최소 내용 포함)
+- 산출물 미생성 시 **작업 실패로 간주**

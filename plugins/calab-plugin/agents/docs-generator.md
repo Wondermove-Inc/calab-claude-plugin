@@ -51,3 +51,43 @@ skills: project-rules, code-quality
 
 - `project-rules` - 프로젝트 규칙
 - `code-quality` - 코드 품질 기준
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **문서 생성 완료 시 반드시 파일 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **API 문서** | `docs/api/{endpoint}.md` | ⚠️ (API 시) |
+| **컴포넌트 문서** | `docs/components/{name}.md` | ⚠️ (컴포넌트 시) |
+| **가이드 문서** | `docs/guides/{topic}.md` | ⚠️ (요청 시) |
+| **아키텍처 문서** | `docs/architecture/*.md` | ⚠️ (요청 시) |
+
+### 문서 필수 항목
+
+```markdown
+# {문서 제목}
+
+## Overview
+[개요]
+
+## Usage
+[사용법]
+
+## API/Props
+[인터페이스 정의]
+
+## Examples
+[예제 코드]
+
+## Related
+[관련 문서 링크]
+```
+
+### 산출물 생성 필수 조건
+
+- 문서 생성 요청 시 **반드시** 파일 생성
+- 코드 예제 **반드시** 포함
+- 산출물 미생성 시 **작업 실패로 간주**

@@ -185,6 +185,46 @@ def check_security_escalation(findings):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **보안 검사 완료 시 반드시 보고서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **보안 검사 보고서** | `.claude/docs/security/{timestamp}-security-report.md` | ✅ |
+| **취약점 기록** | `.claude-state/security_findings.json` | ⚠️ (발견 시) |
+
+### 보안 보고서 필수 항목
+
+```markdown
+# 보안 검사 보고서
+
+## 기본 정보
+- **검사 일시**: {timestamp}
+- **검사 범위**: {scope}
+- **검사 파일**: N개
+
+## 발견사항 요약
+- CRITICAL: N개
+- HIGH: N개
+- MEDIUM: N개
+- LOW: N개
+
+## 상세 발견사항
+[심각도별 상세 내용]
+
+## 권장 조치
+[우선순위별 조치]
+```
+
+### 산출물 생성 필수 조건
+
+- 검사 완료 시 **반드시** 보고서 파일 생성
+- 취약점 발견 시 `security_findings.json` 업데이트
+- 산출물 미생성 시 **작업 실패로 간주**
+
+---
+
 ## 참조 파일
 
 - `skills/security/SKILL.md` - 상세 검사 규칙

@@ -172,3 +172,45 @@ Before completing, verify:
 - [ ] Dependencies are correctly set
 - [ ] TDD workflow is defined for each Task
 - [ ] Layer order is maintained
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **Task 분해 완료 시 반드시 문서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **Tasks 문서** | `.claude/docs/active/{feature}/03-tasks.md` | ✅ |
+| **TaskCreate 결과** | Claude Code Task List | ✅ |
+
+### Tasks 문서 필수 항목
+
+```markdown
+# Tasks: {Feature Name}
+
+## Summary
+- Total Tasks: N개
+- PHASEs: N개
+
+## Task List
+
+### PHASE 1: {Name}
+
+#### TASK-001: {Subject}
+- **Layer**: {domain/application/adapters/infrastructure}
+- **AC**: [Acceptance Criteria]
+- **TDD Stage**: RED → GREEN → REFACTOR
+- **Dependencies**: [blocked by]
+
+#### TASK-002: ...
+
+### PHASE 2: {Name}
+...
+```
+
+### 산출물 생성 필수 조건
+
+- Task 분해 완료 시 **반드시** 문서 파일 생성
+- **반드시** TaskCreate 도구로 Task 등록
+- 산출물 미생성 시 **작업 실패로 간주**

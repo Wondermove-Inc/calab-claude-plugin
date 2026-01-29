@@ -199,6 +199,44 @@ def check_quality_escalation(review_result):
 지금 아키텍처 재검토를 시작하시겠습니까?
 ```
 
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **코드 리뷰 완료 시 반드시 보고서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **리뷰 보고서** | `.claude/docs/reviews/{timestamp}-review.md` | ✅ |
+| **품질 위반 기록** | `.claude-state/quality_violations.json` | ⚠️ (위반 시) |
+
+### 리뷰 보고서 필수 항목
+
+```markdown
+# 코드 리뷰 보고서
+
+## 기본 정보
+- **일시**: {timestamp}
+- **검토 범위**: {files}
+- **검토자**: code-reviewer agent
+
+## 검토 결과 요약
+- 검토 파일: N개
+- 통과: N개 / 경고: N개 / 오류: N개
+
+## 상세 발견사항
+[발견사항 목록]
+
+## 권장 조치
+[조치 사항]
+```
+
+### 산출물 생성 필수 조건
+
+- 리뷰 완료 시 **반드시** 보고서 파일 생성
+- 품질 위반 발견 시 `quality_violations.json` 업데이트
+- 산출물 미생성 시 **작업 실패로 간주**
+
+---
+
 ## 참조 파일
 
 - `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙

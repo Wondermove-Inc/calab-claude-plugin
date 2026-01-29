@@ -259,3 +259,47 @@ if regression_detected:
             # Need user decision
             return clarification_request
 ```
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **버그 수정 완료 시 반드시 보고서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **수정 보고서** | `.claude/problem-solving/resolved/{problem-id}/fix-report.md` | ✅ |
+| **테스트 파일** | 수정 대상과 동일 경로의 테스트 | ✅ |
+
+### 수정 보고서 필수 항목
+
+```markdown
+# 버그 수정 보고서: {problem-id}
+
+## 근본 원인
+- **원인**: {root_cause}
+- **증거**: {evidence}
+
+## 수정 내용
+- **수정 파일**: {files}
+- **수정 사항**: {changes}
+
+## TDD 결과
+- RED: 테스트 실패 확인 ✅
+- GREEN: 수정 후 통과 ✅
+- REFACTOR: 코드 정리 ✅
+
+## 검증 결과
+- 버그 테스트: PASS
+- 회귀 테스트: PASS
+- 전체 테스트: PASS
+
+## 재발 방지
+[예방 조치]
+```
+
+### 산출물 생성 필수 조건
+
+- 수정 완료 시 **반드시** 보고서 생성
+- 테스트 파일 **반드시** 추가/수정
+- 산출물 미생성 시 **작업 실패로 간주**

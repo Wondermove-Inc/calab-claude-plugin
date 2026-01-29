@@ -160,3 +160,49 @@ Return structured result:
   }
 }
 ```
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **기획 완료 시 반드시 PRD 문서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **PRD 문서** | `.claude/docs/active/{feature}/01-PRD.md` | ✅ |
+
+### PRD 문서 필수 항목
+
+```markdown
+# PRD: {Feature Name}
+
+## 1. Overview
+- Feature 설명
+- Priority
+- Estimated Complexity
+
+## 2. Objectives
+[목표 목록]
+
+## 3. Technical Requirements
+- Functional Requirements
+- Non-Functional Requirements
+
+## 4. PHASE Decomposition
+[PHASE별 Goal, Deliverables, Dependencies]
+
+## 5. Domains
+[Primary, Secondary]
+
+## 6. Acceptance Criteria
+[테스트 가능한 기준]
+
+## 7. Out of Scope
+[범위 외 항목]
+```
+
+### 산출물 생성 필수 조건
+
+- 기획 완료 시 **반드시** PRD 파일 생성
+- PHASE 분해 **반드시** 포함
+- 산출물 미생성 시 **작업 실패로 간주**

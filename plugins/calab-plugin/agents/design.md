@@ -241,3 +241,50 @@ When design decisions need user input:
   "dependencies": [...]
 }
 ```
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **설계 완료 시 반드시 문서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **아키텍처 설계 문서** | `.claude/docs/active/{feature}/02-architecture.md` | ✅ |
+| **ERD 문서** | `.claude/docs/active/{feature}/02-erd.md` | ⚠️ (DB 있을 때) |
+
+### 설계 문서 필수 항목
+
+```markdown
+# Architecture Design: {Feature Name}
+
+## 1. Overview
+- System Context
+- Design Goals
+
+## 2. Architecture
+- Component Diagram (ASCII)
+- Layer Responsibilities
+- Dependency Rules
+
+## 3. Data Model (ERD)
+- Entity Definitions
+- Type Definitions
+
+## 4. API Design
+- Endpoints
+- Request/Response Schema
+
+## 5. Technical Decisions
+- Patterns Used
+- Trade-offs
+
+## 6. File Structure
+[디렉토리 구조]
+```
+
+### 산출물 생성 필수 조건
+
+- 설계 완료 시 **반드시** 문서 파일 생성
+- 다이어그램(ASCII) **반드시** 포함
+- 산출물 미생성 시 **작업 실패로 간주**

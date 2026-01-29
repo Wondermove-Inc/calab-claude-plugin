@@ -266,3 +266,47 @@ await page.getByRole('button', { name: 'Submit' }).click();
 - `skills/qa/SKILL.md` - QA 테스트 스킬
 - `commands/qa-run.md` - QA 실행 명령어
 - `.claude/best-practices/testing.md` - 테스트 베스트 프랙티스
+
+---
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **E2E 테스트 완료 시 반드시 리포트 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **테스트 리포트** | `.claude/docs/test/e2e-report.md` | ✅ |
+| **스크린샷** | `.playwright/screenshots/` | ⚠️ (실패 시) |
+| **트레이스** | `.playwright/traces/` | ⚠️ (실패 시) |
+
+### E2E 리포트 필수 항목
+
+```markdown
+# E2E 테스트 리포트
+
+## 실행 정보
+- **일시**: {timestamp}
+- **프레임워크**: {Playwright/Puppeteer}
+- **소요 시간**: {duration}
+
+## 결과 요약
+- 전체: N개 테스트
+- 성공: N개 (X%)
+- 실패: N개 (X%)
+- 건너뜀: N개 (X%)
+
+## 실패 테스트 상세
+[테스트명, 원인, 스크린샷 경로]
+
+## Flaky 테스트
+[목록 + 실패율]
+
+## 아티팩트
+[스크린샷, 비디오, 트레이스 경로]
+```
+
+### 산출물 생성 필수 조건
+
+- E2E 실행 완료 시 **반드시** 리포트 파일 생성
+- 실패 시 **반드시** 스크린샷 저장
+- 산출물 미생성 시 **작업 실패로 간주**
