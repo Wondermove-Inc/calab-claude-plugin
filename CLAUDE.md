@@ -33,7 +33,7 @@
 ### 핵심 구성
 
 ```
-23개 스킬 + 15개 에이전트 + 21개 훅
+24개 스킬 + 23개 에이전트 + 22개 훅
 ```
 
 ### 설치 확인
@@ -140,7 +140,7 @@
 └─────────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
-### 사용 가능한 에이전트 (15개)
+### 사용 가능한 에이전트 (23개)
 
 > **🚨 중요: 에이전트 호출 시 네임스페이스 규칙**
 >
@@ -157,7 +157,7 @@
 | **Plan** | 구현 계획 수립 | Read, Glob, Grep | 아키텍처 설계 |
 | **general-purpose** | 범용 작업 수행 | All | 복잡한 멀티스텝 |
 
-#### 플러그인 에이전트 (12개) - `calab-plugin:` prefix 필수
+#### 플러그인 에이전트 (20개) - `calab-plugin:` prefix 필수
 
 | 에이전트 | 호출 시 이름 | 역할 | 허용 도구 |
 |----------|-------------|------|----------|
@@ -173,6 +173,14 @@
 | **project-onboarder** | `calab-plugin:project-onboarder` | 프로젝트 온보딩 | Read, Glob, Grep, Write |
 | **validator** | `calab-plugin:validator` | 완전성/AC 검증 | Read, Grep, Glob |
 | **reinforcer** | `calab-plugin:reinforcer` | 검증 실패 항목 수정 | Read, Write, Edit |
+| **planner-phase** | `calab-plugin:planner-phase` | PRD 및 PHASE 분해 | Read, Glob, Grep, Task |
+| **planner-task** | `calab-plugin:planner-task` | Task 분해 (TDD) | Read, Glob, Grep, TaskCreate |
+| **design** | `calab-plugin:design` | 아키텍처/ERD 설계 | Read, Glob, Grep, Write |
+| **dev-executor** | `calab-plugin:dev-executor` | TDD 구현 실행 | Read, Write, Edit, Bash |
+| **task-validator** | `calab-plugin:task-validator` | Task 분해 검증 | Read, Grep, Glob |
+| **qa** | `calab-plugin:qa` | 8단계 QA 검증 | Read, Bash, Glob, Grep |
+| **root-cause-finder** | `calab-plugin:root-cause-finder` | 근본 원인 분석 | Read, Glob, Grep, Bash |
+| **bug-fixer** | `calab-plugin:bug-fixer` | TDD 버그 수정 | Read, Write, Edit, Bash |
 
 ### 🚨 에이전트 프롬프트 작성 필수 규칙 (2025)
 

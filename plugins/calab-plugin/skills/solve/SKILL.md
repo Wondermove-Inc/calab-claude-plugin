@@ -9,17 +9,16 @@ description: |
   느림, slow, 성능, performance, timeout, 타임아웃
 argument-hint: "[--5whys|--rca|--hypothesis|--binary] [문제 설명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search]
-agent: build-error-resolver
 agents:
-  primary: build-error-resolver
+  primary: root-cause-finder
   orchestration:
     explore: [Explore]
-    analyze: [build-error-resolver, Explore]
-    research: [deep-researcher]
-    fix: [build-error-resolver, code-reviewer]
-    validate: [validator]
-    reinforce: [reinforcer]
-    verify: [code-reviewer, e2e-runner, validator]
+    analyze: [calab-plugin:root-cause-finder, Explore]
+    research: [calab-plugin:deep-researcher]
+    fix: [calab-plugin:bug-fixer, calab-plugin:code-reviewer]
+    validate: [calab-plugin:validator]
+    reinforce: [calab-plugin:reinforcer]
+    verify: [calab-plugin:code-reviewer, calab-plugin:e2e-runner, calab-plugin:validator]
 ---
 
 # /solve - 문제 해결
@@ -63,42 +62,92 @@ agents:
 - 최근 변경 사항 (git log)
 ```
 
-### 2. 분석 단계
+### 2. 분석 단계 (Root Cause Analysis)
 
 **Task 도구 호출**:
-- `subagent_type`: `"calab-plugin:build-error-resolver"`
-- `description`: `"문제 원인 분석"`
-- `prompt`: 아래 프롬프트 내용 사용
+```python
+Task(
+    subagent_type="calab-plugin:root-cause-finder",
+    description="근본 원인 분석",
+    prompt="""
+    **역할**: 문제 해결 전문가
 
-**프롬프트 내용:**
+    **목표**: 근본 원인 분석
+
+    **방법론**: {--5whys | --rca | --hypothesis}
+    - 5whys: 반복 질문으로 근본 원인 도달
+    - rca: 8단계 체계적 분석
+    - hypothesis: 가설 검증 사이클
+
+    **문제 정보**:
+    {에러 메시지, 스택 트레이스, 관련 파일}
+
+    **출력**:
+    - 근본 원인 식별 (confidence: high/medium/low)
+    - 해결 방안 제시 (P0/P1/P2 우선순위)
+    """,
+    run_in_background=True
+)
 ```
-**역할**: 문제 해결 전문가
 
-**목표**: 근본 원인 분석
+### 3. 수정 단계 (Bug Fix with TDD)
 
-**방법론**: {--5whys | --rca | --hypothesis | --binary}
+**Task 도구 호출**:
+```python
+Task(
+    subagent_type="calab-plugin:bug-fixer",
+    description="버그 수정 (TDD)",
+    prompt="""
+    **역할**: TDD 버그 수정 전문가
 
-**출력**:
-- 근본 원인 식별
-- 해결 방안 제시
+    **목표**: 근본 원인 기반 수정
+
+    **Root Cause**: {root_cause_finder 결과}
+    **권장 수정**: {recommended_fix}
+
+    **TDD 워크플로우**:
+    1. RED: 버그 재현 테스트 작성 (실패해야 함)
+    2. GREEN: 수정 적용 (테스트 통과)
+    3. REFACTOR: 코드 정리
+
+    **수정 후 검증**:
+    - 회귀 테스트 실행
+    - 전체 테스트 스위트 확인
+    """,
+    run_in_background=True
+)
 ```
 
-### 3. 수정 및 검증 단계
+### 4. 검증 단계
 
-**3-1. 수정 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:build-error-resolver"`
-- `description`: `"문제 수정"`
-- `prompt`: `"..."`
+**4-1. 검증 필수 (Task 도구 호출)**:
+```python
+Task(
+    subagent_type="calab-plugin:validator",
+    description="수정 검증",
+    prompt="""
+    **역할**: 완전성 검증 전문가
 
-**3-2. 검증 필수 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:validator"`
-- `description`: `"수정 검증"`
-- `prompt`: `"해결 완전성 확인, 재발 방지 확인..."`
+    **목표**: 해결 완전성 확인
 
-**3-3. 검증 실패 시 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:reinforcer"`
-- `description`: `"추가 수정"`
-- `prompt`: `"..."`
+    **검증 항목**:
+    - 버그 재현 테스트 통과
+    - 회귀 테스트 통과
+    - 엣지 케이스 처리
+    - 재발 방지 조치 확인
+    """
+)
+```
+
+**4-2. 검증 실패 시 (Task 도구 호출)**:
+```python
+if validator_result == "reinforcer 필요":
+    Task(
+        subagent_type="calab-plugin:reinforcer",
+        description="추가 수정",
+        prompt="validator 결과 기반 누락 항목 수정"
+    )
+```
 
 **⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
@@ -246,18 +295,20 @@ Why 5: 왜 리뷰가 없었나?
 │  └── Explore 에이전트: 관련 코드 및 로그 탐색            │
 │                                                         │
 │  2. 분석 단계 (Analyze):                                │
-│  ├── build-error-resolver: 오류 패턴 분석               │
+│  ├── root-cause-finder: 근본 원인 분석                  │
+│  │   └── 5 Whys / RCA / Hypothesis 방법론              │
 │  └── Explore 에이전트: 히스토리 및 변경사항 추적          │
 │                                                         │
 │  3. 리서치 단계 (Research):                             │
 │  └── deep-researcher: 유사 문제/해결책 웹 검색           │
 │                                                         │
 │  4. 수정 단계 (Fix):                                    │
-│  ├── build-error-resolver: 코드 수정                    │
+│  ├── bug-fixer: TDD 기반 버그 수정                      │
+│  │   └── RED → GREEN → REFACTOR                        │
 │  └── code-reviewer: 수정 코드 검증 (병렬)                │
 │                                                         │
 │  5. 검증 단계 (Verify):                                 │
-│  ├── validator: 해결 완전성 검증 (AC, 재발 방지)         │
+│  ├── validator: 해결 완전성 검증 (재발 방지)             │
 │  ├── code-reviewer: 코드 품질 확인                      │
 │  └── e2e-runner: 회귀 테스트 실행 (선택)                 │
 │                                                         │

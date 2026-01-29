@@ -1,7 +1,8 @@
 ---
 name: dev
 description: |
-  개발 워크플로우를 실행합니다. 기획(Plan), 설계(Design), 태스크 분해(Tasks), 구현(Build)을 순차적으로 진행합니다.
+  통합 개발 워크플로우 매니저. 기획(Plan), 설계(Design), 태스크 분해(Tasks), 구현(Build)을 순차적으로 진행합니다.
+  요청 유형을 자동 분류하여 최적의 프로세스를 적용합니다.
   USE WHEN: 새 기능, new feature, 개발, develop, 프로젝트 시작, 설계, design,
   아키텍처, architecture, PRD, 요구사항, requirement, 기획, plan,
   구현해줘, 만들어줘, build, implement, create,
@@ -10,23 +11,74 @@ description: |
   태스크, task, 스토리, story, 에픽, epic,
   착수, 시작, start, 진행, proceed
 argument-hint: "[--plan|--design|--tasks|--build|--status] [기능명]"
-allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task, WebSearch, mcp__tavily__tavily-search]
-agent: dev-workflow
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task, TaskCreate, TaskUpdate, TaskList, TaskGet, WebSearch, AskUserQuestion, EnterPlanMode, ExitPlanMode, mcp__tavily__tavily-search]
 agents:
-  primary: dev-workflow
+  primary: planner-phase
   orchestration:
-    plan: [Plan, deep-researcher]
-    design: [Plan, Explore]
-    tasks: [dev-workflow]
-    build: [dev-workflow, code-reviewer, tdd-workflow]
-    validate: [validator]
-    fix: [reinforcer]
-    review: [code-reviewer, security-reviewer, validator]
+    plan: [calab-plugin:planner-phase, calab-plugin:deep-researcher]
+    design: [calab-plugin:design, Explore]
+    tasks: [calab-plugin:planner-task, calab-plugin:task-validator]
+    build: [calab-plugin:dev-executor, calab-plugin:code-reviewer]
+    validate: [calab-plugin:validator, calab-plugin:qa]
+    fix: [calab-plugin:reinforcer]
+    review: [calab-plugin:code-reviewer, calab-plugin:security-reviewer, calab-plugin:validator]
 ---
 
-# /dev - 개발 워크플로우
+# /dev - 통합 개발 워크플로우 매니저
 
 > **Plan → Design → Tasks → Build 전체 사이클 관리**
+> **요청 유형 자동 분류 + 도메인 분석 + 에이전트 오케스트레이션**
+
+---
+
+## 0. 요청 유형 분류 (자동)
+
+사용자 요청을 분석하여 유형을 결정합니다:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| NEW_DEVELOPMENT | 새로운 기능 개발 | "인증 기능 추가" |
+| MODIFICATION | 기존 기능 수정 | "로그인 방식 변경" |
+| BUG_FIX | 버그 수정 | "로그인 오류 수정" |
+| MULTI_INTENT | 복합 요청 | "버그 수정하고 기능 추가" |
+
+### 유형별 프로세스 파일
+
+| Type | Process File |
+|------|--------------|
+| NEW_DEVELOPMENT / MODIFICATION | `rules/processes/development-process.md` |
+| BUG_FIX | `/solve` 스킬로 위임 |
+
+---
+
+## 1. 도메인 분석 (자동)
+
+영향받는 도메인을 분석하여 적절한 가이드를 로드합니다:
+
+```python
+def detect_domains(request, file_paths):
+    domains = set()
+
+    # 디렉토리 기반 감지
+    for path in file_paths:
+        if "frontend" in path or "components" in path:
+            domains.add("frontend")
+        elif "api" in path or "services" in path:
+            domains.add("backend")
+        elif "models" in path or "schema" in path:
+            domains.add("database")
+
+    # 키워드 기반 감지
+    keywords = {
+        "frontend": ["UI", "컴포넌트", "페이지", "React"],
+        "backend": ["API", "서비스", "Zod", "엔드포인트"],
+        "database": ["SQL", "마이그레이션", "스키마", "테이블"],
+    }
+
+    return domains
+```
+
+---
 
 ## 사용법
 
@@ -44,60 +96,135 @@ agents:
 
 **⚠️ 이 스킬이 로드되면 아래 지침을 따라 즉시 Task 도구를 호출하세요.**
 
-### --plan 단계
-
-**지금 바로 Task 도구를 호출**하세요:
-- `subagent_type`: `"Plan"`
-- `description`: `"기능 기획: {기능명}"`
-- `prompt`: 아래 프롬프트 내용 사용
-
-**프롬프트 내용:**
-```
-**역할**: 소프트웨어 아키텍트
-
-**목표**: {기능명}에 대한 PRD 및 브레인스토밍
-
-**산출물**:
-1. 브레인스토밍 결과 (.claude/docs/active/{feature}/01-brainstorm.md)
-2. PRD 문서 (.claude/docs/active/{feature}/02-prd.md)
-
-**템플릿**: templates/prd-template.md 사용
-```
-
-### --design 단계
+### --plan 단계 (PRD + PHASE 분해)
 
 **Task 도구 호출**:
-- `subagent_type`: `"Plan"`
-- `description`: `"아키텍처 설계: {기능명}"`
-- `prompt`: 아래 프롬프트 내용 사용
+```python
+Task(
+    subagent_type="calab-plugin:planner-phase",
+    description="기능 기획: {기능명}",
+    prompt="""
+    **역할**: 소프트웨어 아키텍트
 
-**프롬프트 내용:**
+    **목표**: {기능명}에 대한 PRD 및 PHASE 분해
+
+    **산출물**:
+    1. PRD 문서 (.claude/plans/{feature-name}.md)
+       - Overview, Objectives
+       - Technical Requirements
+       - PHASE Decomposition
+       - Acceptance Criteria
+
+    **요청 유형**: {NEW_DEVELOPMENT|MODIFICATION}
+    **도메인**: {detected_domains}
+    """,
+    run_in_background=True
+)
 ```
-**역할**: 시스템 아키텍트
 
-**목표**: 상세 아키텍처 및 ERD 설계
+### --design 단계 (아키텍처 + ERD)
 
-**산출물**:
-1. 아키텍처 문서 (.claude/docs/active/{feature}/03-architecture.md)
-2. ERD (.claude/docs/active/{feature}/04-erd.md)
+**Task 도구 호출**:
+```python
+Task(
+    subagent_type="calab-plugin:design",
+    description="아키텍처 설계: {기능명}",
+    prompt="""
+    **역할**: 시스템 아키텍트
+
+    **목표**: 상세 아키텍처 및 ERD 설계
+
+    **산출물**:
+    1. 아키텍처 문서 (.claude/plans/{feature-name}-DESIGN.md)
+       - Component Diagram
+       - Layer Responsibilities
+       - Data Model (ERD)
+       - API Design
+
+    **참조**: PRD 문서 (.claude/plans/{feature-name}.md)
+    """,
+    run_in_background=True
+)
 ```
 
-### --build 단계 (완료 후 검증 필수)
+### --tasks 단계 (Task 분해 + 검증)
 
-**1단계 - 구현 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:dev-workflow"`
-- `description`: `"TASK-{ID} 구현"`
-- `prompt`: `"AC 기반 코드 구현..."`
+**Task 도구 호출 (순차)**:
+```python
+# 1. Task 분해
+Task(
+    subagent_type="calab-plugin:planner-task",
+    description="Task 분해: {기능명}",
+    prompt="""
+    **역할**: 개발 플래너
 
-**2단계 - 검증 필수 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:validator"`
-- `description`: `"TASK-{ID} 검증"`
-- `prompt`: `"AC 100% 충족 확인..."`
+    **목표**: PHASE를 개별 Task로 분해 (TDD 워크플로우)
 
-**3단계 - 검증 실패 시 보강 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:reinforcer"`
-- `description`: `"TASK-{ID} 보강"`
-- `prompt`: `"누락 항목 수정..."`
+    **산출물**:
+    - TaskCreate로 각 Task 생성
+    - AC, 의존성, TDD 단계 명시
+    """,
+    run_in_background=True
+)
+
+# 2. Task 검증 (HARD GATE)
+Task(
+    subagent_type="calab-plugin:task-validator",
+    description="Task 검증: {기능명}",
+    prompt="""
+    **역할**: 품질 게이트
+
+    **목표**: Task 분해 검증
+    - PHASE 커버리지
+    - PRD 목표 매핑
+    - 의존성 순서
+    - 완전성
+    """,
+    run_in_background=True
+)
+```
+
+### --build 단계 (TDD 구현 + 검증)
+
+**Task 도구 호출 (TaskList 기반 병렬 실행)**:
+```python
+# 1. 실행 가능한 Task 조회
+all_tasks = TaskList()
+executable = [t for t in all_tasks if t.status == "pending" and not t.blockedBy]
+
+# 2. 병렬 구현 (독립 Task)
+for task in executable:
+    TaskUpdate(taskId=task.id, status="in_progress")
+    Task(
+        subagent_type="calab-plugin:dev-executor",
+        description=f"구현: {task.subject}",
+        prompt=f"""
+        **Task**: {task.id}
+        **AC**: {task.description}
+
+        TDD 워크플로우:
+        1. RED: 실패하는 테스트 작성
+        2. GREEN: 테스트 통과하는 코드 작성
+        3. REFACTOR: 코드 정리
+        """,
+        run_in_background=True
+    )
+
+# 3. 검증 필수
+Task(
+    subagent_type="calab-plugin:validator",
+    description="구현 검증",
+    prompt="AC 100% 충족 확인, 엣지 케이스, 품질 기준"
+)
+
+# 4. 검증 실패 시 보강
+if validator_result == "reinforcer 필요":
+    Task(
+        subagent_type="calab-plugin:reinforcer",
+        description="누락 항목 보강",
+        prompt="validator 결과 기반 수정"
+    )
+```
 
 **⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
@@ -193,24 +320,24 @@ agents:
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  --plan 단계:                                           │
-│  ├── Plan 에이전트: 아키텍처 설계, 요구사항 분석          │
-│  └── deep-researcher: 베스트 프랙티스 검색               │
+│  ├── planner-phase: PRD 작성, PHASE 분해                │
+│  └── deep-researcher: 베스트 프랙티스 검색 (병렬)        │
 │                                                         │
 │  --design 단계:                                         │
-│  ├── Plan 에이전트: 상세 설계                           │
-│  └── Explore 에이전트: 기존 코드 패턴 분석               │
+│  ├── design: 아키텍처 설계, ERD 작성                    │
+│  └── Explore: 기존 코드 패턴 분석 (병렬)                 │
 │                                                         │
 │  --tasks 단계:                                          │
-│  └── dev-workflow: 태스크 분해 및 AC 정의               │
+│  ├── planner-task: Task 분해 (TDD 워크플로우)           │
+│  └── task-validator: Task 검증 (HARD GATE)              │
 │                                                         │
 │  --build 단계:                                          │
-│  ├── dev-workflow: 코드 구현                            │
-│  ├── code-reviewer: 코드 품질 검증 (병렬)                │
-│  └── tdd-workflow 스킬: 테스트 작성 (--tdd 옵션 시)      │
+│  ├── dev-executor: TDD 구현 (RED→GREEN→REFACTOR)        │
+│  └── code-reviewer: 코드 품질 검증 (병렬)                │
 │                                                         │
 │  완료 후 검증:                                          │
 │  ├── validator: 완전성 검증 (AC, 누락, 엣지케이스)       │
-│  ├── code-reviewer: 최종 코드 리뷰                      │
+│  ├── qa: 8단계 QA 프로세스                              │
 │  └── security-reviewer: 보안 취약점 검사                 │
 │                                                         │
 │  검증 실패 시:                                          │
@@ -218,6 +345,25 @@ agents:
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### Agent Execution Log 템플릿
+
+계획 문서에 포함되는 에이전트 실행 로그:
+
+```markdown
+## Agent Execution Log
+
+| Agent | agentId | Status | Timestamp | Purpose |
+|-------|---------|--------|-----------|---------|
+| planner-phase | - | pending | - | PRD detailing |
+| design | - | pending | - | Architecture design |
+| planner-task | - | pending | - | Task decomposition |
+| task-validator | - | pending | - | Task validation |
+| dev-executor | - | pending | - | Implementation |
+| qa | - | pending | - | Test verification |
+```
+
+> **agentId 기록**: 에이전트 실행 후 반드시 agentId를 로그에 기록하여 컨텍스트 압축 후에도 재개 가능
 
 ### 병렬 실행 가능 조합
 
