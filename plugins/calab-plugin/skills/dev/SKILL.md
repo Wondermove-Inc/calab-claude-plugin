@@ -114,15 +114,18 @@ Task(
 
     **목표**: {기능명}에 대한 PRD 및 PHASE 분해
 
-    **산출물**:
-    1. PRD 문서 (.claude/plans/{feature-name}.md)
+    **요청 유형**: {NEW_DEVELOPMENT|MODIFICATION}
+    **도메인**: {detected_domains}
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. feature-name 결정: kebab-case 형식 (예: user-authentication)
+    2. PRD 문서 생성: `.claude/docs/active/{feature-name}/01-PRD.md`
        - Overview, Objectives
        - Technical Requirements
        - PHASE Decomposition
        - Acceptance Criteria
-
-    **요청 유형**: {NEW_DEVELOPMENT|MODIFICATION}
-    **도메인**: {detected_domains}
+    3. 브레인스토밍 생성: `.claude/docs/active/{feature-name}/01-brainstorm.md` (권장)
+    ※ 산출물 미생성 시 작업 실패로 간주
     """,
     run_in_background=True
 )
@@ -140,14 +143,18 @@ Task(
 
     **목표**: 상세 아키텍처 및 ERD 설계
 
-    **산출물**:
-    1. 아키텍처 문서 (.claude/plans/{feature-name}-DESIGN.md)
+    **feature-name**: {이전 단계에서 결정된 feature-name}
+    **참조**: `.claude/docs/active/{feature-name}/01-PRD.md`
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. 아키텍처 문서 생성: `.claude/docs/active/{feature-name}/02-architecture.md`
        - Component Diagram
        - Layer Responsibilities
-       - Data Model (ERD)
        - API Design
-
-    **참조**: PRD 문서 (.claude/plans/{feature-name}.md)
+    2. ERD 문서 생성 (DB 있을 경우): `.claude/docs/active/{feature-name}/02-erd.md`
+       - Data Model
+       - 테이블 관계
+    ※ 산출물 미생성 시 작업 실패로 간주
     """,
     run_in_background=True
 )
@@ -166,9 +173,15 @@ Task(
 
     **목표**: PHASE를 개별 Task로 분해 (TDD 워크플로우)
 
-    **산출물**:
-    - TaskCreate로 각 Task 생성
-    - AC, 의존성, TDD 단계 명시
+    **feature-name**: {이전 단계에서 결정된 feature-name}
+    **참조**: `.claude/docs/active/{feature-name}/01-PRD.md`, `02-architecture.md`
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. Task 목록 문서 생성: `.claude/docs/active/{feature-name}/03-tasks.md`
+       - AC, 의존성, TDD 단계 명시
+    2. Worktree 생성/업데이트: `.claude-state/worktree.json`
+    3. TaskCreate로 각 Task 등록
+    ※ 산출물 미생성 시 작업 실패로 간주
     """,
     run_in_background=True
 )
@@ -181,10 +194,18 @@ Task(
     **역할**: 품질 게이트
 
     **목표**: Task 분해 검증
+
+    **feature-name**: {feature-name}
+
+    **검증 항목**:
     - PHASE 커버리지
     - PRD 목표 매핑
     - 의존성 순서
     - 완전성
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. 검증 보고서 생성: `.claude/docs/active/{feature-name}/task-validation.md`
+    ※ 산출물 미생성 시 작업 실패로 간주
     """,
     run_in_background=True
 )
@@ -207,11 +228,19 @@ for task in executable:
         prompt=f"""
         **Task**: {task.id}
         **AC**: {task.description}
+        **feature-name**: {feature-name}
 
         TDD 워크플로우:
         1. RED: 실패하는 테스트 작성
         2. GREEN: 테스트 통과하는 코드 작성
         3. REFACTOR: 코드 정리
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. 소스 코드 생성/수정
+        2. 테스트 코드 생성/수정
+        3. Worktree 업데이트: `.claude-state/worktree.json` (status: done)
+        4. 구현 보고서 생성: `.claude/docs/active/{feature-name}/implementation-{task.id}.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
         """,
         run_in_background=True
     )
@@ -224,9 +253,14 @@ if build_result.has_errors:
         prompt=f"""
         **오류 로그**: {build_result.errors}
         **대상 파일**: {build_result.files}
+        **feature-name**: {feature-name}
 
         자동 수정 후 빌드 재시도.
         3회 실패 시 /solve 에스컬레이션 제안.
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. 빌드 오류 분석 보고서: `.claude/docs/active/{feature-name}/build-error-report.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
         """
     )
 
@@ -234,7 +268,14 @@ if build_result.has_errors:
 Task(
     subagent_type="calab-plugin:validator",
     description="구현 검증",
-    prompt="AC 100% 충족 확인, 엣지 케이스, 품질 기준"
+    prompt=f"""
+    **목표**: AC 100% 충족 확인, 엣지 케이스, 품질 기준
+    **feature-name**: {feature-name}
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. 검증 보고서 생성: `.claude/docs/active/{feature-name}/validation-report.md`
+    ※ 산출물 미생성 시 작업 실패로 간주
+    """
 )
 
 # 5. 검증 실패 시 보강 (validator → reinforcer → validator 체인)
@@ -242,22 +283,35 @@ if validator_result == "reinforcer 필요":
     Task(
         subagent_type="calab-plugin:reinforcer",
         description="누락 항목 보강",
-        prompt="validator 결과 기반 수정"
+        prompt=f"""
+        **목표**: validator 결과 기반 수정
+        **feature-name**: {feature-name}
+        **검증 결과**: {validator_result}
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. 수정 보고서 생성: `.claude/docs/active/{feature-name}/reinforcer-report.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
+        """
     )
 
     # 6. 재검증 필수 (reinforcer 후 반드시 실행)
     revalidation_result = Task(
         subagent_type="calab-plugin:validator",
         description="수정 사항 재검증",
-        prompt="""
+        prompt=f"""
         **역할**: 완전성 재검증 전문가
 
         **목표**: reinforcer 수정 결과 검증
+        **feature-name**: {feature-name}
 
         **검증 항목**:
         1. 이전 validator 실패 항목 모두 해결되었는지
         2. 새로운 문제 도입되지 않았는지
         3. AC 100% 충족 확인
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. 재검증 보고서 생성: `.claude/docs/active/{feature-name}/revalidation-report.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
 
         **출력**: 신뢰도 점수 + 상세 검증 결과
         """
@@ -604,10 +658,15 @@ if len(completed) == len(all_tasks):
     Task(
         subagent_type="calab-plugin:qa",
         description="전체 기능 QA",
-        prompt="""
+        prompt=f"""
         **역할**: QA 전문가
         **목표**: 구현된 기능 전체 검증
         **범위**: 완료된 모든 Task
+        **feature-name**: {feature-name}
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. QA 보고서 생성: `.claude/docs/active/{feature-name}/qa-report.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
         """
     )
 

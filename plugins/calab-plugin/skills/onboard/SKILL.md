@@ -61,7 +61,13 @@ agents:
 - 디렉토리 구조
 - 주요 패턴
 
-**출력**: PROJECT_SUMMARY.md 초안
+**🚨 산출물 필수 (CRITICAL)**:
+1. 디렉토리 생성: `.claude/project-context/`
+2. PROJECT_SUMMARY.md 생성: `.claude/project-context/PROJECT_SUMMARY.md`
+   - 기술 스택 정보
+   - 디렉토리 구조
+   - 주요 명령어
+※ 산출물 미생성 시 작업 실패로 간주
 ```
 
 ### Phase 3-4: 아키텍처 및 컨텍스트 생성
@@ -77,17 +83,21 @@ agents:
 
 **목표**: 5개 컨텍스트 문서 생성
 
-**산출물**:
-- .claude/project-context/PROJECT_SUMMARY.md
-- .claude/project-context/ARCHITECTURE.md (C4 다이어그램)
-- .claude/project-context/CODE_PATTERNS.md
-- .claude/project-context/CONVENTIONS.md
-- .claude/project-context/DOMAIN_KNOWLEDGE.md (선택)
-
 **C4 Model**:
 - Level 1: System Context
 - Level 2: Container Diagram
 - Level 3: Component Diagram
+
+**🚨 산출물 필수 (CRITICAL)**:
+모든 파일을 반드시 생성해야 합니다:
+1. `.claude/project-context/PROJECT_SUMMARY.md` ✅ 필수
+2. `.claude/project-context/ARCHITECTURE.md` ✅ 필수 (C4 다이어그램)
+3. `.claude/project-context/CODE_PATTERNS.md` ✅ 필수
+4. `.claude/project-context/CONVENTIONS.md` ✅ 필수
+5. `.claude/project-context/DOMAIN_KNOWLEDGE.md` ⚠️ 권장
+6. `.claude/memory/PROJECT_RULES.md` ✅ 필수 (규칙 요약)
+7. 체크포인트 업데이트: `.claude-state/checkpoint.json` (status: completed)
+※ 산출물 미생성 시 작업 실패로 간주
 ```
 
 **⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!

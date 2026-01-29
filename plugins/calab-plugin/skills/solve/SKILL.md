@@ -83,9 +83,16 @@ Task(
     **문제 정보**:
     {에러 메시지, 스택 트레이스, 관련 파일}
 
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. problem-id 생성: PROB-{YYYYMMDD}-{NNN} 형식
+    2. 문제 정의서 생성: `.claude/problem-solving/active/{problem-id}/problem.md`
+    3. 분석 기록 생성: `.claude/problem-solving/active/{problem-id}/analysis.md`
+    ※ 산출물 미생성 시 작업 실패로 간주
+
     **출력**:
     - 근본 원인 식별 (confidence: high/medium/low)
     - 해결 방안 제시 (P0/P1/P2 우선순위)
+    - 생성된 산출물 경로
     """,
     run_in_background=True
 )
@@ -105,6 +112,7 @@ Task(
 
     **Root Cause**: {root_cause_finder 결과}
     **권장 수정**: {recommended_fix}
+    **problem-id**: {이전 단계에서 생성된 problem-id}
 
     **TDD 워크플로우**:
     1. RED: 버그 재현 테스트 작성 (실패해야 함)
@@ -114,6 +122,11 @@ Task(
     **수정 후 검증**:
     - 회귀 테스트 실행
     - 전체 테스트 스위트 확인
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. 수정 보고서 생성: `.claude/problem-solving/resolved/{problem-id}/fix-report.md`
+    2. active → resolved 폴더로 이동
+    ※ 산출물 미생성 시 작업 실패로 간주
     """,
     run_in_background=True
 )
@@ -131,11 +144,21 @@ Task(
 
     **목표**: 해결 완전성 확인
 
+    **problem-id**: {이전 단계에서 사용된 problem-id}
+
     **검증 항목**:
     - 버그 재현 테스트 통과
     - 회귀 테스트 통과
     - 엣지 케이스 처리
     - 재발 방지 조치 확인
+    - 산출물 존재 확인:
+      - `.claude/problem-solving/resolved/{problem-id}/fix-report.md`
+      - `.claude/problem-solving/resolved/{problem-id}/analysis.md`
+
+    **🚨 산출물 필수 (CRITICAL)**:
+    1. 검증 보고서 생성: `.claude/problem-solving/resolved/{problem-id}/validation-report.md`
+    2. 지식 베이스 업데이트: `.claude/problem-solving/knowledge-base/solutions.json`
+    ※ 산출물 미생성 시 작업 실패로 간주
     """
 )
 ```
@@ -146,7 +169,18 @@ if validator_result == "reinforcer 필요":
     Task(
         subagent_type="calab-plugin:reinforcer",
         description="추가 수정",
-        prompt="validator 결과 기반 누락 항목 수정"
+        prompt="""
+        **역할**: 누락/미흡 항목 수정 전문가
+
+        **목표**: validator 결과 기반 누락 항목 수정
+
+        **problem-id**: {problem-id}
+        **검증 결과**: {validator_result}
+
+        **🚨 산출물 필수 (CRITICAL)**:
+        1. 수정 보고서 업데이트: `.claude/problem-solving/resolved/{problem-id}/reinforcer-report.md`
+        ※ 산출물 미생성 시 작업 실패로 간주
+        """
     )
 ```
 
