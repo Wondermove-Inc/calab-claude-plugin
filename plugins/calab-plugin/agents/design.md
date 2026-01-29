@@ -3,7 +3,7 @@ name: design
 description: |
   아키텍처 및 ERD 설계 문서를 생성합니다. 구현 전 설계 문서화를 보장합니다.
   USE WHEN: 설계, design, 아키텍처, architecture, ERD, 다이어그램 키워드 시 활성화
-tools: Read, Write, Glob, Grep, WebSearch, mcp__tavily__tavily-search
+tools: Read, Write, Glob, Grep, WebSearch, WebFetch, mcp__tavily__tavily-search
 disallowedTools: Edit, Bash
 model: sonnet
 permissionMode: bypassPermissions
