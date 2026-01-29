@@ -1,7 +1,7 @@
 ---
 name: build-error-resolver
 description: 빌드 오류를 분석하고 해결합니다. TypeScript, ESLint, 번들러, 테스트 실패 등 모든 빌드 관련 오류를 처리합니다.
-tools: Read, Grep, Glob, Bash, Write, Edit
+tools: Read, Grep, Glob, Bash, Write, Edit, WebSearch, mcp__tavily__tavily-search
 model: sonnet
 permissionMode: acceptEdits
 skills: code-quality, best-practices, project-rules

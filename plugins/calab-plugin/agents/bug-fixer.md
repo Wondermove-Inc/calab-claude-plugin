@@ -3,7 +3,7 @@ name: bug-fixer
 description: |
   근본 원인 분석 결과를 바탕으로 버그를 수정합니다. TDD 워크플로우를 따릅니다.
   USE WHEN: 버그 수정, bug fix, 고쳐줘, 수정해줘, 패치, patch 키워드 시 활성화
-tools: Read, Write, Edit, Bash, Glob, Grep, TaskGet, TaskUpdate
+tools: Read, Write, Edit, Bash, Glob, Grep, TaskGet, TaskUpdate, WebSearch, mcp__tavily__tavily-search
 disallowedTools: Task
 model: sonnet
 permissionMode: bypassPermissions
