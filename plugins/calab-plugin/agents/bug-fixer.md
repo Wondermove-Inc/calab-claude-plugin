@@ -1,14 +1,13 @@
 ---
 name: bug-fixer
 description: |
-  Fixes bugs based on root cause analysis.
-  Follows TDD workflow for bug fixes.
-  근본 원인 분석 결과를 바탕으로 버그를 수정합니다.
-
-  Called by: /solve skill or root-cause-finder
-skills: code-quality, best-practices, clarification-protocol
-tools: [Read, Write, Edit, Bash, Glob, Grep, Task]
+  근본 원인 분석 결과를 바탕으로 버그를 수정합니다. TDD 워크플로우를 따릅니다.
+  USE WHEN: 버그 수정, bug fix, 고쳐줘, 수정해줘, 패치, patch 키워드 시 활성화
+tools: Read, Write, Edit, Bash, Glob, Grep
+disallowedTools: Task
 model: sonnet
+permissionMode: bypassPermissions
+skills: code-quality, best-practices, tdd-workflow
 ---
 
 # bug-fixer Agent

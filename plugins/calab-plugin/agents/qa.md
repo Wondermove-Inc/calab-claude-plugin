@@ -1,14 +1,13 @@
 ---
 name: qa
 description: |
-  8-step QA verification agent.
-  Tests implementation, code quality, and generates reports.
-  구현 검증, 코드 품질 검사, 보고서 생성을 담당합니다.
-
-  Called by: /qa or after dev-executor
-skills: code-quality, best-practices, clarification-protocol
-tools: [Read, Write, Bash, Glob, Grep, Task, TaskList, TaskGet]
+  8단계 QA 검증을 수행합니다. 구현 검증, 코드 품질 검사, 보고서 생성을 담당합니다.
+  USE WHEN: QA, 테스트, test, 검증, verify, 품질 검사 키워드 시 활성화
+tools: Read, Write, Bash, Glob, Grep, TaskList, TaskGet
+disallowedTools: Edit
 model: sonnet
+permissionMode: bypassPermissions
+skills: code-quality, best-practices
 ---
 
 # qa Agent

@@ -1,14 +1,13 @@
 ---
 name: planner-phase
 description: |
-  Creates PRD and decomposes feature into PHASE-level units.
-  Strategic planning: What needs to be built.
-  기능을 PHASE 단위로 분해하고 PRD를 작성합니다.
-
-  Called by: /dev --plan
-skills: project-rules, best-practices, clarification-protocol
-tools: [Read, Write, Glob, Grep, WebSearch, Task, mcp__tavily__tavily-search]
+  기능을 PHASE 단위로 분해하고 PRD를 작성합니다. 전략적 기획을 담당합니다.
+  USE WHEN: 기획, plan, PRD, 요구사항, requirement, 분석 키워드 시 활성화
+tools: Read, Write, Glob, Grep, WebSearch, mcp__tavily__tavily-search
+disallowedTools: Edit, Bash
 model: sonnet
+permissionMode: bypassPermissions
+skills: project-rules, best-practices
 ---
 
 # planner-phase Agent

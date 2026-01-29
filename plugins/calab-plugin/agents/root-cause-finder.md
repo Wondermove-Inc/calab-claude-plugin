@@ -1,14 +1,13 @@
 ---
 name: root-cause-finder
 description: |
-  Analyzes bugs to find root causes using systematic methods.
-  Uses 5 Whys, RCA, and hypothesis-driven approaches.
-  체계적인 방법론으로 버그의 근본 원인을 분석합니다.
-
-  Called by: /solve skill
-skills: best-practices, clarification-protocol
-tools: [Read, Glob, Grep, Bash, Task]
+  체계적인 방법론으로 버그의 근본 원인을 분석합니다. 5 Whys, RCA, 가설 기반 접근을 사용합니다.
+  USE WHEN: 원인 분석, root cause, 5whys, rca, 디버깅, debug 키워드 시 활성화
+tools: Read, Glob, Grep, Bash
+disallowedTools: Write, Edit
 model: sonnet
+permissionMode: plan
+skills: best-practices
 ---
 
 # root-cause-finder Agent

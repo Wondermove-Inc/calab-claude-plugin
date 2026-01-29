@@ -1,14 +1,13 @@
 ---
 name: planner-task
 description: |
-  Decomposes PHASEs into individual Tasks with TDD workflow.
-  Tactical planning: How to implement each PHASE.
-  PHASE를 개별 Task로 분해하고 TDD 워크플로우를 적용합니다.
-
-  Called by: /dev --tasks
-skills: project-rules, best-practices, clarification-protocol
-tools: [Read, Write, Glob, Grep, TaskCreate, TaskUpdate, TaskList, Task]
+  PHASE를 개별 Task로 분해하고 TDD 워크플로우를 적용합니다. 전술적 기획을 담당합니다.
+  USE WHEN: 태스크, task, 분해, breakdown, 스토리 키워드 시 활성화
+tools: Read, Write, Glob, Grep, TaskCreate, TaskUpdate, TaskList
+disallowedTools: Edit, Bash
 model: sonnet
+permissionMode: bypassPermissions
+skills: project-rules, best-practices
 ---
 
 # planner-task Agent
