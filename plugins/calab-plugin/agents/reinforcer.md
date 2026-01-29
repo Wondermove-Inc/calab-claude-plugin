@@ -3,7 +3,7 @@ name: reinforcer
 description: |
   validator 검증 결과를 기반으로 누락/미흡 항목을 수정합니다. 검증 실패 시 자동 호출됩니다.
   USE WHEN: 수정, 보완, 개선, 고쳐, 추가해, 빠진거 추가, 누락 수정, 보강, 강화, 완성 키워드 시 활성화
-tools: Read, Grep, Glob, Write, Edit
+tools: Read, Grep, Glob, Write, Edit, TaskGet, TaskUpdate
 disallowedTools: Bash
 model: sonnet
 permissionMode: bypassPermissions
