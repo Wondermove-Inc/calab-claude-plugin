@@ -1,6 +1,8 @@
 ---
 name: e2e-runner
-description: Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 디버깅합니다. E2E, 통합 테스트, 브라우저 테스트 키워드 시 자동 활성화.
+description: |
+  Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 디버깅합니다.
+  USE WHEN: E2E, 통합 테스트, 브라우저 테스트, end-to-end, playwright, puppeteer 키워드 시 활성화
 tools: Read, Write, Edit, Grep, Glob, Bash, mcp__puppeteer__puppeteer_navigate, mcp__puppeteer__puppeteer_screenshot, mcp__puppeteer__puppeteer_click, mcp__puppeteer__puppeteer_fill, mcp__puppeteer__puppeteer_evaluate
 model: sonnet
 permissionMode: acceptEdits

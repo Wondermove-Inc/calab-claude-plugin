@@ -1,6 +1,8 @@
 ---
 name: code-reviewer
-description: 코드 품질을 검토하고 개선점을 제안합니다. 코드 리뷰, 품질 검사, PR 리뷰, 코드 검토, 리뷰해줘, 검토해줘 요청 시 활성화됩니다.
+description: |
+  코드 품질을 검토하고 개선점을 제안합니다.
+  USE WHEN: 코드 리뷰, 품질 검사, PR 리뷰, 코드 검토, 리뷰해줘, 검토해줘, review, quality check 키워드 시 활성화
 tools: Read, Grep, Glob
 disallowedTools: Write, Edit, Bash
 model: sonnet

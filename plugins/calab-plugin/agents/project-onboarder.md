@@ -1,6 +1,8 @@
 ---
 name: project-onboarder
-description: 새 프로젝트를 분석하고 컨텍스트 문서를 생성합니다. 기술스택, 패턴, 아키텍처를 파악합니다.
+description: |
+  새 프로젝트를 분석하고 컨텍스트 문서를 생성합니다. 기술스택, 패턴, 아키텍처를 파악합니다.
+  USE WHEN: 온보딩, 프로젝트 분석, 컨텍스트 생성, 코드베이스 학습, 구조 파악 키워드 시 활성화
 tools: Read, Grep, Glob, Write
 disallowedTools: Edit, Bash
 model: sonnet

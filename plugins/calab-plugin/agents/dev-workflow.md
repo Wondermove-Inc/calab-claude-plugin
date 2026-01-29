@@ -1,6 +1,8 @@
 ---
 name: dev-workflow
-description: 개발 워크플로우를 관리합니다. Plan → Design → Tasks → Build 순서로 체계적인 개발을 수행합니다.
+description: |
+  개발 워크플로우를 관리합니다. Plan → Design → Tasks → Build 순서로 체계적인 개발을 수행합니다.
+  USE WHEN: 워크플로우, workflow, 개발 프로세스, 단계별 개발, 체계적 개발 키워드 시 활성화
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 permissionMode: acceptEdits
