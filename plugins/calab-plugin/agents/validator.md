@@ -66,6 +66,81 @@ skills: code-quality, best-practices, project-rules
 - [ ] import/export 완전성
 - [ ] 의존성 연결 완료
 
+### Phase 2.5: 산출물 존재 검증 (Artifact Verification) 🚨
+
+```
+절차:
+1. 현재 작업 유형 확인 (plan/design/tasks/build/solve)
+2. 해당 유형의 필수 산출물 목록 로드
+3. 각 산출물 파일 존재 여부 확인
+4. 누락된 산출물 목록 생성
+```
+
+**필수 산출물 체크리스트:**
+
+| 작업 유형 | 필수 산출물 | 검증 방법 |
+|----------|-----------|----------|
+| **plan** | `.claude/docs/active/{feature}/01-PRD.md` | 파일 존재 |
+| **design** | `.claude/docs/active/{feature}/02-architecture.md` | 파일 존재 |
+| **tasks** | `.claude/docs/active/{feature}/03-tasks.md` | 파일 존재 |
+| **tasks** | `.claude-state/worktree.json` | 파일 존재 + feature 포함 |
+| **build** | 구현 코드 | 파일 존재 + 내용 확인 |
+| **build** | 테스트 코드 | 파일 존재 |
+| **solve** | `.claude/problem-solving/*/analysis.md` | 파일 존재 |
+| **solve** | `.claude/problem-solving/*/report.md` (해결 후) | 파일 존재 |
+
+**검증 코드:**
+
+```python
+def verify_artifacts(work_type, feature_name):
+    """작업 유형별 필수 산출물 검증"""
+
+    REQUIRED_ARTIFACTS = {
+        "plan": [
+            f".claude/docs/active/{feature_name}/01-PRD.md",
+        ],
+        "design": [
+            f".claude/docs/active/{feature_name}/02-architecture.md",
+        ],
+        "tasks": [
+            f".claude/docs/active/{feature_name}/03-tasks.md",
+            ".claude-state/worktree.json",
+        ],
+        "build": [
+            ".claude-state/worktree.json",  # status 업데이트 확인
+        ],
+        "solve": [
+            ".claude/problem-solving/active/*/analysis.md",
+            # 또는 resolved/*/report.md (해결 완료 시)
+        ],
+    }
+
+    missing = []
+    for artifact in REQUIRED_ARTIFACTS.get(work_type, []):
+        if not file_exists(artifact):
+            missing.append(artifact)
+
+    if missing:
+        return {
+            "passed": False,
+            "missing_artifacts": missing,
+            "action": "REINFORCE_REQUIRED",
+            "message": f"⚠️ 필수 산출물 {len(missing)}개 누락"
+        }
+
+    return {"passed": True}
+```
+
+**검증 출력:**
+
+```
+📦 산출물 검증:
+✅ 01-PRD.md 존재
+✅ 02-architecture.md 존재
+❌ 03-tasks.md 누락 → reinforcer 호출 필요
+✅ worktree.json 존재
+```
+
 ### Phase 3: 엣지 케이스 검증
 
 ```
