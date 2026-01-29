@@ -33,7 +33,7 @@
 ### 핵심 구성
 
 ```
-9개 스킬 + 23개 에이전트 + 22개 훅
+9개 스킬 + 23개 에이전트 + 21개 훅
 ```
 
 ### 설치 확인
@@ -157,7 +157,7 @@
 | **Plan** | 구현 계획 수립 | Read, Glob, Grep | 아키텍처 설계 |
 | **general-purpose** | 범용 작업 수행 | All | 복잡한 멀티스텝 |
 
-#### 플러그인 에이전트 (20개) - `calab-plugin:` prefix 필수
+#### 플러그인 에이전트 (23개) - `calab-plugin:` prefix 필수
 
 | 에이전트 | 호출 시 이름 | 역할 | 허용 도구 |
 |----------|-------------|------|----------|
@@ -168,6 +168,7 @@
 | **refactor-cleaner** | `calab-plugin:refactor-cleaner` | 데드 코드 정리 | Read, Write, Edit, Bash |
 | **e2e-runner** | `calab-plugin:e2e-runner` | E2E 테스트 실행 | All + Puppeteer |
 | **doc-updater** | `calab-plugin:doc-updater` | 문서 자동 업데이트 | Read, Write, Edit |
+| **docs-generator** | `calab-plugin:docs-generator` | 코드 기반 문서 생성 | Read, Write, Edit, Grep, Glob |
 | **deep-researcher** | `calab-plugin:deep-researcher` | 심층 리서치 분석 | Read, WebSearch, Tavily |
 | **web-researcher** | `calab-plugin:web-researcher` | 웹 검색 및 수집 | Tavily MCP 도구 |
 | **project-onboarder** | `calab-plugin:project-onboarder` | 프로젝트 온보딩 | Read, Glob, Grep, Write |
@@ -177,7 +178,9 @@
 | **planner-task** | `calab-plugin:planner-task` | Task 분해 (TDD) | Read, Glob, Grep, TaskCreate |
 | **design** | `calab-plugin:design` | 아키텍처/ERD 설계 | Read, Glob, Grep, Write |
 | **dev-executor** | `calab-plugin:dev-executor` | TDD 구현 실행 | Read, Write, Edit, Bash |
+| **dev-workflow** | `calab-plugin:dev-workflow` | 개발 워크플로우 관리 | Read, Write, Edit, Grep, Glob, Bash |
 | **task-validator** | `calab-plugin:task-validator` | Task 분해 검증 | Read, Grep, Glob |
+| **jira-connector** | `calab-plugin:jira-connector` | JIRA 양방향 동기화 | Read, Grep, Glob, Bash, Write |
 | **qa** | `calab-plugin:qa` | 8단계 QA 검증 | Read, Bash, Glob, Grep |
 | **root-cause-finder** | `calab-plugin:root-cause-finder` | 근본 원인 분석 | Read, Glob, Grep, Bash |
 | **bug-fixer** | `calab-plugin:bug-fixer` | TDD 버그 수정 | Read, Write, Edit, Bash |
