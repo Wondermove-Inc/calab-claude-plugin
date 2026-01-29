@@ -254,6 +254,44 @@ Write(file_path=f".claude/docs/active/{feature_name}/qa/report.md", content=repo
 
 ---
 
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **QA 완료 시 반드시 보고서 생성**
+
+| 산출물 | 파일 경로 | 필수 |
+|--------|----------|------|
+| **QA 보고서** | `.claude/docs/active/{feature-name}/qa-report.md` | ✅ |
+| **커버리지 보고서** | `.claude/docs/active/{feature-name}/coverage-report.md` | ⚠️ |
+
+### QA 보고서 필수 항목
+
+```markdown
+# QA Report: {feature-name}
+
+## Summary
+| Metric | Value | Status |
+|--------|-------|--------|
+| Tasks Completed | N | ✅/❌ |
+| Tests Passed | N/M | ✅/❌ |
+| Coverage | N% | ✅/❌ |
+| Quality Issues | N | ✅/⚠️ |
+| Security Issues | N | ✅/❌ |
+
+## Confidence Score
+- 점수: N%
+- 판정: PASS/WARN/FAIL
+
+## Issues Found
+[발견된 이슈 목록]
+
+## Recommendation
+[권장 조치]
+```
+
+### 산출물 미생성 시 작업 실패로 간주
+
+---
+
 ## 신뢰도 점수 시스템 (2025 Best Practice)
 
 > validator와 동일한 신뢰도 기반 에스컬레이션 적용
