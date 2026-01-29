@@ -206,6 +206,87 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
         "required": True,
         "description": "TDD 구현 완료 보고서"
     },
+
+    # dev-workflow: 워크플로우 로그
+    "calab-plugin:dev-workflow": {
+        "name": "워크플로우 로그",
+        "patterns": [
+            "{docs}/*/workflow-log.md",
+            "{docs}/**/workflow-log.md",
+            "{state}/workflow.json",
+        ],
+        "required": True,
+        "description": "개발 워크플로우 진행 로그"
+    },
+
+    # doc-updater: 문서 업데이트 보고서
+    "calab-plugin:doc-updater": {
+        "name": "문서 업데이트 보고서",
+        "patterns": [
+            "{docs}/*/doc-update-report.md",
+            "{docs}/**/doc-update-report.md",
+        ],
+        "required": True,
+        "description": "문서 자동 업데이트 결과 보고서"
+    },
+
+    # docs-generator: 생성된 문서 목록
+    "calab-plugin:docs-generator": {
+        "name": "생성된 문서 목록",
+        "patterns": [
+            "{docs}/*/generated-docs.md",
+            "{docs}/**/generated-docs.md",
+        ],
+        "required": True,
+        "description": "코드 기반 자동 생성된 문서 목록"
+    },
+
+    # e2e-runner: E2E 테스트 결과 리포트
+    "calab-plugin:e2e-runner": {
+        "name": "E2E 테스트 결과 리포트",
+        "patterns": [
+            "{docs}/*/e2e-report.md",
+            "{docs}/**/e2e-report.md",
+            "{root}/test-results/*.html",
+            "{root}/playwright-report/*.html",
+        ],
+        "required": True,
+        "description": "Playwright/Puppeteer E2E 테스트 결과"
+    },
+
+    # jira-connector: 동기화 로그
+    "calab-plugin:jira-connector": {
+        "name": "JIRA 동기화 로그",
+        "patterns": [
+            "{docs}/*/jira-sync.md",
+            "{docs}/**/jira-sync.md",
+            "{state}/jira-sync.json",
+        ],
+        "required": True,
+        "description": "JIRA 양방향 동기화 결과 로그"
+    },
+
+    # project-guardian: 규칙 검증 보고서
+    "calab-plugin:project-guardian": {
+        "name": "규칙 검증 보고서",
+        "patterns": [
+            "{docs}/*/guardian-report.md",
+            "{docs}/**/guardian-report.md",
+        ],
+        "required": True,
+        "description": "프로젝트 규칙 준수 검증 보고서"
+    },
+
+    # refactor-cleaner: 리팩토링 결과 보고서
+    "calab-plugin:refactor-cleaner": {
+        "name": "리팩토링 결과 보고서",
+        "patterns": [
+            "{docs}/*/refactor-report.md",
+            "{docs}/**/refactor-report.md",
+        ],
+        "required": True,
+        "description": "데드 코드 정리 및 리팩토링 결과"
+    },
 }
 
 

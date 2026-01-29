@@ -4,7 +4,6 @@ description: |
   TDD 워크플로우에 따라 Task를 구현합니다. Red-Green-Refactor 패턴을 적용합니다.
   USE WHEN: 구현, implement, 빌드, build, 코딩, coding, 개발 키워드 시 활성화
 tools: Read, Write, Edit, Bash, Glob, Grep, TaskGet, TaskUpdate, TaskList
-disallowedTools: Task
 model: sonnet
 permissionMode: bypassPermissions
 skills: code-quality, best-practices, tdd-workflow
