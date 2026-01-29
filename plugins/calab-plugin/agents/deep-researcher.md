@@ -4,8 +4,10 @@ description: |
   리서치 결과 분석 및 보고서 작성 전문 에이전트입니다.
   web-researcher가 수집한 데이터를 종합 분석하고 구조화된 보고서를 생성합니다.
   USE WHEN: 분석, analyze, 종합, synthesize, 보고서, report, 요약, summary
-tools: [Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, mcp__tavily__tavily-search]
+tools: Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, mcp__tavily__tavily-search
+disallowedTools: Bash
 model: sonnet
+permissionMode: bypassPermissions
 skills: best-practices
 ---
 
