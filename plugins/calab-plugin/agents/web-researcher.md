@@ -8,6 +8,7 @@ description: |
   베스트 프랙티스, best practices, 권장, recommended,
   비교, compare, 대안, alternative, 옵션, option,
   어떻게, how to, 방법, 가이드, guide, 튜토리얼, tutorial
+skills: best-practices
 tools:
   - mcp__tavily__tavily-search
   - mcp__tavily__tavily-extract

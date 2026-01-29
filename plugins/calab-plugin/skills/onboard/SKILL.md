@@ -12,6 +12,7 @@ description: |
   코드 이해, 프로젝트 이해
 argument-hint: "[--quick|--full|--phase N] [--skip-domain]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task]
+skills: [project-rules, best-practices]
 agent: project-onboarder
 agents:
   primary: project-onboarder
@@ -240,6 +241,110 @@ Phase 5에서 대화형 질문:
 | 컨텍스트 확인 | `/context` |
 | 개발 시작 | `/dev --plan [기능]` |
 
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **온보딩 시 반드시 산출물 생성**
+
+| Phase | 산출물 | 파일 경로 | 필수 |
+|-------|--------|----------|------|
+| **Quick** | 프로젝트 요약 | `.claude/project-context/PROJECT_SUMMARY.md` | ✅ |
+| **Phase 3** | 아키텍처 문서 | `.claude/project-context/ARCHITECTURE.md` | ✅ |
+| **Phase 4** | 코드 패턴 | `.claude/project-context/CODE_PATTERNS.md` | ✅ |
+| **Phase 4** | 컨벤션 | `.claude/project-context/CONVENTIONS.md` | ✅ |
+| **Phase 5** | 도메인 지식 | `.claude/project-context/DOMAIN_KNOWLEDGE.md` | ⚠️ |
+| **완료** | 프로젝트 규칙 | `.claude/memory/PROJECT_RULES.md` | ✅ |
+
+### 필수 산출물 검증 체크리스트
+
+#### Quick 모드 (최소 1개)
+```
+□ PROJECT_SUMMARY.md 생성됨
+  □ 기술 스택 정보 포함
+  □ 디렉토리 구조 포함
+  □ 주요 명령어 포함
+```
+
+#### Full 모드 (최소 5개)
+```
+□ PROJECT_SUMMARY.md 생성됨
+□ ARCHITECTURE.md 생성됨
+  □ C4 Level 1-3 다이어그램 포함
+  □ 레이어 구조 설명 포함
+□ CODE_PATTERNS.md 생성됨
+  □ 컴포넌트 패턴 포함
+  □ API 패턴 포함
+  □ Hook 패턴 포함
+□ CONVENTIONS.md 생성됨
+  □ 네이밍 컨벤션 포함
+  □ 커밋 메시지 형식 포함
+□ PROJECT_RULES.md 생성됨 (memory/)
+```
+
+## ✅ State Persistence 의무
+
+### 온보딩 시작 시 필수 작업
+- [ ] 1. `.claude/project-context/` 디렉토리 생성
+- [ ] 2. 온보딩 상태 기록 → `.claude-state/checkpoint.json`
+- [ ] 3. 현재 Phase 기록
+
+### Phase 완료 시 필수 작업
+- [ ] 1. 해당 Phase 산출물 생성 확인
+- [ ] 2. checkpoint 업데이트 → 다음 Phase로
+- [ ] 3. 부분 완료 시 재개 가능하도록 상태 저장
+
+### 온보딩 완료 후 필수 작업
+- [ ] 1. 모든 산출물 존재 확인
+- [ ] 2. PROJECT_RULES.md → `.claude/memory/`에 복사
+- [ ] 3. checkpoint 상태를 "completed"로 업데이트
+- [ ] 4. 완료 메시지 출력 (다음 단계 안내)
+
+### State 파일 업데이트 예시
+
+```python
+def update_onboarding_checkpoint(phase, status, artifacts):
+    """온보딩 체크포인트 업데이트"""
+    checkpoint = {
+        "type": "onboarding",
+        "current_phase": phase,
+        "status": status,  # "in_progress" | "completed" | "paused"
+        "artifacts_created": artifacts,
+        "timestamp": datetime.now().isoformat(),
+        "resumable": True,
+        "next_phase": phase + 1 if status != "completed" else None
+    }
+    save_json(".claude-state/checkpoint.json", checkpoint)
+
+    # Quick 모드 완료 시
+    if phase == "quick" and status == "completed":
+        checkpoint["quick_mode"] = True
+        checkpoint["full_mode_available"] = True
+
+    print(f"✅ 온보딩 체크포인트 업데이트: Phase {phase} - {status}")
+```
+
+### 온보딩 재개 프로토콜
+
+```
+============================================
+[ONBOARD] 이전 온보딩 세션 발견
+============================================
+
+📋 이전 진행 상태:
+• Phase 1-2: ✅ 완료
+• Phase 3: ✅ 완료
+• Phase 4: ⏸️ 중단됨
+
+📁 생성된 문서:
+• PROJECT_SUMMARY.md ✅
+• ARCHITECTURE.md ✅
+• CODE_PATTERNS.md ⏳ (진행 중)
+
+============================================
+이전 세션을 이어서 진행하시겠습니까?
+[Y] 계속 진행 | [N] 처음부터 | [S] 상태만 확인
+============================================
+```
+
 ## 참조 파일
 
 ### 템플릿 (스킬 내부)
@@ -253,3 +358,8 @@ Phase 5에서 대화형 질문:
 
 - `references/project-onboarding.md` - 온보딩 가이드
 - `references/clean-architecture.md` - 아키텍처 분석
+
+### State 파일 (프로젝트 전역)
+
+- `.claude-state/checkpoint.json` - 온보딩 체크포인트
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙 (온보딩 결과)

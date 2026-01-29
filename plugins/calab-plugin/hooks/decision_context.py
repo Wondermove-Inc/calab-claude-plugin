@@ -6,31 +6,23 @@ decision_context.py - calab-claude-plugin 컨텍스트 인식 결정 훅
 사용자 프롬프트 제출 시 컨텍스트 인식 규칙을 주입합니다.
 
 기능:
-  - /wm 패턴 감지 시 Plan Mode 힌트 제공
-  - 일반 요청 시 Core Rules, Context Awareness 규칙 제공
+  - Core Rules, Context Awareness 규칙 제공
   - 질문 트리거 조건 제공
 
 원본: claude-monitoring-main
-적용: calab-claude-plugin v2.3.0+
+적용: calab-claude-plugin v2.4.0+
 """
 
 import json
 import sys
 import os
-import re
 
 # hook_utils에서 유틸리티 임포트
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from hook_utils import setup_hook_config, log, json_get
 
 
-# /wm 패턴 감지 시 출력
-PLAN_MODE_HINT = """<plan-mode-hint>
-/wm skill detected. EnterPlanMode() will be called automatically by the skill.
-Skip the remaining hook rules - follow SKILL.md instructions directly.
-</plan-mode-hint>"""
-
-# 일반 요청 시 출력
+# Core Rules 출력
 FULL_RULES = """<core-rules>
 ## Core Rules
 
@@ -85,13 +77,6 @@ If ambiguous without context → Ask
 </key-principle>"""
 
 
-def detect_wm_pattern(prompt: str) -> bool:
-    """
-    /wm 패턴 감지 (줄 시작 또는 공백 후)
-    """
-    return bool(re.search(r'(^|\s)/wm($|\s)', prompt))
-
-
 def main():
     setup_hook_config("DecisionContext")
 
@@ -108,13 +93,9 @@ def main():
 
     log(f"프롬프트 길이: {len(prompt)}자")
 
-    # /wm 패턴 감지
-    if detect_wm_pattern(prompt):
-        log("/wm 패턴 감지됨 - Plan Mode 힌트 출력")
-        print(PLAN_MODE_HINT)
-    else:
-        log("일반 요청 - Core Rules 출력")
-        print(FULL_RULES)
+    # Core Rules 출력
+    log("Core Rules 출력")
+    print(FULL_RULES)
 
     sys.exit(0)
 

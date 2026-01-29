@@ -126,8 +126,110 @@ skills: project-rules, work-tracker, code-quality
 3. **30분 이상 동일 하위 작업에 머무를 시**
 4. **명시적 금지 사항 위반 감지 시**
 
+## 유기적 에이전트 연동 (Organic Agent Integration)
+
+> **"Seamless escalation and handoff between agents"** - 에이전트 간 유기적 연계
+
+### 에스컬레이션 매트릭스
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PROJECT GUARDIAN (이 에이전트)                   │
+│                       맥락 유지 + 규칙 검증                         │
+└────────────────────────────┬────────────────────────────────────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         │                   │                   │
+         ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ code-reviewer   │ │ validator       │ │ reinforcer      │
+│ 품질 이슈 발견  │ │ AC 미충족 발견  │ │ 수정 필요 시    │
+└────────┬────────┘ └────────┬────────┘ └────────┬────────┘
+         │                   │                   │
+         ▼                   ▼                   ▼
+    ┌─────────────────────────────────────────────────┐
+    │              에스컬레이션 판단                   │
+    │  • 단순 수정 → reinforcer                       │
+    │  • 아키텍처 문제 → /dev --architecture          │
+    │  • 보안 문제 → security-reviewer                │
+    │  • 반복 실패 → /solve                           │
+    └─────────────────────────────────────────────────┘
+```
+
+### 자동 에스컬레이션 규칙
+
+| 감지 상황 | 에스컬레이션 대상 | 이유 |
+|----------|------------------|------|
+| 규칙 위반 발견 | `calab-plugin:reinforcer` | 자동 수정 가능 |
+| 500줄+ 파일 3개+ | `/dev --architecture` | 아키텍처 재검토 필요 |
+| 보안 패턴 위반 | `calab-plugin:security-reviewer` | 보안 전문 분석 필요 |
+| 맥락 이탈 3회+ | 사용자 확인 요청 | 목표 재확인 필요 |
+| 순환 의존성 | `/solve --rca` | 근본 원인 분석 필요 |
+
+### Graceful Degradation (성능 저하 모드)
+
+규칙/컨텍스트 로드 실패 시 단계적 대응:
+
+```python
+def handle_load_failure(failure_type):
+    """규칙/컨텍스트 로드 실패 시 대응"""
+
+    DEGRADATION_MODES = {
+        "rules_missing": {
+            "mode": "default_rules",
+            "action": "기본 코드 품질 규칙 적용",
+            "warning": "프로젝트 규칙 로드 실패 - 기본 규칙 적용 중"
+        },
+        "context_corrupted": {
+            "mode": "fresh_start",
+            "action": "새 컨텍스트로 시작",
+            "warning": "컨텍스트 손상 - /onboard 재실행 권장"
+        },
+        "worktree_missing": {
+            "mode": "manual_tracking",
+            "action": "수동 진행률 추적",
+            "warning": "Worktree 없음 - 진행률 수동 관리"
+        }
+    }
+
+    return DEGRADATION_MODES.get(failure_type, {
+        "mode": "full_manual",
+        "action": "수동 모드",
+        "warning": "알 수 없는 오류 - 수동 개입 필요"
+    })
+```
+
+### 컨텍스트 일관성 검증
+
+```python
+def verify_context_consistency():
+    """컨텍스트 파일 간 일관성 검증"""
+
+    files = [
+        ".claude/memory/CURRENT_CONTEXT.md",
+        ".claude-state/checkpoint.json",
+        ".claude-state/worktree.json"
+    ]
+
+    states = {}
+    for f in files:
+        states[f] = extract_current_task(read_file(f))
+
+    # 일관성 검사
+    if len(set(states.values())) > 1:
+        return {
+            "consistent": False,
+            "conflicts": states,
+            "recommendation": "가장 최신 타임스탬프 기준 동기화"
+        }
+
+    return {"consistent": True}
+```
+
 ## 참조 파일
 
 - `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
 - `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
 - `.claude-state/recent_changes.json` - 최근 변경 파일 목록
+- `.claude-state/checkpoint.json` - 체크포인트 (체크섬 포함)
+- `.claude-state/worktree.json` - 작업 트리 상태

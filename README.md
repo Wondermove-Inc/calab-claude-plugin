@@ -1,6 +1,6 @@
 # Calab Claude Plugin
 
-[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
+[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple.svg)](https://claude.ai/code)
 
@@ -17,16 +17,87 @@
 | 반복적인 보일러플레이트 | 클린 아키텍처 자동 생성 |
 | 문서화 누락 | 코드 변경 시 자동 문서 동기화 |
 | 할루시네이션 | validator/reinforcer 에이전트로 검증 |
+| 산출물 누락 | 스킬별 필수 산출물 + State Persistence 의무화 |
+
+### 🆕 v2.6.0 변경사항
+
+| 기능 | 설명 |
+|------|------|
+| **📦 산출물 필수화** | 모든 스킬/에이전트에 필수 산출물 정의 |
+| **🔄 재검증 체인** | validator→reinforcer→validator 자동 체인 (최대 2회) |
+| **✅ State Persistence** | 작업 전/후 상태 저장 체크리스트 의무화 |
+| **🔌 Circuit Breaker** | 빌드 오류 3회 반복 시 자동 차단 |
+| **📊 Worktree 무결성** | 체크섬 기반 데이터 무결성 검증 |
 
 ---
 
 ## 한눈에 보기
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  16개 명령어  │  7개 패시브 스킬  │  15개 에이전트  │  20개 훅  │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│  3개 액티브 스킬  │  6개 패시브 스킬  │  23개 에이전트  │  20개 훅  │
+└──────────────────────────────────────────────────────────────────────┘
 ```
+
+### 스킬 구조
+
+| 유형 | 스킬 | 역할 |
+|------|------|------|
+| **Active** | `/dev`, `/solve`, `/onboard` | 사용자 호출 메타커맨드 |
+| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 자동 로드 |
+
+### 유기적 워크플로우 통합 (2025 Best Practice)
+
+```
+/onboard → /dev (plan→design→tasks→build) → QA(자동) → 완료
+                                              ↓ 실패
+                                           /solve
+                                              ↓
+                     ┌─────────────────────────┴─────────────────────────┐
+                     │ 단순 버그: bug-fixer    │ 복잡한 문제: /dev 재설계  │
+                     └─────────────────────────┬─────────────────────────┘
+                                              ↓
+                                      validator → reinforcer
+                                         (최대 2회 재시도)
+```
+
+**신뢰도 기반 에스컬레이션**:
+- 90%+ → 다음 작업 진행
+- 70-89% → reinforcer 자동 호출 → **재검증 필수**
+- 50-69% → 사용자 확인 요청
+- 0-49% → /solve 에스컬레이션
+
+**재검증 체인 (무한 루프 방지)**:
+```
+validator → (실패) → reinforcer → validator(재검증) → (2차 실패) → 사용자 결정
+```
+
+### 실패 복원력 패턴 (Failure Resilience)
+
+| 패턴 | 설명 | 적용 |
+|------|------|------|
+| **State Handoff** | 체크섬 검증 + 3중 백업 | 세션 연속성 보장 |
+| **Rollback Mechanism** | 빌드/테스트 실패 시 자동 롤백 | 코드 안정성 보장 |
+| **Graceful Degradation** | 비즈니스 영향도 기반 우선순위 복구 | 부분 장애 대응 |
+| **Exponential Backoff** | 재시도 간격 점진적 증가 | 무한 루프 방지 |
+| **Partial Completion** | 중간 실패 시 진행상황 보존 | Task 격리 처리 |
+| **Three Developer Loops** | Inner/Middle/Outer 루프 분리 | 관심사별 반복 주기 |
+| **Deadlock Prevention** | Task 생성 시 순환 의존성 감지 | 상호 대기 방지 |
+| **Heartbeat/Timeout** | 에이전트 크래시 감지 및 Task 해제 | Stale Task 복구 |
+| **Proactive Interruption** | 사용자 흐름 방해 최소화 | 배치 알림 처리 |
+| **Circuit Breaker** | 빌드 오류 3회 반복 시 차단 | 자동 에스컬레이션 |
+| **Artifact Mandatory** | 모든 스킬 산출물 필수 | 누락 방지 |
+
+### 📦 스킬별 필수 산출물 (NEW)
+
+| 스킬/에이전트 | 산출물 | 저장 위치 |
+|---------------|--------|----------|
+| `/dev --plan` | PRD 문서 | `.claude/docs/active/{feature}/01-PRD.md` |
+| `/dev --design` | 아키텍처 문서 | `.claude/docs/active/{feature}/02-architecture.md` |
+| `/dev --tasks` | Worktree JSON | `.claude-state/worktree.json` |
+| `/solve` | 해결 보고서 | `.claude/problem-solving/resolved/{id}/report.md` |
+| `validator` | 검증 보고서 | `.claude/docs/active/{feature}/validation-report.md` |
+| `reinforcer` | 수정 보고서 | `.claude/docs/active/{feature}/reinforcer-report.md` |
 
 ---
 
@@ -80,51 +151,64 @@ curl -o ~/.claude/CLAUDE.md https://raw.githubusercontent.com/Wondermove-Inc/cal
 
 ---
 
-## 명령어
+## 명령어 (3개 액티브 스킬)
 
-### 메타커맨드 (8개)
+### `/dev` - 개발 워크플로우
 
-하나의 명령어로 여러 서브 기능을 제어합니다.
+| 옵션 | 설명 |
+|------|------|
+| `--plan` | PRD + PHASE 분해 |
+| `--design` | 아키텍처 + ERD 설계 |
+| `--tasks` | Task 분해 (TDD 워크플로우) |
+| `--build [TASK-ID]` | 태스크 구현 |
+| `--architecture` | 클린 아키텍처 관리 |
+| `--status` | 진행 상황 확인 |
 
-| 명령어 | 옵션 | 설명 |
-|--------|------|------|
-| `/dev` | `--plan` `--design` `--tasks` `--build` `--status` | 개발 워크플로우 전체 관리 |
-| `/clean` | `--init` `--entity` `--usecase` `--validate` | 클린 아키텍처 4-Layer 생성 |
-| `/docs` | `--generate` `--add` `--update` `--validate` | 문서 자동 생성/동기화 |
-| `/jira` | `--init` `--pull` `--push` `--link` `--sync` | JIRA 양방향 연동 |
-| `/qa` | `--plan` `--run` `--report` `--status` | E2E/통합 테스트 관리 |
-| `/solve` | `--5whys` `--rca` `--hypothesis` | 체계적 문제 해결 |
-| `/onboard` | `--quick` `--phases` | 프로젝트 분석 및 컨텍스트 생성 |
-| `/context` | `--show` `--refresh` | 프로젝트 컨텍스트 관리 |
+### `/solve` - 문제 해결
 
-### 독립 명령어 (8개)
+| 옵션 | 설명 |
+|------|------|
+| `--5whys` | 5 Whys 분석 (반복 문제) |
+| `--rca` | Root Cause Analysis (시스템 문제) |
+| `--hypothesis` | 가설 기반 접근 |
+| `--binary` | Binary Search 디버깅 |
+| `--log` | 진행 상태 확인 |
+| `--report` | 보고서 생성 |
 
-| 명령어 | 설명 | 사용 예시 |
-|--------|------|----------|
-| `/security` | OWASP Top 10 보안 취약점 검사 | `/security` |
-| `/quality` | 코드 품질 전체 검사 (500줄, 주석, 타입) | `/quality` |
-| `/restore` | Compact 후 컨텍스트 복원 | `/restore` |
-| `/save` | 작업 체크포인트 저장 | `/save "기능 구현 완료"` |
-| `/rules` | 프로젝트 규칙 표시 | `/rules` |
-| `/worktree` | 작업 트리 및 진행률 확인 | `/worktree status` |
-| `/learn` | 특정 코드 영역 심층 학습 | `/learn src/components/` |
-| `/research` | 웹 검색 + 핵심 요약 | `/research Next.js 15 변경사항` |
+### `/onboard` - 프로젝트 온보딩
+
+| 옵션 | 설명 |
+|------|------|
+| `--quick` | 빠른 분석 |
+| `--phases` | 단계별 상세 분석 |
+
+### 에이전트 직접 호출
+
+스킬 대신 에이전트를 직접 호출할 수 있습니다:
+
+| 작업 | 에이전트 |
+|------|----------|
+| 문서 생성/업데이트 | `calab-plugin:doc-updater` |
+| JIRA 연동 | `calab-plugin:jira-connector` |
+| QA 테스트 | `calab-plugin:qa` |
+| 보안 검사 | `calab-plugin:security-reviewer` |
+| 품질 검사 | `calab-plugin:code-reviewer` |
+| 웹 리서치 | `calab-plugin:web-researcher` |
 
 ---
 
-## 패시브 스킬 (7개)
+## 패시브 스킬 (6개)
 
-코드 작성 시 **자동으로 활성화**되어 품질을 보장합니다.
+액티브 스킬이나 에이전트 실행 시 **자동으로 로드**됩니다.
 
-| 스킬 | 트리거 | 효과 |
-|------|--------|------|
-| `best-practices` | React, TypeScript 등 기술 감지 | 해당 기술 베스트 프랙티스 자동 적용 |
-| `code-quality` | 코드 생성/수정 시 | 500줄 제한, 함수 주석, 타입 강제 |
-| `tdd-workflow` | `--tdd` 옵션 또는 테스트 키워드 | Red-Green-Refactor 강제 |
-| `work-tracker` | 소스 파일 수정 시 | Worktree 자동 업데이트 |
-| `project-rules` | 모든 코드 작성 시 | PROJECT_RULES.md 규칙 적용 |
-| `e2e-runner` | E2E/Playwright 키워드 | 자동 테스트 실행 |
-| `refactor-cleaner` | 리팩토링 요청 시 | 데드 코드 탐지 및 정리 |
+| 스킬 | 로드 조건 | 효과 |
+|------|----------|------|
+| `best-practices` | 대부분의 에이전트에서 로드 | 기술별 베스트 프랙티스 자동 적용 |
+| `code-quality` | 코드 생성/수정 에이전트 | 500줄 제한, 함수 주석, 타입 강제 |
+| `tdd-workflow` | `/dev --build`, bug-fixer | Red-Green-Refactor 강제 |
+| `work-tracker` | dev-workflow, project-guardian | Worktree 자동 업데이트 |
+| `project-rules` | 대부분의 에이전트에서 로드 | PROJECT_RULES.md 규칙 적용 |
+| `clarification-protocol` | planner, validator 등 | 불확실한 요구사항 명확화 |
 
 ---
 
@@ -322,9 +406,19 @@ git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
 │   ├── PROJECT_SUMMARY.md
 │   ├── CODE_PATTERNS.md
 │   └── ARCHITECTURE.md
-└── docs/                  # 생성된 문서
-    ├── active/           # 진행 중 기능
-    └── complete/         # 완료된 기능
+├── docs/                  # 생성된 문서
+│   ├── active/           # 진행 중 기능
+│   └── complete/         # 완료된 기능
+└── problem-solving/       # 문제 해결 기록
+    ├── active/           # 진행 중 문제
+    ├── resolved/         # 해결된 문제
+    └── knowledge-base/   # 지식 베이스
+
+.claude-state/             # State Persistence (NEW)
+├── checkpoint.json       # 세션 체크포인트
+├── worktree.json         # 작업 트리 상태
+├── circuit-breaker.json  # Circuit Breaker 상태
+└── request-log.jsonl     # 요청 이력
 ```
 
 ---

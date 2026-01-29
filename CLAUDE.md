@@ -33,8 +33,25 @@
 ### 핵심 구성
 
 ```
-23개 스킬 + 15개 에이전트 + 21개 훅
+9개 스킬 (3 active + 6 passive) + 23개 에이전트 + 20개 훅
 ```
+
+### 🆕 v2.6.0 주요 변경사항
+
+| 기능 | 설명 |
+|------|------|
+| **📦 산출물 필수화** | 모든 스킬/에이전트에 필수 산출물 정의 및 검증 |
+| **🔄 재검증 체인** | validator→reinforcer→validator 3단계 자동 체인 |
+| **✅ State Persistence** | 작업 전/후 상태 저장 체크리스트 의무화 |
+| **🔌 Circuit Breaker** | 빌드 오류 반복 시 자동 차단 및 에스컬레이션 |
+| **📊 Worktree 무결성** | 체크섬 기반 데이터 무결성 검증 |
+
+### 스킬 구조
+
+| 유형 | 스킬 | 역할 |
+|------|------|------|
+| **Active** | dev, solve, onboard | 사용자 명시적 호출 (`/dev`, `/solve`, `/onboard`) |
+| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 액티브 스킬/에이전트에서 자동 로드 |
 
 ### 설치 확인
 
@@ -140,7 +157,7 @@
 └─────────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
-### 사용 가능한 에이전트 (15개)
+### 사용 가능한 에이전트 (23개)
 
 > **🚨 중요: 에이전트 호출 시 네임스페이스 규칙**
 >
@@ -157,7 +174,7 @@
 | **Plan** | 구현 계획 수립 | Read, Glob, Grep | 아키텍처 설계 |
 | **general-purpose** | 범용 작업 수행 | All | 복잡한 멀티스텝 |
 
-#### 플러그인 에이전트 (12개) - `calab-plugin:` prefix 필수
+#### 플러그인 에이전트 (23개) - `calab-plugin:` prefix 필수
 
 | 에이전트 | 호출 시 이름 | 역할 | 허용 도구 |
 |----------|-------------|------|----------|
@@ -168,11 +185,22 @@
 | **refactor-cleaner** | `calab-plugin:refactor-cleaner` | 데드 코드 정리 | Read, Write, Edit, Bash |
 | **e2e-runner** | `calab-plugin:e2e-runner` | E2E 테스트 실행 | All + Puppeteer |
 | **doc-updater** | `calab-plugin:doc-updater` | 문서 자동 업데이트 | Read, Write, Edit |
+| **docs-generator** | `calab-plugin:docs-generator` | 코드 기반 문서 생성 | Read, Write, Edit, Grep, Glob |
 | **deep-researcher** | `calab-plugin:deep-researcher` | 심층 리서치 분석 | Read, WebSearch, Tavily |
 | **web-researcher** | `calab-plugin:web-researcher` | 웹 검색 및 수집 | Tavily MCP 도구 |
 | **project-onboarder** | `calab-plugin:project-onboarder` | 프로젝트 온보딩 | Read, Glob, Grep, Write |
 | **validator** | `calab-plugin:validator` | 완전성/AC 검증 | Read, Grep, Glob |
 | **reinforcer** | `calab-plugin:reinforcer` | 검증 실패 항목 수정 | Read, Write, Edit |
+| **planner-phase** | `calab-plugin:planner-phase` | PRD 및 PHASE 분해 | Read, Glob, Grep, Task |
+| **planner-task** | `calab-plugin:planner-task` | Task 분해 (TDD) | Read, Glob, Grep, TaskCreate |
+| **design** | `calab-plugin:design` | 아키텍처/ERD 설계 | Read, Glob, Grep, Write |
+| **dev-executor** | `calab-plugin:dev-executor` | TDD 구현 실행 | Read, Write, Edit, Bash |
+| **dev-workflow** | `calab-plugin:dev-workflow` | 개발 워크플로우 관리 | Read, Write, Edit, Grep, Glob, Bash |
+| **task-validator** | `calab-plugin:task-validator` | Task 분해 검증 | Read, Grep, Glob |
+| **jira-connector** | `calab-plugin:jira-connector` | JIRA 양방향 동기화 | Read, Grep, Glob, Bash, Write |
+| **qa** | `calab-plugin:qa` | 8단계 QA 검증 | Read, Bash, Glob, Grep |
+| **root-cause-finder** | `calab-plugin:root-cause-finder` | 근본 원인 분석 | Read, Glob, Grep, Bash |
+| **bug-fixer** | `calab-plugin:bug-fixer` | TDD 버그 수정 | Read, Write, Edit, Bash |
 
 ### 🚨 에이전트 프롬프트 작성 필수 규칙 (2025)
 
@@ -650,19 +678,50 @@ Task(
 
 #### 필수 호출 순서 (validator → reinforcer → validator)
 
+```python
+# 1. 구현 완료 후 필수 검증
+validator_result = Task(
+    subagent_type="calab-plugin:validator",
+    description="TASK-001 검증"
+)
+
+# 2. 검증 실패 시 보강
+if validator_result == "reinforcer 필요":
+    Task(
+        subagent_type="calab-plugin:reinforcer",
+        description="TASK-001 보강"
+    )
+
+    # 3. 재검증 필수 (reinforcer 후 반드시 실행)
+    revalidation_result = Task(
+        subagent_type="calab-plugin:validator",
+        description="TASK-001 재검증"
+    )
+
+    # 4. 2차 실패 시 사용자 결정 (무한 루프 방지)
+    if revalidation_result == "reinforcer 필요":
+        # 사용자 확인 요청
+        return {"needs_clarification": True}
 ```
-// 1. 구현 완료 후 필수 검증
-Task(subagent_type="calab-plugin:validator", description="TASK-001 검증", ...)
 
-// 2. 검증 실패 시 보강
-if (validator.result === "reinforcer 필요") {
-  Task(subagent_type="calab-plugin:reinforcer", description="TASK-001 보강", ...)
-}
+#### 🆕 재검증 체인 (2회 반복 제한)
 
-// 3. 보강 후 재검증 (필수)
-Task(subagent_type="calab-plugin:validator", description="TASK-001 재검증", ...)
-
-// 4. 최대 2회 반복 후 사용자 확인
+```
+Build 완료
+    ↓
+validator 호출 (필수)
+    ↓
+┌─────────────────────────────┐
+│ 신뢰도 90%+ → 완료 ✅        │
+│ 신뢰도 70-89% → reinforcer  │
+│        ↓                    │
+│   reinforcer 수정           │
+│        ↓                    │
+│   validator 재검증 (필수)    │
+│        ↓                    │
+│   2차 실패? → 사용자 결정    │
+│ 신뢰도 <70% → /solve 제안   │
+└─────────────────────────────┘
 ```
 
 ### Hook 기반 자동 검증 (권장)
@@ -730,6 +789,175 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 
 ---
 
+## 📦 산출물 필수화 규칙 (2025 Best Practice)
+
+> **"Every skill MUST produce artifacts"** - 모든 스킬은 반드시 산출물을 생성해야 함
+
+### 왜 산출물이 필수인가?
+
+| 문제 | 원인 | 해결책 |
+|------|------|--------|
+| **작업 누락** | 산출물 없이 진행 | 필수 산출물 검증 |
+| **컨텍스트 유실** | 문서 미생성 | 자동 문서 생성 |
+| **재현 불가** | 결과 기록 없음 | State 파일 저장 |
+| **검증 불가** | 증거 부재 | 보고서 필수화 |
+
+### 스킬별 필수 산출물
+
+| 스킬 | 산출물 | 파일 경로 |
+|------|--------|----------|
+| `/dev --plan` | PRD 문서 | `.claude/docs/active/{feature}/01-PRD.md` |
+| `/dev --design` | 아키텍처 문서 | `.claude/docs/active/{feature}/02-architecture.md` |
+| `/dev --tasks` | Task 목록 + Worktree | `.claude/docs/active/{feature}/03-tasks.md` + `.claude-state/worktree.json` |
+| `/dev --build` | 소스 코드 + 테스트 | `src/...` + `test/...` |
+| `/solve` | 해결 보고서 | `.claude/problem-solving/resolved/{id}/report.md` |
+| `/onboard` | 5개 컨텍스트 문서 | `.claude/project-context/` |
+
+### 에이전트별 필수 산출물
+
+| 에이전트 | 산출물 | 파일 경로 |
+|----------|--------|----------|
+| `validator` | 검증 보고서 | `.claude/docs/active/{feature}/validation-report.md` |
+| `reinforcer` | 수정 보고서 + 스냅샷 | `.claude/docs/active/{feature}/reinforcer-report.md` |
+| `build-error-resolver` | 오류 분석 보고서 | `.claude/docs/active/{feature}/build-error-report.md` |
+
+### ✅ State Persistence 체크리스트
+
+모든 작업은 아래 체크리스트를 따라야 함:
+
+**작업 시작 시 필수:**
+- [ ] 이전 체크포인트 확인 → `.claude-state/checkpoint.json`
+- [ ] Worktree 상태 확인 → `.claude-state/worktree.json`
+- [ ] 작업 시작 기록
+
+**작업 완료 시 필수:**
+- [ ] 산출물 생성 확인
+- [ ] Worktree 업데이트
+- [ ] 체크포인트 저장
+
+---
+
+## 🛡️ 실패 복원력 패턴 (2025 Best Practices)
+
+> **"Build resilient, transparent, and secure AI workflows"** - 2025 AI Orchestration Guide
+
+### 신뢰도 기반 에스컬레이션
+
+validator 에이전트가 **신뢰도 점수(0-100%)**를 출력하여 자동 액션 결정:
+
+| 신뢰도 | 상태 | 자동 액션 |
+|--------|------|----------|
+| **90-100%** | ✅ 통과 | 다음 Task 진행 |
+| **70-89%** | ⚠️ 경고 | reinforcer 자동 호출 |
+| **50-69%** | ❌ 실패 | 사용자 확인 요청 |
+| **0-49%** | 🚨 심각 | `/solve` 에스컬레이션 |
+
+### 실패 분류 시스템
+
+```python
+# 재시도 가능 (RETRIABLE) - reinforcer가 자동 수정
+RETRIABLE = [
+    "code_missing",        # 코드 누락
+    "edge_case_missing",   # 엣지 케이스 누락
+    "comment_missing",     # 주석 누락
+    "type_incomplete",     # 타입 불완전
+]
+
+# 재시도 불가 (NON-RETRIABLE) - 사용자 결정 필요
+NON_RETRIABLE = [
+    "architecture_change", # 아키텍처 변경
+    "design_flaw",        # 설계 결함
+    "requirement_unclear", # 요구사항 불명확
+]
+```
+
+### Exponential Backoff 재시도
+
+```
+1차 시도: 즉시 수정
+    ↓ (실패 시)
+2차 시도: 1-2초 대기 후 재수정
+    ↓ (실패 시)
+3차 시도: ❌ 금지 → 사용자 결정 요청
+```
+
+### Cascading Failure 방지
+
+```
+┌─────────────────────────────────────────────────┐
+│ Agent A 실패                                    │
+│     ↓                                          │
+│ ❌ 잘못된 패턴: Agent B, C, D 연쇄 실패         │
+│ ✅ 올바른 패턴: 실패 격리 + 복구 시도           │
+│     ↓                                          │
+│ 1. 실패 지점 snapshot 저장                      │
+│ 2. 독립적으로 재시도 (다른 에이전트 영향 없음)   │
+│ 3. 2회 실패 시 사용자 에스컬레이션              │
+└─────────────────────────────────────────────────┘
+```
+
+### 적용 규칙
+
+| 상황 | 패턴 |
+|------|------|
+| validator 실패 | 신뢰도 점수 기반 자동 분기 |
+| reinforcer 2회 실패 | 사용자 결정 요청 (무한 루프 방지) |
+| build-error 3회+ 반복 | `/solve --5whys` 에스컬레이션 |
+| 설계 결함 발견 | `/dev --design` 재검토 제안 |
+
+### 🔄 Three Developer Loops (개발자 루프 프레임워크)
+
+> **"Different iteration speeds for different concerns"**
+
+| 루프 | 주기 | 용도 | 에이전트 |
+|------|------|------|----------|
+| **Outer** | weeks-months | 아키텍처, 기술 스택 결정 | planner-phase, deep-researcher |
+| **Middle** | hours-days | Feature/Task 구현 | dev-executor, validator, qa |
+| **Inner** | seconds-minutes | TDD 사이클, 즉시 수정 | code-reviewer, reinforcer |
+
+**루프 에스컬레이션:**
+- Inner 3회 실패 → Middle (validator 체인)
+- Middle 2회 실패 → Outer (/solve 또는 /dev --design)
+
+### 📦 Partial Completion Handling (중간 실패 처리)
+
+> **"Save progress even on failure"**
+
+| 상태 | 처리 | 다음 액션 |
+|------|------|----------|
+| `partial` (50% 완료 후 오류) | 완료된 부분 저장 | 남은 부분 새 Task |
+| `blocked` (외부 의존성) | 해당 Task만 블로킹 | 독립 Task 계속 |
+| `interrupted` (세션 중단) | 체크포인트 저장 | /restore로 재개 |
+
+### 🔒 Deadlock Prevention (데드락 방지)
+
+> **"Cycle detection at task creation"**
+
+Task 생성 전 순환 의존성 검사 필수:
+- DFS 기반 순환 탐지
+- 상호 대기(mutual wait) 방지
+- 의존성 깊이 5단계 이하 유지
+
+### ⏱️ Heartbeat & Timeout (하트비트 모니터링)
+
+| 루프 유형 | 타임아웃 | 초과 시 |
+|----------|----------|---------|
+| inner_loop | 5분 | Task 해제 |
+| middle_loop | 30분 | Task 해제 |
+| outer_loop | 2시간 | Task 해제 |
+
+### 🛡️ Proactive Interruption Management (선제적 중단 관리)
+
+> **"Minimize disruption to user flow"**
+
+| 이슈 수 | 알림 방식 | 자동 처리 |
+|---------|----------|----------|
+| 1-2건 (경미) | 알림 없음 | reinforcer 자동 |
+| 3-4건 (중간) | 요약만 | reinforcer 후 재검증 |
+| 5건+ (심각) | 상세 알림 | 사용자 결정 |
+
+---
+
 ## 스킬 활용 전략
 
 ### 스킬 vs 에이전트 차이
@@ -741,40 +969,26 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 | **컨텍스트** | 공유 | 격리 (선택적) |
 | **지속성** | 세션 내 | 작업 완료 후 종료 |
 
-### 스킬 카테고리 (23개)
+### 스킬 카테고리 (9개)
 
-#### 명령형 스킬 (16개) - 명시적 호출
+#### 메타 스킬 (3개) - 명시적 호출
 
-| 카테고리 | 스킬 | 명령어 |
-|----------|------|--------|
-| **개발** | dev | `/dev --plan/--design/--tasks/--build` |
-| **아키텍처** | clean | `/clean --init/--entity/--usecase` |
-| **문서화** | docs | `/docs --generate/--add/--update` |
-| **JIRA** | jira | `/jira --pull/--push/--sync` |
-| **QA** | qa | `/qa --plan/--run/--report` |
-| **문제해결** | solve | `/solve --5whys/--rca/--hypothesis` |
-| **온보딩** | onboard | `/onboard --quick/--phases` |
-| **컨텍스트** | context | `/context --show/--refresh` |
-| **보안** | security | `/security` |
-| **품질** | quality | `/quality` |
-| **복원** | restore | `/restore` |
-| **저장** | save | `/save` |
-| **규칙** | rules | `/rules` |
-| **작업트리** | worktree | `/worktree` |
-| **학습** | learn | `/learn [영역]` |
-| **리서치** | research | `/research [주제]` |
+| 스킬 | 명령어 | 역할 |
+|------|--------|------|
+| **dev** | `/dev --plan/--design/--tasks/--build` | 전체 개발 워크플로우 (기획→설계→구현) |
+| **solve** | `/solve --5whys/--rca/--hypothesis` | 문제 해결 (디버깅, 버그 수정) |
+| **onboard** | `/onboard --quick/--phases` | 프로젝트 분석 및 컨텍스트 생성 |
 
-#### 패시브 스킬 (7개) - 자동 활성화
+#### 패시브 스킬 (6개) - 자동 활성화
 
-| 스킬 | 트리거 조건 | 자동 로드 파일 |
-|------|------------|---------------|
-| `best-practices` | 기술 키워드 감지 | `{language}.md` |
-| `code-quality` | 코드 생성/수정 | 500줄 제한, 주석 규칙 |
-| `tdd-workflow` | `--tdd`, 테스트 키워드 | TDD 워크플로우 |
+| 스킬 | 트리거 조건 | 역할 |
+|------|------------|------|
+| `best-practices` | 기술 키워드 감지 | 언어별 베스트 프랙티스 로드 |
+| `code-quality` | 코드 생성/수정 | 500줄 제한, 주석 필수 |
+| `tdd-workflow` | `--tdd`, 테스트 키워드 | RED→GREEN→REFACTOR 강제 |
+| `project-rules` | 모든 코드 작성 | PROJECT_RULES.md 참조 |
 | `work-tracker` | 소스 파일 수정 | Worktree 자동 업데이트 |
-| `project-rules` | 모든 코드 작성 | PROJECT_RULES.md |
-| `e2e-runner` | E2E/Playwright 키워드 | E2E 실행 스크립트 |
-| `refactor-cleaner` | 리팩토링 요청 | 데드코드 탐지 규칙 |
+| `clarification-protocol` | 서브에이전트 실행 | 플래그 기반 명확화 |
 
 ### 스킬 연계 전략
 
@@ -783,9 +997,9 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 ```mermaid
 /onboard → /dev --plan → /dev --design → /dev --tasks → /dev --build
     ↓                                                        ↓
- PROJECT_RULES                                           /qa --run
+ PROJECT_RULES                                          validator
     ↓                                                        ↓
- best-practices                                         /security
+ best-practices                                         reinforcer
 ```
 
 #### 문제 해결 워크플로우
@@ -795,19 +1009,103 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
               ├─ --5whys (반복 문제)
               ├─ --rca (시스템 문제)
               └─ --hypothesis (불명확 원인)
+                     ↓
+              root-cause-finder → bug-fixer → validator
 ```
 
-### 조건부 패시브 로드 (토큰 최적화)
+### 유기적 워크플로우 통합 다이어그램
 
-> **"Context is prime real estate"** - 필요한 것만 로드
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         전체 워크플로우 연동도                            │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌──────────┐                                                           │
+│  │ /onboard │ ─────────────────────────────────────────────────┐        │
+│  └────┬─────┘                                                   │        │
+│       │ 프로젝트 분석 완료                                        │        │
+│       ▼                                                         │        │
+│  ┌──────────┐      ┌──────────┐      ┌──────────┐      ┌──────────┐    │
+│  │  --plan  │ ──▶  │ --design │ ──▶  │ --tasks  │ ──▶  │ --build  │    │
+│  └────┬─────┘      └──────────┘      └──────────┘      └────┬─────┘    │
+│       │                                                      │          │
+│       │ /dev 워크플로우                                       │          │
+│       │                                                      ▼          │
+│       │                                              ┌───────────────┐  │
+│       │                                              │ 모든 Task 완료 │  │
+│       │                                              └───────┬───────┘  │
+│       │                                                      │ 자동     │
+│       │                                                      ▼          │
+│       │                                              ┌──────────┐      │
+│       │                                              │   QA     │      │
+│       │                                              └────┬─────┘      │
+│       │                                                   │            │
+│       │                              ┌────────────────────┼────────┐   │
+│       │                              │ 통과               │ 실패   │   │
+│       │                              ▼                    ▼        │   │
+│       │                        ┌──────────┐        ┌──────────┐   │   │
+│       │                        │  완료 ✓  │        │ /solve   │◀──┼───┤
+│       │                        └──────────┘        └────┬─────┘   │   │
+│       │                                                  │         │   │
+│       │    ┌─────────────────────────────────────────────┼─────────┘   │
+│       │    │                                             │             │
+│       │    │  ┌─────────────────────┬──────────────────┐│             │
+│       │    │  │ 단순 버그           │ 새 기능/설계 필요 ││             │
+│       │    │  ▼                    ▼                   ││             │
+│       │    │  ┌──────────┐   ┌──────────┐              ││             │
+│       │    │  │ bug-fixer│   │ /dev 전환│──────────────┼┼─────────┐   │
+│       │    │  └────┬─────┘   └──────────┘              ││         │   │
+│       │    │       │                                   ││         │   │
+│       │    │       ▼                                   ││         │   │
+│       │    │  ┌──────────┐   ┌──────────┐              ││         │   │
+│       │    └─▶│validator │──▶│reinforcer│──────────────┘│         │   │
+│       │       └────┬─────┘   └──────────┘               │         │   │
+│       │            │ 2회 실패                            │         │   │
+│       │            ▼                                    │         │   │
+│       │       ┌──────────────┐                          │         │   │
+│       │       │ 사용자 결정   │                          │         │   │
+│       │       └──────────────┘                          │         │   │
+│       │                                                 │         │   │
+│       └─────────────────────────────────────────────────┘         │   │
+│                                                                    │   │
+│  빌드 실패 시:                                                      │   │
+│  ┌────────────────────┐    3회+ 반복                               │   │
+│  │ build-error-resolver│ ─────────────────────▶ /solve 에스컬레이션  │   │
+│  └────────────────────┘                                            │   │
+│                                                                    │   │
+└────────────────────────────────────────────────────────────────────┘   │
+```
 
-| 요청 타입 | 자동 로드 | 토큰 |
-|----------|----------|------|
-| **새 기능 구현** | clean-architecture + best-practices + code-quality | ~1,800 |
-| **기존 파일 수정** | code-quality + {기술}.md | ~1,000 |
-| **포맷/주석만** | code-quality만 | ~500 |
-| **버그 해결** | problem-solving | ~1,200 |
-| **리서치** | research-skill | ~800 |
+### solve ↔ dev 유기적 연동
+
+| 시나리오 | 시작 | 전환 | 종료 |
+|----------|------|------|------|
+| **단순 버그** | `/solve` | - | bug-fixer로 해결 |
+| **새 기능 필요** | `/solve` | `/dev --plan` | dev 워크플로우로 전환 |
+| **설계 변경** | `/solve` | `/dev --design` | 아키텍처 재설계 |
+| **대규모 변경** | `/solve` | `/dev` 전체 | plan→design→tasks→build |
+| **버그 발견** | `/dev --build` | `/solve` | 근본 원인 분석 후 수정 |
+| **QA 실패** | QA | `/solve` | 근본 원인 분석 |
+| **빌드 반복 실패** | build-error-resolver | `/solve --5whys` | 근본 원인 분석 |
+
+**전환 판단 기준:**
+- 새 기능 구현 필요 → `/dev --plan`
+- 3개 이상 모듈 영향 → `/dev --design`
+- DB 스키마 변경 필요 → `/dev --plan --design`
+- 단순 코드 수정 → `/solve` 내에서 해결
+- 테스트 3개+ 실패 → `/solve --rca`
+- 빌드 오류 3회+ 반복 → `/solve --5whys`
+
+### 에이전트 직접 호출 (스킬 대신)
+
+| 작업 | 에이전트 호출 |
+|------|-------------|
+| 문서 업데이트 | `calab-plugin:doc-updater` |
+| JIRA 연동 | `calab-plugin:jira-connector` |
+| QA 테스트 | `calab-plugin:qa` |
+| 보안 검사 | `calab-plugin:security-reviewer` |
+| 품질 검사 | `calab-plugin:code-reviewer` |
+| 웹 리서치 | `calab-plugin:web-researcher` |
 
 ---
 
@@ -858,31 +1156,25 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 
 ## 명령어 참조
 
-### 메타커맨드 (8개)
+### 액티브 스킬 (3개) - 사용자 호출
 
-| 명령어 | 자연어 | 설명 |
-|--------|--------|------|
-| `/dev [--plan\|--design\|--tasks\|--build\|--status]` | "기획/설계/구현" | 개발 워크플로우 |
-| `/clean [--init\|--entity\|--usecase\|--validate]` | "클린 아키텍처" | 4-Layer 관리 |
-| `/docs [--generate\|--add\|--update\|--validate\|--status]` | "문서화" | 문서 자동화 |
-| `/jira [--init\|--pull\|--push\|--link\|--status\|--sync]` | "지라 연동" | JIRA 동기화 |
-| `/qa [--plan\|--run\|--report\|--status]` | "QA 테스트" | E2E 관리 |
-| `/solve [--5whys\|--rca\|--hypothesis\|--log\|--report]` | "문제 해결" | 체계적 해결 |
-| `/onboard [--quick\|--phases]` | "프로젝트 분석" | 컨텍스트 생성 |
-| `/context [--show\|--refresh]` | "컨텍스트" | 표시/갱신 |
+| 명령어 | 옵션 | 설명 |
+|--------|------|------|
+| `/dev` | `--plan`, `--design`, `--tasks`, `--build`, `--architecture`, `--status` | 통합 개발 워크플로우 |
+| `/solve` | `--5whys`, `--rca`, `--hypothesis`, `--binary`, `--log`, `--report` | 체계적 문제 해결 |
+| `/onboard` | `--quick`, `--full`, `--phase N`, `--skip-domain` | 프로젝트 분석/온보딩 |
 
-### 독립 명령어 (8개)
+### 에이전트 직접 호출 (스킬 대신)
 
-| 명령어 | 자연어 | 설명 |
-|--------|--------|------|
-| `/security` | "보안 검사" | OWASP Top 10 |
-| `/quality` | "품질 검사" | 코드 품질 |
-| `/restore` | "복원" | 상태 복원 |
-| `/save` | "저장" | 체크포인트 |
-| `/rules` | "규칙" | 규칙 표시 |
-| `/worktree` | "작업 트리" | 진행률 |
-| `/learn [영역]` | "학습" | 심층 학습 |
-| `/research [주제]` | "조사" | 검색 + 요약 |
+| 작업 | 에이전트 호출 | 대체된 기능 |
+|------|-------------|------------|
+| 문서 생성 | `calab-plugin:doc-updater` | `/docs` |
+| JIRA 연동 | `calab-plugin:jira-connector` | `/jira` |
+| QA 테스트 | `calab-plugin:qa` | `/qa` |
+| 보안 검사 | `calab-plugin:security-reviewer` | `/security` |
+| 품질 검사 | `calab-plugin:code-reviewer` | `/quality` |
+| 웹 리서치 | `calab-plugin:web-researcher` | `/research` |
+| 클린 아키텍처 | `/dev --architecture` | `/clean` |
 
 ---
 
@@ -940,6 +1232,61 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 ```
 
 하위 작업 완료 후 **반드시 상위 작업으로 복귀**
+
+### State Handoff Pattern (세션 연속성)
+
+> **"Reliable state transfer with checksum validation"** - 세션 간 상태 전달 무결성 보장
+
+#### 중복 저장 채널 (Redundancy Channels)
+
+| 우선순위 | 채널 | 파일 | 용도 |
+|---------|------|------|------|
+| **Primary** | 체크포인트 | `.claude-state/checkpoint.json` | 상세 상태 + 체크섬 |
+| **Secondary** | Worktree | `.claude-state/worktree.json` | 작업 트리 상태 |
+| **Tertiary** | 컨텍스트 | `.claude/memory/CURRENT_CONTEXT.md` | 비상 복구용 |
+
+#### 복구 우선순위
+
+```
+1. checkpoint.json (체크섬 검증) → 성공 시 사용
+2. worktree.json → 1 실패 시 사용
+3. CURRENT_CONTEXT.md → 1,2 실패 시 파싱
+4. /onboard 재실행 → 모두 실패 시
+```
+
+### Rollback Mechanism (롤백 메커니즘)
+
+> **"Severity-based rollback decisions"** - 심각도에 따른 롤백 결정
+
+#### 롤백 트리거
+
+| 상황 | 롤백 | 대응 |
+|------|------|------|
+| **빌드 실패** | ✅ 즉시 | 스냅샷 복원 + /solve 제안 |
+| **테스트 실패** | ✅ 즉시 | 스냅샷 복원 + 원인 분석 |
+| **타입 에러 증가** | ✅ | 스냅샷 복원 |
+| **린트 경고 증가** | ❌ | 경고만 |
+| **커버리지 감소** | ❌ | 경고 + 테스트 추가 권고 |
+
+#### 수정 전 스냅샷 프로토콜
+
+```
+1. PRE-MODIFICATION: 변경 전 파일 상태 기록
+2. MODIFICATION: 실제 코드 수정
+3. POST-VALIDATION: 빌드/테스트 검증
+4. ROLLBACK or COMMIT: 결과에 따라 결정
+```
+
+### Graceful Degradation (우아한 성능 저하)
+
+> **"Prioritize recovery based on business impact"** - 비즈니스 영향도 기반 복구
+
+| 우선순위 | 영역 | 실패 시 대응 |
+|---------|------|-------------|
+| **P0** | 작업 컨텍스트 | 3중 백업 복구 시도 |
+| **P1** | Worktree 상태 | 마지막 커밋 기준 재계산 |
+| **P2** | 규칙 캐시 | 기본 규칙으로 폴백 |
+| **P3** | 베스트 프랙티스 | 기본 품질 규칙 적용 |
 
 ---
 

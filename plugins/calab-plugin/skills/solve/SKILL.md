@@ -9,17 +9,17 @@ description: |
   느림, slow, 성능, performance, timeout, 타임아웃
 argument-hint: "[--5whys|--rca|--hypothesis|--binary] [문제 설명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search]
-agent: build-error-resolver
+skills: [code-quality, best-practices, project-rules]
 agents:
-  primary: build-error-resolver
+  primary: root-cause-finder
   orchestration:
     explore: [Explore]
-    analyze: [build-error-resolver, Explore]
-    research: [deep-researcher]
-    fix: [build-error-resolver, code-reviewer]
-    validate: [validator]
-    reinforce: [reinforcer]
-    verify: [code-reviewer, e2e-runner, validator]
+    analyze: [calab-plugin:root-cause-finder, Explore]
+    research: [calab-plugin:deep-researcher]
+    fix: [calab-plugin:bug-fixer, calab-plugin:code-reviewer]
+    validate: [calab-plugin:validator]
+    reinforce: [calab-plugin:reinforcer]
+    verify: [calab-plugin:code-reviewer, calab-plugin:e2e-runner, calab-plugin:validator]
 ---
 
 # /solve - 문제 해결
@@ -63,42 +63,92 @@ agents:
 - 최근 변경 사항 (git log)
 ```
 
-### 2. 분석 단계
+### 2. 분석 단계 (Root Cause Analysis)
 
 **Task 도구 호출**:
-- `subagent_type`: `"calab-plugin:build-error-resolver"`
-- `description`: `"문제 원인 분석"`
-- `prompt`: 아래 프롬프트 내용 사용
+```python
+Task(
+    subagent_type="calab-plugin:root-cause-finder",
+    description="근본 원인 분석",
+    prompt="""
+    **역할**: 문제 해결 전문가
 
-**프롬프트 내용:**
+    **목표**: 근본 원인 분석
+
+    **방법론**: {--5whys | --rca | --hypothesis}
+    - 5whys: 반복 질문으로 근본 원인 도달
+    - rca: 8단계 체계적 분석
+    - hypothesis: 가설 검증 사이클
+
+    **문제 정보**:
+    {에러 메시지, 스택 트레이스, 관련 파일}
+
+    **출력**:
+    - 근본 원인 식별 (confidence: high/medium/low)
+    - 해결 방안 제시 (P0/P1/P2 우선순위)
+    """,
+    run_in_background=True
+)
 ```
-**역할**: 문제 해결 전문가
 
-**목표**: 근본 원인 분석
+### 3. 수정 단계 (Bug Fix with TDD)
 
-**방법론**: {--5whys | --rca | --hypothesis | --binary}
+**Task 도구 호출**:
+```python
+Task(
+    subagent_type="calab-plugin:bug-fixer",
+    description="버그 수정 (TDD)",
+    prompt="""
+    **역할**: TDD 버그 수정 전문가
 
-**출력**:
-- 근본 원인 식별
-- 해결 방안 제시
+    **목표**: 근본 원인 기반 수정
+
+    **Root Cause**: {root_cause_finder 결과}
+    **권장 수정**: {recommended_fix}
+
+    **TDD 워크플로우**:
+    1. RED: 버그 재현 테스트 작성 (실패해야 함)
+    2. GREEN: 수정 적용 (테스트 통과)
+    3. REFACTOR: 코드 정리
+
+    **수정 후 검증**:
+    - 회귀 테스트 실행
+    - 전체 테스트 스위트 확인
+    """,
+    run_in_background=True
+)
 ```
 
-### 3. 수정 및 검증 단계
+### 4. 검증 단계
 
-**3-1. 수정 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:build-error-resolver"`
-- `description`: `"문제 수정"`
-- `prompt`: `"..."`
+**4-1. 검증 필수 (Task 도구 호출)**:
+```python
+Task(
+    subagent_type="calab-plugin:validator",
+    description="수정 검증",
+    prompt="""
+    **역할**: 완전성 검증 전문가
 
-**3-2. 검증 필수 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:validator"`
-- `description`: `"수정 검증"`
-- `prompt`: `"해결 완전성 확인, 재발 방지 확인..."`
+    **목표**: 해결 완전성 확인
 
-**3-3. 검증 실패 시 (Task 도구 호출)**:
-- `subagent_type`: `"calab-plugin:reinforcer"`
-- `description`: `"추가 수정"`
-- `prompt`: `"..."`
+    **검증 항목**:
+    - 버그 재현 테스트 통과
+    - 회귀 테스트 통과
+    - 엣지 케이스 처리
+    - 재발 방지 조치 확인
+    """
+)
+```
+
+**4-2. 검증 실패 시 (Task 도구 호출)**:
+```python
+if validator_result == "reinforcer 필요":
+    Task(
+        subagent_type="calab-plugin:reinforcer",
+        description="추가 수정",
+        prompt="validator 결과 기반 누락 항목 수정"
+    )
+```
 
 **⚠️ 중요**: 이 지침을 읽고 있다면, 사용자에게 텍스트로 응답하지 말고 **Task 도구를 호출**하세요!
 
@@ -246,18 +296,20 @@ Why 5: 왜 리뷰가 없었나?
 │  └── Explore 에이전트: 관련 코드 및 로그 탐색            │
 │                                                         │
 │  2. 분석 단계 (Analyze):                                │
-│  ├── build-error-resolver: 오류 패턴 분석               │
+│  ├── root-cause-finder: 근본 원인 분석                  │
+│  │   └── 5 Whys / RCA / Hypothesis 방법론              │
 │  └── Explore 에이전트: 히스토리 및 변경사항 추적          │
 │                                                         │
 │  3. 리서치 단계 (Research):                             │
 │  └── deep-researcher: 유사 문제/해결책 웹 검색           │
 │                                                         │
 │  4. 수정 단계 (Fix):                                    │
-│  ├── build-error-resolver: 코드 수정                    │
+│  ├── bug-fixer: TDD 기반 버그 수정                      │
+│  │   └── RED → GREEN → REFACTOR                        │
 │  └── code-reviewer: 수정 코드 검증 (병렬)                │
 │                                                         │
 │  5. 검증 단계 (Verify):                                 │
-│  ├── validator: 해결 완전성 검증 (AC, 재발 방지)         │
+│  ├── validator: 해결 완전성 검증 (재발 방지)             │
 │  ├── code-reviewer: 코드 품질 확인                      │
 │  └── e2e-runner: 회귀 테스트 실행 (선택)                 │
 │                                                         │
@@ -305,6 +357,59 @@ Why 5: 왜 리뷰가 없었나?
 }
 ```
 
+## /dev 워크플로우 연동
+
+### 언제 dev 워크플로우로 전환하는가?
+
+| 상황 | 액션 |
+|------|------|
+| **단순 버그 수정** | solve 내에서 bug-fixer로 해결 |
+| **새 기능 필요** | `/dev --plan` 으로 전환 |
+| **대규모 리팩토링** | `/dev --architecture` 로 전환 |
+| **설계 변경 필요** | `/dev --design` 으로 전환 |
+
+### 전환 판단 기준
+
+```python
+def should_transition_to_dev(root_cause_analysis):
+    """
+    solve → dev 전환 판단
+    """
+    # dev 워크플로우로 전환해야 하는 경우
+    if root_cause_analysis.requires_new_feature:
+        return "/dev --plan {feature_name}"
+
+    if root_cause_analysis.requires_architecture_change:
+        return "/dev --architecture"
+
+    if root_cause_analysis.affects_multiple_modules > 3:
+        return "/dev --design"
+
+    if root_cause_analysis.requires_database_change:
+        return "/dev --plan --design"
+
+    # solve 내에서 해결
+    return None
+```
+
+### 전환 시 사용자 안내
+
+```
+🔀 워크플로우 전환 권장
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+근본 원인 분석 결과, 단순 수정으로 해결 불가합니다.
+
+**원인**: [근본 원인]
+**권장 전환**: `/dev --plan {기능명}`
+
+**이유**:
+- 새로운 기능 구현 필요
+- 3개 이상 모듈 영향
+- 설계 변경 필요
+
+전환하시겠습니까? [Y/N]
+```
+
 ## 다음 단계
 
 | 상황 | 권장 명령어 |
@@ -314,6 +419,116 @@ Why 5: 왜 리뷰가 없었나?
 | 진행 확인 | `/solve --log` |
 | 완료 후 | `/solve --report` |
 | 유사 문제 검색 | `/solve --history "키워드"` |
+| **새 기능 필요** | `/dev --plan` |
+| **설계 변경 필요** | `/dev --design` |
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **문제 해결 시 반드시 산출물 생성**
+
+| 단계 | 산출물 | 파일 경로 | 필수 |
+|------|--------|----------|------|
+| **문제 정의** | 문제 정의서 | `.claude/problem-solving/active/{problem-id}/problem.md` | ✅ |
+| **분석** | 분석 기록 | `.claude/problem-solving/active/{problem-id}/analysis.md` | ✅ |
+| **가설** | 가설 목록 | `.claude/problem-solving/active/{problem-id}/hypotheses.md` | ⚠️ |
+| **해결 후** | 해결 보고서 | `.claude/problem-solving/resolved/{problem-id}/report.md` | ✅ |
+| **지식 베이스** | 패턴 등록 | `.claude/problem-solving/knowledge-base/solutions.json` | ✅ |
+
+### 문제 정의서 필수 항목
+
+```markdown
+# 문제 정의서: {problem-id}
+
+## 기본 정보
+- **ID**: {problem-id}
+- **보고 일시**: {timestamp}
+- **보고자**: {user}
+- **심각도**: [CRITICAL/HIGH/MEDIUM/LOW]
+
+## 증상
+- 에러 메시지: {message}
+- 발생 위치: {file:line}
+- 재현 조건: {conditions}
+
+## 영향 범위
+- 영향 받는 기능: {features}
+- 영향 받는 사용자: {users}
+```
+
+### 해결 보고서 필수 항목
+
+```markdown
+# 해결 보고서: {problem-id}
+
+## 근본 원인
+- **원인**: {root_cause}
+- **분석 방법**: {method} (5whys/rca/hypothesis)
+- **신뢰도**: {confidence}%
+
+## 해결 내용
+- **수정 파일**: {files}
+- **수정 내용**: {changes}
+- **테스트 결과**: {test_result}
+
+## 재발 방지
+- [ ] 예방 조치 1
+- [ ] 예방 조치 2
+
+## 지식 베이스 등록
+- 키워드: {keywords}
+- 유사 문제 대응 가이드: {guide}
+```
+
+## ✅ State Persistence 의무
+
+### 문제 해결 시작 시 필수 작업
+- [ ] 1. problem-id 생성 (PROB-NNN 형식)
+- [ ] 2. 문제 정의서 생성 → `.claude/problem-solving/active/{id}/problem.md`
+- [ ] 3. Worktree 업데이트 → 현재 문제 해결 상태 기록
+
+### 분석 완료 후 필수 작업
+- [ ] 1. 분석 기록 생성 → `.claude/problem-solving/active/{id}/analysis.md`
+- [ ] 2. 근본 원인 confidence 기록
+
+### 해결 완료 후 필수 작업
+- [ ] 1. 해결 보고서 생성 → `.claude/problem-solving/resolved/{id}/report.md`
+- [ ] 2. 지식 베이스 업데이트 → `solutions.json`에 패턴 추가
+- [ ] 3. active 폴더 → resolved 폴더로 이동
+- [ ] 4. Worktree 업데이트 → 해결 상태로 변경
+
+### State 파일 업데이트 예시
+
+```python
+def register_solution_to_knowledge_base(problem_id, root_cause, solution, keywords):
+    """해결된 문제를 지식 베이스에 등록"""
+    kb_path = ".claude/problem-solving/knowledge-base/solutions.json"
+    kb = load_json(kb_path)
+
+    kb["solutions"].append({
+        "id": problem_id,
+        "problem": root_cause["symptom"],
+        "cause": root_cause["cause"],
+        "solution": solution["description"],
+        "keywords": keywords,
+        "resolved_at": datetime.now().isoformat(),
+        "confidence": root_cause["confidence"]
+    })
+
+    # 패턴 업데이트
+    for keyword in keywords:
+        existing_pattern = find_pattern(kb, keyword)
+        if existing_pattern:
+            existing_pattern["occurrences"] += 1
+        else:
+            kb["patterns"].append({
+                "keywords": [keyword],
+                "likely_causes": [root_cause["cause"]],
+                "occurrences": 1
+            })
+
+    save_json(kb_path, kb)
+    print(f"✅ 지식 베이스 업데이트 완료: {problem_id}")
+```
 
 ## 참조 파일
 
@@ -333,3 +548,5 @@ Why 5: 왜 리뷰가 없었나?
 ### 추가 참조 (프로젝트 전역)
 
 - `.claude/best-practices/typescript/ts-error-*.md` - 에러 처리 세부 규칙
+- `.claude/problem-solving/knowledge-base/solutions.json` - 해결 패턴
+- `.claude-state/worktree.json` - 작업 상태
