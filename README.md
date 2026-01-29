@@ -1,6 +1,6 @@
 # Calab Claude Plugin
 
-[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
+[![Version](https://img.shields.io/badge/version-2.7.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple.svg)](https://claude.ai/code)
 
@@ -19,7 +19,16 @@
 | 할루시네이션 | validator/reinforcer 에이전트로 검증 |
 | 산출물 누락 | 스킬별 필수 산출물 + State Persistence 의무화 |
 
-### 🆕 v2.6.0 변경사항
+### 🆕 v2.7.0 변경사항
+
+| 기능 | 설명 |
+|------|------|
+| **🔍 산출물 검증 훅** | SubagentStop 시 자동 산출물 검증 (post_skill_artifact_check.py) |
+| **📋 23개 에이전트 산출물 규칙** | 모든 에이전트에 필수 산출물 100% 정의 |
+| **🏷️ USE WHEN 키워드** | 23개 에이전트 전체 활성화 키워드 정의 |
+| **✅ 에이전트 완전성 100%** | frontmatter, tools, model, permissionMode 검증 완료 |
+
+### v2.6.0 변경사항
 
 | 기능 | 설명 |
 |------|------|
