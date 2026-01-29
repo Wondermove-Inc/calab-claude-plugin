@@ -57,65 +57,37 @@ def detect_slash_command(prompt: str) -> Optional[dict]:
     """슬래시 명령어 감지"""
     prompt_stripped = prompt.strip()
 
-    # 슬래시 명령어 패턴 정의
+    # 슬래시 명령어 패턴 정의 (존재하는 스킬만 포함)
+    # 현재 스킬: dev, solve, onboard (메타), best-practices, code-quality, tdd-workflow,
+    #           project-rules, work-tracker, clarification-protocol (패시브)
     command_patterns = {
-        # 개발 워크플로우
+        # /dev - 개발 워크플로우 (메타 스킬)
+        '/dev --plan': {'type': 'design', 'category': '기획', 'command': '/dev --plan'},
+        '/dev --design': {'type': 'design', 'category': '설계', 'command': '/dev --design'},
+        '/dev --tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev --tasks'},
+        '/dev --build': {'type': 'implement', 'category': '구현', 'command': '/dev --build'},
+        '/dev --status': {'type': 'review', 'category': '진행 확인', 'command': '/dev --status'},
         '/dev plan': {'type': 'design', 'category': '기획', 'command': '/dev plan'},
         '/dev design': {'type': 'design', 'category': '설계', 'command': '/dev design'},
         '/dev tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev tasks'},
         '/dev build': {'type': 'implement', 'category': '구현', 'command': '/dev build'},
         '/dev status': {'type': 'review', 'category': '진행 확인', 'command': '/dev status'},
-        '/dev-plan': {'type': 'design', 'category': '기획', 'command': '/dev-plan'},
-        '/dev-design': {'type': 'design', 'category': '설계', 'command': '/dev-design'},
-        '/dev-tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev-tasks'},
-        '/dev-build': {'type': 'implement', 'category': '구현', 'command': '/dev-build'},
-        '/dev-status': {'type': 'review', 'category': '진행 확인', 'command': '/dev-status'},
+        '/dev': {'type': 'implement', 'category': '개발', 'command': '/dev'},
 
-        # 클린 아키텍처
-        '/clean-init': {'type': 'design', 'category': '클린 아키텍처 초기화', 'command': '/clean-init'},
-        '/clean-entity': {'type': 'implement', 'category': '엔티티 생성', 'command': '/clean-entity'},
-        '/clean-usecase': {'type': 'implement', 'category': '유스케이스 생성', 'command': '/clean-usecase'},
-        '/clean-validate': {'type': 'review', 'category': '아키텍처 검증', 'command': '/clean-validate'},
-
-        # 온보딩
-        '/onboard': {'type': 'research', 'category': '프로젝트 온보딩', 'command': '/onboard'},
-        '/onboard-quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard-quick'},
-        '/learn': {'type': 'research', 'category': '영역 학습', 'command': '/learn'},
-        '/context-refresh': {'type': 'document', 'category': '컨텍스트 갱신', 'command': '/context-refresh'},
-        '/context-show': {'type': 'review', 'category': '컨텍스트 확인', 'command': '/context-show'},
-
-        # 리서치
-        '/research': {'type': 'research', 'category': '리서치', 'command': '/research'},
-
-        # Worktree
-        '/worktree': {'type': 'review', 'category': '작업 트리 확인', 'command': '/worktree'},
-        '/worktree status': {'type': 'review', 'category': '작업 상태 확인', 'command': '/worktree status'},
-        '/worktree start': {'type': 'implement', 'category': '태스크 시작', 'command': '/worktree start'},
-        '/worktree done': {'type': 'implement', 'category': '태스크 완료', 'command': '/worktree done'},
-        '/worktree block': {'type': 'implement', 'category': '블로커 등록', 'command': '/worktree block'},
-        '/worktree reset': {'type': 'implement', 'category': '작업 트리 초기화', 'command': '/worktree reset'},
-
-        # 컨텍스트 관리
-        '/restore-context': {'type': 'review', 'category': '컨텍스트 복원', 'command': '/restore-context'},
-        '/save-progress': {'type': 'document', 'category': '진행 저장', 'command': '/save-progress'},
-        '/show-rules': {'type': 'review', 'category': '규칙 확인', 'command': '/show-rules'},
-
-        # 코드 품질
-        '/check-quality': {'type': 'review', 'category': '품질 검사', 'command': '/check-quality'},
-
-        # 문제 해결
+        # /solve - 문제 해결 (메타 스킬)
+        '/solve --5whys': {'type': 'fix', 'category': '5 Whys 분석', 'command': '/solve --5whys'},
+        '/solve --rca': {'type': 'fix', 'category': 'Root Cause Analysis', 'command': '/solve --rca'},
+        '/solve --hypothesis': {'type': 'fix', 'category': '가설 검증', 'command': '/solve --hypothesis'},
+        '/solve --binary': {'type': 'fix', 'category': 'Binary Search 디버깅', 'command': '/solve --binary'},
+        '/solve --log': {'type': 'review', 'category': '분석 로그 확인', 'command': '/solve --log'},
+        '/solve --report': {'type': 'document', 'category': '보고서 생성', 'command': '/solve --report'},
+        '/solve --history': {'type': 'research', 'category': '해결 이력 검색', 'command': '/solve --history'},
         '/solve': {'type': 'fix', 'category': '문제 해결', 'command': '/solve'},
-        '/solve-log': {'type': 'review', 'category': '분석 로그 확인', 'command': '/solve-log'},
-        '/solve-history': {'type': 'research', 'category': '해결 이력 검색', 'command': '/solve-history'},
-        '/solve-report': {'type': 'document', 'category': '보고서 생성', 'command': '/solve-report'},
 
-        # JIRA 연동
-        '/jira-init': {'type': 'implement', 'category': 'JIRA 연동 초기화', 'command': '/jira-init'},
-        '/jira-push': {'type': 'implement', 'category': 'JIRA 푸시', 'command': '/jira-push'},
-        '/jira-pull': {'type': 'implement', 'category': 'JIRA 풀', 'command': '/jira-pull'},
-        '/jira-sync': {'type': 'implement', 'category': 'JIRA 동기화', 'command': '/jira-sync'},
-        '/jira-link': {'type': 'implement', 'category': 'JIRA 연결', 'command': '/jira-link'},
-        '/jira-status': {'type': 'review', 'category': 'JIRA 상태 확인', 'command': '/jira-status'},
+        # /onboard - 프로젝트 온보딩 (메타 스킬)
+        '/onboard --quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard --quick'},
+        '/onboard --phases': {'type': 'research', 'category': '단계별 온보딩', 'command': '/onboard --phases'},
+        '/onboard': {'type': 'research', 'category': '프로젝트 온보딩', 'command': '/onboard'},
     }
 
     # 정확한 명령어 매칭 (긴 명령어부터 체크)
@@ -525,8 +497,8 @@ def get_context_reminder(intent: Optional[dict]) -> str:
         'fix': "🔍 문제 해결: /solve 명령으로 체계적 분석 가능",
         'refactor': "🏗️ 리팩토링: 기존 테스트 통과 확인 필수",
         'review': "✅ 리뷰: 품질 규칙 준수 여부 확인",
-        'design': "📐 설계: 클린 아키텍처 4-레이어 고려",
-        'research': "🔎 리서치: /research 명령으로 심층 조사",
+        'design': "📐 설계: /dev --design 명령으로 아키텍처 설계",
+        'research': "🔎 리서치: /onboard 명령으로 프로젝트 분석",
         'document': "📝 문서화: 코드 주석과 README 동기화",
         'test': "🧪 테스트: TDD 모드 --tdd 옵션 활용"
     }
