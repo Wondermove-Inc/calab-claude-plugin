@@ -33,7 +33,7 @@
 ### 핵심 구성
 
 ```
-24개 스킬 + 23개 에이전트 + 22개 훅
+9개 스킬 + 23개 에이전트 + 22개 훅
 ```
 
 ### 설치 확인
@@ -749,40 +749,26 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 | **컨텍스트** | 공유 | 격리 (선택적) |
 | **지속성** | 세션 내 | 작업 완료 후 종료 |
 
-### 스킬 카테고리 (23개)
+### 스킬 카테고리 (9개)
 
-#### 명령형 스킬 (16개) - 명시적 호출
+#### 메타 스킬 (3개) - 명시적 호출
 
-| 카테고리 | 스킬 | 명령어 |
-|----------|------|--------|
-| **개발** | dev | `/dev --plan/--design/--tasks/--build` |
-| **아키텍처** | clean | `/clean --init/--entity/--usecase` |
-| **문서화** | docs | `/docs --generate/--add/--update` |
-| **JIRA** | jira | `/jira --pull/--push/--sync` |
-| **QA** | qa | `/qa --plan/--run/--report` |
-| **문제해결** | solve | `/solve --5whys/--rca/--hypothesis` |
-| **온보딩** | onboard | `/onboard --quick/--phases` |
-| **컨텍스트** | context | `/context --show/--refresh` |
-| **보안** | security | `/security` |
-| **품질** | quality | `/quality` |
-| **복원** | restore | `/restore` |
-| **저장** | save | `/save` |
-| **규칙** | rules | `/rules` |
-| **작업트리** | worktree | `/worktree` |
-| **학습** | learn | `/learn [영역]` |
-| **리서치** | research | `/research [주제]` |
+| 스킬 | 명령어 | 역할 |
+|------|--------|------|
+| **dev** | `/dev --plan/--design/--tasks/--build` | 전체 개발 워크플로우 (기획→설계→구현) |
+| **solve** | `/solve --5whys/--rca/--hypothesis` | 문제 해결 (디버깅, 버그 수정) |
+| **onboard** | `/onboard --quick/--phases` | 프로젝트 분석 및 컨텍스트 생성 |
 
-#### 패시브 스킬 (7개) - 자동 활성화
+#### 패시브 스킬 (6개) - 자동 활성화
 
-| 스킬 | 트리거 조건 | 자동 로드 파일 |
-|------|------------|---------------|
-| `best-practices` | 기술 키워드 감지 | `{language}.md` |
-| `code-quality` | 코드 생성/수정 | 500줄 제한, 주석 규칙 |
-| `tdd-workflow` | `--tdd`, 테스트 키워드 | TDD 워크플로우 |
+| 스킬 | 트리거 조건 | 역할 |
+|------|------------|------|
+| `best-practices` | 기술 키워드 감지 | 언어별 베스트 프랙티스 로드 |
+| `code-quality` | 코드 생성/수정 | 500줄 제한, 주석 필수 |
+| `tdd-workflow` | `--tdd`, 테스트 키워드 | RED→GREEN→REFACTOR 강제 |
+| `project-rules` | 모든 코드 작성 | PROJECT_RULES.md 참조 |
 | `work-tracker` | 소스 파일 수정 | Worktree 자동 업데이트 |
-| `project-rules` | 모든 코드 작성 | PROJECT_RULES.md |
-| `e2e-runner` | E2E/Playwright 키워드 | E2E 실행 스크립트 |
-| `refactor-cleaner` | 리팩토링 요청 | 데드코드 탐지 규칙 |
+| `clarification-protocol` | 서브에이전트 실행 | 플래그 기반 명확화 |
 
 ### 스킬 연계 전략
 
@@ -791,9 +777,9 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
 ```mermaid
 /onboard → /dev --plan → /dev --design → /dev --tasks → /dev --build
     ↓                                                        ↓
- PROJECT_RULES                                           /qa --run
+ PROJECT_RULES                                          validator
     ↓                                                        ↓
- best-practices                                         /security
+ best-practices                                         reinforcer
 ```
 
 #### 문제 해결 워크플로우
@@ -803,19 +789,22 @@ Hook 4: 테스트 실행 → 회귀 버그 감지
               ├─ --5whys (반복 문제)
               ├─ --rca (시스템 문제)
               └─ --hypothesis (불명확 원인)
+                     ↓
+              root-cause-finder → bug-fixer → validator
 ```
 
-### 조건부 패시브 로드 (토큰 최적화)
+### 통합된 기능 (삭제된 스킬 → 대체)
 
-> **"Context is prime real estate"** - 필요한 것만 로드
-
-| 요청 타입 | 자동 로드 | 토큰 |
-|----------|----------|------|
-| **새 기능 구현** | clean-architecture + best-practices + code-quality | ~1,800 |
-| **기존 파일 수정** | code-quality + {기술}.md | ~1,000 |
-| **포맷/주석만** | code-quality만 | ~500 |
-| **버그 해결** | problem-solving | ~1,200 |
-| **리서치** | research-skill | ~800 |
+| 기존 스킬 | 대체 방법 |
+|----------|----------|
+| `/clean` | `/dev --design` (아키텍처 설계) |
+| `/docs` | `calab-plugin:doc-updater` 에이전트 |
+| `/jira` | `calab-plugin:jira-connector` 에이전트 |
+| `/qa` | `calab-plugin:qa` 에이전트 |
+| `/security` | `calab-plugin:security-reviewer` 에이전트 |
+| `/quality` | `calab-plugin:code-reviewer` 에이전트 |
+| `/restore`, `/save` | `.claude/memory/` 자동 관리 |
+| `/research` | `calab-plugin:web-researcher` 에이전트 |
 
 ---
 
