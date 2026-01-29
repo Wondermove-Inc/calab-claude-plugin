@@ -6,7 +6,7 @@ description: |
   USE WHEN: 분석, analyze, 종합, synthesize, 보고서, report, 요약, summary
 tools: [Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, mcp__tavily__tavily-search]
 model: sonnet
-skills: research, research-skill
+skills: best-practices
 ---
 
 # Deep Researcher Agent
@@ -81,8 +81,7 @@ skills: research, research-skill
 
 ## 참조 스킬
 
-- `research` - 리서치 메인 (analyze, report 단계에서 호출)
-- `research-skill` - 리서치 방법론
+- `best-practices` - 기술별 베스트 프랙티스
 
 ## 연관 에이전트
 

@@ -98,14 +98,62 @@ skills: code-quality, best-practices, project-rules
 - [ ] 타입 any 사용 없음
 - [ ] 네이밍 규칙 준수
 
+## 신뢰도 점수 시스템 (2025 Best Practice)
+
+> **"Confidence-based escalation"** - 수치화된 점수로 에스컬레이션 결정
+
+### 점수 계산 방식
+
+```python
+def calculate_confidence(validation_result):
+    """검증 결과 신뢰도 점수 계산 (0-100%)"""
+
+    weights = {
+        "ac_compliance": 40,      # AC 충족률 (40%)
+        "completeness": 25,       # 완전성 (25%)
+        "edge_cases": 20,         # 엣지 케이스 (20%)
+        "quality": 15             # 품질 기준 (15%)
+    }
+
+    scores = {
+        "ac_compliance": (passed_ac / total_ac) * 100,
+        "completeness": (implemented / required) * 100,
+        "edge_cases": (handled / identified) * 100,
+        "quality": quality_score
+    }
+
+    confidence = sum(
+        scores[k] * (weights[k] / 100)
+        for k in weights
+    )
+
+    return round(confidence, 1)
+```
+
+### 신뢰도 기반 액션 결정
+
+| 신뢰도 | 상태 | 액션 |
+|--------|------|------|
+| **90-100%** | ✅ 통과 | 다음 Task 진행 |
+| **70-89%** | ⚠️ 경고 | reinforcer 자동 호출 |
+| **50-69%** | ❌ 실패 | reinforcer + 사용자 확인 |
+| **0-49%** | 🚨 심각 | /solve 에스컬레이션 제안 |
+
 ## 출력 형식
 
-### 검증 통과 시
+### 검증 통과 시 (신뢰도 90%+)
 
 ```
 ============================================
 [VALIDATOR] 검증 완료 ✅
 ============================================
+
+📊 신뢰도 점수: 95.2% (PASSED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• AC 충족률:    100% (40/40점)
+• 완전성:       92%  (23/25점)
+• 엣지 케이스:  90%  (18/20점)
+• 품질 기준:    93%  (14/15점)
 
 📋 AC 검증:
 ✅ AC1: 사용자 로그인 기능 | 충족
@@ -131,12 +179,19 @@ skills: code-quality, best-practices, project-rules
 ============================================
 ```
 
-### 검증 실패 시 (reinforcer 필요)
+### 검증 실패 시 (신뢰도 70-89% - reinforcer 자동)
 
 ```
 ============================================
-[VALIDATOR] 검증 실패 ❌
+[VALIDATOR] 검증 경고 ⚠️
 ============================================
+
+📊 신뢰도 점수: 78.5% (WARNING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• AC 충족률:    75%  (30/40점)
+• 완전성:       80%  (20/25점)
+• 엣지 케이스:  70%  (14/20점)
+• 품질 기준:    87%  (13/15점)
 
 📋 AC 검증:
 ✅ AC1: 사용자 로그인 기능 | 충족
@@ -162,16 +217,81 @@ skills: code-quality, best-practices, project-rules
 ✅ 타입: 완전함
 
 ============================================
-❌ 결과: 검증 실패 - reinforcer 에이전트 호출 필요
+⚠️ 결과: reinforcer 에이전트 자동 호출
 
-🔧 필요한 수정:
-1. [HIGH] refreshToken 저장 로직 추가
-2. [HIGH] 토큰 만료 체크 구현
-3. [MEDIUM] 네트워크 에러 처리 추가
-4. [LOW] 주석 추가
+🔧 실패 분류:
+[RETRIABLE] 코드 추가로 해결 가능:
+  1. refreshToken 저장 로직 추가
+  2. 토큰 만료 체크 구현
+  3. 네트워크 에러 처리 추가
+
+[RETRIABLE] 품질 개선:
+  4. 주석 추가
 
 ============================================
-reinforcer 에이전트를 호출하시겠습니까? (Y/N)
+→ reinforcer 에이전트 자동 호출 중...
+```
+
+### 검증 심각 실패 시 (신뢰도 50-69% - 사용자 확인)
+
+```
+============================================
+[VALIDATOR] 검증 실패 ❌
+============================================
+
+📊 신뢰도 점수: 52.3% (FAILED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• AC 충족률:    50%  (20/40점)
+• 완전성:       60%  (15/25점)
+• 엣지 케이스:  40%  (8/20점)
+• 품질 기준:    60%  (9/15점)
+
+🔧 실패 분류:
+[NON-RETRIABLE] 설계 변경 필요:
+  1. 인증 방식 재설계 필요 (JWT → Session)
+  2. API 구조 변경 필요
+
+[RETRIABLE] 코드 추가로 해결 가능:
+  3. 에러 핸들링 추가
+  4. 타입 정의 보완
+
+============================================
+❌ 결과: 사용자 결정 필요
+
+선택하세요:
+1. reinforcer로 retriable 항목만 수정
+2. /solve --rca로 근본 원인 분석
+3. /dev --design으로 재설계
+
+============================================
+```
+
+### 검증 심각 실패 시 (신뢰도 0-49% - /solve 제안)
+
+```
+============================================
+[VALIDATOR] 검증 심각 실패 🚨
+============================================
+
+📊 신뢰도 점수: 35.0% (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• AC 충족률:    25%  (10/40점)
+• 완전성:       40%  (10/25점)
+• 엣지 케이스:  30%  (6/20점)
+• 품질 기준:    60%  (9/15점)
+
+🚨 심각한 문제:
+• 핵심 AC 3개 이상 미충족
+• 필수 기능 50% 이상 누락
+• 구조적 문제 감지됨
+
+============================================
+🚨 결과: /solve 에스컬레이션 권장
+
+근본적인 문제 분석이 필요합니다.
+→ /solve --rca 실행을 권장합니다.
+
+============================================
 ```
 
 ## Multi-Agent 연계
@@ -211,6 +331,177 @@ Task(subagent_type="calab-plugin:validator", "수정 사항 재검증")
 | **P1** | 기능 완전성 | reinforcer 호출 |
 | **P2** | 엣지 케이스 | reinforcer 호출 |
 | **P3** | 품질 기준 | 경고 후 진행 가능 |
+
+## 🛡️ Proactive Interruption Management (선제적 중단 관리)
+
+> **"Minimize disruption to user flow"** - 사용자 흐름 방해 최소화
+
+### 알림 최소화 전략
+
+| 검증 결과 | 신뢰도 | 사용자 알림 | 자동 처리 |
+|----------|--------|------------|----------|
+| 경미한 이슈 1-2건 | 85%+ | 알림 없음 | reinforcer 자동 |
+| 중간 이슈 3-4건 | 70-84% | 요약만 표시 | reinforcer 후 재검증 |
+| 심각한 이슈 5건+ | 50-69% | 상세 알림 | 사용자 결정 대기 |
+| 구조적 문제 | 0-49% | 즉시 알림 | /solve 에스컬레이션 |
+
+### 배치 알림 프로토콜
+
+```python
+def batch_notification(validation_results):
+    """검증 결과를 배치로 묶어 알림 최소화"""
+
+    # 1. 자동 처리 가능한 항목 필터링
+    auto_fixable = [r for r in validation_results if r.is_retriable]
+    needs_attention = [r for r in validation_results if not r.is_retriable]
+
+    # 2. 자동 처리 가능하면 조용히 처리
+    if len(needs_attention) == 0 and len(auto_fixable) <= 3:
+        # reinforcer 자동 호출, 사용자에게 알리지 않음
+        return {
+            "notify": False,
+            "action": "auto_fix",
+            "silent": True
+        }
+
+    # 3. 주의가 필요한 항목만 요약해서 알림
+    if len(needs_attention) > 0:
+        return {
+            "notify": True,
+            "format": "summary",  # 상세 내용 대신 요약
+            "summary": f"⚠️ {len(needs_attention)}건 확인 필요",
+            "auto_fixed": f"✅ {len(auto_fixable)}건 자동 수정됨",
+            "details_available": True
+        }
+```
+
+### 사용자 흐름 보존
+
+```python
+def preserve_user_flow(validation_result):
+    """사용자 작업 흐름 보존"""
+
+    # 진행 중인 작업이 있으면 중단하지 않음
+    if has_active_user_input():
+        # 결과를 큐에 저장, 나중에 표시
+        queue_for_later(validation_result)
+        return {"deferred": True}
+
+    # 사용자가 idle 상태일 때만 알림
+    if is_user_idle():
+        return {
+            "notify": True,
+            "timing": "immediate"
+        }
+
+    return {
+        "notify": True,
+        "timing": "after_current_action"
+    }
+```
+
+## 실패 분류 매트릭스 (Failure Classification)
+
+| 실패 유형 | 코드 | 자동 수정 | 에스컬레이션 |
+|----------|------|----------|-------------|
+| `MISSING_COMMENT` | R01 | ✅ reinforcer | - |
+| `LINE_LIMIT_EXCEEDED` | R02 | ✅ refactor-cleaner | - |
+| `TYPE_ERROR` | R03 | ✅ reinforcer | 3회 실패 시 /solve |
+| `MISSING_EDGE_CASE` | R04 | ✅ reinforcer | - |
+| `AC_NOT_MET` | N01 | ⚠️ 부분 자동 | 사용자 확인 |
+| `DESIGN_FLAW` | N02 | ❌ 수동 | /dev --design |
+| `CIRCULAR_DEPENDENCY` | N03 | ❌ 수동 | /solve --rca |
+| `SECURITY_VULNERABILITY` | N04 | ❌ 수동 | security-reviewer |
+
+### 분류 코드 설명
+
+- **R** (Retriable): 자동 수정 가능
+- **N** (Non-retriable): 수동 개입 또는 에스컬레이션 필요
+
+## Exponential Backoff (재시도 간격)
+
+```python
+def calculate_retry_delay(attempt, base_delay=1):
+    """지수 백오프 재시도 간격 계산"""
+
+    MAX_DELAY = 30  # 최대 30초
+    JITTER = random.uniform(0, 0.5)  # 0~0.5초 랜덤 지터
+
+    delay = min(base_delay * (2 ** attempt) + JITTER, MAX_DELAY)
+    return delay
+
+# 재시도 간격: 1초 → 2초 → 4초 → ... → 최대 30초
+```
+
+### 최대 재시도 정책
+
+| 실패 유형 | 최대 재시도 | 초과 시 액션 |
+|----------|-----------|-------------|
+| 빌드 오류 | 3회 | build-error-resolver 호출 |
+| 테스트 실패 | 2회 | 사용자 확인 |
+| 검증 실패 | 2회 | /solve 에스컬레이션 제안 |
+| 외부 API 오류 | 5회 | 폴백 또는 캐시 사용 |
+
+## 📦 산출물 (CRITICAL - 누락 금지)
+
+> **검증 완료 후 반드시 아래 산출물 생성/업데이트**
+
+### 필수 산출물
+
+| 산출물 | 파일 경로 | 내용 | 생성 시점 |
+|--------|----------|------|----------|
+| **검증 보고서** | `.claude/docs/active/{feature}/validation-report.md` | 신뢰도 점수, AC 검증 결과 | 검증 완료 시 |
+| **Worktree 업데이트** | `.claude-state/worktree.json` | `validation_status`, `confidence_score` | 검증 완료 시 |
+| **Request ID 기록** | `.claude-state/request-log.jsonl` | 검증 요청 추적 | 검증 시작 시 |
+
+### 검증 보고서 템플릿
+
+```markdown
+# Validation Report: {TASK-ID}
+
+## 요약
+- **신뢰도 점수**: {score}%
+- **결과**: {PASSED | WARNING | FAILED | CRITICAL}
+- **검증 일시**: {timestamp}
+
+## AC 검증 결과
+| AC | 내용 | 상태 | 근거 |
+|----|------|------|------|
+| AC1 | ... | ✅/❌/⚠️ | ... |
+
+## 발견된 문제
+1. [P0] ...
+2. [P1] ...
+
+## 권장 조치
+- ...
+```
+
+### Worktree 업데이트 내용
+
+```json
+{
+  "tasks[id=TASK-XXX]": {
+    "validation_status": "passed|warning|failed|critical",
+    "confidence_score": 95.2,
+    "validated_at": "2024-01-15T10:30:00Z",
+    "issues_found": 0,
+    "issues_auto_fixed": 0
+  }
+}
+```
+
+## ✅ State Persistence 의무 (작업 완료 후 필수)
+
+검증 완료 후 **반드시** 다음을 수행:
+
+```
+[ ] 1. 검증 보고서 생성 (.claude/docs/active/{feature}/validation-report.md)
+[ ] 2. Worktree 업데이트 (validation_status, confidence_score)
+[ ] 3. Request ID 기록 (request-log.jsonl)
+[ ] 4. 실패 시 reinforcer 자동 호출 (신뢰도 70-89%)
+[ ] 5. 심각 실패 시 /solve 제안 (신뢰도 < 50%)
+```
 
 ## 참조 파일
 

@@ -6,7 +6,7 @@ description: |
   아키텍처 및 ERD 설계 문서를 생성합니다.
 
   Called by: /dev --design
-skills: clarification-protocol
+skills: best-practices, project-rules, clarification-protocol
 tools: [Read, Write, Glob, Grep, Task, WebSearch, mcp__tavily__tavily-search]
 model: sonnet
 ---

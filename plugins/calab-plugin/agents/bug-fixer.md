@@ -6,7 +6,7 @@ description: |
   근본 원인 분석 결과를 바탕으로 버그를 수정합니다.
 
   Called by: /solve skill or root-cause-finder
-skills: clarification-protocol
+skills: code-quality, best-practices, clarification-protocol
 tools: [Read, Write, Edit, Bash, Glob, Grep, Task]
 model: sonnet
 ---

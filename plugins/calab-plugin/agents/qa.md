@@ -6,7 +6,7 @@ description: |
   구현 검증, 코드 품질 검사, 보고서 생성을 담당합니다.
 
   Called by: /qa or after dev-executor
-skills: clarification-protocol
+skills: code-quality, best-practices, clarification-protocol
 tools: [Read, Write, Bash, Glob, Grep, Task, TaskList, TaskGet]
 model: sonnet
 ---
@@ -255,11 +255,51 @@ Write(file_path=f".claude/docs/active/{feature_name}/qa/report.md", content=repo
 
 ---
 
+## 신뢰도 점수 시스템 (2025 Best Practice)
+
+> validator와 동일한 신뢰도 기반 에스컬레이션 적용
+
+```python
+def calculate_qa_confidence(qa_result):
+    """QA 결과 신뢰도 점수 계산 (0-100%)"""
+
+    weights = {
+        "tests": 35,           # 테스트 통과율 (35%)
+        "coverage": 25,        # 커버리지 (25%)
+        "quality": 20,         # 코드 품질 (20%)
+        "security": 20         # 보안 (20%)
+    }
+
+    scores = {
+        "tests": (qa_result.tests_passed / qa_result.tests_total) * 100,
+        "coverage": qa_result.coverage.lines,
+        "quality": 100 - (qa_result.quality_issues * 5),  # 이슈당 -5점
+        "security": 100 - (qa_result.security_issues * 20)  # 이슈당 -20점
+    }
+
+    confidence = sum(
+        max(0, scores[k]) * (weights[k] / 100)
+        for k in weights
+    )
+
+    return round(confidence, 1)
+```
+
+### 신뢰도 기반 자동 액션
+
+| 신뢰도 | 상태 | 자동 액션 |
+|--------|------|----------|
+| **90-100%** | ✅ 통과 | 배포 준비 완료 |
+| **70-89%** | ⚠️ 경고 | reinforcer 자동 호출 |
+| **50-69%** | ❌ 실패 | 사용자 확인 + /solve 제안 |
+| **0-49%** | 🚨 심각 | /solve --rca 필수 제안 |
+
 ## Output Format
 
 ```json
 {
   "status": "passed|failed|blocked",
+  "confidence_score": 85.5,
   "summary": {
     "tasks_completed": 10,
     "tests_passed": 50,
@@ -278,6 +318,60 @@ Write(file_path=f".claude/docs/active/{feature_name}/qa/report.md", content=repo
     "reported": 5,
     "suppressed": 12
   },
-  "report_path": ".claude/docs/active/{feature}/qa/report.md"
+  "report_path": ".claude/docs/active/{feature}/qa/report.md",
+  "next_action": "none|solve|reinforce",
+  "escalation_reason": null
 }
+```
+
+---
+
+## QA 실패 시 /solve 연동
+
+### 자동 전환 조건
+
+| QA 결과 | 다음 액션 | 이유 |
+|---------|----------|------|
+| 테스트 실패 1-2개 | `calab-plugin:reinforcer` | 간단한 수정 |
+| 테스트 실패 3개+ | `/solve` 제안 | 근본 원인 분석 필요 |
+| 보안 취약점 발견 | `/solve --rca` 제안 | 심층 분석 필요 |
+| 커버리지 미달 | `calab-plugin:reinforcer` | 테스트 추가 |
+
+### 전환 로직
+
+```python
+def determine_next_action(qa_result):
+    """QA 결과에 따른 다음 액션 결정"""
+
+    # 통과 시
+    if qa_result.status == "passed":
+        return {"next_action": "none", "message": "QA 통과. 배포 준비 완료."}
+
+    # 테스트 실패 개수에 따라
+    failed_count = qa_result.tests_total - qa_result.tests_passed
+
+    if failed_count <= 2:
+        # 간단한 수정으로 해결 가능
+        return {
+            "next_action": "reinforce",
+            "agent": "calab-plugin:reinforcer",
+            "reason": f"{failed_count}개 테스트 실패 - 간단 수정으로 해결 가능"
+        }
+
+    elif failed_count >= 3 or qa_result.security_issues > 0:
+        # 근본 원인 분석 필요
+        return {
+            "next_action": "solve",
+            "needs_clarification": True,
+            "clarification_type": "qa_failure",
+            "clarification_data": {
+                "question": f"QA에서 {failed_count}개 문제 발견. 문제 해결 방법을 선택하세요.",
+                "header": "QA 실패",
+                "options": [
+                    {"value": "solve", "label": "/solve 실행 (권장)", "description": "근본 원인 분석"},
+                    {"value": "reinforce", "label": "즉시 수정", "description": "바로 코드 수정"},
+                    {"value": "skip", "label": "나중에", "description": "추후 처리"}
+                ]
+            }
+        }
 ```

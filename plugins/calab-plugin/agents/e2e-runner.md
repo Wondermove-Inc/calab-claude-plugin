@@ -4,7 +4,7 @@ description: Playwright/Puppeteer 기반 E2E 테스트를 자동 실행하고 �
 tools: Read, Write, Edit, Grep, Glob, Bash, mcp__puppeteer__puppeteer_navigate, mcp__puppeteer__puppeteer_screenshot, mcp__puppeteer__puppeteer_click, mcp__puppeteer__puppeteer_fill, mcp__puppeteer__puppeteer_evaluate
 model: sonnet
 permissionMode: acceptEdits
-skills: qa, code-quality, best-practices, tdd-workflow
+skills: code-quality, best-practices, tdd-workflow
 ---
 
 # E2E Runner Agent

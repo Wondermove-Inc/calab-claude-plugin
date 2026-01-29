@@ -6,7 +6,7 @@ description: |
   Task 분해가 PHASE 계획과 일치하는지 검증합니다.
 
   Called by: /dev workflow after planner-task
-skills: clarification-protocol
+skills: project-rules, clarification-protocol
 tools: [Read, Glob, Grep, TaskList, TaskGet]
 model: sonnet
 ---

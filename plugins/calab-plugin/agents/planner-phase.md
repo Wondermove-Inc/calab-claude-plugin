@@ -6,7 +6,7 @@ description: |
   기능을 PHASE 단위로 분해하고 PRD를 작성합니다.
 
   Called by: /dev --plan
-skills: clarification-protocol
+skills: project-rules, best-practices, clarification-protocol
 tools: [Read, Write, Glob, Grep, WebSearch, Task, mcp__tavily__tavily-search]
 model: sonnet
 ---

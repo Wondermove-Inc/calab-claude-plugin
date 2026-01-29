@@ -6,7 +6,7 @@ description: |
   TDD 워크플로우에 따라 Task를 구현합니다.
 
   Called by: /dev --build
-skills: clarification-protocol
+skills: code-quality, best-practices, tdd-workflow, clarification-protocol
 tools: [Read, Write, Edit, Bash, Glob, Grep, TaskGet, TaskUpdate, Skill]
 model: sonnet
 ---

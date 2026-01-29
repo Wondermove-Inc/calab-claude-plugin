@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Write
 disallowedTools: Edit, Bash
 model: sonnet
 permissionMode: default
-skills: onboard, context, project-rules, best-practices
+skills: project-rules, best-practices
 ---
 
 # Project Onboarder Agent
@@ -62,8 +62,7 @@ skills: onboard, context, project-rules, best-practices
 문서: 5개 생성 완료
 ```
 
-## 참조 스킬
+## 참조 스킬 (패시브)
 
-- `onboard` - 온보딩 메인
-- `context` - 컨텍스트 관리
 - `project-rules` - 프로젝트 규칙
+- `best-practices` - 기술별 베스트 프랙티스

@@ -6,7 +6,7 @@ description: |
   PHASE를 개별 Task로 분해하고 TDD 워크플로우를 적용합니다.
 
   Called by: /dev --tasks
-skills: clarification-protocol
+skills: project-rules, best-practices, clarification-protocol
 tools: [Read, Write, Glob, Grep, TaskCreate, TaskUpdate, TaskList, Task]
 model: sonnet
 ---

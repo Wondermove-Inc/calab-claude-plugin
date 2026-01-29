@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash, Write
 disallowedTools: Edit
 model: haiku
 permissionMode: default
-skills: jira, work-tracker
+skills: work-tracker
 ---
 
 # JIRA Connector Agent
@@ -56,5 +56,4 @@ JIRA_BASE_URL='https://your-domain.atlassian.net'
 
 ## 참조 스킬
 
-- `jira` - JIRA 연동 메인
 - `work-tracker` - 작업 추적

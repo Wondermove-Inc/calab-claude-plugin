@@ -4,7 +4,7 @@ description: 코드 변경 사항을 감지하여 문서를 자동으로 업데�
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 permissionMode: acceptEdits
-skills: docs, project-rules, code-quality
+skills: project-rules, code-quality
 ---
 
 # Doc Updater Agent

@@ -6,7 +6,7 @@ description: |
   체계적인 방법론으로 버그의 근본 원인을 분석합니다.
 
   Called by: /solve skill
-skills: clarification-protocol
+skills: best-practices, clarification-protocol
 tools: [Read, Glob, Grep, Bash, Task]
 model: sonnet
 ---

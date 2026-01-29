@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 disallowedTools: Write, Edit
 model: sonnet
 permissionMode: plan
-skills: security, code-quality, best-practices
+skills: code-quality, best-practices
 ---
 
 # Security Reviewer Agent
@@ -120,6 +120,68 @@ document\.write\(
 - 문서/주석 내 예시 값
 - 환경 변수 참조 (`process.env.`, `os.environ`)
 - 플레이스홀더 (`YOUR_API_KEY`, `<api-key>`, `xxx`)
+
+## /solve 에스컬레이션 (2025 Best Practice)
+
+> **"Security issues require root cause analysis"** - 보안 문제는 근본 원인 분석 필요
+
+### 자동 에스컬레이션 조건
+
+| 심각도 | 개수 | 액션 |
+|--------|------|------|
+| **CRITICAL** | 1개+ | 🚨 `/solve --rca` 즉시 제안 |
+| **HIGH** | 3개+ | ⚠️ `/solve --5whys` 제안 |
+| **MEDIUM** | 5개+ | 💡 리팩토링 검토 제안 |
+| **LOW** | - | 백로그 등록 |
+
+### 에스컬레이션 로직
+
+```python
+def check_security_escalation(findings):
+    """보안 검사 결과 에스컬레이션 판단"""
+
+    critical_count = len([f for f in findings if f.severity == "CRITICAL"])
+    high_count = len([f for f in findings if f.severity == "HIGH"])
+
+    if critical_count >= 1:
+        return {
+            "escalate": True,
+            "target": "/solve --rca",
+            "reason": f"CRITICAL 취약점 {critical_count}개 발견 - 즉각 대응 필요",
+            "priority": "P0"
+        }
+
+    if high_count >= 3:
+        return {
+            "escalate": True,
+            "target": "/solve --5whys",
+            "reason": f"HIGH 취약점 {high_count}개 발견 - 근본 원인 분석 필요",
+            "priority": "P1"
+        }
+
+    return {"escalate": False}
+```
+
+### 에스컬레이션 출력
+
+```
+🔒 보안 검사 에스컬레이션
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚨 CRITICAL 취약점 발견
+
+발견 내용:
+• src/auth/login.ts:45 - SQL Injection 가능
+• src/api/user.ts:78 - 인증 우회 가능
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ 즉각 대응 필요
+
+권장 액션:
+→ /solve --rca 실행 (근본 원인 분석)
+→ 인증 아키텍처 전체 검토 필요
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ## 참조 파일
 

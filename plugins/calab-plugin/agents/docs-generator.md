@@ -4,7 +4,7 @@ description: 코드 변경 기반 문서를 자동 생성하고 업데이트합�
 tools: Read, Write, Edit, Grep, Glob
 model: sonnet
 permissionMode: acceptEdits
-skills: docs, project-rules, code-quality
+skills: project-rules, code-quality
 ---
 
 # Docs Generator Agent
@@ -47,5 +47,5 @@ skills: docs, project-rules, code-quality
 
 ## 참조 스킬
 
-- `docs` - 문서 자동화 메인
 - `project-rules` - 프로젝트 규칙
+- `code-quality` - 코드 품질 기준

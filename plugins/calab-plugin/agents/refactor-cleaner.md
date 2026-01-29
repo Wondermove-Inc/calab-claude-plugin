@@ -4,7 +4,7 @@ description: 데드 코드, 미사용 import, 중복 코드를 자동으로 정�
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 permissionMode: acceptEdits
-skills: code-quality, clean, best-practices
+skills: code-quality, best-practices
 ---
 
 # Refactor Cleaner Agent

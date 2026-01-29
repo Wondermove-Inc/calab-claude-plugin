@@ -5,7 +5,7 @@ tools: Read, Grep, Glob
 disallowedTools: Write, Edit, Bash
 model: sonnet
 permissionMode: plan
-skills: code-quality, clean, project-rules, best-practices
+skills: code-quality, project-rules, best-practices
 ---
 
 # Code Reviewer Agent
@@ -126,6 +126,75 @@ skills: code-quality, clean, project-rules, best-practices
 • 상세 목록은 /check-quality로 확인
 
 ============================================
+```
+
+## /dev 에스컬레이션 (2025 Best Practice)
+
+> **"Complex quality issues need architectural review"** - 구조적 문제는 재설계 필요
+
+### 자동 에스컬레이션 조건
+
+| 상황 | 액션 |
+|------|------|
+| 500줄 초과 파일 3개+ | `/dev --architecture` 제안 |
+| 순환 의존성 발견 | `/solve --rca` 제안 |
+| 중복 코드 20%+ | `calab-plugin:refactor-cleaner` 제안 |
+| 주석 누락 50%+ | `calab-plugin:reinforcer` 자동 호출 |
+
+### 에스컬레이션 로직
+
+```python
+def check_quality_escalation(review_result):
+    """코드 리뷰 결과 에스컬레이션 판단"""
+
+    large_files = [f for f in review_result.files if f.lines > 500]
+    missing_comments_ratio = review_result.missing_comments / review_result.total_functions
+
+    if len(large_files) >= 3:
+        return {
+            "escalate": True,
+            "target": "/dev --architecture",
+            "reason": f"{len(large_files)}개 파일이 500줄 초과 - 아키텍처 재검토 필요"
+        }
+
+    if review_result.circular_deps:
+        return {
+            "escalate": True,
+            "target": "/solve --rca",
+            "reason": "순환 의존성 발견 - 근본 원인 분석 필요"
+        }
+
+    if missing_comments_ratio > 0.5:
+        return {
+            "escalate": True,
+            "target": "calab-plugin:reinforcer",
+            "reason": f"주석 누락 {int(missing_comments_ratio*100)}% - 자동 보강"
+        }
+
+    return {"escalate": False}
+```
+
+### 에스컬레이션 출력
+
+```
+============================================
+[CODE REVIEWER] 구조적 문제 발견 ⚠️
+============================================
+
+📊 검토 결과:
+• 500줄+ 파일: 4개
+• 주석 누락률: 35%
+• 순환 의존성: 없음
+
+🔧 권장 액션:
+→ /dev --architecture 실행 (아키텍처 재검토)
+
+파일 분리 필요:
+1. src/services/user-service.ts → user-auth.ts + user-profile.ts
+2. src/utils/helpers.ts → string-utils.ts + date-utils.ts
+
+============================================
+지금 아키텍처 재검토를 시작하시겠습니까?
 ```
 
 ## 참조 파일

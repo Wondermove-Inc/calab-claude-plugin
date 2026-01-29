@@ -247,6 +247,131 @@ completed_at: "2024-01-15T11:00:00Z"  (완료 시)
 }
 ```
 
+## 🔐 Worktree 무결성 검증 (W3 Fix)
+
+> **"Validate before trust"** - worktree.json 데이터 무결성 보장
+
+### Worktree 체크섬 검증
+
+```python
+import hashlib
+import json
+from datetime import datetime
+
+def calculate_worktree_checksum(worktree):
+    """Worktree 상태 체크섬 계산"""
+    # 변동성 필드 제외한 핵심 상태만 해시
+    core_state = {
+        "epics": worktree.get("epics", []),
+        "progress": worktree.get("progress", {}),
+        "current_task": worktree.get("current_task")
+    }
+    state_json = json.dumps(core_state, sort_keys=True)
+    return hashlib.sha256(state_json.encode()).hexdigest()[:16]
+
+
+def save_worktree_with_integrity(worktree):
+    """무결성 메타데이터 포함하여 저장"""
+    worktree["_integrity"] = {
+        "checksum": calculate_worktree_checksum(worktree),
+        "updated_at": datetime.now().isoformat(),
+        "version": worktree.get("_integrity", {}).get("version", 0) + 1
+    }
+    save_to_file(".claude-state/worktree.json", worktree)
+
+
+def validate_worktree_integrity(worktree):
+    """Worktree 무결성 검증"""
+    integrity = worktree.get("_integrity", {})
+
+    if not integrity:
+        return {
+            "valid": False,
+            "error": "NO_INTEGRITY_METADATA",
+            "action": "regenerate_checksum"
+        }
+
+    stored_checksum = integrity.get("checksum")
+    calculated_checksum = calculate_worktree_checksum(worktree)
+
+    if stored_checksum != calculated_checksum:
+        return {
+            "valid": False,
+            "error": "CHECKSUM_MISMATCH",
+            "stored": stored_checksum,
+            "calculated": calculated_checksum,
+            "action": "investigate_corruption"
+        }
+
+    # 타임스탬프 검증 (24시간 이상 미업데이트 경고)
+    updated_at = integrity.get("updated_at")
+    if updated_at:
+        last_update = datetime.fromisoformat(updated_at)
+        if (datetime.now() - last_update).total_seconds() > 86400:
+            return {
+                "valid": True,
+                "warning": "STALE_DATA",
+                "last_update": updated_at,
+                "action": "consider_refresh"
+            }
+
+    return {"valid": True, "checksum": stored_checksum}
+```
+
+### Worktree JSON 형식 (무결성 포함)
+
+```json
+{
+  "_integrity": {
+    "checksum": "a1b2c3d4e5f67890",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "version": 42
+  },
+  "current_task": "TASK-003",
+  "epics": [...],
+  "progress": {
+    "done": 5,
+    "in_progress": 1,
+    "pending": 4,
+    "percentage": 50
+  }
+}
+```
+
+### 무결성 검증 시점
+
+| 시점 | 액션 | 실패 시 |
+|------|------|--------|
+| **세션 시작** | 체크섬 검증 | checkpoint.json에서 복구 |
+| **worktree 로드** | 체크섬 검증 | 경고 후 재계산 |
+| **worktree 저장** | 체크섬 갱신 | - |
+| **/restore 실행** | 3중 채널 교차 검증 | 가장 최신 버전 사용 |
+
+### 무결성 오류 출력
+
+```
+============================================
+[WORKTREE INTEGRITY] 무결성 검증 결과
+============================================
+
+⚠️ 체크섬 불일치 감지!
+
+• 저장된 체크섬: a1b2c3d4e5f67890
+• 계산된 체크섬: x9y8z7w6v5u43210
+
+🔍 가능한 원인:
+1. 외부 도구에 의한 직접 수정
+2. 비정상 세션 종료
+3. 동시 접근 충돌
+
+🔧 복구 옵션:
+1. checkpoint.json에서 복원 (권장)
+2. 현재 상태 기준 체크섬 재계산
+3. 수동 검토 후 수정
+
+============================================
+```
+
 ### Worktree 표시 트리거
 
 다음 상황에서 Worktree 트리 자동 출력:
@@ -270,9 +395,471 @@ completed_at: "2024-01-15T11:00:00Z"  (완료 시)
 └─ 진행률: ████████░░░░ 40%
 ```
 
+## State Handoff Pattern (2025 Best Practice)
+
+> **"Reliable state transfer with checksum validation and redundancy"** - AI Agent Handoff Pattern
+
+### 상태 전달 신뢰성 보장
+
+세션 간 상태 전달 시 데이터 무결성을 보장하기 위한 체크섬 검증 및 중복 채널 패턴.
+
+### 중복 저장 채널 (Redundancy Channels)
+
+| 우선순위 | 채널 | 파일 | 용도 |
+|---------|------|------|------|
+| **Primary** | 구조화된 핸드오프 | `.claude-state/checkpoint.json` | 상세 체크포인트 |
+| **Secondary** | 상태 JSON | `.claude-state/worktree.json` | 작업 트리 상태 |
+| **Tertiary** | 사람 읽기용 저널 | `.claude/memory/CURRENT_CONTEXT.md` | 비상 복구용 |
+
+### 체크섬 검증 프로토콜
+
+```python
+def create_checkpoint_with_checksum(state):
+    """체크섬 포함 체크포인트 생성"""
+    import hashlib
+    import json
+
+    checkpoint = {
+        "timestamp": datetime.now().isoformat(),
+        "state": state,
+        "version": "1.0"
+    }
+
+    # 상태 해시 계산
+    state_json = json.dumps(state, sort_keys=True)
+    checkpoint["checksum"] = hashlib.sha256(state_json.encode()).hexdigest()[:16]
+
+    return checkpoint
+
+
+def validate_checkpoint(checkpoint):
+    """체크포인트 무결성 검증"""
+    import hashlib
+    import json
+
+    state_json = json.dumps(checkpoint["state"], sort_keys=True)
+    calculated = hashlib.sha256(state_json.encode()).hexdigest()[:16]
+
+    return calculated == checkpoint.get("checksum")
+```
+
+### 체크포인트 JSON 형식
+
+```json
+{
+  "timestamp": "2024-01-15T10:00:00Z",
+  "version": "1.0",
+  "checksum": "a1b2c3d4e5f67890",
+  "state": {
+    "current_task": "TASK-003",
+    "progress": {
+      "done": 2,
+      "in_progress": 1,
+      "pending": 5,
+      "percentage": 25
+    },
+    "work_stack": [
+      {
+        "task_id": "TASK-003",
+        "status": "in_progress",
+        "started_at": "2024-01-15T09:30:00Z",
+        "context": "사용자 인증 로직 구현 중"
+      }
+    ],
+    "recent_files": [
+      "src/auth/login.ts",
+      "src/services/auth.ts"
+    ],
+    "next_steps": [
+      "토큰 검증 로직 구현",
+      "에러 핸들링 추가"
+    ],
+    "important_notes": "JWT 라이브러리 사용, 환경변수 SECRET_KEY 필요"
+  }
+}
+```
+
+### 복구 시 검증 절차
+
+```python
+def restore_state():
+    """상태 복구 with 체크섬 검증"""
+
+    channels = [
+        ".claude-state/checkpoint.json",      # Primary
+        ".claude-state/worktree.json",        # Secondary
+        ".claude/memory/CURRENT_CONTEXT.md"   # Tertiary
+    ]
+
+    for channel in channels:
+        try:
+            checkpoint = read_file(channel)
+
+            if channel.endswith('.json'):
+                if validate_checkpoint(checkpoint):
+                    return {
+                        "status": "success",
+                        "source": channel,
+                        "state": checkpoint["state"],
+                        "checksum_valid": True
+                    }
+                else:
+                    log_warning(f"Checksum mismatch in {channel}")
+                    continue
+
+            else:
+                # Markdown 파일은 파싱 후 사용
+                return {
+                    "status": "degraded",
+                    "source": channel,
+                    "state": parse_markdown_context(checkpoint),
+                    "checksum_valid": None
+                }
+
+        except Exception as e:
+            log_error(f"Failed to read {channel}: {e}")
+            continue
+
+    return {
+        "status": "failed",
+        "reason": "All recovery channels exhausted"
+    }
+```
+
+### 복구 결과 출력
+
+```
+============================================
+[STATE RECOVERY] 상태 복구 완료
+============================================
+
+📁 복구 소스: .claude-state/checkpoint.json
+✅ 체크섬 검증: 통과 (a1b2c3d4e5f67890)
+
+📊 복구된 상태:
+• 현재 태스크: TASK-003
+• 진행률: 25% (2/8 완료)
+• 마지막 작업: 2024-01-15T09:30:00Z
+
+📋 다음 단계:
+1. 토큰 검증 로직 구현
+2. 에러 핸들링 추가
+
+============================================
+```
+
+## Graceful Degradation (우아한 성능 저하)
+
+> **"Prioritize recovery based on business impact"** - 비즈니스 영향도 기반 복구
+
+### 복구 우선순위
+
+| 우선순위 | 영역 | 실패 시 영향 | 복구 전략 |
+|---------|------|-------------|----------|
+| **P0** | 작업 컨텍스트 | 진행 상황 유실 | 3중 백업 복구 |
+| **P1** | Worktree 상태 | 진행률 오류 | 마지막 커밋 기준 재계산 |
+| **P2** | 규칙 캐시 | 규칙 적용 지연 | 런타임 재로드 |
+| **P3** | 베스트 프랙티스 | 품질 저하 가능 | 기본 규칙 폴백 |
+
+### 성능 저하 모드
+
+```python
+def determine_degradation_level(failures):
+    """장애 수준에 따른 성능 저하 모드 결정"""
+
+    if "checkpoint" in failures and "worktree" in failures:
+        return {
+            "level": "CRITICAL",
+            "mode": "manual_recovery",
+            "message": "수동 복구 필요 - 사용자에게 /restore 안내"
+        }
+
+    if "checkpoint" in failures:
+        return {
+            "level": "DEGRADED",
+            "mode": "worktree_only",
+            "message": "체크포인트 불가 - Worktree 기반 진행"
+        }
+
+    if "rules" in failures:
+        return {
+            "level": "LIMITED",
+            "mode": "default_rules",
+            "message": "프로젝트 규칙 로드 실패 - 기본 규칙 적용"
+        }
+
+    return {
+        "level": "NORMAL",
+        "mode": "full_operation",
+        "message": None
+    }
+```
+
+## 🔒 Deadlock Prevention (데드락 방지)
+
+> **"Cycle detection at task creation"** - Task 생성 시 순환 의존성 감지
+
+### 의존성 검증 (Task 생성 전 필수)
+
+새 Task 생성 시 반드시 의존성 그래프를 검증합니다:
+
+```python
+def validate_task_dependencies(new_task_id, depends_on, worktree):
+    """Task 의존성 유효성 검사"""
+
+    # 1. 기존 의존성 그래프 구축
+    graph = {}
+    for epic in worktree["epics"]:
+        for story in epic["stories"]:
+            for task in story["tasks"]:
+                graph[task["id"]] = task.get("depends_on", [])
+
+    # 2. 새 Task 추가
+    graph[new_task_id] = depends_on
+
+    # 3. 순환 의존성 검사 (DFS)
+    def has_cycle(node, visited, rec_stack):
+        visited.add(node)
+        rec_stack.add(node)
+
+        for dep in graph.get(node, []):
+            if dep not in visited:
+                if has_cycle(dep, visited, rec_stack):
+                    return True
+            elif dep in rec_stack:
+                return True
+
+        rec_stack.remove(node)
+        return False
+
+    visited, rec_stack = set(), set()
+    for node in graph:
+        if node not in visited:
+            if has_cycle(node, visited, rec_stack):
+                return {
+                    "valid": False,
+                    "error": "CIRCULAR_DEPENDENCY",
+                    "suggestion": "의존성 구조 재검토 필요"
+                }
+
+    return {"valid": True}
+```
+
+### 데드락 방지 체크리스트
+
+Task 생성 시:
+- [ ] 순환 의존성 없음 확인
+- [ ] 상호 대기(mutual wait) 가능성 없음
+- [ ] 의존성 체인 깊이 5단계 이하
+- [ ] 모든 의존 Task가 존재함
+
+## ⏱️ Heartbeat & Timeout (하트비트 모니터링)
+
+> **"Release stale tasks automatically"** - 오래된 Task 자동 해제
+
+### 하트비트 프로토콜
+
+진행 중인 Task의 활성 상태를 추적합니다:
+
+```python
+TIMEOUT_THRESHOLDS = {
+    "inner_loop": 300,      # 5분 (코드 수정)
+    "middle_loop": 1800,    # 30분 (Task 구현)
+    "outer_loop": 7200,     # 2시간 (설계/계획)
+}
+
+def check_task_heartbeat(worktree):
+    """Stale Task 감지 및 처리"""
+
+    stale_tasks = []
+    now = datetime.now()
+
+    for epic in worktree["epics"]:
+        for story in epic["stories"]:
+            for task in story["tasks"]:
+                if task["status"] == "in_progress":
+                    last_beat = parse_datetime(task.get("last_heartbeat", task.get("started_at")))
+                    loop_type = determine_loop_type(task)
+                    timeout = TIMEOUT_THRESHOLDS[loop_type]
+
+                    elapsed = (now - last_beat).total_seconds()
+                    if elapsed > timeout:
+                        stale_tasks.append({
+                            "task_id": task["id"],
+                            "elapsed_seconds": elapsed,
+                            "timeout": timeout,
+                            "action": "release"
+                        })
+
+    return stale_tasks
+
+
+def release_stale_task(task_id, worktree):
+    """Stale Task 해제 - 재시도 가능 상태로 변경"""
+
+    # Task 상태 업데이트
+    task["status"] = "pending"  # 다시 pending으로
+    task["release_reason"] = "heartbeat_timeout"
+    task["release_time"] = datetime.now().isoformat()
+    task.pop("started_at", None)
+
+    return {"released": True, "task_id": task_id}
+```
+
+### Worktree에 하트비트 기록
+
+```json
+{
+  "current_task": "TASK-003",
+  "epics": [...],
+  "heartbeat_tracking": {
+    "enabled": true,
+    "check_interval_seconds": 60,
+    "last_check": "2024-01-15T10:30:00Z"
+  },
+  "stale_releases": [
+    {
+      "task_id": "TASK-002",
+      "released_at": "2024-01-15T09:00:00Z",
+      "reason": "heartbeat_timeout",
+      "elapsed_seconds": 3600
+    }
+  ]
+}
+```
+
+### Task 시작 시 하트비트 시작
+
+```python
+def start_task_with_heartbeat(task_id):
+    """Task 시작 시 하트비트 초기화"""
+
+    task = get_task(task_id)
+    task["status"] = "in_progress"
+    task["started_at"] = datetime.now().isoformat()
+    task["last_heartbeat"] = datetime.now().isoformat()
+
+    # Worktree 업데이트
+    update_worktree(task)
+
+    return task
+```
+
+### 하트비트 갱신 시점
+
+다음 시점에 하트비트를 갱신합니다:
+- 파일 수정 완료 시
+- 빌드/테스트 실행 후
+- 사용자 응답 후
+- 체크포인트 저장 시
+
+## 🔗 Request ID Correlation (요청 추적)
+
+> **"You can't fix what you don't trace"** - 2025 SRE Best Practice
+
+### Request ID 생성 규칙
+
+모든 에이전트 호출과 작업에 고유 ID를 부여하여 추적합니다:
+
+```python
+import uuid
+from datetime import datetime
+
+def generate_request_id(prefix="REQ"):
+    """고유 요청 ID 생성"""
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    short_uuid = str(uuid.uuid4())[:8]
+    return f"{prefix}-{timestamp}-{short_uuid}"
+
+# 예시: REQ-20240115103045-a1b2c3d4
+```
+
+### Request ID 유형
+
+| Prefix | 용도 | 예시 |
+|--------|------|------|
+| `REQ` | 일반 요청 | `REQ-20240115103045-a1b2c3d4` |
+| `TSK` | Task 작업 | `TSK-001-20240115103045-a1b2c3d4` |
+| `AGT` | 에이전트 호출 | `AGT-validator-20240115103045-a1b2c3d4` |
+| `ERR` | 오류 추적 | `ERR-build-20240115103045-a1b2c3d4` |
+
+### 로그 형식
+
+```json
+{
+  "request_id": "TSK-003-20240115103045-a1b2c3d4",
+  "timestamp": "2024-01-15T10:30:45Z",
+  "severity": "INFO",
+  "task_id": "TASK-003",
+  "agent": "dev-executor",
+  "operation": "file_edit",
+  "file": "src/auth/login.ts",
+  "latency_ms": 234,
+  "success": true,
+  "parent_request_id": "REQ-20240115103000-xyz12345"
+}
+```
+
+### 분산 추적 체인
+
+```
+[REQ-xxx] 사용자 요청: "로그인 기능 구현해줘"
+    │
+    ├── [AGT-planner-xxx] planner-phase 호출
+    │       └── 결과: PRD 생성
+    │
+    ├── [AGT-executor-xxx] dev-executor 호출
+    │       ├── [TSK-001-xxx] 타입 정의
+    │       ├── [TSK-002-xxx] API 구현
+    │       └── [TSK-003-xxx] 테스트 작성
+    │
+    └── [AGT-validator-xxx] validator 호출
+            └── [ERR-type-xxx] 타입 오류 발생
+                    └── [AGT-reinforcer-xxx] reinforcer 호출
+```
+
+### Correlation 저장 위치
+
+```
+.claude-state/
+├── request-log.jsonl     # 요청 로그 (JSON Lines 형식)
+├── correlation-index.json # 요청 ID 인덱스
+└── error-traces/         # 오류별 상세 추적
+    └── ERR-xxx.json
+```
+
+### 오류 추적 활용
+
+```
+============================================
+[ERROR TRACE] 오류 추적 정보
+============================================
+
+🔍 오류 ID: ERR-build-20240115103045-a1b2c3d4
+
+📋 추적 체인:
+REQ-20240115103000-xyz12345 (최초 요청)
+  └── AGT-executor-20240115103010-abc (dev-executor)
+        └── TSK-003-20240115103020-def (TASK-003)
+              └── ERR-build-20240115103045-a1b2c3d4 ← 오류 발생
+
+📊 컨텍스트:
+• 작업: TASK-003 - AuthService 구현
+• 파일: src/services/auth.ts:45
+• 에이전트: dev-executor
+
+🔄 관련 요청:
+• 이전: TSK-002-xxx (성공)
+• 현재: TSK-003-xxx (실패)
+• 의존: TSK-001-xxx
+
+============================================
+```
+
 ## 참조 파일
 - `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 상태
-- `.claude-state/checkpoint.json` - 체크포인트
+- `.claude-state/checkpoint.json` - 체크포인트 (체크섬 포함)
 - `.claude-state/worktree.json` - 작업 트리 상태
 - `.claude/memory/WORK_HISTORY.md` - 작업 히스토리
+- `.claude-state/request-log.jsonl` - 요청 로그
 - `commands/worktree.md` - Worktree 명령어
