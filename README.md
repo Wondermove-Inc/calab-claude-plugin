@@ -35,7 +35,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  3개 액티브 스킬  │  6개 패시브 스킬  │  23개 에이전트  │  20개 훅  │
+│  3개 액티브 스킬  │  6개 패시브 스킬  │  23개 에이전트  │  19개 훅  │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -212,49 +212,67 @@ curl -o ~/.claude/CLAUDE.md https://raw.githubusercontent.com/Wondermove-Inc/cal
 
 ---
 
-## 에이전트 (15개)
+## 에이전트 (23개)
 
 특화된 작업을 수행하는 서브에이전트입니다.
 
-### 워크플로우 에이전트
+### 워크플로우 에이전트 (7개)
 
 | 에이전트 | 역할 | 호출 조건 |
 |----------|------|----------|
-| `dev-workflow` | Plan → Design → Tasks → Build | `/dev` 실행 |
-| `docs-generator` | 문서 자동 생성/업데이트 | `/docs` 실행 |
-| `jira-connector` | JIRA 이슈 동기화 | `/jira` 실행 |
+| `dev-workflow` | Plan → Design → Tasks → Build 오케스트레이션 | `/dev` 실행 |
+| `planner-phase` | PHASE 기반 기획/분석 | `/dev --plan` 실행 |
+| `planner-task` | Task 분해 및 AC 정의 | `/dev --tasks` 실행 |
+| `design` | 아키텍처 + ERD 설계 | `/dev --design` 실행 |
+| `dev-executor` | 실제 코드 구현 | `/dev --build` 실행 |
 | `project-onboarder` | 프로젝트 분석 | `/onboard` 실행 |
-| `deep-researcher` | 5-10회 검색 심층 리서치 | `/research` 실행 |
+| `jira-connector` | JIRA 이슈 동기화 | JIRA 연동 요청 시 |
 
-### 웹 리서치 에이전트
+### 문제 해결 에이전트 (2개)
 
 | 에이전트 | 역할 | 호출 조건 |
 |----------|------|----------|
-| `web-researcher` | Tavily MCP 기반 실시간 웹 검색/분석 | 검색, 조사, 최신 정보 요청 시 |
+| `root-cause-finder` | 5 Whys, RCA 기반 근본 원인 분석 | `/solve` 실행 |
+| `bug-fixer` | 버그 수정 및 테스트 작성 | validator 실패 시 |
 
-### 품질 에이전트
+### 리서치 에이전트 (2개)
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `web-researcher` | Tavily MCP 기반 실시간 웹 검색 | 검색, 조사 요청 시 |
+| `deep-researcher` | 검색 결과 종합 분석 및 보고서 | 심층 리서치 요청 시 |
+
+### 품질 에이전트 (4개)
 
 | 에이전트 | 역할 | 호출 조건 |
 |----------|------|----------|
 | `code-reviewer` | 코드 품질/스타일 검토 | 리뷰 요청 시 |
 | `security-reviewer` | OWASP Top 10 검사 | 보안 검사 시 |
 | `project-guardian` | 프로젝트 규칙 준수 검증 | 규칙 확인 시 |
-| `build-error-resolver` | 빌드/타입 오류 해결 | 빌드 실패 시 |
+| `build-error-resolver` | 빌드/타입 오류 해결 + Circuit Breaker | 빌드 실패 시 |
 
-### 검증/보강 에이전트
+### 검증/보강 에이전트 (3개)
 
 | 에이전트 | 역할 | 호출 조건 |
 |----------|------|----------|
 | `validator` | AC/완전성/엣지케이스 검증 | 구현 완료 후 **필수** |
+| `task-validator` | Task 단위 검증 | Task 완료 시 |
 | `reinforcer` | 검증 실패 항목 자동 수정 | validator 실패 시 |
 
-### 자동화 에이전트
+### 자동화/문서화 에이전트 (4개)
 
 | 에이전트 | 역할 | 호출 조건 |
 |----------|------|----------|
 | `refactor-cleaner` | 데드 코드/미사용 import 정리 | 리팩토링 시 |
 | `e2e-runner` | Playwright/Puppeteer 테스트 | E2E 테스트 시 |
 | `doc-updater` | 코드 변경 감지 문서 업데이트 | 문서 동기화 시 |
+| `docs-generator` | 문서 자동 생성 | 문서 생성 요청 시 |
+
+### QA 에이전트 (1개)
+
+| 에이전트 | 역할 | 호출 조건 |
+|----------|------|----------|
+| `qa` | 테스트 계획/실행/보고 | QA 요청 시 |
 
 ---
 
@@ -274,21 +292,26 @@ calab-claude-plugin/
         │
         ├── CLAUDE.md          # Claude 지침 (핵심)
         │
-        ├── skills/            # 23개 스킬
-        │   ├── dev/          # 개발 워크플로우
-        │   ├── clean/        # 클린 아키텍처
-        │   ├── qa/           # QA 테스트
-        │   ├── solve/        # 문제 해결
-        │   ├── security/     # 보안 검사
+        ├── skills/            # 9개 스킬 (3 active + 6 passive)
+        │   ├── dev/          # 개발 워크플로우 (active)
+        │   ├── solve/        # 문제 해결 (active)
+        │   ├── onboard/      # 프로젝트 온보딩 (active)
+        │   ├── best-practices/   # (passive)
+        │   ├── code-quality/     # (passive)
+        │   ├── tdd-workflow/     # (passive)
+        │   ├── project-rules/    # (passive)
+        │   ├── work-tracker/     # (passive)
+        │   └── clarification-protocol/  # (passive)
+        │
+        ├── agents/            # 23개 에이전트
+        │   ├── dev-workflow.md      # 워크플로우
+        │   ├── validator.md         # 검증
+        │   ├── reinforcer.md        # 보강
+        │   ├── code-reviewer.md     # 품질
+        │   ├── security-reviewer.md # 보안
         │   └── ...
         │
-        ├── agents/            # 15개 에이전트
-        │   ├── web-researcher.md
-        │   ├── validator.md
-        │   ├── reinforcer.md
-        │   └── ...
-        │
-        └── hooks/             # 20개 훅 스크립트
+        └── hooks/             # 19개 훅 스크립트
 ```
 
 ---
@@ -311,11 +334,11 @@ calab-claude-plugin/
 /dev --build TASK-001
 /dev --build TASK-002
 
-# 5. QA
-/qa --run
+# 5. QA (에이전트 직접 호출)
+"qa 에이전트로 테스트 실행해줘"
 
-# 6. 보안 검사
-/security
+# 6. 보안 검사 (에이전트 직접 호출)
+"security-reviewer 에이전트로 보안 검사해줘"
 ```
 
 ### 버그 수정
@@ -333,8 +356,9 @@ calab-claude-plugin/
 ### Compact 후 복구
 
 ```bash
-# 이전 작업 컨텍스트 복원
-/restore
+# 이전 작업 컨텍스트 복원 (훅에서 자동 안내됨)
+# 세션 시작 시 session_start_restore_hint.py 훅이 복원 안내
+# 저장된 상태: .claude-state/checkpoint.json
 ```
 
 ---

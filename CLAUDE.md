@@ -33,7 +33,7 @@
 ### 핵심 구성
 
 ```
-9개 스킬 (3 active + 6 passive) + 23개 에이전트 + 20개 훅
+9개 스킬 (3 active + 6 passive) + 23개 에이전트 + 19개 훅
 ```
 
 ### 🆕 v2.6.0 주요 변경사항
@@ -1114,9 +1114,9 @@ Task 생성 전 순환 의존성 검사 필수:
 ### 새 프로젝트 시작
 
 ```bash
-/onboard              # 1. 프로젝트 분석 및 컨텍스트 생성
-/context --show       # 2. 생성된 컨텍스트 확인
-/rules                # 3. 프로젝트 규칙 확인
+/onboard              # 프로젝트 분석 및 컨텍스트 생성
+# 컨텍스트 확인: .claude/project-context/ 디렉토리 참조
+# 규칙 확인: .claude/memory/PROJECT_RULES.md 참조
 ```
 
 ### 기능 개발 (권장 워크플로우)
@@ -1141,15 +1141,17 @@ Task 생성 전 순환 의존성 검사 필수:
 ### 코드 품질 관리
 
 ```bash
-/quality              # 전체 코드 품질 검사
-/security             # OWASP Top 10 보안 검사
+# 에이전트 직접 호출
+"code-reviewer 에이전트로 품질 검사해줘"
+"security-reviewer 에이전트로 보안 검사해줘"
 ```
 
 ### 세션 복원
 
 ```bash
-/restore              # Compact 후 컨텍스트 복원
-/save                 # 중요 시점 체크포인트 저장
+# 세션 시작 시 자동 안내됨 (session_start_restore_hint.py 훅)
+# 체크포인트: .claude-state/checkpoint.json
+# Worktree: .claude-state/worktree.json
 ```
 
 ---
@@ -1164,17 +1166,19 @@ Task 생성 전 순환 의존성 검사 필수:
 | `/solve` | `--5whys`, `--rca`, `--hypothesis`, `--binary`, `--log`, `--report` | 체계적 문제 해결 |
 | `/onboard` | `--quick`, `--full`, `--phase N`, `--skip-domain` | 프로젝트 분석/온보딩 |
 
-### 에이전트 직접 호출 (스킬 대신)
+### 에이전트 직접 호출
 
-| 작업 | 에이전트 호출 | 대체된 기능 |
-|------|-------------|------------|
-| 문서 생성 | `calab-plugin:doc-updater` | `/docs` |
-| JIRA 연동 | `calab-plugin:jira-connector` | `/jira` |
-| QA 테스트 | `calab-plugin:qa` | `/qa` |
-| 보안 검사 | `calab-plugin:security-reviewer` | `/security` |
-| 품질 검사 | `calab-plugin:code-reviewer` | `/quality` |
-| 웹 리서치 | `calab-plugin:web-researcher` | `/research` |
-| 클린 아키텍처 | `/dev --architecture` | `/clean` |
+> 기존 스킬들이 에이전트로 통합되었습니다. 자연어로 호출하세요.
+
+| 작업 | 에이전트 | 호출 예시 |
+|------|----------|----------|
+| 문서 생성/업데이트 | `calab-plugin:doc-updater` | "doc-updater로 문서 업데이트해줘" |
+| JIRA 연동 | `calab-plugin:jira-connector` | "jira-connector로 이슈 동기화해줘" |
+| QA 테스트 | `calab-plugin:qa` | "qa 에이전트로 테스트해줘" |
+| 보안 검사 | `calab-plugin:security-reviewer` | "security-reviewer로 보안 검사해줘" |
+| 품질 검사 | `calab-plugin:code-reviewer` | "code-reviewer로 리뷰해줘" |
+| 웹 리서치 | `calab-plugin:web-researcher` | "web-researcher로 조사해줘" |
+| 클린 아키텍처 | `/dev --architecture` | `/dev --architecture --init` |
 
 ---
 
@@ -1220,7 +1224,8 @@ Task 생성 전 순환 의존성 검사 필수:
 ### Compact 발생 시
 
 ```bash
-/restore   # 규칙 + 작업 상태 즉시 복원
+# 세션 시작 시 session_start_restore_hint.py 훅이 자동으로 복원 안내
+# 수동 확인: .claude-state/checkpoint.json, .claude-state/worktree.json
 ```
 
 ### 작업 스택 유지
@@ -1341,16 +1346,18 @@ Task(subagent_type="Explore", "DB 스키마 분석")
 ### 스킬 호출 Quick Reference
 
 ```bash
-# 개발 워크플로우
+# 개발 워크플로우 (3개 액티브 스킬)
 /dev --plan 사용자 인증 → /dev --design → /dev --tasks → /dev --build
 
 # 문제 해결
 /solve TypeError: Cannot read property 'id' of undefined
 
-# 품질 검사
-/quality && /security
+# 온보딩
+/onboard --quick   # 빠른 분석
+/onboard           # 전체 분석
 
-# 컨텍스트 관리
-/save → /restore
+# 품질/보안 검사 (에이전트 자연어 호출)
+"code-reviewer로 품질 검사해줘"
+"security-reviewer로 보안 검사해줘"
 ```
 
