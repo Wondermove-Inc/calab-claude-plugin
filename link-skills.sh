@@ -9,6 +9,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_SKILLS_DIR="$SCRIPT_DIR/plugins/calab-plugin/skills"
+PLUGIN_HOOKS_DIR="$SCRIPT_DIR/plugins/calab-plugin/hooks"
 TARGET_DIR="$HOME/.claude/skills"
 
 # 색상 정의
@@ -92,6 +93,41 @@ create_links() {
         fi
     done
 
+    # 각 스킬 디렉토리에 hooks 심볼릭 링크 생성
+    echo ""
+    echo -e "${YELLOW}스킬 내부 hooks 링크 생성 중...${NC}"
+
+    for skill in "${ACTIVE_SKILLS[@]}"; do
+        local skill_dir="$PLUGIN_SKILLS_DIR/$skill"
+        local hooks_link="$skill_dir/hooks"
+
+        if [ ! -d "$skill_dir" ]; then
+            continue
+        fi
+
+        # 이미 hooks 폴더/링크가 있는지 확인
+        if [ -L "$hooks_link" ]; then
+            # 이미 심볼릭 링크
+            local current_target=$(readlink -f "$hooks_link" 2>/dev/null || echo "")
+            if [ "$current_target" = "$PLUGIN_HOOKS_DIR" ]; then
+                echo -e "${YELLOW}[EXISTS]${NC} $skill/hooks -> 이미 연결됨"
+                continue
+            else
+                rm "$hooks_link"
+            fi
+        elif [ -e "$hooks_link" ]; then
+            echo -e "${RED}[SKIP]${NC} $skill/hooks - 이미 존재 (링크 아님)"
+            continue
+        fi
+
+        # hooks 심볼릭 링크 생성 (상대 경로)
+        if ln -s "../../hooks" "$hooks_link"; then
+            echo -e "${GREEN}[LINK]${NC} $skill/hooks -> ../../hooks"
+        else
+            echo -e "${RED}[FAIL]${NC} $skill/hooks - 링크 생성 실패"
+        fi
+    done
+
     echo ""
     echo -e "${BLUE}======================================${NC}"
     echo -e "${GREEN}생성됨: $created${NC}"
@@ -112,12 +148,27 @@ remove_links() {
 
     local removed=0
 
+    # ~/.claude/skills/calab-* 링크 제거
     for skill in "${ACTIVE_SKILLS[@]}"; do
         local target_link="$TARGET_DIR/calab-$skill"
 
         if [ -L "$target_link" ]; then
             rm "$target_link"
             echo -e "${GREEN}[REMOVED]${NC} $target_link"
+            ((removed++))
+        fi
+    done
+
+    # 각 스킬 디렉토리 내부 hooks 링크 제거
+    echo ""
+    echo -e "${YELLOW}스킬 내부 hooks 링크 제거 중...${NC}"
+
+    for skill in "${ACTIVE_SKILLS[@]}"; do
+        local hooks_link="$PLUGIN_SKILLS_DIR/$skill/hooks"
+
+        if [ -L "$hooks_link" ]; then
+            rm "$hooks_link"
+            echo -e "${GREEN}[REMOVED]${NC} $skill/hooks"
             ((removed++))
         fi
     done
