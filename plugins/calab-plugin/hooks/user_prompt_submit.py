@@ -390,7 +390,19 @@ def log_user_prompt(prompt: str, intent: Optional[dict]):
 
 
 def update_work_history(prompt: str, intent: dict):
-    """WORK_HISTORY.md에 작업 기록 추가"""
+    """
+    WORK_HISTORY.md에 작업 기록 추가
+
+    역할 분리:
+    - CURRENT_CONTEXT.md: 현재 작업 스택 (실시간 상태)
+    - WORK_HISTORY.md: 날짜별 아카이브 (간략 기록)
+
+    중복 최소화: 슬래시 명령어와 주요 작업만 기록
+    """
+    # 슬래시 명령어가 아닌 일반 작업은 기록하지 않음 (중복 방지)
+    if not intent.get('is_command', False):
+        return
+
     # 쓰기: 항상 프로젝트에
     history_file = MEMORY_PATH_WRITE / 'WORK_HISTORY.md'
     # 프로젝트 memory 디렉토리 생성

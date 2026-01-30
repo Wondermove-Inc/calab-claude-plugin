@@ -157,6 +157,53 @@ def track_subagent_stop(session_id: str, agent_id: str, agent_transcript_path: s
         print(f"[SUBAGENT] Stopped: unknown (id: {agent_id[:8] if agent_id else 'N/A'}...)", file=sys.stderr)
 
 
+def extract_type_from_description(description: str) -> str:
+    """
+    description 필드에서 에이전트 타입 추출
+
+    Task 도구 호출 시 description에 에이전트 정보가 포함될 수 있음
+    """
+    if not description:
+        return ''
+
+    # 알려진 에이전트 타입 패턴
+    known_types = [
+        'calab-plugin:planner-phase',
+        'calab-plugin:design',
+        'calab-plugin:planner-task',
+        'calab-plugin:dev-executor',
+        'calab-plugin:validator',
+        'calab-plugin:reinforcer',
+        'calab-plugin:code-reviewer',
+        'calab-plugin:security-reviewer',
+        'calab-plugin:root-cause-finder',
+        'calab-plugin:bug-fixer',
+        'calab-plugin:qa',
+        'calab-plugin:web-researcher',
+        'calab-plugin:deep-researcher',
+        'calab-plugin:project-onboarder',
+        'calab-plugin:doc-updater',
+        'calab-plugin:docs-generator',
+        'calab-plugin:build-error-resolver',
+        'calab-plugin:e2e-runner',
+        'calab-plugin:jira-connector',
+        'calab-plugin:project-guardian',
+        'calab-plugin:refactor-cleaner',
+        'calab-plugin:task-validator',
+        'calab-plugin:dev-workflow',
+        'Explore',
+        'Plan',
+        'general-purpose',
+    ]
+
+    description_lower = description.lower()
+    for agent_type in known_types:
+        if agent_type.lower() in description_lower:
+            return agent_type
+
+    return ''
+
+
 def log_event(event_type: str, data: dict):
     """이벤트 로깅"""
     state_path = get_state_path()
@@ -203,8 +250,15 @@ def main():
         log_event(hook_event_name, input_data)
 
         if event_type == 'start' or hook_event_name == 'SubagentStart':
-            # v2.0.43+ SubagentStart 필드
-            subagent_type = input_data.get('subagent_type', 'unknown')
+            # v2.0.43+ SubagentStart 필드 - 여러 경로에서 타입 추출 시도
+            subagent_type = (
+                input_data.get('subagent_type') or
+                input_data.get('tool_input', {}).get('subagent_type') or
+                input_data.get('agent_type') or
+                input_data.get('type') or
+                extract_type_from_description(input_data.get('description', '')) or
+                'unknown'
+            )
             track_subagent_start(session_id, agent_id, subagent_type, transcript_path)
 
         elif event_type == 'stop' or hook_event_name == 'SubagentStop':

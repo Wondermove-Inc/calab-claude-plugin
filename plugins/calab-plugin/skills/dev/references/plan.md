@@ -7,7 +7,17 @@
 ```bash
 /dev --plan [기능명]           # 전체 기획 (브레인스토밍 + PRD)
 /dev --plan --brainstorm       # 브레인스토밍만
-/dev --plan --prd              # PRD만 (브레인스토밍 필요)
+/dev --plan --prd              # PRD만 (브레인스토밍 이후)
+```
+
+---
+
+## 산출물 (필수)
+
+```
+.claude/docs/active/{feature-name}/
+├── 01-brainstorm.md   ← 브레인스토밍 문서
+└── 02-PRD.md          ← PRD 문서
 ```
 
 ---
@@ -23,7 +33,7 @@
 
 ### Step 2: 아이디어 체계화
 
-**01-brainstorm.md 작성:**
+**01-brainstorm.md 작성 (필수):**
 
 ```markdown
 # 브레인스토밍: {기능명}
@@ -77,13 +87,6 @@
 - **의존성**: {외부 의존성}
 ```
 
-### Step 3: 리서치 통합 (선택)
-
-`/research` 결과가 있다면:
-```
-.claude/research/{topic}/report.md 참조하여 통합
-```
-
 ---
 
 ## Phase 2: PRD 작성 (`--prd`)
@@ -96,7 +99,7 @@
 
 ### Step 2: PRD 문서 작성
 
-**02-prd.md 작성:**
+**02-PRD.md 작성 (필수):**
 
 ```markdown
 # PRD: {기능명}
@@ -193,15 +196,15 @@
 
 ## 8. 참조
 - 브레인스토밍: 01-brainstorm.md
-- 리서치: .claude/research/{topic}/
+- 리서치: .claude/research/{topic}/ (있는 경우)
 ```
 
 ---
 
 ## 완료 조건
 
-- [ ] 01-brainstorm.md 생성됨
-- [ ] 02-prd.md 생성됨
+- [ ] **01-brainstorm.md 생성됨** (필수)
+- [ ] **02-PRD.md 생성됨** (필수)
 - [ ] 문제-해결 구조 명확
 - [ ] P0/P1/P2 요구사항 분류됨
 - [ ] KPI 정의됨
@@ -217,7 +220,7 @@
 
  📁 생성된 문서:
  • .claude/docs/active/{feature-name}/01-brainstorm.md
- • .claude/docs/active/{feature-name}/02-prd.md
+ • .claude/docs/active/{feature-name}/02-PRD.md
 
  📋 요약:
  • 핵심 문제: {한 줄 요약}

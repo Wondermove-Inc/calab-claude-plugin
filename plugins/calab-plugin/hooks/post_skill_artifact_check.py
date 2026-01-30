@@ -31,37 +31,45 @@ CONTEXT_PATH = PROJECT_ROOT / '.claude' / 'project-context'
 
 # 에이전트별 필수 산출물 정의
 AGENT_ARTIFACTS: Dict[str, Dict] = {
-    # planner-phase: PRD 문서
+    # planner-phase: 브레인스토밍 + PRD 문서
     "calab-plugin:planner-phase": {
-        "name": "PRD 문서",
+        "name": "기획 문서 (브레인스토밍 + PRD)",
         "patterns": [
-            "{docs}/*/01-PRD.md",
-            "{docs}/**/01-PRD.md",
+            "{docs}/*/01-brainstorm.md",
+            "{docs}/*/02-PRD.md",
+            "{docs}/**/01-brainstorm.md",
+            "{docs}/**/02-PRD.md",
         ],
         "required": True,
-        "description": "기능 기획 문서 (PRD)"
+        "min_count": 2,  # 브레인스토밍 + PRD 둘 다 필요
+        "description": "기능 기획 문서 (브레인스토밍 + PRD)"
     },
 
-    # design: 아키텍처 문서
+    # design: 아키텍처 + ERD 문서
     "calab-plugin:design": {
-        "name": "아키텍처 문서",
+        "name": "설계 문서 (아키텍처 + ERD)",
         "patterns": [
-            "{docs}/*/02-architecture.md",
-            "{docs}/**/02-architecture.md",
+            "{docs}/*/03-architecture.md",
+            "{docs}/*/04-ERD.md",
+            "{docs}/**/03-architecture.md",
+            "{docs}/**/04-ERD.md",
         ],
         "required": True,
-        "description": "아키텍처 설계 문서"
+        "min_count": 2,  # 아키텍처 + ERD 둘 다 필요
+        "description": "아키텍처 및 ERD 설계 문서"
     },
 
-    # planner-task: Task 목록 + Worktree
+    # planner-task: Task 목록 + Worktree (둘 다 필수)
     "calab-plugin:planner-task": {
-        "name": "Task 분해 문서",
+        "name": "Task 분해 문서 + Worktree",
         "patterns": [
-            "{docs}/*/03-tasks.md",
-            "{docs}/**/03-tasks.md",
+            "{docs}/*/05-tasks.md",
+            "{docs}/**/05-tasks.md",
+            "{state}/worktree.json",
         ],
         "required": True,
-        "description": "Task 분해 목록"
+        "min_count": 2,  # 05-tasks.md + worktree.json 둘 다 필수
+        "description": "Task 분해 목록 및 Worktree 상태 파일"
     },
 
     # validator: 검증 보고서
@@ -441,6 +449,11 @@ def main():
 
     SubagentStop 이벤트에서 호출됨.
     stdin으로 JSON 데이터 수신.
+
+    Exit Code 정책 (베스트 프랙티스):
+    - Exit 0: 성공, stdout → Claude 컨텍스트 (verbose 모드)
+    - Exit 2: 차단, stderr → Claude에게 자동 피드백 (재실행 유도)
+    - 기타: 비차단 에러, stderr → 사용자만 표시
     """
     try:
         # stdin에서 Claude Code가 전달하는 공식 데이터 읽기
@@ -486,8 +499,30 @@ def main():
             if len(files) > 5:
                 print(f"  ... 외 {len(files) - 5}개", file=sys.stderr)
 
-        # 실패해도 훅은 성공으로 반환 (Claude Code 동작 방해 안 함)
-        # 단, 경고 메시지로 사용자에게 알림
+        # 필수 산출물 미생성 시 차단
+        # 베스트 프랙티스: JSON decision: block (exit 0) 사용
+        if not passed:
+            spec = AGENT_ARTIFACTS.get(agent_type, {})
+            if spec.get('required', False):
+                # JSON 응답 (decision: block)
+                response = {
+                    "decision": "block",
+                    "reason": f"필수 산출물 미생성: {spec.get('name', 'unknown')}",
+                    "systemMessage": f"에이전트 {agent_type}의 필수 산출물이 생성되지 않았습니다. "
+                                    f"예상 경로: {spec.get('patterns', ['unknown'])[0]}. "
+                                    f"산출물을 생성한 후 다시 시도하세요."
+                }
+                print(json.dumps(response, ensure_ascii=False))
+
+                # stderr로도 출력 (사용자 피드백)
+                print(f"\n⚠️  산출물 미생성으로 에이전트 종료 차단", file=sys.stderr)
+                print(f"   에이전트: {agent_type}", file=sys.stderr)
+                print(f"   필수 산출물: {spec.get('name', 'unknown')}", file=sys.stderr)
+                print(f"   예상 경로: {spec.get('patterns', ['unknown'])[0]}", file=sys.stderr)
+                print(f"\n📋 산출물 생성 후 다시 시도하세요.", file=sys.stderr)
+
+                # Exit 0 (JSON decision: block이 차단 처리)
+                sys.exit(0)
 
     except json.JSONDecodeError:
         pass

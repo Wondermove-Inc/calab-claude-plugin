@@ -60,7 +60,7 @@
 ### Step 4: AC 확인
 
 ```
-05-tasks.md에서 해당 TASK의 Acceptance Criteria 추출
+03-tasks.md에서 해당 TASK의 Acceptance Criteria 추출
 
 TASK-001 AC:
 - [ ] AC1: ...

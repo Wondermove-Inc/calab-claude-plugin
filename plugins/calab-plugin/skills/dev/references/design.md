@@ -7,7 +7,17 @@
 ```bash
 /dev --design [기능명]    # 전체 설계 (아키텍처 + ERD)
 /dev --design --arch      # 아키텍처만
-/dev --design --erd       # ERD만 (아키텍처 필요)
+/dev --design --erd       # ERD만
+```
+
+---
+
+## 산출물 (필수)
+
+```
+.claude/docs/active/{feature-name}/
+├── 03-architecture.md    ← 아키텍처 설계 문서
+└── 04-ERD.md             ← 데이터베이스 스키마
 ```
 
 ---
@@ -15,23 +25,24 @@
 ## 전제 조건
 
 - [ ] `/dev --plan` 완료됨
-- [ ] `02-prd.md` 존재함
+- [ ] `01-brainstorm.md` 존재함
+- [ ] `02-PRD.md` 존재함
 
 ---
 
-## Phase 1: 아키텍처 설계 (`--arch`)
+## 실행 절차
 
 ### Step 1: PRD 분석
 
 ```
-.claude/docs/active/{feature-name}/02-prd.md 읽기
+.claude/docs/active/{feature-name}/01-PRD.md 읽기
 - P0/P1 요구사항 추출
 - 비기능 요구사항 확인
 ```
 
 ### Step 2: 아키텍처 문서 작성
 
-**03-architecture.md 작성:**
+**03-architecture.md 작성 (필수):**
 
 ```markdown
 # 아키텍처: {기능명}
@@ -123,7 +134,8 @@ graph TD
 ---
 
 ## 8. 참조
-- PRD: 02-prd.md
+- 브레인스토밍: 01-brainstorm.md
+- PRD: 02-PRD.md
 - 프로젝트 규칙: .claude/memory/PROJECT_RULES.md
 ```
 
@@ -137,7 +149,7 @@ PRD에서 명사 추출 → 엔티티 후보
 
 ### Step 2: ERD 문서 작성
 
-**04-erd.md 작성:**
+**04-ERD.md 작성 (필수):**
 
 ```markdown
 # ERD: {기능명}
@@ -258,11 +270,11 @@ enum PostStatus {
 
 ## 완료 조건
 
-- [ ] 03-architecture.md 생성됨
-- [ ] 04-erd.md 생성됨
+- [ ] **03-architecture.md 생성됨** (필수)
+- [ ] **04-ERD.md 생성됨** (DB 사용 시 필수)
 - [ ] 기술 스택 명시됨
 - [ ] API 엔드포인트 정의됨
-- [ ] Prisma 스키마 작성됨
+- [ ] Prisma 스키마 작성됨 (DB 사용 시)
 
 ---
 
@@ -275,7 +287,7 @@ enum PostStatus {
 
  📁 생성된 문서:
  • .claude/docs/active/{feature-name}/03-architecture.md
- • .claude/docs/active/{feature-name}/04-erd.md
+ • .claude/docs/active/{feature-name}/04-ERD.md
 
  📋 설계 요약:
  • 기술 스택: {Frontend} + {Backend} + {DB}

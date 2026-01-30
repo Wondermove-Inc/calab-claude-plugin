@@ -165,11 +165,30 @@ Return structured result:
 
 ## 📦 산출물 (CRITICAL - 누락 금지)
 
-> **기획 완료 시 반드시 PRD 문서 생성**
+> **기획 완료 시 반드시 브레인스토밍 + PRD 문서 생성**
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **PRD 문서** | `.claude/docs/active/{feature}/01-PRD.md` | ✅ |
+| **브레인스토밍 문서** | `.claude/docs/active/{feature}/01-brainstorm.md` | ✅ |
+| **PRD 문서** | `.claude/docs/active/{feature}/02-PRD.md` | ✅ |
+
+### 브레인스토밍 문서 필수 항목
+
+```markdown
+# 브레인스토밍: {Feature Name}
+
+## 1. 아이디어
+- 핵심 컨셉
+- 예상 사용 시나리오
+
+## 2. 제약 사항
+- 기술적 제약
+- 비즈니스 제약
+
+## 3. 초기 스케치
+- 대략적인 구조
+- 주요 컴포넌트
+```
 
 ### PRD 문서 필수 항목
 

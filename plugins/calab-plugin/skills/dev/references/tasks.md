@@ -10,11 +10,25 @@
 
 ---
 
+## 산출물 (필수)
+
+```
+.claude/docs/active/{feature-name}/
+└── 05-tasks.md    ← 반드시 이 파일명으로 생성!
+
+.claude-state/
+└── worktree.json  ← 작업 트리 상태
+```
+
+---
+
 ## 전제 조건
 
 - [ ] `/dev --design` 완료됨
+- [ ] `01-brainstorm.md` 존재함
+- [ ] `02-PRD.md` 존재함
 - [ ] `03-architecture.md` 존재함
-- [ ] `04-erd.md` 존재함
+- [ ] `04-ERD.md` 존재함 (DB 사용 시)
 
 ---
 
@@ -25,9 +39,9 @@
 ```
 .claude/docs/active/{feature-name}/ 존재 확인
 - 01-brainstorm.md
-- 02-prd.md
+- 02-PRD.md
 - 03-architecture.md
-- 04-erd.md
+- 04-ERD.md
 ```
 
 ### Step 2: 컨텍스트 로드
@@ -234,11 +248,11 @@ graph LR
 
 ## 완료 조건
 
-- [ ] 05-tasks.md 생성됨
+- [ ] **05-tasks.md 생성됨** (필수)
 - [ ] 모든 Task에 AC 정의됨
 - [ ] 의존성 분석됨
 - [ ] 우선순위 할당됨
-- [ ] worktree.json 생성됨
+- [ ] **worktree.json 생성됨** (필수)
 
 ---
 

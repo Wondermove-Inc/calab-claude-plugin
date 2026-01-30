@@ -181,8 +181,34 @@ Before completing, verify:
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **Tasks 문서** | `.claude/docs/active/{feature}/03-tasks.md` | ✅ |
+| **Tasks 문서** | `.claude/docs/active/{feature}/05-tasks.md` | ✅ |
+| **Worktree 상태** | `.claude-state/worktree.json` | ✅ |
 | **TaskCreate 결과** | Claude Code Task List | ✅ |
+
+### Worktree 파일 필수 생성
+
+```python
+# 반드시 worktree.json 생성
+Write(
+    file_path=".claude-state/worktree.json",
+    content=json.dumps({
+        "feature": feature_name,
+        "current_task": None,
+        "tasks": [
+            {
+                "id": "TASK-001",
+                "subject": task.subject,
+                "status": "pending",  # pending → in_progress → done
+                "phase": phase_num,
+                "layer": task.layer
+            }
+            for task in all_tasks
+        ],
+        "created_at": datetime.now().isoformat(),
+        "updated_at": datetime.now().isoformat()
+    }, indent=2, ensure_ascii=False)
+)
+```
 
 ### Tasks 문서 필수 항목
 

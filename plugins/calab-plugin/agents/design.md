@@ -246,12 +246,12 @@ When design decisions need user input:
 
 ## 📦 산출물 (CRITICAL - 누락 금지)
 
-> **설계 완료 시 반드시 문서 생성**
+> **설계 완료 시 반드시 아키텍처 + ERD 문서 생성**
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **아키텍처 설계 문서** | `.claude/docs/active/{feature}/02-architecture.md` | ✅ |
-| **ERD 문서** | `.claude/docs/active/{feature}/02-erd.md` | ⚠️ (DB 있을 때) |
+| **아키텍처 설계 문서** | `.claude/docs/active/{feature}/03-architecture.md` | ✅ |
+| **ERD 문서** | `.claude/docs/active/{feature}/04-ERD.md` | ✅ |
 
 ### 설계 문서 필수 항목
 
