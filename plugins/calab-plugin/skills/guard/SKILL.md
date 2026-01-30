@@ -2,10 +2,9 @@
 name: guard
 description: |
   규칙 검증. 프로젝트 규칙 준수 여부와 작업 맥락을 확인합니다.
-  USE WHEN: 규칙, rules, 검증, verify, 컨벤션, convention, 가드, guard, 점검
 argument-hint: "[--rules|--context|--full]"
 allowed-tools: [Read, Grep, Glob, Task]
-skills: [project-rules]
+skills: [project-rules, skill-completion-rules]
 agents:
   primary: project-guardian
   orchestration:
@@ -124,10 +123,19 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 결과 | 권장 |
 |------|------|
 | 위반 발견 | `/refactor` 로 수정 |
 | 맥락 이탈 | 원래 Task로 복귀 |
 | 전체 통과 | 작업 계속 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 검증이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.
+> - 검증 결과 요약
+> - 발견된 이슈 수정 옵션 (권장 표시, 이슈 있는 경우)
+> - 다음 Task 진행 옵션
+> - 추가 검증 옵션
+> - 종료 옵션

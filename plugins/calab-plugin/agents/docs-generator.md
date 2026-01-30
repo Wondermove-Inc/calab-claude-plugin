@@ -2,7 +2,6 @@
 name: docs-generator
 description: |
   코드 변경 기반 문서를 자동 생성하고 업데이트합니다. API, 컴포넌트, 가이드 문서를 관리합니다.
-  USE WHEN: 문서 생성, docs generate, API 문서, 문서화, documentation, JSDoc, 타입 문서 키워드 시 활성화
 tools: Read, Write, Edit, Grep, Glob
 model: sonnet
 permissionMode: acceptEdits

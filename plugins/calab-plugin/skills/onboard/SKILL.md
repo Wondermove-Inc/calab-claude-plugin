@@ -1,11 +1,10 @@
 ---
 name: onboard
 description: |
-  프로젝트 분석 및 컨텍스트 문서 생성. 새 프로젝트 온보딩 시 자동 활성화.
-  USE WHEN: 프로젝트 분석, 코드베이스 학습, 온보딩, 구조 파악
+  프로젝트 분석 및 컨텍스트 문서 생성.
 argument-hint: "[--quick|--full|--phase N] [--skip-domain]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task]
-skills: [project-rules, best-practices]
+skills: [project-rules, best-practices, skill-completion-rules]
 agents:
   primary: project-onboarder
   orchestration:
@@ -165,10 +164,19 @@ Phase 5: Domain Knowledge
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
 | Quick 완료 | `/dev --plan` |
 | Full 완료 | `/dev --plan` |
 | 컨텍스트 확인 | `Read .claude/project-context/` |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 온보딩이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.
+> - 프로젝트 분석 결과 요약
+> - 개발 시작 옵션 (권장 표시)
+> - Full 온보딩 확장 옵션 (Quick인 경우)
+> - 문제 해결 옵션
+> - 종료 옵션

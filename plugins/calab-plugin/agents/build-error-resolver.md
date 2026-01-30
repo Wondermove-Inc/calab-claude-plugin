@@ -2,7 +2,6 @@
 name: build-error-resolver
 description: |
   빌드 오류를 분석하고 해결합니다. TypeScript, ESLint, 번들러, 테스트 실패 등 모든 빌드 관련 오류를 처리합니다.
-  USE WHEN: 빌드 오류, build error, 컴파일 오류, 타입 오류, 린트 오류, npm error, tsc error 키워드 시 활성화
 tools: Read, Grep, Glob, Bash, Write, Edit, WebSearch, mcp__tavily__tavily-search
 model: sonnet
 permissionMode: acceptEdits

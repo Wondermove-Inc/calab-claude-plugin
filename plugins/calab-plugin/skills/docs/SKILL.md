@@ -2,10 +2,9 @@
 name: docs
 description: |
   문서 생성. API, 컴포넌트, 가이드 문서를 자동 생성합니다.
-  USE WHEN: 문서, docs, API 문서, 컴포넌트 문서, 가이드, documentation, JSDoc
 argument-hint: "[--api|--component|--guide|--update] [대상]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Task]
-skills: [project-rules, code-quality]
+skills: [project-rules, code-quality, skill-completion-rules]
 agents:
   primary: docs-generator
   orchestration:
@@ -97,9 +96,13 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
 | API 문서 생성 | `/security --api` 보안 검사 |
 | 컴포넌트 문서 | 관련 테스트 확인 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 문서 생성이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.

@@ -1,6 +1,6 @@
 ---
 name: best-practices
-description: 기술별 베스트 프랙티스를 적용합니다. 코드 작성, 구현, 개발, React, Node.js, TypeScript, 데이터베이스, API 요청 시 자동 활성화. 검증된 패턴과 방법론을 사용합니다.
+description: 기술별 베스트 프랙티스를 적용합니다. 검증된 패턴과 방법론을 사용합니다.
 allowed-tools: [Read, Glob, Grep, mcp__tavily__tavily-search]
 agent: code-reviewer
 agents:
@@ -20,63 +20,24 @@ agents:
 각 기술에 대해 검증된 베스트 프랙티스와 디자인 패턴을 적용하여
 일관되고 유지보수 가능한 코드를 생성합니다.
 
-## 🚨 자동 활성화 규칙 (필수 적용)
+## 기술별 레퍼런스 파일
 
-### 1. 키워드 감지 (대소문자 무관)
-
-**프로그래밍 언어 감지 시 해당 best-practices 파일 자동 로드:**
-
-| 감지 키워드 | 로드 파일 |
-|------------|----------|
-| `python`, `django`, `flask`, `fastapi`, `pydantic`, `pytest` | `python.md` |
-| `go`, `golang`, `goroutine`, `gin`, `echo` | `go.md` |
-| `rust`, `cargo`, `tokio`, `axum` | `rust.md` |
-| `java`, `spring`, `springboot`, `jpa`, `hibernate`, `maven`, `gradle` | `java.md` |
-| `react`, `jsx`, `컴포넌트`, `훅`, `hook`, `useState`, `useEffect` | `react.md` |
-| `next`, `nextjs`, `app router`, `서버 컴포넌트` | `nextjs.md` |
-| `node`, `nodejs`, `express`, `nestjs` | `nodejs.md` |
-| `typescript`, `ts`, `타입`, `interface`, `type` | `typescript.md` |
-| `tailwind`, `css`, `스타일`, `className`, `디자인 시스템` | `tailwind.md` |
-| `test`, `testing`, `테스트`, `jest`, `vitest`, `tdd` | `testing.md` |
-| `api`, `rest`, `graphql`, `endpoint`, `swagger` | `api-design.md` |
-| `db`, `database`, `sql`, `prisma`, `typeorm`, `데이터베이스` | `database.md` |
-
-### 2. 파일 확장자 감지
-
-**편집/생성하는 파일 확장자에 따라 자동 로드:**
-
-| 확장자 | 로드 파일 |
-|--------|----------|
-| `.py` | `python.md` |
-| `.go` | `go.md` |
-| `.rs` | `rust.md` |
-| `.java`, `.kt` | `java.md` |
-| `.tsx`, `.jsx` | `react.md` + `typescript.md` |
-| `.ts` | `typescript.md` + `nodejs.md` |
-| `.css`, `.scss` | `tailwind.md` |
-| `.test.ts`, `.spec.ts` | `testing.md` |
-
-### 3. 액션 기반 감지
-
-**다음 액션 수행 시 관련 best-practices 자동 로드:**
-
-| 액션 | 로드 파일 |
-|------|----------|
-| `구현해줘`, `만들어줘`, `작성해줘`, `코드 생성` | 언어 감지 후 해당 파일 |
-| `테스트 작성`, `TDD`, `단위 테스트` | `testing.md` |
-| `API 설계`, `엔드포인트 추가` | `api-design.md` |
-| `스키마 설계`, `ERD`, `마이그레이션` | `database.md` |
-| `컴포넌트 만들어`, `UI 구현` | `react.md` + `tailwind.md` |
+| 기술 | 레퍼런스 파일 |
+|------|-------------|
+| Python | `references/python/python.md` |
+| Go | `references/go/go.md` |
+| Rust | `references/rust/rust.md` |
+| Java | `references/java/java.md` |
+| React | `references/react/react.md` |
+| Next.js | `references/nextjs/nextjs.md` |
+| Node.js | `references/nodejs/nodejs.md` |
+| TypeScript | `references/typescript/typescript.md` |
+| Tailwind | `references/tailwind/tailwind.md` |
+| Testing | `references/testing/testing.md` |
+| API Design | `references/api/api-design.md` |
+| Database | `references/database/database.md` |
 
 ## 베스트 프랙티스 적용 프로토콜
-
-### 1. 기술 감지 (자동)
-
-```
-사용자 입력/파일 확장자 분석
-→ 관련 키워드/확장자 감지
-→ 해당 베스트 프랙티스 파일 자동 로드
-```
 
 ### 2. 베스트 프랙티스 로드 (필수)
 

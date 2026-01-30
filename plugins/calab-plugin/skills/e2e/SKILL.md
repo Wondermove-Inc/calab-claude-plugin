@@ -2,10 +2,9 @@
 name: e2e
 description: |
   E2E 테스트. Playwright/Puppeteer 기반 통합 테스트를 실행합니다.
-  USE WHEN: E2E, e2e, 통합 테스트, integration test, 브라우저 테스트, playwright, puppeteer
 argument-hint: "[--run|--debug|--record|--headed] [테스트파일]"
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash, Task, mcp__puppeteer__puppeteer_navigate, mcp__puppeteer__puppeteer_screenshot, mcp__puppeteer__puppeteer_click, mcp__puppeteer__puppeteer_fill, mcp__puppeteer__puppeteer_evaluate]
-skills: [project-rules, code-quality]
+skills: [project-rules, code-quality, skill-completion-rules]
 agents:
   primary: e2e-runner
   orchestration:
@@ -116,9 +115,13 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 결과 | 권장 |
 |------|------|
 | 전체 통과 | 배포 준비 |
 | 실패 발생 | `/solve` 로 디버깅 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> E2E 테스트가 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.

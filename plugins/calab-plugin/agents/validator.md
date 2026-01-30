@@ -2,7 +2,6 @@
 name: validator
 description: |
   작업 완전성과 품질을 검증합니다. 모든 구현 작업 후 필수 호출됩니다. AC 충족 여부, 누락 항목, 엣지 케이스를 검사합니다.
-  USE WHEN: 검증, 확인, 체크, 점검, 검사, 리뷰, 빠진거, 누락, 완료됐는지, 다 됐는지, AC, 완전성 키워드 시 활성화
 tools: Read, Grep, Glob, TaskGet, TaskList
 disallowedTools: Write, Edit, Bash
 model: sonnet

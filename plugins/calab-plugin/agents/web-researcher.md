@@ -2,7 +2,6 @@
 name: web-researcher
 description: |
   웹 검색 및 리서치 전문 에이전트입니다. Tavily MCP를 활용하여 실시간 웹 정보를 수집하고 분석합니다.
-  USE WHEN: 검색, search, 웹, web, 리서치, research, 조사, 찾아봐, 알아봐,
   최신 정보, 트렌드, trend, 뉴스, news, 업데이트, update,
   문서, docs, documentation, 공식 문서, official,
   베스트 프랙티스, best practices, 권장, recommended,

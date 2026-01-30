@@ -2,7 +2,6 @@
 name: task-validator
 description: |
   Task 분해가 PHASE 계획과 일치하는지 검증합니다. planner-task 출력의 완전성을 확인합니다.
-  USE WHEN: Task 검증, 분해 확인, 계획 검증 키워드 시 활성화
 tools: Read, Glob, Grep, TaskList, TaskGet
 disallowedTools: Write, Edit, Bash
 model: sonnet

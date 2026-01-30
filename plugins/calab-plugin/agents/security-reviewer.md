@@ -2,7 +2,6 @@
 name: security-reviewer
 description: |
   코드 보안 취약점을 분석합니다. OWASP Top 10, 시크릿 탐지, SQL Injection, XSS, 의존성 취약점 등을 검사합니다.
-  USE WHEN: 보안 검사, security review, 취약점 분석, OWASP, 보안 리뷰, 시큐리티 키워드 시 활성화
 tools: Read, Grep, Glob, Bash
 disallowedTools: Write, Edit
 model: sonnet

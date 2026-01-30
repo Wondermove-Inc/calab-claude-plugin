@@ -2,7 +2,6 @@
 name: jira-connector
 description: |
   JIRA와 양방향 동기화를 수행합니다. 이슈 생성, 상태 업데이트, Worktree 연동을 관리합니다.
-  USE WHEN: JIRA, 지라, 이슈 동기화, 티켓, issue sync, jira sync 키워드 시 활성화
 tools: Read, Grep, Glob, Bash, Write, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__createJiraIssue, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__transitionJiraIssue, mcp__claude_ai_Atlassian__addCommentToJiraIssue
 disallowedTools: Edit
 model: haiku
