@@ -11,6 +11,37 @@
 
 ---
 
+## 에이전트 호출 (필수)
+
+> **이 옵션이 실행되면 dev-workflow 에이전트를 호출합니다.**
+
+```python
+Task(
+    subagent_type="calab-plugin:dev-workflow",
+    description="워크플로우 상태 확인",
+    prompt="""
+[Role] 워크플로우 상태 관리자
+[Goal] 현재 개발 진행 상황 분석 및 보고
+
+## 분석 대상
+1. .claude/memory/CURRENT_CONTEXT.md - 현재 컨텍스트
+2. .claude-state/worktree.json - 작업 트리
+3. .claude/docs/active/ - 진행 중 기능
+4. .claude/docs/complete/ - 완료된 기능
+
+## 출력
+- 각 Phase별 문서 존재 여부
+- 태스크 진행률 (완료/진행/대기/블로커)
+- 현재 작업 및 다음 작업
+- 권장 명령어
+
+[Output Format] references/status.md 출력 형식 참조
+"""
+)
+```
+
+---
+
 ## 실행 절차
 
 ### Step 1: 컨텍스트 로드

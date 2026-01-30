@@ -25,6 +25,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional, Union
+from functools import lru_cache
 
 # 전역 설정
 HOOK_NAME = "Unknown"
@@ -33,6 +34,15 @@ PROJECT_ROOT = ""
 CHECKPOINT_FILE = ""
 CHECKPOINTS_FILE = ""
 MAX_CHECKPOINTS = 5
+
+# 성능 최적화: 캐싱
+_cache = {
+    "project_root": None,
+    "git_info": None,
+    "git_info_time": 0,
+    "config": None,
+}
+CACHE_TTL = 5  # 캐시 TTL (초)
 
 
 def setup_hook_config(hook_name: str) -> None:
@@ -272,14 +282,22 @@ def migrate_checkpoint_to_v4(old_file: str, new_file: str) -> bool:
         return False
 
 
-def get_git_info(cwd: str) -> tuple:
-    """Git 브랜치 및 상태 정보 반환"""
+def get_git_info(cwd: str, use_cache: bool = True) -> tuple:
+    """Git 브랜치 및 상태 정보 반환 (캐싱 지원)"""
+    global _cache
+
+    # 캐시 확인 (TTL 내)
+    if use_cache and _cache["git_info"] is not None:
+        if time.time() - _cache["git_info_time"] < CACHE_TTL:
+            return _cache["git_info"]
+
     try:
         # Git 디렉토리 확인
         result = subprocess.run(
             ["git", "-C", cwd, "rev-parse", "--git-dir"],
             capture_output=True,
-            text=True
+            text=True,
+            timeout=2  # 타임아웃 추가
         )
         if result.returncode != 0:
             return "", False
@@ -288,24 +306,45 @@ def get_git_info(cwd: str) -> tuple:
         result = subprocess.run(
             ["git", "-C", cwd, "--no-optional-locks", "symbolic-ref", "--short", "HEAD"],
             capture_output=True,
-            text=True
+            text=True,
+            timeout=2
         )
         branch = result.stdout.strip() if result.returncode == 0 else "detached"
 
         # 변경 사항 확인
         result1 = subprocess.run(
             ["git", "-C", cwd, "--no-optional-locks", "diff", "--quiet"],
-            capture_output=True
+            capture_output=True,
+            timeout=2
         )
         result2 = subprocess.run(
             ["git", "-C", cwd, "--no-optional-locks", "diff", "--cached", "--quiet"],
-            capture_output=True
+            capture_output=True,
+            timeout=2
         )
         has_changes = result1.returncode != 0 or result2.returncode != 0
 
+        # 캐시 저장
+        _cache["git_info"] = (branch, has_changes)
+        _cache["git_info_time"] = time.time()
+
         return branch, has_changes
-    except (subprocess.SubprocessError, OSError):
+    except (subprocess.SubprocessError, OSError, subprocess.TimeoutExpired):
         return "", False
+
+
+@lru_cache(maxsize=32)
+def get_project_root_cached() -> str:
+    """프로젝트 루트 캐싱 (불변 값)"""
+    return os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
+
+
+def fast_json_parse(json_str: str) -> Optional[dict]:
+    """빠른 JSON 파싱 (에러 시 None 반환)"""
+    try:
+        return json.loads(json_str)
+    except (json.JSONDecodeError, TypeError):
+        return None
 
 
 if __name__ == "__main__":

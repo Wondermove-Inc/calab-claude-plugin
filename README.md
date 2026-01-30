@@ -43,16 +43,17 @@
 ## 한눈에 보기
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│  3개 액티브 스킬  │  6개 패시브 스킬  │  23개 에이전트  │  21개 훅  │
-└──────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────┐
+│  16개 스킬 (10 active + 6 passive)  │  23개 에이전트  │  24개 훅  │
+└───────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 스킬 구조
 
 | 유형 | 스킬 | 역할 |
 |------|------|------|
-| **Active** | `/dev`, `/solve`, `/onboard` | 사용자 호출 메타커맨드 |
+| **Active (Core)** | `/dev`, `/solve`, `/onboard` | 개발/문제해결/온보딩 |
+| **Active (Utility)** | `/docs`, `/security`, `/research`, `/jira`, `/refactor`, `/e2e`, `/guard` | 문서/보안/리서치/JIRA/리팩토링/E2E/규칙검증 |
 | **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 자동 로드 |
 
 ### 유기적 워크플로우 통합 (2025 Best Practice)
@@ -160,7 +161,52 @@ curl -o ~/.claude/CLAUDE.md https://raw.githubusercontent.com/Wondermove-Inc/cal
 
 ---
 
-## 명령어 (3개 액티브 스킬)
+## 스킬 자동완성 설정
+
+플러그인 스킬을 `/` 자동완성에 표시하려면 심볼릭 링크를 설정합니다.
+
+### 링크 생성
+
+```bash
+# 리포지토리 클론 후
+cd calab-claude-plugin
+./link-skills.sh
+```
+
+### 결과
+
+```
+~/.claude/skills/
+├── calab-dev -> plugins/calab-plugin/skills/dev
+├── calab-solve -> plugins/calab-plugin/skills/solve
+├── calab-onboard -> plugins/calab-plugin/skills/onboard
+├── calab-docs -> plugins/calab-plugin/skills/docs
+├── calab-security -> plugins/calab-plugin/skills/security
+├── calab-research -> plugins/calab-plugin/skills/research
+├── calab-jira -> plugins/calab-plugin/skills/jira
+├── calab-refactor -> plugins/calab-plugin/skills/refactor
+├── calab-e2e -> plugins/calab-plugin/skills/e2e
+└── calab-guard -> plugins/calab-plugin/skills/guard
+```
+
+### 사용법
+
+```bash
+/calab-dev --plan 기능명     # 개발 워크플로우
+/calab-solve 에러메시지       # 문제 해결
+/calab-docs --api src/api/   # 문서 생성
+/calab-security --owasp      # 보안 검사
+```
+
+### 링크 제거
+
+```bash
+./link-skills.sh --remove
+```
+
+---
+
+## 명령어 (코어 스킬)
 
 ### `/dev` - 개발 워크플로우
 
@@ -191,13 +237,77 @@ curl -o ~/.claude/CLAUDE.md https://raw.githubusercontent.com/Wondermove-Inc/cal
 | `--quick` | 빠른 분석 |
 | `--phases` | 단계별 상세 분석 |
 
+## 명령어 (유틸리티 스킬)
+
+### `/docs` - 문서 생성
+
+| 옵션 | 설명 |
+|------|------|
+| `--api` | API 문서 생성 |
+| `--component` | 컴포넌트 문서 |
+| `--guide` | 가이드 문서 |
+| `--update` | 기존 문서 업데이트 |
+
+### `/security` - 보안 검사
+
+| 옵션 | 설명 |
+|------|------|
+| `--owasp` | OWASP Top 10 검사 |
+| `--secrets` | 시크릿 탐지 |
+| `--deps` | 의존성 취약점 |
+| `--full` | 전체 검사 |
+
+### `/research` - 웹 리서치
+
+| 옵션 | 설명 |
+|------|------|
+| `--deep` | 심층 분석 |
+| `--compare` | 대안 비교 |
+
+### `/jira` - JIRA 연동
+
+| 옵션 | 설명 |
+|------|------|
+| `--sync` | 양방향 동기화 |
+| `--create` | 이슈 생성 |
+| `--update` | 상태 업데이트 |
+| `--link` | Worktree 연동 |
+
+### `/refactor` - 리팩토링
+
+| 옵션 | 설명 |
+|------|------|
+| `--dead-code` | 데드 코드 정리 |
+| `--duplicates` | 중복 코드 제거 |
+| `--imports` | 미사용 import 정리 |
+| `--cleanup` | 전체 정리 |
+
+### `/e2e` - E2E 테스트
+
+| 옵션 | 설명 |
+|------|------|
+| `--run` | 테스트 실행 |
+| `--debug` | 디버그 모드 |
+| `--record` | 녹화 모드 |
+| `--headed` | 브라우저 표시 |
+
+### `/guard` - 규칙 검증
+
+| 옵션 | 설명 |
+|------|------|
+| `--rules` | 규칙 준수 검사 |
+| `--context` | 맥락 유지 확인 |
+| `--full` | 전체 검증 |
+
+---
+
 ### 에이전트 직접 호출
 
 스킬 대신 에이전트를 직접 호출할 수 있습니다:
 
 | 작업 | 에이전트 |
 |------|----------|
-| 문서 생성/업데이트 | `calab-plugin:doc-updater` |
+| 문서 생성/업데이트 | `calab-plugin:docs-generator` |
 | JIRA 연동 | `calab-plugin:jira-connector` |
 | QA 테스트 | `calab-plugin:qa` |
 | 보안 검사 | `calab-plugin:security-reviewer` |
@@ -301,15 +411,22 @@ calab-claude-plugin/
         │
         ├── CLAUDE.md          # Claude 지침 (핵심)
         │
-        ├── skills/            # 9개 스킬 (3 active + 6 passive)
-        │   ├── dev/          # 개발 워크플로우 (active)
-        │   ├── solve/        # 문제 해결 (active)
-        │   ├── onboard/      # 프로젝트 온보딩 (active)
-        │   ├── best-practices/   # (passive)
-        │   ├── code-quality/     # (passive)
-        │   ├── tdd-workflow/     # (passive)
-        │   ├── project-rules/    # (passive)
-        │   ├── work-tracker/     # (passive)
+        ├── skills/            # 16개 스킬 (10 active + 6 passive)
+        │   ├── dev/           # 개발 워크플로우 (core)
+        │   ├── solve/         # 문제 해결 (core)
+        │   ├── onboard/       # 프로젝트 온보딩 (core)
+        │   ├── docs/          # 문서 생성 (utility)
+        │   ├── security/      # 보안 검사 (utility)
+        │   ├── research/      # 웹 리서치 (utility)
+        │   ├── jira/          # JIRA 연동 (utility)
+        │   ├── refactor/      # 리팩토링 (utility)
+        │   ├── e2e/           # E2E 테스트 (utility)
+        │   ├── guard/         # 규칙 검증 (utility)
+        │   ├── best-practices/      # (passive)
+        │   ├── code-quality/        # (passive)
+        │   ├── tdd-workflow/        # (passive)
+        │   ├── project-rules/       # (passive)
+        │   ├── work-tracker/        # (passive)
         │   └── clarification-protocol/  # (passive)
         │
         ├── agents/            # 23개 에이전트
@@ -320,7 +437,7 @@ calab-claude-plugin/
         │   ├── security-reviewer.md # 보안
         │   └── ...
         │
-        └── hooks/             # 21개 훅 스크립트
+        └── hooks/             # 24개 훅 스크립트
 ```
 
 ---

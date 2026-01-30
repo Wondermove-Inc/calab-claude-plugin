@@ -13,6 +13,7 @@ agents:
     design: [calab-plugin:design, Explore]
     tasks: [calab-plugin:planner-task, calab-plugin:task-validator]
     build: [calab-plugin:dev-executor, calab-plugin:code-reviewer]
+    status: [calab-plugin:dev-workflow]
     validate: [calab-plugin:validator, calab-plugin:qa]
     fix: [calab-plugin:reinforcer]
 hooks:

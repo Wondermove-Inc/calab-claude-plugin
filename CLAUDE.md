@@ -20,7 +20,7 @@
 ### 핵심 구성
 
 ```
-9개 스킬 (3 active + 6 passive) + 23개 에이전트 + 21개 훅
+16개 스킬 (10 active + 6 passive) + 23개 에이전트 + 24개 훅
 ```
 
 | 영역 | 자동화 내용 |
@@ -34,7 +34,8 @@
 
 | 유형 | 스킬 | 역할 |
 |------|------|------|
-| **Active** | dev, solve, onboard | `/dev`, `/solve`, `/onboard` |
+| **Active (Core)** | dev, solve, onboard | 개발/문제해결/온보딩 |
+| **Active (Utility)** | docs, security, research, jira, refactor, e2e, guard | 문서/보안/리서치/JIRA/리팩토링/E2E/규칙검증 |
 | **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 자동 로드 |
 
 ---
@@ -328,13 +329,25 @@
 
 ## 명령어 참조
 
-### 액티브 스킬
+### 코어 스킬
 
 | 명령어 | 옵션 |
 |--------|------|
 | `/dev` | `--plan`, `--design`, `--tasks`, `--build`, `--status` |
 | `/solve` | `--5whys`, `--rca`, `--hypothesis` |
 | `/onboard` | `--quick`, `--full` |
+
+### 유틸리티 스킬
+
+| 명령어 | 옵션 | 용도 |
+|--------|------|------|
+| `/docs` | `--api`, `--component`, `--guide` | 문서 생성 |
+| `/security` | `--owasp`, `--secrets`, `--deps` | 보안 검사 |
+| `/research` | `--deep`, `--compare` | 웹 리서치 |
+| `/jira` | `--sync`, `--create`, `--update` | JIRA 연동 |
+| `/refactor` | `--dead-code`, `--duplicates`, `--imports` | 리팩토링 |
+| `/e2e` | `--run`, `--debug`, `--record` | E2E 테스트 |
+| `/guard` | `--rules`, `--context`, `--full` | 규칙 검증 |
 
 ### 에이전트 호출
 
@@ -343,3 +356,24 @@
 "security-reviewer로 보안 검사해줘"
 "web-researcher로 조사해줘"
 ```
+
+---
+
+## 스킬 자동완성 (링크 설정)
+
+플러그인 스킬을 `/` 자동완성에 표시하려면:
+
+```bash
+# 리포지토리에서 실행
+./link-skills.sh
+```
+
+결과: `~/.claude/skills/calab-*` 심볼릭 링크 생성
+
+```bash
+/calab-dev --plan 기능명     # 개발 워크플로우
+/calab-solve 에러메시지       # 문제 해결
+/calab-docs --api src/api/   # 문서 생성
+```
+
+제거: `./link-skills.sh --remove`
