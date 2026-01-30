@@ -2,10 +2,9 @@
 name: jira
 description: |
   JIRA 연동. 이슈 생성, 상태 업데이트, 동기화를 수행합니다.
-  USE WHEN: JIRA, 지라, 이슈, issue, 티켓, ticket, 동기화, sync
 argument-hint: "[--sync|--create|--update|--link] [이슈키]"
 allowed-tools: [Read, Write, Grep, Glob, Bash, Task, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__createJiraIssue, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__transitionJiraIssue, mcp__claude_ai_Atlassian__addCommentToJiraIssue]
-skills: [project-rules]
+skills: [project-rules, skill-completion-rules]
 agents:
   primary: jira-connector
   orchestration:
@@ -103,9 +102,13 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
 | 이슈 생성 | `/dev --build` 구현 시작 |
 | 동기화 완료 | 작업 진행 확인 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> JIRA 작업이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.

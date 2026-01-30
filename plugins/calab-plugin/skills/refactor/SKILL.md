@@ -2,10 +2,9 @@
 name: refactor
 description: |
   리팩토링. 데드 코드 정리, 중복 제거, 코드 개선을 수행합니다.
-  USE WHEN: 리팩토링, refactor, 정리, cleanup, 데드 코드, dead code, 중복, duplicate
 argument-hint: "[--dead-code|--duplicates|--imports|--cleanup] [경로]"
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash, Task]
-skills: [project-rules, code-quality]
+skills: [project-rules, code-quality, skill-completion-rules]
 agents:
   primary: refactor-cleaner
   orchestration:
@@ -122,9 +121,13 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
 | 리팩토링 완료 | 테스트 실행 확인 |
 | 대규모 변경 | `/security` 검사 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 리팩토링이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.

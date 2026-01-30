@@ -2,10 +2,9 @@
 name: dev
 description: |
   통합 개발 워크플로우 매니저. Plan → Design → Tasks → Build 전체 사이클 관리.
-  USE WHEN: 새 기능, 개발, 설계, 아키텍처, PRD, 구현, 태스크, 스토리
 argument-hint: "[--plan|--design|--tasks|--build|--status] [기능명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task, TaskCreate, TaskUpdate, TaskList, TaskGet, WebSearch, AskUserQuestion, EnterPlanMode, ExitPlanMode, mcp__tavily__tavily-search]
-skills: [code-quality, best-practices, tdd-workflow, project-rules, work-tracker]
+skills: [code-quality, best-practices, tdd-workflow, project-rules, work-tracker, skill-completion-rules]
 agents:
   primary: planner-phase
   orchestration:
@@ -199,7 +198,7 @@ PLAN ────────→ DESIGN ─────────→ TASKS ─
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
@@ -208,3 +207,12 @@ PLAN ────────→ DESIGN ─────────→ TASKS ─
 | `--tasks` | `--build TASK-001` |
 | 모든 Task 완료 | QA 자동 호출 |
 | QA 실패 | `/solve` |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 스킬 작업이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.
+> - 현재 완료된 작업 내용
+> - 워크플로우 다음 단계 (권장 표시)
+> - 수정/보완 옵션
+> - 다른 작업 옵션
+> - 종료 옵션

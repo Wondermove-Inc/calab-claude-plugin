@@ -2,10 +2,9 @@
 name: security
 description: |
   보안 검사. OWASP Top 10, 시크릿 탐지, 의존성 취약점을 검사합니다.
-  USE WHEN: 보안, security, OWASP, 취약점, vulnerability, 시크릿, secret, 보안 검사
 argument-hint: "[--owasp|--secrets|--deps|--full] [경로]"
 allowed-tools: [Read, Grep, Glob, Bash, Task]
-skills: [project-rules]
+skills: [project-rules, skill-completion-rules]
 agents:
   primary: security-reviewer
   orchestration:
@@ -118,10 +117,19 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 결과 | 권장 |
 |------|------|
 | Critical 발견 | 즉시 `/solve` 로 수정 |
 | High 발견 | 우선순위 높여 수정 |
 | 의존성 취약점 | `npm audit fix` |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 보안 검사가 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.
+> - 검사 결과 요약 (Critical/High/Medium/Low 개수)
+> - 취약점 수정 옵션 (권장 표시, 취약점 있는 경우)
+> - 전체 검증 옵션
+> - 추가 보안 검사 옵션
+> - 종료 옵션

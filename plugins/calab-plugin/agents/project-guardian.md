@@ -2,7 +2,6 @@
 name: project-guardian
 description: |
   프로젝트 규칙 준수와 작업 맥락 유지를 담당합니다. 코드 변경 시 자동으로 규칙 검증을 수행하고, 작업 방향이 흩어질 때 원래 목표로 안내합니다.
-  USE WHEN: 규칙 확인, 검토, 검증, rules check, 컨벤션 검사, 규칙 위반 키워드 시 활성화
 tools: Read, Grep, Glob
 disallowedTools: Write, Edit, Bash
 model: sonnet

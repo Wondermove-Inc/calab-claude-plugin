@@ -2,7 +2,6 @@
 name: refactor-cleaner
 description: |
   데드 코드, 미사용 import, 중복 코드를 자동으로 정리합니다.
-  USE WHEN: 리팩토링, 정리, 클린업, 미사용 코드, dead code, cleanup, refactor 키워드 시 활성화
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 permissionMode: acceptEdits

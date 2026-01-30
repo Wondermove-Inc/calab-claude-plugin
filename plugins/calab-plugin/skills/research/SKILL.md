@@ -2,10 +2,9 @@
 name: research
 description: |
   웹 리서치. 기술 문서, 베스트 프랙티스, 최신 트렌드를 조사합니다.
-  USE WHEN: 조사, research, 검색, search, 리서치, 최신, 트렌드, 문서 찾기
 argument-hint: "[--deep|--compare] [주제]"
 allowed-tools: [Read, Write, Glob, Grep, WebSearch, WebFetch, Task, mcp__tavily__tavily-search, mcp__tavily__tavily-extract]
-skills: [project-rules]
+skills: [project-rules, skill-completion-rules]
 agents:
   primary: web-researcher
   orchestration:
@@ -124,9 +123,13 @@ Task(
 
 ---
 
-## 다음 단계
+## 다음 단계 선택 (필수)
 
 | 완료 후 | 권장 |
 |--------|------|
 | 기술 조사 완료 | `/dev --plan` 적용 |
 | 비교 완료 | 선택 후 구현 |
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 리서치가 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.

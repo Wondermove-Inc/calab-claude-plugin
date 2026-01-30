@@ -2,7 +2,6 @@
 name: root-cause-finder
 description: |
   체계적인 방법론으로 버그의 근본 원인을 분석합니다. 5 Whys, RCA, 가설 기반 접근을 사용합니다.
-  USE WHEN: 원인 분석, root cause, 5whys, rca, 디버깅, debug 키워드 시 활성화
 tools: Read, Write, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search
 model: sonnet
 permissionMode: bypassPermissions

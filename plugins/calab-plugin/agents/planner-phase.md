@@ -2,7 +2,6 @@
 name: planner-phase
 description: |
   기능을 PHASE 단위로 분해하고 PRD를 작성합니다. 전략적 기획을 담당합니다.
-  USE WHEN: 기획, plan, PRD, 요구사항, requirement, 분석 키워드 시 활성화
 tools: Read, Write, Glob, Grep, WebSearch, WebFetch, mcp__tavily__tavily-search
 disallowedTools: Edit, Bash
 model: sonnet

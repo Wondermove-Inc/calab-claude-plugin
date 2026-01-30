@@ -1,6 +1,6 @@
 ---
 name: tdd-workflow
-description: 테스트 주도 개발(TDD) 워크플로우를 강제합니다. 테스트 먼저 작성, 80% 커버리지 요구. --tdd 옵션이나 TDD 키워드 시 자동 활성화.
+description: 테스트 주도 개발(TDD) 워크플로우를 강제합니다. 테스트 먼저 작성, 80% 커버리지 요구.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -11,13 +11,6 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ## 목적
 
 코드 품질과 안정성을 보장하기 위해 TDD 방법론을 강제합니다.
-
-## 활성화 조건
-
-다음 상황에서 **자동 활성화**:
-- `/dev-build --tdd` 옵션 사용 시
-- "TDD", "테스트 먼저", "테스트 주도" 키워드 언급 시
-- 새로운 기능/모듈 구현 요청 시 (권장)
 
 ## 핵심 원칙
 

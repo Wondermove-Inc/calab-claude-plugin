@@ -2,10 +2,9 @@
 name: solve
 description: |
   문제 해결 프로세스. 체계적인 방법론으로 근본 원인을 분석하고 해결합니다.
-  USE WHEN: 에러, 버그, 문제, 디버깅, 해결, 오류, 실패, crash, 성능
 argument-hint: "[--5whys|--rca|--hypothesis|--binary] [문제 설명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search]
-skills: [code-quality, best-practices, project-rules]
+skills: [code-quality, best-practices, project-rules, skill-completion-rules]
 agents:
   primary: root-cause-finder
   orchestration:
@@ -201,3 +200,16 @@ Task(
 └── knowledge-base/
     └── solutions.json
 ```
+
+---
+
+## 다음 단계 선택 (필수)
+
+> **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**
+>
+> 문제 해결이 완료되면 현재 상황을 분석하여 AskUserQuestion으로 다음 단계 선택지를 제시하세요.
+> - 해결된 문제 요약
+> - 새 기능 개발 필요 여부 (권장 표시)
+> - 보고서 작성 옵션
+> - 추가 문제 분석 옵션
+> - 종료 옵션

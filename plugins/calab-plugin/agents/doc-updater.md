@@ -2,7 +2,6 @@
 name: doc-updater
 description: |
   코드 변경 사항을 감지하여 문서를 자동으로 업데이트합니다.
-  USE WHEN: 문서 업데이트, 동기화, API 문서, 컴포넌트 문서, docs update, sync docs 키워드 시 활성화
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 permissionMode: acceptEdits
