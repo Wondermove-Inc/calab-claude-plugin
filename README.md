@@ -1,6 +1,6 @@
 # Calab Claude Plugin
 
-[![Version](https://img.shields.io/badge/version-2.7.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
+[![Version](https://img.shields.io/badge/version-2.8.0-blue.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple.svg)](https://claude.ai/code)
 
@@ -19,13 +19,21 @@
 | 할루시네이션 | validator/reinforcer 에이전트로 검증 |
 | 산출물 누락 | 스킬별 필수 산출물 + State Persistence 의무화 |
 
-### 🆕 v2.7.0 변경사항
+### 🆕 v2.8.0 변경사항
+
+| 기능 | 설명 |
+|------|------|
+| **🧹 USE WHEN 제거** | 에이전트/스킬 설명에서 USE WHEN 라인 제거 (깔끔한 표시) |
+| **📊 신뢰도 기반 자동 에스컬레이션** | validator 결과 기반 reinforcer 자동 호출 안내 (confidence_based_reinforcer.py) |
+| **🔗 skill-completion-rules** | 모든 Active 스킬에 완료 규칙 통합 (7번째 패시브 스킬) |
+| **📦 에이전트별 References** | skill_activator v4: 에이전트별 레퍼런스 자동 로드 |
+
+### v2.7.0 변경사항
 
 | 기능 | 설명 |
 |------|------|
 | **🔍 산출물 검증 훅** | SubagentStop 시 자동 산출물 검증 (post_skill_artifact_check.py) |
 | **📋 23개 에이전트 산출물 규칙** | 모든 에이전트에 필수 산출물 100% 정의 |
-| **🏷️ USE WHEN 키워드** | 23개 에이전트 전체 활성화 키워드 정의 |
 | **✅ 에이전트 완전성 100%** | frontmatter, tools, model, permissionMode 검증 완료 |
 
 ### v2.6.0 변경사항
@@ -44,7 +52,7 @@
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────┐
-│  16개 스킬 (10 active + 6 passive)  │  23개 에이전트  │  24개 훅  │
+│  17개 스킬 (10 active + 7 passive)  │  23개 에이전트  │  25개 훅  │
 └───────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -54,7 +62,7 @@
 |------|------|------|
 | **Active (Core)** | `/dev`, `/solve`, `/onboard` | 개발/문제해결/온보딩 |
 | **Active (Utility)** | `/docs`, `/security`, `/research`, `/jira`, `/refactor`, `/e2e`, `/guard` | 문서/보안/리서치/JIRA/리팩토링/E2E/규칙검증 |
-| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 자동 로드 |
+| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules | 자동 로드 |
 
 ### 유기적 워크플로우 통합 (2025 Best Practice)
 
@@ -316,7 +324,7 @@ cd calab-claude-plugin
 
 ---
 
-## 패시브 스킬 (6개)
+## 패시브 스킬 (7개)
 
 액티브 스킬이나 에이전트 실행 시 **자동으로 로드**됩니다.
 
@@ -328,6 +336,7 @@ cd calab-claude-plugin
 | `work-tracker` | dev-workflow, project-guardian | Worktree 자동 업데이트 |
 | `project-rules` | 대부분의 에이전트에서 로드 | PROJECT_RULES.md 규칙 적용 |
 | `clarification-protocol` | planner, validator 등 | 불확실한 요구사항 명확화 |
+| `skill-completion-rules` | 모든 Active 스킬 | 스킬 완료 시 AskUserQuestion 강제 |
 
 ---
 
@@ -427,7 +436,8 @@ calab-claude-plugin/
         │   ├── tdd-workflow/        # (passive)
         │   ├── project-rules/       # (passive)
         │   ├── work-tracker/        # (passive)
-        │   └── clarification-protocol/  # (passive)
+        │   ├── clarification-protocol/  # (passive)
+        │   └── skill-completion-rules/  # (passive) - 스킬 완료 규칙
         │
         ├── agents/            # 23개 에이전트
         │   ├── dev-workflow.md      # 워크플로우

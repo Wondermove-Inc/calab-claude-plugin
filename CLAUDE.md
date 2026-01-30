@@ -20,7 +20,7 @@
 ### 핵심 구성
 
 ```
-16개 스킬 (10 active + 6 passive) + 23개 에이전트 + 24개 훅
+17개 스킬 (10 active + 7 passive) + 23개 에이전트 + 25개 훅
 ```
 
 | 영역 | 자동화 내용 |
@@ -36,7 +36,7 @@
 |------|------|------|
 | **Active (Core)** | dev, solve, onboard | 개발/문제해결/온보딩 |
 | **Active (Utility)** | docs, security, research, jira, refactor, e2e, guard | 문서/보안/리서치/JIRA/리팩토링/E2E/규칙검증 |
-| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol | 자동 로드 |
+| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules | 자동 로드 |
 
 ---
 
@@ -198,7 +198,7 @@
 | **solve** | `/solve --5whys/--rca/--hypothesis` | 문제 해결 |
 | **onboard** | `/onboard` | 프로젝트 분석 |
 
-### 패시브 스킬 (6개)
+### 패시브 스킬 (7개)
 
 | 스킬 | 트리거 |
 |------|--------|
@@ -208,6 +208,7 @@
 | `project-rules` | 모든 코드 작성 |
 | `work-tracker` | 소스 파일 수정 |
 | `clarification-protocol` | 서브에이전트 실행 |
+| `skill-completion-rules` | Active 스킬 완료 시 |
 
 ### 워크플로우 연동
 
