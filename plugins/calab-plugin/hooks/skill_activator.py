@@ -1,19 +1,76 @@
 #!/usr/bin/env python3
 """
-Skill Activator Hook - 스킬 강제 활성화 (벡터 검색 보완)
+Skill Activator Hook - 스킬 강제 활성화 + References 자동 로드
 
 트리거: UserPromptSubmit 이벤트
-동작: 키워드 기반 스킬 활성화 힌트를 Claude에게 제공
+동작:
+1. 키워드 기반 스킬 활성화 힌트 제공
+2. 감지된 스킬의 references 파일 자동 로드 → Claude 컨텍스트 주입
 
 베스트 프랙티스:
 - 벡터 검색 활성화율: 20% → 훅 기반 활성화율: 84%
-- Plain text 출력으로 Claude에게 스킬 컨텍스트 주입
+- References 파일 자동 로드 → 100% 활용률 보장
 """
 
 import json
 import sys
-import re
-from typing import List, Tuple
+import os
+from pathlib import Path
+from typing import List, Tuple, Optional
+
+
+# 플러그인 루트 경로 (환경 변수에서 가져오기)
+PLUGIN_ROOT = os.environ.get('CLAUDE_PLUGIN_ROOT', '')
+if not PLUGIN_ROOT:
+    # 훅 파일 기준으로 상위 디렉토리 추정
+    PLUGIN_ROOT = str(Path(__file__).parent.parent)
+
+
+# 스킬별 References 파일 매핑
+# 옵션별로 로드할 파일 지정
+SKILL_REFERENCES = {
+    'dev': {
+        'base_path': 'skills/dev/references',
+        'options': {
+            'plan': ['plan-phase.md', 'plan.md'],
+            'design': ['design-phase.md', 'design.md'],
+            'tasks': ['tasks-phase.md', 'tasks.md'],
+            'build': ['build-phase.md', 'build.md'],
+            'default': ['plan-phase.md']  # 옵션 없을 때
+        },
+        'templates': {
+            'architecture': 'templates/architecture-template.md',
+            'erd': 'templates/erd-template.md'
+        }
+    },
+    'solve': {
+        'base_path': 'skills/solve/references',
+        'options': {
+            '5whys': ['5whys.md'],
+            'rca': ['rca.md'],
+            'hypothesis': ['hypothesis.md'],
+            'log': ['log.md'],
+            'report': ['report.md'],
+            'default': ['testing.md']  # 기본 디버깅 참조
+        },
+        'templates': {
+            'problem': 'templates/problem-definition.md',
+            'analysis': 'templates/analysis-report.md'
+        }
+    },
+    'onboard': {
+        'base_path': 'skills/onboard/references',
+        'options': {
+            'quick': ['quick.md'],
+            'full': ['project-onboarding.md', 'clean-architecture.md'],
+            'default': ['quick.md']
+        },
+        'templates': {
+            'analysis': 'templates/analysis-report.md',
+            'architecture': 'templates/architecture-template.md'
+        }
+    }
+}
 
 
 # 스킬 활성화 규칙 정의
@@ -156,12 +213,88 @@ def detect_skills(prompt: str) -> List[Tuple[str, str, str]]:
     return result
 
 
-def format_skill_hints(detected_skills: List[Tuple[str, str, str]]) -> str:
+def detect_option(prompt: str, skill_name: str) -> str:
     """
-    스킬 힌트를 포맷팅
+    프롬프트에서 스킬 옵션 감지
 
     Returns:
-        Plain text 형태의 스킬 힌트 (Claude에게 주입)
+        옵션 이름 (예: 'plan', 'design') 또는 'default'
+    """
+    prompt_lower = prompt.lower()
+
+    if skill_name == 'dev':
+        if '--plan' in prompt_lower or '기획' in prompt_lower or 'prd' in prompt_lower:
+            return 'plan'
+        elif '--design' in prompt_lower or '설계' in prompt_lower or '아키텍처' in prompt_lower:
+            return 'design'
+        elif '--tasks' in prompt_lower or '태스크' in prompt_lower or '분해' in prompt_lower:
+            return 'tasks'
+        elif '--build' in prompt_lower or '구현' in prompt_lower or '코딩' in prompt_lower:
+            return 'build'
+    elif skill_name == 'solve':
+        if '--5whys' in prompt_lower or '5whys' in prompt_lower:
+            return '5whys'
+        elif '--rca' in prompt_lower or 'rca' in prompt_lower or 'root cause' in prompt_lower:
+            return 'rca'
+        elif '--hypothesis' in prompt_lower or '가설' in prompt_lower:
+            return 'hypothesis'
+        elif '--log' in prompt_lower:
+            return 'log'
+        elif '--report' in prompt_lower or '보고서' in prompt_lower:
+            return 'report'
+    elif skill_name == 'onboard':
+        if '--quick' in prompt_lower or '빠른' in prompt_lower:
+            return 'quick'
+        elif '--full' in prompt_lower or '전체' in prompt_lower:
+            return 'full'
+
+    return 'default'
+
+
+def load_reference_files(skill_name: str, option: str) -> str:
+    """
+    스킬의 references 파일을 로드
+
+    Args:
+        skill_name: 스킬 이름 (dev, solve, onboard)
+        option: 옵션 (plan, design, 5whys 등)
+
+    Returns:
+        파일 내용 (Claude 컨텍스트에 주입됨)
+    """
+    if skill_name not in SKILL_REFERENCES:
+        return ""
+
+    skill_ref = SKILL_REFERENCES[skill_name]
+    base_path = Path(PLUGIN_ROOT) / skill_ref['base_path']
+
+    # 옵션에 해당하는 파일 목록
+    files_to_load = skill_ref['options'].get(option, skill_ref['options'].get('default', []))
+
+    contents = []
+    for filename in files_to_load:
+        file_path = base_path / filename
+        if file_path.exists():
+            try:
+                content = file_path.read_text(encoding='utf-8')
+                # 파일 내용을 구분자로 감싸기
+                contents.append(f"\n<reference file=\"{filename}\">\n{content}\n</reference>\n")
+            except Exception:
+                pass
+
+    return ''.join(contents)
+
+
+def format_skill_hints(detected_skills: List[Tuple[str, str, str]], prompt: str) -> str:
+    """
+    스킬 힌트를 포맷팅 + References 파일 로드
+
+    Args:
+        detected_skills: 감지된 스킬 목록
+        prompt: 사용자 프롬프트 (옵션 감지용)
+
+    Returns:
+        Plain text 형태의 스킬 힌트 + References 내용 (Claude에게 주입)
     """
     if not detected_skills:
         return ""
@@ -177,6 +310,13 @@ def format_skill_hints(detected_skills: List[Tuple[str, str, str]]) -> str:
             lines.append(hint)
             if subskill:
                 lines.append(subskill)
+
+            # References 파일 자동 로드
+            option = detect_option(prompt, skill_name)
+            ref_content = load_reference_files(skill_name, option)
+            if ref_content:
+                lines.append(f"\n[AUTO-LOADED] {skill_name} references ({option}):")
+                lines.append(ref_content)
 
     if passive:
         # Passive 스킬은 간략하게
@@ -201,17 +341,26 @@ def main():
         if not prompt or len(prompt) < 3:
             sys.exit(0)
 
-        # 슬래시 명령어는 이미 스킬이 활성화되므로 스킵
+        # 슬래시 명령어 처리 (스킬 활성화됨 + references 자동 로드)
         if prompt.strip().startswith('/'):
+            slash_cmd = prompt.strip().split()[0].lower()
+            skill_name = slash_cmd.lstrip('/')
+
+            if skill_name in SKILL_REFERENCES:
+                option = detect_option(prompt, skill_name)
+                ref_content = load_reference_files(skill_name, option)
+                if ref_content:
+                    print(f"[AUTO-LOADED] {skill_name} references ({option}):")
+                    print(ref_content)
             sys.exit(0)
 
-        # 스킬 감지
+        # 키워드 기반 스킬 감지
         detected = detect_skills(prompt)
 
         if detected:
-            hints = format_skill_hints(detected)
+            hints = format_skill_hints(detected, prompt)
             if hints:
-                print(hints)  # stdout으로 Claude에게 주입
+                print(hints)  # stdout으로 Claude에게 주입 (References 포함)
 
     except json.JSONDecodeError:
         pass
