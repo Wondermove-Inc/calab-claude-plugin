@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-Subagent Tracker Hook - 서브에이전트 사용 추적
+Subagent Tracker Hook - 서브에이전트 사용 추적 + 산출물 경로 자동 주입
 
 트리거: SubagentStart, SubagentStop 이벤트
-동작: 서브에이전트 사용 로깅, 통계 수집
+동작:
+1. 서브에이전트 사용 로깅, 통계 수집
+2. SubagentStart 시 필수 산출물 경로를 Claude 컨텍스트에 주입 (핵심)
 
 공식 Claude Code Hook Input 필드 (v2.0.42+ / v2.0.43+):
 
@@ -37,6 +39,98 @@ STATE_PATH = PROJECT_ROOT / '.claude-state'
 HOME_STATE_PATH = Path.home() / '.claude' / 'state'
 
 
+# 에이전트별 필수 산출물 경로 (SubagentStart 시 주입)
+# {feature}는 현재 작업 중인 기능명으로 대체됨
+AGENT_REQUIRED_ARTIFACTS = {
+    'calab-plugin:planner-phase': {
+        'name': 'PRD 및 브레인스토밍',
+        'paths': [
+            '.claude/docs/active/{feature}/01-brainstorm.md',
+            '.claude/docs/active/{feature}/02-PRD.md'
+        ],
+        'description': '기능 기획 문서를 생성합니다.'
+    },
+    'calab-plugin:design': {
+        'name': '아키텍처 및 ERD',
+        'paths': [
+            '.claude/docs/active/{feature}/03-architecture.md',
+            '.claude/docs/active/{feature}/04-ERD.md'
+        ],
+        'description': '설계 문서를 생성합니다.'
+    },
+    'calab-plugin:planner-task': {
+        'name': 'Task 분해 및 Worktree',
+        'paths': [
+            '.claude/docs/active/{feature}/05-tasks.md',
+            '.claude-state/worktree.json'
+        ],
+        'description': 'Task 분해 문서와 작업 트리를 생성합니다.'
+    },
+    'calab-plugin:dev-executor': {
+        'name': '소스코드 및 테스트',
+        'paths': [
+            '소스 파일 (기능에 따라 다름)',
+            '테스트 파일 (기능에 따라 다름)'
+        ],
+        'description': 'TDD 방식으로 코드를 구현합니다.',
+        'update_worktree': True
+    },
+    'calab-plugin:validator': {
+        'name': '검증 보고서',
+        'paths': [
+            '.claude/docs/active/{feature}/validation-report.md'
+        ],
+        'description': '검증 결과를 문서화합니다.'
+    },
+    'calab-plugin:reinforcer': {
+        'name': '보강 보고서',
+        'paths': [
+            '.claude/docs/active/{feature}/reinforcer-report.md'
+        ],
+        'description': '보강 작업 결과를 문서화합니다.'
+    },
+    'calab-plugin:root-cause-finder': {
+        'name': '원인 분석',
+        'paths': [
+            '.claude/problem-solving/active/{problem_id}/analysis.md'
+        ],
+        'description': '근본 원인 분석 결과를 문서화합니다.'
+    },
+    'calab-plugin:bug-fixer': {
+        'name': '버그 수정 보고서',
+        'paths': [
+            '.claude/problem-solving/resolved/{problem_id}/fix-report.md'
+        ],
+        'description': '버그 수정 내용을 문서화합니다.'
+    },
+    'calab-plugin:project-onboarder': {
+        'name': '프로젝트 컨텍스트',
+        'paths': [
+            '.claude/project-context/PROJECT_SUMMARY.md',
+            '.claude/project-context/ARCHITECTURE.md',
+            '.claude/project-context/CODE_PATTERNS.md',
+            '.claude/project-context/CONVENTIONS.md',
+            '.claude/memory/PROJECT_RULES.md'
+        ],
+        'description': '프로젝트 분석 결과를 문서화합니다.'
+    },
+    'calab-plugin:build-error-resolver': {
+        'name': '빌드 오류 해결 보고서',
+        'paths': [
+            '.claude/docs/active/{feature}/build-error-report.md'
+        ],
+        'description': '빌드 오류 해결 과정을 문서화합니다.'
+    },
+    'calab-plugin:qa': {
+        'name': 'QA 보고서',
+        'paths': [
+            '.claude/docs/active/{feature}/qa-report.md'
+        ],
+        'description': 'QA 검증 결과를 문서화합니다.'
+    }
+}
+
+
 def get_state_path() -> Path:
     """상태 저장 경로 결정"""
     if STATE_PATH.exists() or (PROJECT_ROOT / '.claude').exists():
@@ -62,8 +156,73 @@ def save_json(path: Path, data: dict):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+def get_current_feature() -> str:
+    """현재 작업 중인 기능명 추출"""
+    state_path = get_state_path()
+
+    # worktree.json에서 현재 기능명 추출
+    worktree_file = state_path / 'worktree.json'
+    if worktree_file.exists():
+        worktree = load_json(worktree_file)
+        if 'feature' in worktree:
+            return worktree['feature']
+
+    # CURRENT_CONTEXT.md에서 추출 시도
+    context_file = PROJECT_ROOT / '.claude' / 'memory' / 'CURRENT_CONTEXT.md'
+    if context_file.exists():
+        try:
+            content = context_file.read_text(encoding='utf-8')
+            # "Feature: xxx" 또는 "기능: xxx" 패턴 찾기
+            import re
+            match = re.search(r'(?:Feature|기능):\s*(.+)', content)
+            if match:
+                return match.group(1).strip()
+        except:
+            pass
+
+    return 'current-feature'
+
+
+def inject_artifact_requirements(subagent_type: str) -> str:
+    """
+    에이전트 타입에 맞는 필수 산출물 경로를 주입 메시지로 생성
+
+    Returns:
+        stdout으로 출력할 산출물 요구사항 메시지
+    """
+    if subagent_type not in AGENT_REQUIRED_ARTIFACTS:
+        return ''
+
+    artifact_spec = AGENT_REQUIRED_ARTIFACTS[subagent_type]
+    feature = get_current_feature()
+
+    # 경로에서 {feature} 치환
+    paths = [p.replace('{feature}', feature) for p in artifact_spec['paths']]
+
+    lines = [
+        f"\n<artifact-requirements agent=\"{subagent_type}\">",
+        f"## 필수 산출물 (CRITICAL)",
+        f"",
+        f"**{artifact_spec['name']}** - {artifact_spec['description']}",
+        f"",
+        f"### 반드시 생성해야 할 파일:",
+    ]
+
+    for path in paths:
+        lines.append(f"- `{path}`")
+
+    lines.extend([
+        f"",
+        f"⚠️ **산출물 미생성 시 작업 실패로 간주됩니다.**",
+        f"⚠️ **작업 완료 전 반드시 위 파일들을 Write 도구로 생성하세요.**",
+        f"</artifact-requirements>\n"
+    ])
+
+    return '\n'.join(lines)
+
+
 def track_subagent_start(session_id: str, agent_id: str, subagent_type: str, transcript_path: str):
-    """서브에이전트 시작 추적 (v2.0.43+ 필드 사용)"""
+    """서브에이전트 시작 추적 + 산출물 경로 주입 (v2.0.43+ 필드 사용)"""
     state_path = get_state_path()
     stats_file = state_path / 'subagent_stats.json'
     stats = load_json(stats_file)
@@ -99,6 +258,11 @@ def track_subagent_start(session_id: str, agent_id: str, subagent_type: str, tra
     stats['last_start'] = datetime.now().isoformat()
 
     save_json(stats_file, stats)
+
+    # 산출물 경로 주입 (stdout → Claude 컨텍스트에 자동 추가)
+    artifact_msg = inject_artifact_requirements(subagent_type)
+    if artifact_msg:
+        print(artifact_msg)  # stdout으로 Claude에게 주입
 
     # 로그 출력 (stderr로)
     print(f"[SUBAGENT] Started: {subagent_type} (id: {agent_id[:8]}...)", file=sys.stderr)
