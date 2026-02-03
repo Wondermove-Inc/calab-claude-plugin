@@ -28,7 +28,7 @@
 ### 마켓플레이스 등록 (최초 1회)
 
 ```bash
-/plugin marketplace add https://github.com/Wondermove-Inc/calab-claude-plugin.git#marketplace
+/plugin marketplace add https://github.com/Wondermove-Inc/calab-claude-plugin.git#prometheus
 ```
 
 ### 플러그인 설치
