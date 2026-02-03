@@ -16,6 +16,7 @@
   ],
   "skills": [
     "./skills/statusline",
+    "./skills/beads",
     "./skills/help"
   ]
 }

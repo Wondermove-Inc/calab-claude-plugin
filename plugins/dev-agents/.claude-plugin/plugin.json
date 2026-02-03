@@ -1,0 +1,47 @@
+{
+  "name": "dev-agents",
+  "version": "2.0.0",
+  "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우. 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함.",
+  "author": {
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
+  },
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "workflow",
+    "planner",
+    "architect",
+    "coder",
+    "tester",
+    "reviewer",
+    "writer",
+    "code-quality",
+    "solid",
+    "clean-code",
+    "go",
+    "typescript",
+    "react",
+    "python",
+    "code-review",
+    "code-commit"
+  ],
+  "agents": [
+    "./agents/planner.md",
+    "./agents/interviewer.md",
+    "./agents/architect.md",
+    "./agents/designer.md",
+    "./agents/coder.md",
+    "./agents/tester.md",
+    "./agents/reviewer.md",
+    "./agents/writer.md"
+  ],
+  "skills": [
+    "./skills/workflow",
+    "./skills/code-review",
+    "./skills/code-commit",
+    "./skills/help"
+  ]
+}

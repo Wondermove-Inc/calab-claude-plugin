@@ -15,6 +15,7 @@ allowed-tools: Read
 ### 사용자 요청 분석
 사용자 입력에서 도구명을 파악합니다:
 - "statusline" 키워드 → statusline 상세 가이드 출력
+- "beads" 또는 "bd" 키워드 → beads 상세 가이드 출력
 - 키워드 없음 → 도구 목록 출력
 
 ---
@@ -35,6 +36,7 @@ Claude Code 터미널 환경을 개선하는 도구 모음입니다.
 | 도구 | 설명 | 명령어 |
 |------|------|--------|
 | statusline | 터미널 상태바 설치/관리 | `/cli-tools:statusline` |
+| beads | 이슈 트래킹 도구 설치 (macOS) | `/cli-tools:beads` |
 
 ## 도구별 상세 가이드
 
@@ -42,6 +44,7 @@ Claude Code 터미널 환경을 개선하는 도구 모음입니다.
 
 예시:
 - `/cli-tools:help statusline`
+- `/cli-tools:help beads`
 
 **[출력 끝]**
 
@@ -118,6 +121,75 @@ Claude Code 터미널에 상태 정보를 표시하는 statusline을 설치하�
   - Ubuntu: sudo apt install jq
 - bc: 계산용 (대부분 기본 설치됨)
   - Ubuntu: sudo apt install bc
+
+**[출력 끝]**
+
+---
+
+---
+
+## beads 상세 가이드
+
+사용자가 `/cli-tools:help beads`를 입력한 경우 아래 내용을 **그대로** 출력합니다:
+
+---
+**[출력 시작]**
+
+# beads (bd) 도구
+
+Claude Code용 경량 이슈 트래킹 도구입니다. 로컬 `.beads/` 디렉토리에 이슈를 저장합니다.
+
+**기본 모드**: `--stealth` (로컬 전용, Git 동기화 없음)
+
+## 명령어
+
+| 명령어 | 설명 |
+|--------|------|
+| /cli-tools:beads | Beads(bd) 설치 |
+| /cli-tools:beads 삭제 | Beads(bd) 삭제 |
+
+## 주요 CLI 명령어
+
+### 작업 찾기
+| 명령어 | 설명 |
+|--------|------|
+| bd ready | 작업 가능한 이슈 (블로커 없음) |
+| bd list --status=open | 열린 이슈 전체 |
+| bd show <id> | 이슈 상세 보기 |
+
+### 이슈 생성/수정
+| 명령어 | 설명 |
+|--------|------|
+| bd create --title="제목" --type=task --priority=2 | 이슈 생성 |
+| bd update <id> --status=in_progress | 작업 시작 |
+| bd close <id> | 완료 |
+
+### 의존성 및 상태
+| 명령어 | 설명 |
+|--------|------|
+| bd init --stealth | stealth 모드로 초기화 (기본 권장) |
+| bd dep add <issue> <depends-on> | 의존성 추가 |
+| bd blocked | 차단된 이슈 보기 |
+| bd stats | 프로젝트 통계 |
+| bd sync | Git 동기화 (일반 모드만 해당) |
+
+## 이슈 타입
+- task: 일반 작업
+- bug: 버그 수정
+- feature: 새 기능
+
+## 우선순위
+- 0 (P0): Critical
+- 1 (P1): High
+- 2 (P2): Medium (기본값)
+- 3 (P3): Low
+- 4 (P4): Backlog
+
+## 요구사항
+
+- macOS 필수
+- Homebrew 필수
+  - 미설치 시: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
 **[출력 끝]**
 

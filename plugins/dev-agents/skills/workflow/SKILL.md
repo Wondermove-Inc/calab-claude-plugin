@@ -1,0 +1,265 @@
+---
+name: dev-agents:workflow
+description: 멀티 에이전트 워크플로우를 시작합니다. 요청을 분석하고 적절한 에이전트를 조율하여 작업을 수행합니다.
+---
+
+# /dev-agents:workflow 커맨드
+
+멀티 에이전트 워크플로우를 시작합니다.
+
+## 사용법
+
+### 새 워크플로우 시작
+```
+/dev-agents:workflow <작업 요청>
+
+예시:
+/dev-agents:workflow 클러스터 알림 기능 추가
+/dev-agents:workflow 로그인 버그 수정
+/dev-agents:workflow API 응답 성능 최적화
+```
+
+### 중단된 워크플로우 재개
+```
+/dev-agents:workflow --resume <epic-id>
+
+예시:
+/dev-agents:workflow --resume beads-abc123
+```
+
+Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행한 후, 워크플로우를 이어서 진행할 때 사용합니다.
+
+## 워크플로우 단계
+
+### 1단계: 플래너 에이전트 호출
+
+#### 새 워크플로우
+`Task` 도구로 `dev-agents:planner` 에이전트를 호출하세요.
+
+전달할 정보:
+- 사용자 요청 원문
+- 현재 프로젝트 경로
+
+```
+Task (subagent_type: dev-agents:planner, model: opus):
+"사용자 요청: {요청 내용}
+프로젝트: {현재 경로}"
+```
+
+#### 워크플로우 재개 (--resume)
+중단된 워크플로우를 재개할 때는 Epic ID를 전달합니다.
+
+```
+Task (subagent_type: dev-agents:planner, model: opus):
+"워크플로우 재개: {epic-id}
+프로젝트: {현재 경로}"
+```
+
+Planner가 이슈 상태를 확인하고 중단된 Gate부터 재개합니다.
+
+### 2단계: 플래너가 수행하는 작업
+1. 요청 분석 및 작업 분류
+2. beads 이슈 등록 (Epic + Sub-tasks)
+3. **실행 계획 미리보기** (시각적 프로세스 표시)
+4. **초기 계획 승인** (Gate 0)
+5. 에이전트 호출 및 검증 게이트 통과
+
+### 실행 계획 미리보기 예시
+Gate 0에서 사용자는 다음과 같은 시각적 실행 계획을 확인합니다:
+```
+┌────────────────────────────────────────────────┐
+│ 1. Interviewer  │ Requirements Clarification   │
+├────────────────────────────────────────────────┤
+│ 2. Architect    │ Technical Design             │
+├────────────────────────────────────────────────┤
+│ 3. Tester       │ Write Tests (TDD-RED)        │
+├────────────────────────────────────────────────┤
+│ 4. Coder        │ Implementation (TDD-GREEN)   │
+├────────────────────────────────────────────────┤
+│ 5. Reviewer     │ Code Review                  │
+└────────────────────────────────────────────────┘
+
+스킵: Designer (UI 변경 없음)
+```
+
+### 3단계: 검증 게이트 (Quality Gates)
+
+```
+Gate 0: 초기 계획 승인
+    ↓
+Interviewer → spec.md
+    ↓
+Gate 1: 요구사항 검증 ← 사용자 확인
+    ↓
+Designer/Architect → ux-scenario.md, design.md
+    ↓
+Gate 2: 설계 검증 ← 사용자 확인
+    ↓
+Coder → Tester → Reviewer
+    ↓
+Gate 3: 최종 검증 ← 사용자 확인
+```
+
+| Gate | 검증 대상 | 산출물 |
+|------|----------|--------|
+| Gate 0 | 작업 계획 | - |
+| Gate 1 | 요구사항 | `docs/{앱명}/{기능명}/spec.md` |
+| Gate 2 | 설계 | `ux-scenario.md`, `design.md` |
+| Gate 3 | 구현 결과 | 코드, 테스트, 리뷰, `test.md` |
+
+### 4단계: 에이전트 실행
+플래너가 필요에 따라 다음 에이전트들을 호출:
+- `dev-agents:interviewer`: 요구사항 명확화 (**필수**, 단순 버그/중간 작업 제외)
+- `dev-agents:architect`: 설계 필요 시
+- `dev-agents:designer`: UI/UX 디자인 필요 시 (shadcn/ui)
+- `dev-agents:coder`: 구현 필요 시
+- `dev-agents:tester`: 테스트 필요 시
+- `dev-agents:reviewer`: 리뷰 필요 시
+- `dev-agents:writer`: 문서 2개 이상 생성 시
+
+### 5단계: 완료 보고
+모든 작업 완료 후 플래너가 결과 보고
+
+## Git Worktree 브랜치 전략
+
+복잡한 작업은 Git Worktree를 사용하여 메인 디렉토리와 격리합니다.
+
+### 디렉토리 구조
+```
+project/
+├── tree/                    # Worktree 루트
+│   ├── feature-xxx/         # 기능 A 작업
+│   └── bugfix-yyy/          # 버그 B 작업
+├── .git/
+└── (메인 작업 디렉토리)
+```
+
+### 브랜치 네이밍 규칙
+| 유형 | 브랜치명 | Worktree 경로 |
+|------|----------|---------------|
+| 새 기능 | `plan/feature-xxx` | `tree/feature-xxx/` |
+| 버그 수정 | `plan/bugfix-xxx` | `tree/bugfix-xxx/` |
+| 리팩토링 | `plan/refactor-xxx` | `tree/refactor-xxx/` |
+
+### 워크플로우
+```
+1. Planner: Worktree 생성 결정
+   ↓
+2. git worktree add tree/{name} -b plan/{name}
+   ↓
+3. Coder/Tester: tree/{name}/ 에서 작업
+   ↓
+4. 완료 후: 병합 또는 삭제
+   - 성공: git merge plan/{name}
+   - 실패: git worktree remove --force tree/{name}
+```
+
+### 적용 기준
+| 작업 유형 | Worktree | 이유 |
+|----------|----------|------|
+| 새 기능 구현 | ✓ 사용 | 격리 필요, 롤백 용이 |
+| 복잡한 버그 | ✓ 사용 | 안전한 실험 가능 |
+| 단순 수정 | ✗ 불필요 | 오버헤드 |
+| 문서 작업 | ✗ 불필요 | 충돌 위험 낮음 |
+
+## 병렬 처리
+
+### 다중 /workflow 동시 실행
+여러 `/dev-agents:workflow` 요청은 독립적으로 병렬 실행됩니다.
+각 워크플로우는 별도 Worktree에서 격리되어 작업합니다.
+
+### 단일 요청 내 다중 작업
+```
+/dev-agents:workflow "A 기능 추가, B 버그 수정"
+```
+- 독립적 작업: 병렬 진행 (각각 별도 Worktree)
+- 의존적 작업: 순차 진행 (동일 Worktree)
+
+### Worktree 정리
+작업 완료 후 Planner가 Worktree를 정리합니다.
+상세 프로세스는 `agents/planner.md`의 "Worktree 정리" 섹션 참조.
+
+## 에이전트 호출 규칙
+
+**중요: 모든 Task 호출은 백그라운드로 실행합니다.**
+
+- 모든 Task 호출 시 `run_in_background: true` 사용
+- `TaskOutput` 도구로 결과 확인 (timeout 지정 권장)
+- 여러 독립적인 에이전트는 동시에 백그라운드로 실행 가능
+
+### 단일 에이전트 호출
+```
+Task (subagent_type: dev-agents:planner, model: opus, run_in_background: true):
+"사용자 요청: {요청 내용}"
+```
+
+결과 확인:
+```
+TaskOutput (task_id: {반환된 task_id}, block: true, timeout: 300000)
+```
+
+### 병렬 에이전트 호출 (독립 작업)
+단일 메시지에서 여러 Task 도구를 동시에 호출합니다:
+```
+Task (subagent_type: dev-agents:architect, model: opus, run_in_background: true):
+"bd-xxx 설계 수행. bd show로 상세 확인."
+
+Task (subagent_type: dev-agents:designer, model: opus, run_in_background: true):
+"bd-yyy UX 설계 수행. bd show로 상세 확인."
+```
+
+모든 에이전트 완료 대기:
+```
+TaskOutput (task_id: {architect_task_id}, block: true, timeout: 300000)
+TaskOutput (task_id: {designer_task_id}, block: true, timeout: 300000)
+```
+
+## 이슈 작성 규칙
+
+**중요: 모든 에이전트는 작업 완료 시 이슈에 상세 내용을 작성해야 합니다.**
+
+### 이슈 업데이트 명령어
+```bash
+# 상세 내용 작성 (마크다운 지원)
+bd update <issue-id> --description "$(cat <<'EOF'
+## 작업 완료
+
+### 요약
+[작업 요약]
+
+### 상세 내용
+[상세 내용]
+
+### 산출물
+- [파일 경로]
+EOF
+)"
+```
+
+### 에이전트별 작성 내용
+
+| 에이전트 | 필수 작성 내용 |
+|----------|---------------|
+| `interviewer` | 인터뷰 질문/답변 요약, 핵심 결정사항, 스펙 문서 경로 |
+| `architect` | 설계 결정사항, 컴포넌트 구조, 설계 문서 경로 |
+| `designer` | UX 플로우, 컴포넌트 목록, UX 시나리오 문서 경로 |
+| `coder` | 변경 파일 목록, 구현 내용 요약, 빌드 결과 |
+| `tester` | 테스트 케이스 목록, 커버리지, 테스트 보고서 경로 |
+| `reviewer` | 리뷰 피드백, 평가 점수, 승인/반려 결정 |
+
+### 작성 원칙
+
+1. **완결성**: 이슈만 보고 작업 내용을 파악할 수 있어야 함
+2. **추적성**: 관련 문서, 파일 경로 명시
+3. **결정사항 기록**: 주요 의사결정과 근거 포함
+4. **다음 단계**: 후속 작업이나 권장사항 명시
+
+## 토큰 효율성
+
+- 에이전트 호출 시 최소 컨텍스트만 전달
+- beads 이슈 ID로 상세 정보 참조
+- 불필요한 단계는 자동 스킵
+
+## 지금 시작하세요
+
+플래너 에이전트를 호출하여 워크플로우를 시작합니다.
