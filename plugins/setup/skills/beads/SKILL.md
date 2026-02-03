@@ -1,10 +1,10 @@
 ---
-name: cli-tools:beads
+name: setup:beads
 description: Beads(bd) 이슈 트래킹 도구 설치 및 관리. macOS 전용 (Homebrew 사용)
 allowed-tools: Bash, Read, AskUserQuestion
 ---
 
-# /cli-tools:beads - Beads 설치 및 관리
+# /setup:beads - Beads 설치 및 관리
 
 ## 설명
 Beads(bd)는 Claude Code용 경량 이슈 트래킹 도구입니다. 로컬 `.beads/` 디렉토리에 이슈를 저장합니다.
@@ -12,9 +12,9 @@ Beads(bd)는 Claude Code용 경량 이슈 트래킹 도구입니다. 로컬 `.be
 **기본 모드**: `--stealth` (로컬 전용, Git 동기화 없음)
 
 ## 사용법
-- `/cli-tools:beads` - Beads(bd) 설치
-- `/cli-tools:beads 삭제` - Beads(bd) 삭제
-- `/cli-tools:beads uninstall` - Beads(bd) 삭제
+- `/setup:beads` - Beads(bd) 설치
+- `/setup:beads 삭제` - Beads(bd) 삭제
+- `/setup:beads uninstall` - Beads(bd) 삭제
 
 ## 실행 방식
 

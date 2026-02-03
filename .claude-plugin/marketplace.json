@@ -31,11 +31,11 @@
       "tags": ["research", "problem-solving", "rca"]
     },
     {
-      "name": "cli-tools",
-      "source": "./plugins/cli-tools",
-      "description": "Claude Code CLI 환경 설정 (statusline)",
+      "name": "setup",
+      "source": "./plugins/setup",
+      "description": "Claude Code 환경 설정 (statusline, beads)",
       "category": "utilities",
-      "tags": ["cli", "terminal", "statusline", "config"]
+      "tags": ["setup", "install", "statusline", "beads"]
     },
     {
       "name": "docs",

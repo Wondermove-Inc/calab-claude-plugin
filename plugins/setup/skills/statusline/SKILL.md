@@ -1,16 +1,16 @@
 ---
-name: cli-tools:statusline
+name: setup:statusline
 description: Claude Code statusline 설치. 터미널에 모델명, 컨텍스트 사용량, Git 상태를 표시합니다.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
-# /cli-tools:statusline - Statusline 설치
+# /setup:statusline - Statusline 설치
 
 ## 설명
 Claude Code 터미널에 상태 정보를 표시하는 statusline을 설치합니다.
 
 ## 사용법
-- `/cli-tools:statusline` - 플러그인 statusline 설치
+- `/setup:statusline` - 플러그인 statusline 설치
 
 ## Statusline 표시 정보
 ```

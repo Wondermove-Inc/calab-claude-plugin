@@ -1,14 +1,14 @@
-# cli-tools 플러그인
+# setup 플러그인
 
-> Claude Code CLI 환경 설정 도구 모음
+> Claude Code 환경 설정 도구 모음
 
 ## 스킬 목록
 
 | 스킬 | 설명 |
 |------|------|
-| `/cli-tools:statusline` | Statusline 설정 및 설치 |
-| `/cli-tools:beads` | Beads(bd) 설치 가이드 |
-| `/cli-tools:help` | 플러그인 도움말 |
+| `/setup:statusline` | Statusline 설정 및 설치 |
+| `/setup:beads` | Beads(bd) 설치 가이드 |
+| `/setup:help` | 플러그인 도움말 |
 
 ## 도구 목록
 
@@ -67,7 +67,7 @@ bd close <id>         # 작업 완료
 ## 플러그인 구조
 
 ```
-plugins/cli-tools/
+plugins/setup/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── scripts/
@@ -76,6 +76,7 @@ plugins/cli-tools/
 │   └── setup-beads.sh
 ├── skills/
 │   ├── statusline/SKILL.md
+│   ├── beads/SKILL.md
 │   └── help/SKILL.md
 └── README.md
 ```

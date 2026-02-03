@@ -1,7 +1,7 @@
 {
-  "name": "cli-tools",
+  "name": "setup",
   "version": "1.0.0",
-  "description": "Claude Code CLI 환경 설정 - statusline, 테마, 단축키",
+  "description": "Claude Code 환경 설정 - statusline, beads 설치 및 관리",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -9,10 +9,10 @@
   "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
-    "cli",
-    "terminal",
+    "setup",
+    "install",
     "statusline",
-    "configuration"
+    "beads"
   ],
   "skills": [
     "./skills/statusline",

@@ -1,14 +1,14 @@
 ---
-name: cli-tools:help
-description: cli-tools 플러그인 사용법을 안내합니다. 도구별 상세 가이드를 제공합니다.
+name: setup:help
+description: setup 플러그인 사용법을 안내합니다. 도구별 상세 가이드를 제공합니다.
 allowed-tools: Read
 ---
 
-# /cli-tools:help - 플러그인 도움말
+# /setup:help - 플러그인 도움말
 
 ## 사용법
-- `/cli-tools:help` - 지원 도구 목록 표시
-- `/cli-tools:help {도구명}` - 해당 도구의 상세 가이드
+- `/setup:help` - 지원 도구 목록 표시
+- `/setup:help {도구명}` - 해당 도구의 상세 가이드
 
 ## 실행 방식
 
@@ -22,12 +22,12 @@ allowed-tools: Read
 
 ## 도구 목록 (기본 출력)
 
-사용자가 `/cli-tools:help`만 입력한 경우 아래 내용을 **그대로** 출력합니다:
+사용자가 `/setup:help`만 입력한 경우 아래 내용을 **그대로** 출력합니다:
 
 ---
 **[출력 시작]**
 
-# cli-tools 플러그인 (v1.0.0)
+# setup 플러그인 (v1.0.0)
 
 Claude Code 터미널 환경을 개선하는 도구 모음입니다.
 
@@ -35,16 +35,16 @@ Claude Code 터미널 환경을 개선하는 도구 모음입니다.
 
 | 도구 | 설명 | 명령어 |
 |------|------|--------|
-| statusline | 터미널 상태바 설치/관리 | `/cli-tools:statusline` |
-| beads | 이슈 트래킹 도구 설치 (macOS) | `/cli-tools:beads` |
+| statusline | 터미널 상태바 설치/관리 | `/setup:statusline` |
+| beads | 이슈 트래킹 도구 설치 (macOS) | `/setup:beads` |
 
 ## 도구별 상세 가이드
 
-`/cli-tools:help {도구명}`으로 상세 가이드를 확인하세요.
+`/setup:help {도구명}`으로 상세 가이드를 확인하세요.
 
 예시:
-- `/cli-tools:help statusline`
-- `/cli-tools:help beads`
+- `/setup:help statusline`
+- `/setup:help beads`
 
 **[출력 끝]**
 
@@ -54,7 +54,7 @@ Claude Code 터미널 환경을 개선하는 도구 모음입니다.
 
 ## statusline 상세 가이드
 
-사용자가 `/cli-tools:help statusline`을 입력한 경우 아래 내용을 **그대로** 출력합니다:
+사용자가 `/setup:help statusline`을 입력한 경우 아래 내용을 **그대로** 출력합니다:
 
 ---
 **[출력 시작]**
@@ -67,9 +67,9 @@ Claude Code 터미널에 상태 정보를 표시하는 statusline을 설치하�
 
 | 명령어 | 설명 |
 |--------|------|
-| /cli-tools:statusline | 플러그인 statusline 설치 |
-| /cli-tools:statusline 롤백 | 이전 설정으로 복원 |
-| /cli-tools:statusline rollback | 이전 설정으로 복원 |
+| /setup:statusline | 플러그인 statusline 설치 |
+| /setup:statusline 롤백 | 이전 설정으로 복원 |
+| /setup:statusline rollback | 이전 설정으로 복원 |
 
 ## 표시 예시
 
@@ -130,7 +130,7 @@ Claude Code 터미널에 상태 정보를 표시하는 statusline을 설치하�
 
 ## beads 상세 가이드
 
-사용자가 `/cli-tools:help beads`를 입력한 경우 아래 내용을 **그대로** 출력합니다:
+사용자가 `/setup:help beads`를 입력한 경우 아래 내용을 **그대로** 출력합니다:
 
 ---
 **[출력 시작]**
@@ -145,8 +145,8 @@ Claude Code용 경량 이슈 트래킹 도구입니다. 로컬 `.beads/` 디렉�
 
 | 명령어 | 설명 |
 |--------|------|
-| /cli-tools:beads | Beads(bd) 설치 |
-| /cli-tools:beads 삭제 | Beads(bd) 삭제 |
+| /setup:beads | Beads(bd) 설치 |
+| /setup:beads 삭제 | Beads(bd) 삭제 |
 
 ## 주요 CLI 명령어
 
