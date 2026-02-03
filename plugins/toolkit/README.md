@@ -1,6 +1,6 @@
 # Toolkit Plugin
 
-> **리서치 및 문제 해결 도구**: 5-10회 자동 검색 + 체계적 문제 분석 (5 Whys, RCA)
+> **리서치, 문제 해결, 코드 리뷰/커밋, DB 작업 도구**
 
 ---
 
@@ -12,6 +12,7 @@
 | **버그 발생** | 원인 파악 어려움 | 5 Whys, RCA 방법론 적용 | `/toolkit:solve` |
 | **회귀 버그** | 변경 지점 찾기 어려움 | 이분 탐색 방식 | `/toolkit:solve --binary` |
 | **복잡한 문제** | 다중 원인 파악 어려움 | Fishbone 분석 | `/toolkit:solve --fishbone` |
+| **DB 작업 필요** | 쿼리 작성 부담 | 인터뷰 기반 MongoDB 작업 | `/toolkit:mongodb` |
 
 ---
 
@@ -38,6 +39,22 @@
 | `/toolkit:solve-log` | - | "분석 로그 보여줘" | 진행 중 문제 확인 |
 | `/toolkit:solve-history [키워드]` | `--recent`, `--keyword` | "해결 이력 보여줘" | 과거 사례 검색 |
 | `/toolkit:solve-report [id]` | `--draft`, `--summary`, `--full` | "보고서 만들어줘" | 해결 보고서 생성 |
+
+### 데이터베이스 (MongoDB)
+
+| 명령어 | 자연어 | 설명 |
+|--------|--------|------|
+| `/toolkit:mongodb` | "DB 작업해줘" | 인터뷰로 접속 정보 수집 후 작업 |
+| `/toolkit:mongodb [작업]` | "사용자 조회해줘" | 작업 힌트와 함께 시작 |
+
+### Git 도구 (Code Review & Commit)
+
+| 명령어 | 자연어 | 설명 |
+|--------|--------|------|
+| `/toolkit:code-review` | "코드 리뷰해줘" | 최근 변경사항 리뷰 |
+| `/toolkit:code-review [범위]` | "최근 3개 커밋 리뷰해줘" | 특정 범위 리뷰 |
+| `/toolkit:code-commit` | "커밋해줘" | 변경사항 분석 후 커밋 메시지 생성 |
+| `/toolkit:code-commit [힌트]` | "인증 수정 커밋해줘" | 힌트 기반 커밋 메시지 생성 |
 
 ---
 
@@ -200,10 +217,16 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
 |------|------------|------|
 | `research` | 조사/리서치 요청 시 | 다중 검색 + 핵심 요약 |
 | `solve` | 에러/버그 언급 시 | 5 Whys, RCA 방법론 자동 적용 |
+| `mongodb` | DB 작업 요청 시 | 인터뷰 기반 MongoDB 쿼리 실행 |
+| `code-review` | 코드 리뷰 요청 시 | 변경사항 분석 및 개선점 제안 |
+| `code-commit` | 커밋 요청 시 | 변경사항 분석 및 커밋 메시지 생성 |
 
 **자동 적용 내용:**
 - "~에 대해 알아봐줘" → research 스킬 활성화
 - "에러가 발생해요" → solve 스킬 활성화
+- "DB에서 조회해줘" → mongodb 스킬 활성화
+- "코드 리뷰해줘" → code-review 스킬 활성화
+- "커밋해줘" → code-commit 스킬 활성화
 - 과거 유사 문제 자동 검색 및 참조
 
 ---
@@ -259,6 +282,9 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
   - `solve-report/` - 해결 보고서 생성
   - `solve-log/` - 진행 상황 확인
   - `solve-history/` - 과거 이력 조회
+  - `mongodb/` - MongoDB 데이터베이스 작업
+  - `code-review/` - 코드 리뷰 및 개선점 제안
+  - `code-commit/` - 변경사항 분석 및 커밋
   - `help/` - 플러그인 도움말
 - **skills/solve/methods/**:
   - five-whys.md

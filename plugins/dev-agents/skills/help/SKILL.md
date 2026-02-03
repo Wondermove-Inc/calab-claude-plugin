@@ -13,9 +13,9 @@ user-invocable: true
 | 명령어 | 설명 |
 |--------|------|
 | `/dev-agents:workflow <요청>` | 멀티 에이전트 워크플로우 시작 |
-| `/dev-agents:code-review` | 코드 리뷰 수행 |
-| `/dev-agents:code-commit` | 변경사항 분석 및 커밋 |
 | `/dev-agents:help` | 도움말 표시 |
+
+> **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
 
 ## 에이전트 목록
 
@@ -98,19 +98,6 @@ user-invocable: true
 /dev-agents:workflow 인증 모듈 클린 아키텍처로 리팩토링
 ```
 
-### 코드 리뷰
-```
-/dev-agents:code-review
-/dev-agents:code-review HEAD~3..HEAD
-/dev-agents:code-review src/service.ts
-```
-
-### 커밋 생성
-```
-/dev-agents:code-commit
-/dev-agents:code-commit "인증 기능 수정"
-```
-
 ## Quality Gates
 
 각 단계 완료 시 사용자 승인을 요청합니다:
@@ -126,22 +113,3 @@ user-invocable: true
 - Epic + Sub-task 구조
 - 에이전트별 라벨 자동 지정
 - 진행 상황 실시간 업데이트
-
-## 커밋 메시지 형식
-
-```
-[type]: 간단 명료한 제목
-
-- 주요 변경사항 1
-- 주요 변경사항 2
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### Type 종류
-- `feature`: 새로운 기능 추가
-- `fix`: 버그 수정
-- `refactor`: 코드 리팩토링
-- `test`: 테스트 코드 추가/수정
-- `docs`: 문서 수정
-- `chore`: 기타 변경사항

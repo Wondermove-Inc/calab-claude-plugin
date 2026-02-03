@@ -1,12 +1,10 @@
 ---
-name: dev-agents:code-review
+name: toolkit:code-review
 description: 최근 변경사항을 리뷰하고 개선점을 제안합니다
 user-invocable: true
 ---
 
 # Code Review Command
-
-> **역할 구분**: 이 스킬은 **범용 코드 리뷰**용입니다. 워크플로우 내 설계/코드 리뷰는 `dev-agents:reviewer` 에이전트를 사용하세요.
 
 최근 변경된 코드를 분석하여 코드 품질, 설계 패턴, 잠재적 이슈를 검토하고 개선점을 제안합니다.
 
@@ -102,19 +100,19 @@ user-invocable: true
 
 ### 기본 사용
 ```
-/dev-agents:code-review
+/toolkit:code-review
 ```
 → 최근 커밋과 현재 변경사항 리뷰
 
 ### 특정 커밋 범위 지정
 ```
-/dev-agents:code-review HEAD~3..HEAD
+/toolkit:code-review HEAD~3..HEAD
 ```
 → 최근 3개 커밋 리뷰
 
 ### 특정 파일만 리뷰
 ```
-/dev-agents:code-review src/service.ts src/utils.ts
+/toolkit:code-review src/service.ts src/utils.ts
 ```
 → 지정된 파일만 리뷰
 

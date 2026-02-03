@@ -80,6 +80,29 @@ Toolkit 플러그인의 모든 명령어와 사용 예시를 안내합니다.
       옵션: --draft, --summary, --full
       예시: /toolkit:solve-report PROB-001 --full
 
+📌 데이터베이스 (MongoDB)
+───────────────────────────────────────────────────────────────
+  /toolkit:mongodb
+      MongoDB 작업 시작 (인터뷰로 접속 정보 수집)
+      예시: /toolkit:mongodb
+
+  /toolkit:mongodb [작업 설명]
+      작업 힌트와 함께 시작
+      예시: /toolkit:mongodb 최근 가입한 사용자 조회
+            /toolkit:mongodb 만료된 세션 삭제
+
+📌 Git 도구 (Code Review & Commit)
+───────────────────────────────────────────────────────────────
+  /toolkit:code-review
+      최근 변경사항 리뷰
+      예시: /toolkit:code-review
+            /toolkit:code-review HEAD~3..HEAD
+
+  /toolkit:code-commit
+      변경사항 분석 후 커밋 메시지 생성
+      예시: /toolkit:code-commit
+            /toolkit:code-commit "인증 기능 수정"
+
 🔄 자연어 사용 예시
 ───────────────────────────────────────────────────────────────
   "OAuth에 대해 알아봐줘"        → /toolkit:research OAuth
@@ -87,6 +110,9 @@ Toolkit 플러그인의 모든 명령어와 사용 예시를 안내합니다.
   "이 에러 해결해줘"             → /toolkit:solve [에러 내용]
   "근본 원인 분석해줘"           → /toolkit:solve [문제] --rca
   "해결 이력 보여줘"             → /toolkit:solve-history
+  "DB에서 사용자 조회해줘"       → /toolkit:mongodb 사용자 조회
+  "코드 리뷰해줘"                → /toolkit:code-review
+  "커밋해줘"                     → /toolkit:code-commit
 
 📊 문제 해결 방법론
 ───────────────────────────────────────────────────────────────

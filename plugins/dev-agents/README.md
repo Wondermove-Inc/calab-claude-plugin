@@ -1,7 +1,6 @@
 # dev-agents 플러그인
 
 > 멀티 에이전트 오케스트레이션: 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우
-> Clean/Hexagonal Architecture 가이드, 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함
 
 ---
 
@@ -14,7 +13,7 @@ plugins/dev-agents/
 │   ├── architecture/ # 아키텍처 가이드 (Clean, Hexagonal)
 │   └── ...           # 코딩, TDD, Worktree, Gate
 ├── templates/        # 설계 문서 템플릿
-└── skills/           # 스킬 (workflow, code-review, code-commit, help)
+└── skills/           # 스킬 (workflow, help)
 ```
 
 ### 아키텍처 가이드
@@ -54,9 +53,9 @@ plugins/dev-agents/
 | 명령어 | 설명 |
 |--------|------|
 | `/dev-agents:workflow <요청>` | 멀티 에이전트 워크플로우 시작 |
-| `/dev-agents:code-review` | 코드 리뷰 수행 |
-| `/dev-agents:code-commit` | 변경사항 분석 및 커밋 |
 | `/dev-agents:help` | 도움말 표시 |
+
+> **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
 
 ---
 
@@ -205,19 +204,6 @@ flowchart TB
 ### 복합 작업
 ```
 /dev-agents:workflow "결제 API 추가, 결제 내역 화면 구현"
-```
-
-### 코드 리뷰
-```
-/dev-agents:code-review
-/dev-agents:code-review HEAD~3..HEAD
-/dev-agents:code-review src/service.ts
-```
-
-### 커밋 생성
-```
-/dev-agents:code-commit
-/dev-agents:code-commit "인증 기능 수정"
 ```
 
 ---

@@ -1,5 +1,5 @@
 ---
-name: dev-agents:code-commit
+name: toolkit:code-commit
 description: 현재 변경사항을 분석하고 커밋 메시지를 생성합니다
 user-invocable: true
 ---
@@ -54,13 +54,13 @@ user-invocable: true
 
 ### 기본 사용
 ```
-/dev-agents:code-commit
+/toolkit:code-commit
 ```
 → 현재 변경사항 분석 후 커밋 메시지 생성
 
 ### 메시지 힌트 제공
 ```
-/dev-agents:code-commit "인증 기능 수정"
+/toolkit:code-commit "인증 기능 수정"
 ```
 → 힌트를 바탕으로 커밋 메시지 생성
 
