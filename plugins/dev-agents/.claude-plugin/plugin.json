@@ -1,7 +1,7 @@
 {
   "name": "dev-agents",
-  "version": "2.0.0",
-  "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우. 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함.",
+  "version": "2.1.0",
+  "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우. Clean/Hexagonal Architecture 가이드, 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -21,6 +21,9 @@
     "code-quality",
     "solid",
     "clean-code",
+    "clean-architecture",
+    "hexagonal-architecture",
+    "ports-and-adapters",
     "go",
     "typescript",
     "react",

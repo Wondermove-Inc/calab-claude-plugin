@@ -6,15 +6,15 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "2.5.0"
+    "version": "2.6.0"
   },
   "plugins": [
     {
-      "name": "dev-process",
-      "source": "./plugins/dev-process",
-      "description": "개발 프로세스 자동화 + JIRA 연동 + QA 테스트 통합",
+      "name": "dev-agents",
+      "source": "./plugins/dev-agents",
+      "description": "멀티 에이전트 워크플로우 + Clean/Hexagonal Architecture 가이드",
       "category": "development",
-      "tags": ["workflow", "jira", "qa", "automation"]
+      "tags": ["multi-agent", "workflow", "architecture", "clean-architecture", "hexagonal"]
     },
     {
       "name": "onboarding",
@@ -22,13 +22,6 @@
       "description": "프로젝트 분석 및 온보딩 자동화",
       "category": "productivity",
       "tags": ["onboarding", "analysis", "context"]
-    },
-    {
-      "name": "architecture",
-      "source": "./plugins/architecture",
-      "description": "클린 아키텍처 설계 및 검증",
-      "category": "development",
-      "tags": ["architecture", "clean-architecture", "design"]
     },
     {
       "name": "toolkit",

@@ -32,9 +32,24 @@ permissionMode: default
 
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
+| **Clean Architecture** | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
+| **Hexagonal Architecture** | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
 | Git Worktree | `guides/worktree.md` | 격리 전략, 작업 규칙 |
 | 언어별 가이드 | `guides/language-guide.md` | 코딩 원칙, 에러 처리 |
+
+### 아키텍처 준수 (필수)
+
+코드 작성 전 프로젝트의 아키텍처 패턴을 확인하고 반드시 준수하세요:
+
+| 감지 기준 | 패턴 | 참조 가이드 |
+|----------|------|------------|
+| `internal/domain/`, `internal/application/` | Clean Architecture | `guides/architecture/clean-architecture.md` |
+| `internal/core/`, `internal/adapter/` | Hexagonal Architecture | `guides/architecture/hexagonal-architecture.md` |
+| `src/domain/`, `src/application/` | Clean Architecture (TS) | `guides/architecture/clean-architecture.md` |
+| `src/core/`, `src/adapters/` | Hexagonal Architecture (TS) | `guides/architecture/hexagonal-architecture.md` |
+
+**의존성 규칙 위반 금지**: 내부 레이어가 외부 레이어를 import하면 안 됩니다.
 
 ## 코딩 원칙
 

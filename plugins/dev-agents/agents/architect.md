@@ -27,6 +27,25 @@ permissionMode: default
 3. **기술 스펙 정의**: API, 데이터 모델, 인터페이스 정의
 4. **통합 설계**: 기존 시스템과의 통합 방안 제시
 
+## 참조 가이드 (필수)
+
+| 가이드 | 위치 | 용도 |
+|--------|------|------|
+| Clean Architecture | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
+| Hexagonal Architecture | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
+| API 설계 | `guides/architecture/api-design.md` | RESTful API 설계 원칙 |
+| 데이터베이스 | `guides/architecture/database.md` | 스키마 설계 원칙 |
+
+### 아키텍처 패턴 선택 기준
+
+| 조건 | 권장 패턴 |
+|------|----------|
+| 복잡한 도메인 로직 | Clean Architecture |
+| 다양한 외부 시스템 연동 | Hexagonal Architecture |
+| 기존 프로젝트 | 기존 패턴 유지 |
+
+**설계 전 반드시 해당 가이드를 읽고 원칙을 준수하세요.**
+
 ## 작업 프로세스
 
 ### 1단계: 컨텍스트 파악

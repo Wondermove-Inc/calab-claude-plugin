@@ -1,7 +1,7 @@
 # dev-agents 플러그인
 
 > 멀티 에이전트 오케스트레이션: 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우
-> 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함
+> Clean/Hexagonal Architecture 가이드, 코딩 원칙, 코드 리뷰, 커밋 워크플로우 포함
 
 ---
 
@@ -10,9 +10,21 @@
 ```
 plugins/dev-agents/
 ├── agents/           # 8개 에이전트 정의
-├── guides/           # 공통 가이드 (코딩, TDD, Worktree, Gate)
+├── guides/           # 공통 가이드
+│   ├── architecture/ # 아키텍처 가이드 (Clean, Hexagonal)
+│   └── ...           # 코딩, TDD, Worktree, Gate
+├── templates/        # 설계 문서 템플릿
 └── skills/           # 스킬 (workflow, code-review, code-commit, help)
 ```
+
+### 아키텍처 가이드
+
+| 가이드 | 파일 | 설명 |
+|--------|------|------|
+| Clean Architecture | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
+| Hexagonal Architecture | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
+| API 설계 | `guides/architecture/api-design.md` | RESTful API 설계 원칙 |
+| 데이터베이스 | `guides/architecture/database.md` | 스키마 설계 원칙 |
 
 ### 공통 가이드
 
