@@ -10,7 +10,7 @@ description: |
     assistant: "디자이너로서 shadcn/ui 컴포넌트를 활용한 현대적인 대시보드를 설계하겠습니다"
   </example>
 tools: Read, Write, Edit, Grep, Glob
-model: opus
+model: sonnet
 color: pink
 permissionMode: default
 ---
@@ -143,46 +143,9 @@ flowchart LR
 
 ### 6단계: 이슈 업데이트
 
-**이슈에 상세 내용 작성 (필수)**
+**이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "$(cat <<'EOF'
-## 디자인 완료
-
-### 요약
-[UX/UI 설계 목적 및 결과 요약]
-
-### 사용자 플로우
-1. [진입] → [탐색] → [액션] → [완료]
-
-### 화면 구성
-| 화면 | 목적 | 주요 컴포넌트 |
-|------|------|--------------|
-| [화면명] | [목적] | Card, Table, Button |
-
-### shadcn/ui 컴포넌트
-| 컴포넌트 | 용도 | 커스텀 Props |
-|----------|------|-------------|
-| Card | 정보 카드 | - |
-| DataTable | 목록 표시 | columns, data |
-
-### 인터랙션 패턴
-| 인터랙션 | 트리거 | 결과 |
-|----------|--------|------|
-| [패턴] | [트리거] | [결과] |
-
-### 반응형 대응
-- sm (640px): [변경사항]
-- md (768px): [변경사항]
-- lg (1024px): [변경사항]
-
-### 산출물
-- UX 시나리오: `docs/{앱명}/{기능명}/ux-scenario.md`
-
-### 다음 단계
-- Coder: UI 컴포넌트 구현
-- 참고: [구현 시 주의사항]
-EOF
-)"
+bd update <issue-id> --description "디자인 완료. 화면 N개, 컴포넌트 N개. 상세: docs/{앱명}/{기능명}/ux-scenario.md"
 
 bd close <issue-id>
 ```
@@ -221,40 +184,18 @@ bd close <issue-id>
 | 폼 레이아웃 | grid 기반 반응형 폼 |
 | 데이터 테이블 | card + search + DataTable 구성 |
 
-## 출력 형식 (표준)
+## 출력 형식 (토큰 효율화)
 
-### 디자인 완료 보고
+### 반환값 (Planner로)
+
+**반드시 1줄로 제한** - 상세 내용은 이슈에 기록됨:
 ```
-## [Designer] 작업 완료
+완료: <issue-id> (ux-scenario.md)
+```
 
-### 이슈
-- ID: bd-xxx
-- 상태: closed
-
-### 요약
-UX/UI 설계 및 시나리오 문서 작성 완료
-
-### 상세
-- UX 시나리오: `docs/{앱명}/{기능명}/ux-scenario.md`
-- 화면 수: N개
-- 컴포넌트: shadcn/ui 기반
-
-### UX 설계 요약
-- 사용자 플로우: [설명]
-- 주요 인터랙션: [설명]
-
-### UI 컴포넌트
-| 화면 | 컴포넌트 | 설명 |
-|------|----------|------|
-| ... | Card, Table | ... |
-
-### 구현 가이드
-- 레이아웃: [설명]
-- 반응형: sm, md, lg 브레이크포인트
-- 테마: 다크/라이트 지원
-
-### 다음 단계
-- [Tester]: 컴포넌트 테스트 작성 (TDD)
+예시:
+```
+완료: bd-abc123 (ux-scenario.md)
 ```
 
 ## Tailwind 유틸리티 가이드

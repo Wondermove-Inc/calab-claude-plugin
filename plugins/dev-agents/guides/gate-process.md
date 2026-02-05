@@ -126,17 +126,9 @@ Gate 3: 최종 검증
 
 Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행해야 할 경우를 위한 가이드입니다.
 
-### Gate 상태 기록 형식
+### 코멘트 기록 형식
 
-Planner는 각 Gate 진입 시 Epic 코멘트에 상태를 기록합니다:
-
-```bash
-bd comments add <epic-id> "[Gate N] 대기 - {Gate 설명}"
-
-# 예시
-bd comments add beads-abc123 "[Gate 1] 대기 - 요구사항 검증"
-bd comments add beads-abc123 "[Gate 2] 대기 - 설계 검증"
-```
+> 상세 형식 및 예시는 `agents/planner.md`의 "6단계: 진행 추적" 섹션 참조
 
 ### 세션 재개 방법
 
@@ -146,27 +138,30 @@ bd comments add beads-abc123 "[Gate 2] 대기 - 설계 검증"
 /dev-agents:workflow --resume <epic-id>
 ```
 
-Planner가 다음 절차를 수행합니다:
-1. `bd show <epic-id>`로 Epic 상태 확인
-2. `bd comments <epic-id>`로 마지막 Gate 상태 확인
-3. `bd list --parent <epic-id>`로 Sub-task 진행 상황 확인
-4. 마지막 대기 중이던 Gate부터 재개
+### 재개 지점 결정 (우선순위)
 
-### 재개 시 컨텍스트 복구
+Planner는 다음 순서로 재개 지점을 결정합니다:
 
+**1. Sub-task 상태 (주요 기준)**
 ```bash
-# Epic 정보 확인
-bd show <epic-id>
-
-# 코멘트에서 진행 상황 확인
-bd comments <epic-id>
-
-# Sub-task 상태 확인
 bd list --parent <epic-id>
+```
+- `in_progress` Sub-task → 해당 에이전트부터 재개
+- 모두 `open` → 처음부터 시작
+- 일부 `closed` → 다음 `open` Sub-task부터
 
-# 관련 문서 확인 (있는 경우)
+**2. 산출물 존재 여부 (스킵 판단)**
+```bash
 ls docs/{앱명}/{기능명}/
 ```
+- spec.md 존재 → Interviewer 스킵 가능
+- design.md 존재 → Architect 스킵 가능
+
+**3. 코멘트 상태 (보조 정보)**
+```bash
+bd comments <epic-id>
+```
+- `[Gate N] 대기중` → 해당 Gate 승인 요청부터
 
 ### 재개 불가능한 경우
 

@@ -139,83 +139,33 @@ pytest --cov
 
 ### 4단계: 결정 및 이슈 업데이트
 
+**이슈 description은 3-5줄 요약만 (토큰 효율화)**
+
 #### 승인 시
 ```bash
-bd update <issue-id> --description "$(cat <<'EOF'
-## 리뷰 완료: 승인
-
-### 평가
-| 항목 | 점수 |
-|------|------|
-| 코드 품질 | 8/10 |
-| 설계 일관성 | 9/10 |
-
-### SOLID 원칙 준수
-- [x] SRP, OCP, LSP, ISP, DIP
-
-### 장점
-- [장점 1]
-
-### Minor 피드백 (선택적)
-- [m1] [파일:라인] - [피드백]
-
-### 결론
-승인. 다음 단계로 진행 가능.
-EOF
-)"
+bd update <issue-id> --description "리뷰 승인. 품질 8/10, Critical 0건, Major N건."
 
 bd close <issue-id>
 ```
 
 #### 수정 요청 시
 ```bash
-bd update <issue-id> --description "$(cat <<'EOF'
-## 리뷰 완료: 수정 필요
-
-### 평가
-| 항목 | 점수 |
-|------|------|
-| 코드 품질 | 6/10 |
-
-### Critical 피드백 (필수 수정)
-- [C1] [파일:라인] - [문제 및 수정 방법]
-
-### Major 피드백 (권장 수정)
-- [M1] [파일:라인] - [문제 및 수정 방법]
-
-### 결론
-Critical/Major 항목 수정 후 재리뷰 필요.
-EOF
-)"
+bd update <issue-id> --description "리뷰 수정필요. Critical N건, Major N건. 수정 후 재리뷰 필요."
 ```
 
-## 출력 형식
+## 출력 형식 (토큰 효율화)
 
+### 반환값 (Planner로)
+
+**반드시 1줄로 제한** - 상세 내용은 이슈에 기록됨:
 ```
-## [Reviewer] 작업 완료
+완료: <issue-id> (승인|수정필요, C:N/M:N)
+```
 
-### 이슈
-- ID: bd-xxx
-- 상태: closed
-
-### 요약
-코드/설계 리뷰 완료, 결과: [승인/수정 필요]
-
-### 상세
-- 리뷰 대상: [설계/코드]
-- 평가 점수: X/10
-- Critical: 0건 / Major: N건 / Minor: N건
-
-### 피드백
-#### Critical
-- 없음
-
-#### Major
-- [M1] file.go:45 - 에러 래핑 누락
-
-### 다음 단계
-- [승인]: 작업 완료
-- [수정 필요]: Coder에게 피드백 전달
+예시:
+```
+완료: bd-abc123 (승인, C:0/M:2)
+완료: bd-abc123 (수정필요, C:1/M:3)
 ```
 
 ## 에러 핸들링

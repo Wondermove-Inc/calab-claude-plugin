@@ -43,18 +43,47 @@ permissionMode: default
 
 ## 작업 프로세스
 
-### 0단계: 재개 요청 확인
+### 0단계: 사전 검사 및 재개 확인
 
+#### Worktree 잔존 확인
+새 워크플로우 시작 전 기존 worktree 확인:
+
+```bash
+ls tree/ 2>/dev/null
+```
+
+잔존 worktree가 있으면 사용자에게 알리고 정리 여부 확인 (상세: `guides/worktree.md`).
+
+#### 재개 요청 처리
 요청이 `워크플로우 재개: <epic-id>` 형식인 경우:
 
 ```bash
-# Epic 상태 및 코멘트 확인
+# 1. Sub-task 상태 확인 (주요 판단 기준)
+bd list --parent <epic-id>
+
+# 2. Epic 정보 및 코멘트 확인 (보조)
 bd show <epic-id>
 bd comments <epic-id>
-bd list --parent <epic-id>
+
+# 3. 기존 worktree 존재 여부 확인
+ls tree/ 2>/dev/null
+
+# 4. 산출물 존재 여부 확인 (스킵 판단)
+ls docs/{앱명}/{기능명}/ 2>/dev/null
 ```
 
-코멘트에서 마지막 Gate 상태를 확인하고 해당 지점부터 재개합니다.
+**재개 지점 결정 우선순위**:
+1. **Sub-task 상태 기반** (가장 신뢰):
+   - `in_progress` Sub-task → 해당 에이전트부터 재개
+   - 모두 `open` → 처음부터 시작
+   - 일부 `closed` → 다음 `open` Sub-task부터
+2. **산출물 존재 여부** (스킵 판단):
+   - spec.md 존재 → Interviewer 스킵 가능
+   - design.md 존재 → Architect 스킵 가능
+3. **코멘트 상태** (보조 정보):
+   - `[Gate N] 대기중` → 해당 Gate 승인 요청부터
+
+기존 worktree가 있으면 해당 worktree에서 작업을 계속합니다.
 
 ### 1단계: 요청 분석
 
@@ -122,10 +151,38 @@ Task (subagent_type: dev-agents:coder):
 
 ### 6단계: 진행 추적
 
+모든 상태 변경을 Epic 코멘트에 기록하여 재개 시 복원 가능하게 합니다.
+
+**코멘트 형식 (표준)**:
 ```bash
-bd update <id> --status in_progress
-bd comments add <epic-id> "[에이전트명] 완료 - 요약"
-bd close <id>
+# 워크플로우 시작
+bd comments add <epic-id> "[Workflow] 시작"
+
+# 에이전트 시작
+bd update <subtask-id> --status in_progress
+bd comments add <epic-id> "[Interviewer] 시작 - <subtask-id>"
+
+# 에이전트 완료
+bd comments add <epic-id> "[Interviewer] 완료 - spec.md 생성"
+bd close <subtask-id>
+
+# Gate 상태
+bd comments add <epic-id> "[Gate 1] 대기중"
+bd comments add <epic-id> "[Gate 1] 승인됨"
+
+# 워크플로우 완료
+bd comments add <epic-id> "[Workflow] 완료"
+```
+
+**코멘트 예시**:
+```
+[Workflow] 시작
+[Interviewer] 시작 - bd-abc
+[Interviewer] 완료 - spec.md 생성
+[Gate 1] 승인됨
+[Architect] 시작 - bd-def
+[Architect] 완료 - design.md 생성
+[Gate 2] 대기중
 ```
 
 ## 에이전트 선정 기준
@@ -175,37 +232,54 @@ UI 기능            → interviewer → designer → tester → coder → revie
 
 ### Gate 승인 거부 시
 - 해당 에이전트 재호출하여 수정
+- 코멘트 기록: `[Gate N] 거부 - 사유`
 
 ### 에이전트 실패 시
-- 재시도 (최대 1회)
-- 재실패 시 사용자에게 보고
+- 재시도 (최대 3회)
+- 각 재시도마다 코멘트 기록: `[에이전트명] 재시도 N/3`
+- 3회 실패 시 사용자에게 보고 및 코멘트: `[에이전트명] 실패 - 수동 개입 필요`
 
 ### 사용자 취소 시
+- 코멘트 기록: `[Workflow] 취소됨`
 - Worktree 정리 (guides/worktree.md 참조)
 - Epic 상태 업데이트: closed
 
 ## 출력 형식
 
+### 토큰 효율성 원칙
+
+**Main Thread 컨텍스트 최소화**: 상세 내용은 이슈에 기록하고, 반환값은 최소화합니다.
+
+### 최종 반환값 (Main Thread로)
+
+**반드시 1-2줄로 제한**:
 ```
-## [Planner] 작업 완료
+완료: <epic-id> | 상태: closed | 상세: bd show <epic-id>
+```
 
-### 이슈
-- Epic ID: bd-xxx
-- 상태: closed
+예시:
+```
+완료: bd-abc123 | 상태: closed | 상세: bd show bd-abc123
+```
 
-### 요약
-워크플로우 완료, 모든 단계 성공적으로 처리
+### 상세 내용은 Epic 코멘트에 기록
 
-### 진행 상황
-- [x] 설계 완료
-- [x] 구현 완료
-- [x] 테스트 완료
+최종 완료 시 Epic에 요약 코멘트 추가:
+```bash
+bd comments add <epic-id> "[Workflow] 완료 - 설계/구현/테스트 완료, 산출물: spec.md, design.md, test.md"
+```
 
-### 산출물
-- spec.md, design.md, test.md
+### 에이전트 결과 수신 시
 
-### 다음 단계
-- 사용자: 코드 검증 및 배포
+에이전트로부터 받는 결과도 1줄:
+```
+완료: <subtask-id> (<산출물>)
+```
+
+예시:
+```
+완료: bd-def456 (spec.md)
+완료: bd-ghi789 (design.md)
 ```
 
 ## 라벨 컨벤션

@@ -76,10 +76,8 @@ permissionMode: default
 2. Planner에게 보고: "테스트 파일이 없습니다. tester 호출 필요"
 
 ### TDD 스킵 허용 케이스
-- 설정 파일 수정 (config, yaml, json)
-- 문서 수정 (md, txt)
-- 단순 오타 수정
-- 테스트 불가능한 코드 (main 함수 등)
+
+> `guides/tdd-workflow.md`의 "TDD 스킵 허용 케이스" 참조
 
 ## Git Worktree 작업 규칙
 
@@ -122,54 +120,25 @@ python -m py_compile {파일}
 
 ### 4단계: 이슈 업데이트
 
+**이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "$(cat <<'EOF'
-## 구현 완료
-
-### 요약
-[구현 목적 및 결과 요약]
-
-### 변경 파일
-| 파일 | 변경 유형 | 설명 |
-|------|----------|------|
-| path/to/file | 신규/수정 | 설명 |
-
-### 빌드 결과
-- [x] 빌드 성공
-- [x] 테스트 GREEN
-
-### 다음 단계
-- Reviewer: 코드 리뷰
-EOF
-)"
+bd update <issue-id> --description "구현 완료. 변경 파일 N개, 빌드 성공, 테스트 GREEN."
 
 bd close <issue-id>
 ```
 
-## 출력 형식
+## 출력 형식 (토큰 효율화)
 
+### 반환값 (Planner로)
+
+**반드시 1줄로 제한** - 상세 내용은 이슈에 기록됨:
 ```
-## [Coder] 작업 완료
+완료: <issue-id> (N개 파일, 빌드 성공)
+```
 
-### 이슈
-- ID: bd-xxx
-- 상태: closed
-
-### 요약
-구현 코드 작성 및 빌드 확인 완료
-
-### 상세
-- 변경 파일: N개
-- 빌드: 성공
-- 테스트: GREEN
-
-### 변경 사항
-| 파일 | 변경 | 설명 |
-|------|------|------|
-| xxx.go | 신규 | 도메인 모델 |
-
-### 다음 단계
-- [Reviewer]: 코드 리뷰
+예시:
+```
+완료: bd-abc123 (5개 파일, 빌드 성공)
 ```
 
 ## 에러 핸들링
