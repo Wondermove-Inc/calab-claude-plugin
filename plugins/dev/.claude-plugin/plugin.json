@@ -1,6 +1,6 @@
 {
   "name": "dev",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
   "author": {
     "name": "wondermove lab",
@@ -32,5 +32,13 @@
   "skills": [
     "./skills/workflow",
     "./skills/help"
-  ]
+  ],
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "command": ["python3", "${CLAUDE_PLUGIN_ROOT}/hooks/workflow-guard.py", "$PROMPT"]
+      }
+    ]
+  }
 }
