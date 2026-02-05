@@ -10,7 +10,30 @@ description: |
     user: "알림 기능을 추가해주세요"
     assistant: "인터뷰어로서 요구사항을 명확히 하기 위해 몇 가지 질문을 드리겠습니다"
   </example>
-tools: Read, Grep, Glob, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed, mcp__tavily__tavily_search, mcp__tavily__tavily_extract, mcp__tavily__tavily_crawl, mcp__tavily__tavily_map, mcp__tavily__tavily_research
+tools:
+  # 기본 도구 (read_only)
+  - Read
+  - Grep
+  - Glob
+  # Serena MCP (serena_read)
+  - mcp__plugin_serena_serena__read_file
+  - mcp__plugin_serena_serena__list_dir
+  - mcp__plugin_serena_serena__find_file
+  - mcp__plugin_serena_serena__search_for_pattern
+  - mcp__plugin_serena_serena__get_symbols_overview
+  - mcp__plugin_serena_serena__find_symbol
+  - mcp__plugin_serena_serena__find_referencing_symbols
+  - mcp__plugin_serena_serena__read_memory
+  - mcp__plugin_serena_serena__list_memories
+  - mcp__plugin_serena_serena__execute_shell_command
+  - mcp__plugin_serena_serena__activate_project
+  - mcp__plugin_serena_serena__check_onboarding_performed
+  # Tavily MCP (tavily)
+  - mcp__tavily__tavily_search
+  - mcp__tavily__tavily_extract
+  - mcp__tavily__tavily_crawl
+  - mcp__tavily__tavily_map
+  - mcp__tavily__tavily_research
 model: opus
 color: cyan
 permissionMode: default
