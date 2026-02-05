@@ -16,7 +16,7 @@ description: |
     user: "domain 패키지 커버리지를 80% 이상으로 올려주세요"
     assistant: "커버리지 낮은 함수를 분석하고 테스트를 보강하겠습니다"
   </example>
-tools: Read, Write, Edit, Grep, Glob, Bash
+tools: Read, Write, Edit, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__create_text_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_serena_serena__rename_symbol, mcp__plugin_serena_serena__write_memory, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed
 model: sonnet
 color: yellow
 permissionMode: default
