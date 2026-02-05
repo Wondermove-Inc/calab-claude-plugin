@@ -35,13 +35,41 @@ validator의 검증 결과를 100% 해결하여 재검증 시 통과를 보장�
 
 ## 수정 프로토콜
 
+### Phase 0: 실패 레벨 확인 (3레벨 검증 연동)
+
+> **validator의 3레벨 아티팩트 검증 결과에 따라 수정 전략이 달라진다**
+
+```python
+def determine_fix_strategy(validation_result):
+    """실패 레벨에 따른 수정 전략 결정"""
+
+    failed_level = validation_result.get("failed_level")
+
+    if failed_level == 1:
+        return "LEVEL1_EXISTENCE"   # 파일 생성, 기본 구조 추가
+    elif failed_level == 2:
+        return "LEVEL2_SUBSTANTIVE" # AC 구현 추가, 에러 처리, 타입 보완
+    elif failed_level == 3:
+        return "LEVEL3_WIRED"       # import 추가, 라우터 등록, 테스트 연결
+    else:
+        return "STANDARD"           # 기존 P0-P3 우선순위 수정
+```
+
+#### 레벨별 수정 전략
+
+| 실패 레벨 | 수정 전략 | 수정 내용 |
+|----------|----------|----------|
+| **Level 1** | 파일/구조 생성 | 누락 파일 생성, 기본 클래스/함수 정의, 테스트 파일 생성 |
+| **Level 2** | 내용 보강 | AC 코드 구현, 에러 처리 추가, 타입 정의 보완, 빈 파일 채우기 |
+| **Level 3** | 연결 보강 | import 문 추가, 라우터 등록, DB 마이그레이션, 테스트 import 수정 |
+
 ### Phase 1: 검증 결과 분석
 
 ```
 절차:
-1. validator 출력 파싱
+1. validator 출력 파싱 (실패 레벨 + 상세 이슈)
 2. 실패 항목 우선순위 정렬
-3. 수정 계획 수립
+3. 레벨별 수정 계획 수립
 ```
 
 **분석 항목:**

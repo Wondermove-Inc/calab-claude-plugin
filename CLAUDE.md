@@ -20,15 +20,15 @@
 ### 핵심 구성
 
 ```
-17개 스킬 (10 active + 7 passive) + 23개 에이전트 + 25개 훅
+17개 스킬 (10 active + 7 passive) + 23개 에이전트 + 26개 훅
 ```
 
 | 영역 | 자동화 내용 |
 |------|------------|
-| **개발 워크플로우** | Plan → Design → Tasks → Build |
+| **개발 워크플로우** | Plan → Discuss → Design → Tasks → Build (Wave 병렬) |
 | **코드 품질** | 베스트 프랙티스, 500줄 제한, 주석 필수 |
 | **문제 해결** | 5 Whys, RCA, 가설 검증 |
-| **작업 추적** | Worktree 진행률 관리 |
+| **작업 추적** | Worktree 진행률 + Phase 로드맵 관리 |
 
 ### 스킬 구조
 
@@ -69,18 +69,27 @@
 - [ ] 엣지 케이스 처리
 - [ ] 코드 품질 (500줄↓, 주석, 타입)
 
-### 4. 사용자 선택권 보장
+### 4. 사용자 선택권 보장 (Checkpoint 분류)
 
-```
-**방안 1**: [설명] ⭐ 권장
-**방안 2**: [설명] ⚡ 빠른 적용
-**방안 3**: [설명] ⚠️ 리스크 있음
-```
+| 타입 | 빈도 | 처리 |
+|------|------|------|
+| **human-verify** | 90% | 간결 요약 + 자동 진행 옵션 |
+| **decision** | 9% | 트레이드오프 분석 + 추천안 제시 |
+| **human-action** | 1% | 단계별 가이드 + 완료 대기 |
 
-### 5. 컨텍스트 유지
+> 직접 결정할 수 있으면 묻지 마라. 되돌리기 비용이 높을 때만 물어라.
+
+### 5. 컨텍스트 유지 (50% Budget Rule)
 
 - `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 상태
 - `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
+
+| 사용률 | 품질 | 액션 |
+|--------|------|------|
+| **0-30%** | PEAK | 최적 구간 |
+| **30-50%** | GOOD | 목표 완료 구간 |
+| **50-70%** | DEGRADING | 효율 모드. 생략 발생 |
+| **70%+** | POOR | 즉시 분리. 체크포인트 저장 |
 
 ---
 
@@ -141,6 +150,40 @@
 | **O**utput | 출력 형식 |
 | **C**onstraints | 제약 조건 |
 
+### Task 명세 6요소 (Specificity Test)
+
+> **"다른 Claude 인스턴스가 질문 없이 실행할 수 있는가?"**
+
+| 요소 | 설명 |
+|------|------|
+| **What** | 구현할 것 (구체적 기능) |
+| **How** | 구현 방법 (기술, 패턴) |
+| **Avoid + WHY** | 금지 사항 + 이유 |
+| **Verify** | 검증 명령어 |
+| **Done** | 완료 기준 (AC) |
+| **Files** | 생성/수정 파일 목록 |
+
+### Structured Returns (에이전트 간 통신)
+
+> 모든 검증/리뷰 에이전트는 텍스트 + JSON 구조화 결과를 반환한다.
+
+| 에이전트 | result 값 |
+|----------|----------|
+| `validator` | `passed\|warning\|failed\|critical` + `confidence_score` |
+| `code-reviewer` | `passed\|needs_improvement\|failed` + `issues[]` |
+| `security-reviewer` | `clean\|warning\|vulnerable\|critical` + `findings[]` |
+| `dev-executor` | `success\|failure\|needs_clarification` + `deviations[]` |
+
+### Deviation Rules (dev-executor 자동 수정)
+
+| 자동 수정 (확인 없이) | 사용자 확인 필수 |
+|----------------------|-----------------|
+| 버그/타입 오류 수정 | 아키텍처 변경 |
+| 보안 취약점 수정 | 공개 API 변경 |
+| 누락된 에러 처리/검증 | 범위 확장 (scope creep) |
+| 의존성/import 수정 | 기존 파일/함수 삭제 |
+| 깨진 테스트 수정 | |
+
 ### 병렬 vs 순차 실행
 
 | 상황 | 실행 방식 |
@@ -148,6 +191,35 @@
 | 독립적인 조사 | **병렬** |
 | 결과가 다음 단계 입력 | **순차** |
 | 파일 수정 작업 | **순차** (충돌 방지) |
+| Wave 내 Task | **병렬** (Fresh Context) |
+
+### Fresh Context Pattern
+
+> **오케스트레이터는 Task 정의만 관리. 구현 코드를 직접 읽지 않는다.**
+
+| 항목 | 규칙 |
+|------|------|
+| 오케스트레이터 | Task 정의 + worktree.json만 읽기 |
+| executor | Fresh 200k context로 독립 실행 |
+| 전달 금지 | 이전 Task 구현 결과, 히스토리 |
+
+### Wave 기반 병렬 실행
+
+```
+Wave 1: [TASK-001] [TASK-002]  ← 병렬 (의존성 없음)
+Wave 2: [TASK-003]             ← Wave 1 완료 후
+Wave 3: [TASK-004] [TASK-005]  ← Wave 2 완료 후
+```
+
+### 모델 프로필 관리
+
+| 프로필 | 설명 | 비용 |
+|--------|------|------|
+| **quality** | 모든 단계 opus | 100% |
+| **balanced** | 기획 opus + 실행 sonnet (권장) | ~60% |
+| **budget** | 모든 단계 haiku/sonnet | ~30% |
+
+설정: `.claude/settings/model-profile.json`
 
 ---
 
@@ -156,17 +228,31 @@
 ### 필수 검증 체인
 
 ```
-구현 → validator → (실패 시) reinforcer → validator (재검증)
+구현 → validator (3레벨 + Goal-Backward) → (실패 시) reinforcer → validator (재검증)
 ```
 
 | 단계 | 에이전트 | 역할 |
 |------|---------|------|
 | 1 | 구현 에이전트 | 코드 작성 |
-| 2 | `validator` | AC/완전성 검증 **필수** |
+| 2 | `validator` | AC/완전성 검증 **필수** (3레벨 아티팩트 + Goal-Backward) |
 | 3 | `code-reviewer` | 품질 검증 |
 | 4 | `security-reviewer` | 보안 검사 (API/인증) |
-| 5 | `reinforcer` | 누락 수정 (실패 시) |
+| 5 | `reinforcer` | 레벨별 수정 (실패 시) |
 | 6 | `validator` | 재검증 **필수** |
+
+### 3레벨 아티팩트 검증
+
+| 레벨 | 검증 내용 | 신뢰도 기여 |
+|------|----------|------------|
+| **L1: Existence** | 파일/함수 존재 확인 | 기본 |
+| **L2: Substantive** | AC 구현, 에러 처리, 타입 정의 | 중간 |
+| **L3: Wired** | import 연결, 라우터 등록, 테스트 연결 | 높음 |
+
+### Goal-Backward 검증
+
+```
+사용자 목표 → Observable Truth → 코드 Artifact → Key Link 역추적
+```
 
 ### 신뢰도 기반 에스컬레이션
 
@@ -176,6 +262,14 @@
 | 70-89% | reinforcer 호출 |
 | 50-69% | 사용자 확인 |
 | <50% | `/solve` 에스컬레이션 |
+
+### Plan Checker Loop
+
+> Task 분해 시 planner-task가 자체 검증 (최대 3회) 후 task-validator가 최종 확인
+
+```
+planner-task → self_verify (3회) → task-validator (최종)
+```
 
 ### 검증 우회 금지
 
@@ -194,7 +288,7 @@
 
 | 스킬 | 명령어 | 역할 |
 |------|--------|------|
-| **dev** | `/dev --plan/--design/--tasks/--build` | 개발 워크플로우 |
+| **dev** | `/dev --plan/--discuss/--design/--tasks/--build/--roadmap` | 개발 워크플로우 |
 | **solve** | `/solve --5whys/--rca/--hypothesis` | 문제 해결 |
 | **onboard** | `/onboard` | 프로젝트 분석 |
 
@@ -213,9 +307,10 @@
 ### 워크플로우 연동
 
 ```
-/onboard → /dev --plan → --design → --tasks → --build → QA
-                                                    ↓
-                                              실패 시 /solve
+/onboard → /dev --plan → --discuss → --design → --tasks → --build → QA
+                (ROADMAP)  (선택적)                (Wave)   (Wave 병렬)
+                                                              ↓
+                                                        실패 시 /solve
 ```
 
 ### solve ↔ dev 전환 기준
@@ -240,10 +335,14 @@
 ### 기능 개발
 
 ```bash
-/dev --plan [기능명]   # PRD 작성
-/dev --design          # 아키텍처 설계
-/dev --tasks           # 태스크 분해
-/dev --build TASK-001  # 구현
+/dev --plan [기능명]       # PRD 작성 + ROADMAP.md 생성
+/dev --discuss             # 그레이 영역 해소 (선택)
+/dev --design              # 아키텍처 설계
+/dev --tasks               # 태스크 분해 (Wave 할당)
+/dev --build --all         # Wave 병렬 실행
+/dev --build TASK-001      # 단일 Task 실행
+/dev --roadmap complete 1  # Phase 완료 → 다음 Phase
+/dev --roadmap milestone "v1.0.0"  # 마일스톤 생성
 ```
 
 ### 문제 해결
@@ -283,7 +382,8 @@
 | 파일 | 용도 |
 |------|------|
 | `.claude-state/checkpoint.json` | 상세 상태 |
-| `.claude-state/worktree.json` | 작업 트리 |
+| `.claude-state/worktree.json` | 작업 트리 (Wave/Phase 포함) |
+| `.claude/docs/active/{feature}/ROADMAP.md` | Phase 로드맵 |
 | `.claude/memory/CURRENT_CONTEXT.md` | 비상 복구 |
 
 ### 복구 우선순위
@@ -310,7 +410,8 @@
 
 | 스킬 | 산출물 | 경로 |
 |------|--------|------|
-| `/dev --plan` | PRD | `.claude/docs/active/{feature}/01-PRD.md` |
+| `/dev --plan` | PRD + ROADMAP | `.claude/docs/active/{feature}/01-PRD.md`, `ROADMAP.md` |
+| `/dev --discuss` | 구현 결정 | `.claude/docs/active/{feature}/00-CONTEXT.md` |
 | `/dev --design` | 아키텍처 | `.claude/docs/active/{feature}/02-architecture.md` |
 | `/dev --tasks` | Task 목록 | `.claude/docs/active/{feature}/03-tasks.md` |
 | `/solve` | 해결 보고서 | `.claude/problem-solving/resolved/{id}/report.md` |
@@ -334,9 +435,9 @@
 
 | 명령어 | 옵션 |
 |--------|------|
-| `/dev` | `--plan`, `--design`, `--tasks`, `--build`, `--status` |
-| `/solve` | `--5whys`, `--rca`, `--hypothesis` |
-| `/onboard` | `--quick`, `--full` |
+| `/dev` | `--plan`, `--discuss`, `--design`, `--tasks`, `--build [ID\|--wave N\|--all]`, `--roadmap [add\|insert\|remove\|complete\|milestone]`, `--status` |
+| `/solve` | `--5whys`, `--rca`, `--hypothesis`, `--log`, `--report` |
+| `/onboard` | `--quick`, `--full`, `--phase N`, `--skip-domain` |
 
 ### 유틸리티 스킬
 

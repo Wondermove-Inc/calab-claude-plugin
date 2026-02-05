@@ -122,6 +122,51 @@ document\.write\(
 - 환경 변수 참조 (`process.env.`, `os.environ`)
 - 플레이스홀더 (`YOUR_API_KEY`, `<api-key>`, `xxx`)
 
+## Structured Return (에이전트 간 통신용)
+
+> 텍스트 보고서 외에 **오케스트레이터가 파싱 가능한 구조화된 결과**를 반환한다.
+
+```json
+{
+  "agent": "security-reviewer",
+  "result": "clean|warning|vulnerable|critical",
+  "findings": [
+    {
+      "severity": "critical|high|medium|low",
+      "category": "hardcoded_secret|sql_injection|xss|auth_bypass|insecure_config",
+      "file": "src/config.ts",
+      "line": 15,
+      "message": "하드코딩된 API 키 발견",
+      "cwe": "CWE-798",
+      "fix_suggestion": "환경 변수로 이동",
+      "auto_fixable": false
+    }
+  ],
+  "severity_counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 2
+  },
+  "escalation": {
+    "needed": false,
+    "target": null,
+    "reason": null
+  }
+}
+```
+
+### result 판정 기준
+
+| result | 조건 |
+|--------|------|
+| `clean` | 발견사항 0개 |
+| `warning` | medium/low만 존재 |
+| `vulnerable` | high 1개+ |
+| `critical` | critical 1개+ |
+
+---
+
 ## /solve 에스컬레이션 (2025 Best Practice)
 
 > **"Security issues require root cause analysis"** - 보안 문제는 근본 원인 분석 필요
