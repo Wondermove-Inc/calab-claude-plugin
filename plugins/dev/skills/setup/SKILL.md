@@ -38,11 +38,13 @@ cat ~/.claude/settings.json 2>/dev/null || echo "{}"
   "hooks": [
     {
       "type": "command",
-      "command": "python3 ~/.claude/hooks/workflow-guard.py \"$PROMPT\""
+      "command": "test -f ~/.claude/hooks/workflow-guard.py && python3 ~/.claude/hooks/workflow-guard.py \"$PROMPT\" || true"
     }
   ]
 }
 ```
+
+> **참고**: `test -f ... || true` 조건으로 스크립트가 없어도 에러가 발생하지 않습니다.
 
 **주의사항:**
 - 파일이 없으면 새로 생성
