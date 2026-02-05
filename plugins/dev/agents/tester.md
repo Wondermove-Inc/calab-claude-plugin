@@ -1,5 +1,5 @@
 ---
-name: dev-agents:tester
+name: dev:tester
 description: |
   테스트 코드 작성과 테스트 실행을 담당합니다.
   단위 테스트, 통합 테스트를 작성하고 테스트 결과를 보고합니다.

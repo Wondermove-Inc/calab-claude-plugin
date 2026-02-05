@@ -1,5 +1,5 @@
 ---
-name: dev-agents:interviewer
+name: dev:interviewer
 description: |
   고객 요구사항을 명확화하고 스펙을 구체화하는 인터뷰어 에이전트입니다.
   요구사항이 모호하거나 불완전할 때 심층 질문을 통해 명확한 스펙을 도출합니다.

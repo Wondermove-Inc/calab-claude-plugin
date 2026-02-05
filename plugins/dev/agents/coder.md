@@ -1,5 +1,5 @@
 ---
-name: dev-agents:coder
+name: dev:coder
 description: |
   코드 구현, 수정, 리팩토링을 담당합니다.
   설계 문서를 바탕으로 실제 코드를 작성하며, 기존 코드 스타일과 패턴을 준수합니다.

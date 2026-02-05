@@ -1,5 +1,5 @@
 ---
-name: dev-agents:writer
+name: dev:writer
 description: |
   기술 문서의 품질과 일관성을 보장합니다.
   각 에이전트가 작성한 문서를 검토/정제하고, 문서 간 상호 참조를 관리합니다.

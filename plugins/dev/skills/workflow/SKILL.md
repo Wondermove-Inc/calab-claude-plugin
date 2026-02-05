@@ -1,9 +1,9 @@
 ---
-name: dev-agents:workflow
+name: dev:workflow
 description: 멀티 에이전트 워크플로우를 시작합니다. 요청을 분석하고 적절한 에이전트를 조율하여 작업을 수행합니다.
 ---
 
-# /dev-agents:workflow 커맨드
+# /dev:workflow 커맨드
 
 멀티 에이전트 워크플로우를 시작합니다.
 
@@ -11,20 +11,20 @@ description: 멀티 에이전트 워크플로우를 시작합니다. 요청을 �
 
 ### 새 워크플로우 시작
 ```
-/dev-agents:workflow <작업 요청>
+/dev:workflow <작업 요청>
 
 예시:
-/dev-agents:workflow 클러스터 알림 기능 추가
-/dev-agents:workflow 로그인 버그 수정
-/dev-agents:workflow API 응답 성능 최적화
+/dev:workflow 클러스터 알림 기능 추가
+/dev:workflow 로그인 버그 수정
+/dev:workflow API 응답 성능 최적화
 ```
 
 ### 중단된 워크플로우 재개
 ```
-/dev-agents:workflow --resume <epic-id>
+/dev:workflow --resume <epic-id>
 
 예시:
-/dev-agents:workflow --resume beads-abc123
+/dev:workflow --resume beads-abc123
 ```
 
 Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행한 후, 워크플로우를 이어서 진행할 때 사용합니다.
@@ -47,14 +47,14 @@ ls tree/ 2>/dev/null
 ### 1단계: 플래너 에이전트 호출
 
 #### 새 워크플로우
-`Task` 도구로 `dev-agents:planner` 에이전트를 호출하세요.
+`Task` 도구로 `dev:planner` 에이전트를 호출하세요.
 
 전달할 정보:
 - 사용자 요청 원문
 - 현재 프로젝트 경로
 
 ```
-Task (subagent_type: dev-agents:planner, model: opus):
+Task (subagent_type: dev:planner, model: opus):
 "사용자 요청: {요청 내용}
 프로젝트: {현재 경로}"
 ```
@@ -63,7 +63,7 @@ Task (subagent_type: dev-agents:planner, model: opus):
 중단된 워크플로우를 재개할 때는 Epic ID를 전달합니다.
 
 ```
-Task (subagent_type: dev-agents:planner, model: opus):
+Task (subagent_type: dev:planner, model: opus):
 "워크플로우 재개: {epic-id}
 프로젝트: {현재 경로}"
 ```
@@ -122,13 +122,13 @@ Gate 3: 최종 검증 ← 사용자 확인
 
 ### 4단계: 에이전트 실행
 플래너가 필요에 따라 다음 에이전트들을 호출:
-- `dev-agents:interviewer`: 요구사항 명확화 (**필수**, 단순 버그/중간 작업 제외)
-- `dev-agents:architect`: 설계 필요 시
-- `dev-agents:designer`: UI/UX 디자인 필요 시 (shadcn/ui)
-- `dev-agents:coder`: 구현 필요 시
-- `dev-agents:tester`: 테스트 필요 시
-- `dev-agents:reviewer`: 리뷰 필요 시
-- `dev-agents:writer`: 문서 2개 이상 생성 시
+- `dev:interviewer`: 요구사항 명확화 (**필수**, 단순 버그/중간 작업 제외)
+- `dev:architect`: 설계 필요 시
+- `dev:designer`: UI/UX 디자인 필요 시 (shadcn/ui)
+- `dev:coder`: 구현 필요 시
+- `dev:tester`: 테스트 필요 시
+- `dev:reviewer`: 리뷰 필요 시
+- `dev:writer`: 문서 2개 이상 생성 시
 
 ### 5단계: 완료 보고
 모든 작업 완료 후 플래너가 결과 보고
@@ -178,12 +178,12 @@ project/
 ## 병렬 처리
 
 ### 다중 /workflow 동시 실행
-여러 `/dev-agents:workflow` 요청은 독립적으로 병렬 실행됩니다.
+여러 `/dev:workflow` 요청은 독립적으로 병렬 실행됩니다.
 각 워크플로우는 별도 Worktree에서 격리되어 작업합니다.
 
 ### 단일 요청 내 다중 작업
 ```
-/dev-agents:workflow "A 기능 추가, B 버그 수정"
+/dev:workflow "A 기능 추가, B 버그 수정"
 ```
 - 독립적 작업: 병렬 진행 (각각 별도 Worktree)
 - 의존적 작업: 순차 진행 (동일 Worktree)
@@ -202,7 +202,7 @@ project/
 
 ### 단일 에이전트 호출
 ```
-Task (subagent_type: dev-agents:planner, model: opus, run_in_background: true):
+Task (subagent_type: dev:planner, model: opus, run_in_background: true):
 "사용자 요청: {요청 내용}"
 ```
 
@@ -214,10 +214,10 @@ TaskOutput (task_id: {반환된 task_id}, block: true, timeout: 300000)
 ### 병렬 에이전트 호출 (독립 작업)
 단일 메시지에서 여러 Task 도구를 동시에 호출합니다:
 ```
-Task (subagent_type: dev-agents:architect, model: opus, run_in_background: true):
+Task (subagent_type: dev:architect, model: opus, run_in_background: true):
 "bd-xxx 설계 수행. bd show로 상세 확인."
 
-Task (subagent_type: dev-agents:designer, model: opus, run_in_background: true):
+Task (subagent_type: dev:designer, model: opus, run_in_background: true):
 "bd-yyy UX 설계 수행. bd show로 상세 확인."
 ```
 

@@ -10,8 +10,8 @@
   },
   "plugins": [
     {
-      "name": "dev-agents",
-      "source": "./plugins/dev-agents",
+      "name": "dev",
+      "source": "./plugins/dev",
       "description": "멀티 에이전트 워크플로우 + Clean/Hexagonal Architecture 가이드",
       "category": "development",
       "tags": ["multi-agent", "workflow", "architecture", "clean-architecture", "hexagonal"]

@@ -1,4 +1,4 @@
-# dev-agents 플러그인
+# dev 플러그인
 
 > 멀티 에이전트 오케스트레이션: 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우
 
@@ -7,7 +7,7 @@
 ## 구조
 
 ```
-plugins/dev-agents/
+plugins/dev/
 ├── agents/           # 8개 에이전트 정의
 ├── guides/           # 공통 가이드
 │   ├── architecture/ # 아키텍처 가이드 (Clean, Hexagonal)
@@ -52,8 +52,8 @@ plugins/dev-agents/
 
 | 명령어 | 설명 |
 |--------|------|
-| `/dev-agents:workflow <요청>` | 멀티 에이전트 워크플로우 시작 |
-| `/dev-agents:help` | 도움말 표시 |
+| `/dev:workflow <요청>` | 멀티 에이전트 워크플로우 시작 |
+| `/dev:help` | 도움말 표시 |
 
 > **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
 
@@ -90,7 +90,7 @@ plugins/dev-agents/
 
 ```yaml
 ---
-name: dev-agents:{에이전트명}
+name: dev:{에이전트명}
 description: |
   에이전트 설명 및 Examples
 tools: 사용 가능한 도구 목록
@@ -102,7 +102,7 @@ permissionMode: default
 
 | 필드 | 설명 |
 |------|------|
-| `name` | 에이전트 고유 식별자 (`dev-agents:` 접두사) |
+| `name` | 에이전트 고유 식별자 (`dev:` 접두사) |
 | `tools` | 에이전트가 사용 가능한 도구 (Read, Write, Edit, Grep, Glob, Bash 등) |
 | `model` | AI 모델 선택 (opus: 복잡한 판단, sonnet: 구현 작업) |
 | `color` | 로그 출력 시 시각적 구분을 위한 색상 |
@@ -188,22 +188,22 @@ flowchart TB
 
 ### 새 기능 개발
 ```
-/dev-agents:workflow 사용자 알림 기능 추가
+/dev:workflow 사용자 알림 기능 추가
 ```
 
 ### 버그 수정
 ```
-/dev-agents:workflow 로그인 실패 시 에러 메시지 표시 안됨
+/dev:workflow 로그인 실패 시 에러 메시지 표시 안됨
 ```
 
 ### 리팩토링
 ```
-/dev-agents:workflow 인증 모듈 클린 아키텍처로 리팩토링
+/dev:workflow 인증 모듈 클린 아키텍처로 리팩토링
 ```
 
 ### 복합 작업
 ```
-/dev-agents:workflow "결제 API 추가, 결제 내역 화면 구현"
+/dev:workflow "결제 API 추가, 결제 내역 화면 구현"
 ```
 
 ---

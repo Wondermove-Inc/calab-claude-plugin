@@ -1,5 +1,5 @@
 {
-  "name": "dev-agents",
+  "name": "dev",
   "version": "2.2.0",
   "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
   "author": {

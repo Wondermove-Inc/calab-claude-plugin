@@ -135,7 +135,7 @@ Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행해야 �
 중단된 워크플로우를 재개하려면:
 
 ```
-/dev-agents:workflow --resume <epic-id>
+/dev:workflow --resume <epic-id>
 ```
 
 ### 재개 지점 결정 (우선순위)
