@@ -10,33 +10,7 @@ description: |
     user: "작성된 문서들을 검토해주세요"
     assistant: "테크니컬 라이터로서 문서 품질과 일관성을 검토하겠습니다"
   </example>
-tools:
-  # 기본 도구 (read_write - Bash 제외)
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  # Serena MCP (serena_write)
-  - mcp__plugin_serena_serena__read_file
-  - mcp__plugin_serena_serena__create_text_file
-  - mcp__plugin_serena_serena__list_dir
-  - mcp__plugin_serena_serena__find_file
-  - mcp__plugin_serena_serena__replace_content
-  - mcp__plugin_serena_serena__search_for_pattern
-  - mcp__plugin_serena_serena__get_symbols_overview
-  - mcp__plugin_serena_serena__find_symbol
-  - mcp__plugin_serena_serena__find_referencing_symbols
-  - mcp__plugin_serena_serena__replace_symbol_body
-  - mcp__plugin_serena_serena__insert_after_symbol
-  - mcp__plugin_serena_serena__insert_before_symbol
-  - mcp__plugin_serena_serena__rename_symbol
-  - mcp__plugin_serena_serena__write_memory
-  - mcp__plugin_serena_serena__read_memory
-  - mcp__plugin_serena_serena__list_memories
-  - mcp__plugin_serena_serena__execute_shell_command
-  - mcp__plugin_serena_serena__activate_project
-  - mcp__plugin_serena_serena__check_onboarding_performed
+tools: Read, Write, Edit, Grep, Glob, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__create_text_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_serena_serena__rename_symbol, mcp__plugin_serena_serena__write_memory, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed
 model: sonnet
 color: orange
 permissionMode: default
