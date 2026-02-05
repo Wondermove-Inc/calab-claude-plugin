@@ -120,7 +120,7 @@ ls *_test.go *.test.ts 2>/dev/null
 
 ### 5단계: 테스트 문서 생성
 
-문서 위치: `docs/{앱}/{기능}/test.md`
+문서 위치: `.dev/artifacts/{앱}/{기능}/test.md`
 
 ```markdown
 # {기능명} 테스트 보고서
@@ -146,7 +146,7 @@ ls *_test.go *.test.ts 2>/dev/null
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "테스트 완료. N개 테스트, 커버리지 XX%. 상세: docs/{앱}/{기능}/test.md"
+bd update <issue-id> --description "테스트 완료. N개 테스트, 커버리지 XX%. 상세: .dev/artifacts/{앱}/{기능}/test.md"
 
 bd close <issue-id>
 ```

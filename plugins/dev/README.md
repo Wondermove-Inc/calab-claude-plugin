@@ -178,7 +178,7 @@ flowchart TB
 | Gate | 검증 대상 | 산출물 |
 |------|----------|--------|
 | Gate 0 | 작업 계획 | - |
-| Gate 1 | 요구사항 | `docs/{앱}/{기능}/spec.md` |
+| Gate 1 | 요구사항 | `.dev/artifacts/{앱}/{기능}/spec.md` |
 | Gate 2 | 설계 | `design.md`, `ux-scenario.md` |
 | Gate 3 | 구현 결과 | 코드, `test.md`, 리뷰 결과 |
 
@@ -211,13 +211,16 @@ flowchart TB
 ## 산출물 구조
 
 ```
-docs/
-└── {앱명}/
-    └── {기능명}/
-        ├── spec.md          # 요구사항 스펙 (Interviewer)
-        ├── design.md        # 기술 설계 (Architect)
-        ├── ux-scenario.md   # UX 시나리오 (Designer)
-        └── test.md          # 테스트 보고서 (Tester)
+.dev/
+├── progress/                # 워크플로우 진행상태
+│   └── <epic-id>.md
+└── artifacts/               # 워크플로우 산출물
+    └── {앱명}/
+        └── {기능명}/
+            ├── spec.md          # 요구사항 스펙 (Interviewer)
+            ├── design.md        # 기술 설계 (Architect)
+            ├── ux-scenario.md   # UX 시나리오 (Designer)
+            └── test.md          # 테스트 보고서 (Tester)
 ```
 
 ---

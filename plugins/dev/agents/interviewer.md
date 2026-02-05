@@ -40,9 +40,9 @@ Planner가 Interviewer를 호출할 때 다음 조건에 따라 문서를 관리
 | 새로운 기능/모듈 추가 | "알림 기능 추가", "결제 모듈 구현" |
 | 새로운 API 엔드포인트 | "사용자 통계 API 추가" |
 | 새로운 화면/페이지 | "대시보드 화면 구현" |
-| 기존에 spec.md가 없는 영역 | 해당 `docs/{앱}/{기능}/` 폴더 없음 |
+| 기존에 spec.md가 없는 영역 | 해당 `.dev/artifacts/{앱}/{기능}/` 폴더 없음 |
 
-→ `docs/{앱명}/{기능명}/spec.md` **신규 생성**
+→ `.dev/artifacts/{앱명}/{기능명}/spec.md` **신규 생성**
 
 ### 업데이트 (Update) - 기존 기능 변경
 
@@ -99,7 +99,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Interviewer\]"
 
 # 3. 기존 스펙 문서 확인
-ls docs/{앱명}/{기능명}/spec.md 2>/dev/null
+ls .dev/artifacts/{앱명}/{기능명}/spec.md 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
@@ -107,7 +107,7 @@ ls docs/{앱명}/{기능명}/spec.md 2>/dev/null
 ### 1단계: 컨텍스트 파악
 ```
 1. 이슈 정보 확인 (bd show <issue-id>)
-2. 기존 스펙 문서 확인 (docs/{앱명}/ 폴더)
+2. 기존 스펙 문서 확인 (.dev/artifacts/{앱명}/ 폴더)
 3. 관련 코드 분석으로 프로젝트 유형 파악
 4. 현재 정보의 완성도 평가
 ```
@@ -124,7 +124,7 @@ ls docs/{앱명}/{기능명}/spec.md 2>/dev/null
 ```
 
 ### 3단계: 스펙 문서 작성
-인터뷰 결과를 `docs/{앱명}/{기능명}/spec.md`에 작성:
+인터뷰 결과를 `.dev/artifacts/{앱명}/{기능명}/spec.md`에 작성:
 
 ```markdown
 # [기능명] 요구사항 스펙
@@ -169,7 +169,7 @@ ls docs/{앱명}/{기능명}/spec.md 2>/dev/null
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "인터뷰 완료. 요구사항 N개 도출, 기술 결정 N건. 상세: docs/{앱명}/{기능명}/spec.md"
+bd update <issue-id> --description "인터뷰 완료. 요구사항 N개 도출, 기술 결정 N건. 상세: .dev/artifacts/{앱명}/{기능명}/spec.md"
 
 bd close <issue-id>
 ```

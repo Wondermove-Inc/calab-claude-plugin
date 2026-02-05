@@ -15,8 +15,8 @@ credentials/
 hook.log
 checkpoints.json
 
-# dev 플러그인 워크플로우 상태 (로컬)
-.dev/progress/
+# dev 플러그인 워크플로우 상태 및 산출물 (로컬)
+.dev/
 
 # Python 캐시
 __pycache__/

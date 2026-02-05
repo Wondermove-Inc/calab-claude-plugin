@@ -76,10 +76,10 @@ user-invocable: true
 
 | 단계 | 문서 | 위치 |
 |------|------|------|
-| 요구사항 | spec.md | `docs/{앱}/{기능}/spec.md` |
-| UX 설계 | ux-scenario.md | `docs/{앱}/{기능}/ux-scenario.md` |
-| 기술 설계 | design.md | `docs/{앱}/{기능}/design.md` |
-| 테스트 | test.md | `docs/{앱}/{기능}/test.md` |
+| 요구사항 | spec.md | `.dev/artifacts/{앱}/{기능}/spec.md` |
+| UX 설계 | ux-scenario.md | `.dev/artifacts/{앱}/{기능}/ux-scenario.md` |
+| 기술 설계 | design.md | `.dev/artifacts/{앱}/{기능}/design.md` |
+| 테스트 | test.md | `.dev/artifacts/{앱}/{기능}/test.md` |
 
 ## 사용 예시
 

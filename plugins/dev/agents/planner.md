@@ -76,7 +76,7 @@ bd comments <epic-id>
 ls tree/ 2>/dev/null
 
 # 5. 산출물 존재 여부 확인 (스킵 판단)
-ls docs/{앱명}/{기능명}/ 2>/dev/null
+ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 지점 결정 우선순위**:

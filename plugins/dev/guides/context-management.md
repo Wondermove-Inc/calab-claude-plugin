@@ -52,7 +52,7 @@ bd show <issue-id>
 bd comments <epic-id>
 
 # 3. 기존 산출물 확인
-ls docs/{앱명}/{기능명}/ 2>/dev/null
+ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 # 4. Progress 파일 확인 (있는 경우)
 cat .dev/progress/<epic-id>.md 2>/dev/null

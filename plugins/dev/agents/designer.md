@@ -67,7 +67,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Designer\]"
 
 # 3. 기존 UX 문서 확인
-ls docs/{앱명}/{기능명}/ux-scenario.md 2>/dev/null
+ls .dev/artifacts/{앱명}/{기능명}/ux-scenario.md 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
@@ -103,7 +103,7 @@ ls docs/{앱명}/{기능명}/ux-scenario.md 2>/dev/null
 ```
 
 ### 5단계: UX 시나리오 문서 작성
-UX 설계 결과를 `docs/{앱명}/{기능명}/ux-scenario.md`에 작성:
+UX 설계 결과를 `.dev/artifacts/{앱명}/{기능명}/ux-scenario.md`에 작성:
 
 ```markdown
 # [기능명] UX 시나리오
@@ -169,7 +169,7 @@ flowchart LR
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "디자인 완료. 화면 N개, 컴포넌트 N개. 상세: docs/{앱명}/{기능명}/ux-scenario.md"
+bd update <issue-id> --description "디자인 완료. 화면 N개, 컴포넌트 N개. 상세: .dev/artifacts/{앱명}/{기능명}/ux-scenario.md"
 
 bd close <issue-id>
 ```

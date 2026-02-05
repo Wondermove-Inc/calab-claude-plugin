@@ -123,7 +123,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Reviewer\]"
 
 # 3. 리뷰 대상 산출물 확인
-ls docs/{앱명}/{기능명}/ 2>/dev/null
+ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
