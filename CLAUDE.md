@@ -20,7 +20,7 @@
 ### Composition
 
 ```
-17 Skills (10 active + 7 passive) + 23 Agents + 26 Hooks
+17 Skills (10 active + 7 passive) + 23 Agents + 27 Hooks
 ```
 
 | Area | Automation |
@@ -288,9 +288,9 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 
 | Skill | Command | Role |
 |-------|---------|------|
-| **dev** | `/dev --plan/--discuss/--design/--tasks/--build/--roadmap` | Development workflow |
-| **solve** | `/solve --5whys/--rca/--hypothesis` | Problem solving |
-| **onboard** | `/onboard` | Project analysis |
+| **dev** | `/dev --plan/--discuss/--design/--tasks/--build/--roadmap/--status` | Development workflow |
+| **solve** | `/solve --5whys/--rca/--hypothesis/--binary/--log/--report` | Problem solving |
+| **onboard** | `/onboard --quick/--full/--phase/--skip-domain` | Project analysis |
 
 ### Passive Skills (7)
 
@@ -436,19 +436,19 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 | Command | Options |
 |---------|---------|
 | `/dev` | `--plan`, `--discuss`, `--design`, `--tasks`, `--build [ID\|--wave N\|--all]`, `--roadmap [add\|insert\|remove\|complete\|milestone]`, `--status` |
-| `/solve` | `--5whys`, `--rca`, `--hypothesis`, `--log`, `--report` |
+| `/solve` | `--5whys`, `--rca`, `--hypothesis`, `--binary`, `--log`, `--report` |
 | `/onboard` | `--quick`, `--full`, `--phase N`, `--skip-domain` |
 
 ### Utility Skills
 
 | Command | Options | Purpose |
 |---------|---------|---------|
-| `/docs` | `--api`, `--component`, `--guide` | Documentation generation |
-| `/security` | `--owasp`, `--secrets`, `--deps` | Security scanning |
+| `/docs` | `--api`, `--component`, `--guide`, `--update` | Documentation generation |
+| `/security` | `--owasp`, `--secrets`, `--deps`, `--full` | Security scanning |
 | `/research` | `--deep`, `--compare` | Web research |
-| `/jira` | `--sync`, `--create`, `--update` | JIRA integration |
-| `/refactor` | `--dead-code`, `--duplicates`, `--imports` | Refactoring |
-| `/e2e` | `--run`, `--debug`, `--record` | E2E testing |
+| `/jira` | `--sync`, `--create`, `--update`, `--link` | JIRA integration |
+| `/refactor` | `--dead-code`, `--duplicates`, `--imports`, `--cleanup` | Refactoring |
+| `/e2e` | `--run`, `--debug`, `--record`, `--headed` | E2E testing |
 | `/guard` | `--rules`, `--context`, `--full` | Rule enforcement |
 
 ### Agent Invocation

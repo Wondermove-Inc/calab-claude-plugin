@@ -624,8 +624,9 @@ def calculate_confidence(validation_result):
 ```json
 {
   "agent": "validator",
-  "validation_result": "passed|warning|failed|critical",
+  "result": "passed|warning|failed|critical",
   "confidence_score": 95.2,
+  "failed_level": null,
   "scores": {
     "ac_compliance": { "score": 100, "weight": 30, "details": "40/40점" },
     "completeness": { "score": 92, "weight": 20, "details": "23/25점" },

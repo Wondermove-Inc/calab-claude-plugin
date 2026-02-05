@@ -71,7 +71,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
             "type": "command",
@@ -79,11 +79,11 @@
           },
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/code_quality_validator.py\""
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/auto_format.py\""
           },
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/auto_format.py\""
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/code_quality_validator.py\""
           },
           {
             "type": "command",

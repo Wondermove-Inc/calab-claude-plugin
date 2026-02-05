@@ -1,6 +1,7 @@
 ---
 name: work-tracker
 description: 작업 진행 상태를 추적하고 관리합니다. 맥락 유실 방지에 필수입니다.
+user-invocable: false
 allowed-tools: Read, Write, Edit
 ---
 

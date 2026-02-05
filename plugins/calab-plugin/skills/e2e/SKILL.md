@@ -4,7 +4,7 @@ description: |
   E2E 테스트. Playwright/Puppeteer 기반 통합 테스트를 실행합니다.
 argument-hint: "[--run|--debug|--record|--headed] [테스트파일]"
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash, Task, mcp__puppeteer__puppeteer_navigate, mcp__puppeteer__puppeteer_screenshot, mcp__puppeteer__puppeteer_click, mcp__puppeteer__puppeteer_fill, mcp__puppeteer__puppeteer_evaluate]
-skills: [project-rules, code-quality, skill-completion-rules]
+skills: [project-rules, code-quality, clarification-protocol, skill-completion-rules]
 agents:
   primary: e2e-runner
   orchestration:

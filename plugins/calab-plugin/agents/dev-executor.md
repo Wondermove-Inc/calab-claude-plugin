@@ -288,7 +288,7 @@ if test_failed:
 ```json
 {
   "agent": "dev-executor",
-  "status": "success|failure|needs_clarification",
+  "result": "success|failure|needs_clarification",
   "task_id": "...",
   "tdd_phases": {
     "red": "completed",

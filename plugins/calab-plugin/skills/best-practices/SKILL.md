@@ -1,16 +1,17 @@
 ---
 name: best-practices
 description: 기술별 베스트 프랙티스를 적용합니다. 검증된 패턴과 방법론을 사용합니다.
+user-invocable: false
 allowed-tools: [Read, Glob, Grep, mcp__tavily__tavily-search]
-agent: code-reviewer
+agent: calab-plugin:code-reviewer
 agents:
-  primary: code-reviewer
+  primary: calab-plugin:code-reviewer
   orchestration:
-    analyze: [code-reviewer, Explore]
-    research: [deep-researcher]
-    apply: [code-reviewer]
-    validate: [validator]
-    fix: [reinforcer]
+    analyze: [calab-plugin:code-reviewer, Explore]
+    research: [calab-plugin:deep-researcher]
+    apply: [calab-plugin:code-reviewer]
+    validate: [calab-plugin:validator]
+    fix: [calab-plugin:reinforcer]
 ---
 
 # Best Practices Skill

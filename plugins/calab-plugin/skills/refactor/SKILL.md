@@ -4,7 +4,7 @@ description: |
   리팩토링. 데드 코드 정리, 중복 제거, 코드 개선을 수행합니다.
 argument-hint: "[--dead-code|--duplicates|--imports|--cleanup] [경로]"
 allowed-tools: [Read, Write, Edit, Grep, Glob, Bash, Task]
-skills: [project-rules, code-quality, skill-completion-rules]
+skills: [project-rules, code-quality, clarification-protocol, skill-completion-rules]
 agents:
   primary: refactor-cleaner
   orchestration:

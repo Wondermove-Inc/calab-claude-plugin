@@ -1,15 +1,16 @@
 ---
 name: code-quality
 description: 코드 품질 규칙을 강제합니다. 500줄 제한과 주석 필수 규칙을 적용합니다.
+user-invocable: false
 allowed-tools: Read, Grep, Glob, Edit, Write
-agent: code-reviewer
+agent: calab-plugin:code-reviewer
 agents:
-  primary: code-reviewer
+  primary: calab-plugin:code-reviewer
   orchestration:
-    write: [code-reviewer]
-    validate: [validator]
-    fix: [reinforcer]
-    review: [code-reviewer, validator]
+    write: [calab-plugin:code-reviewer]
+    validate: [calab-plugin:validator]
+    fix: [calab-plugin:reinforcer]
+    review: [calab-plugin:code-reviewer, calab-plugin:validator]
 ---
 
 # Code Quality Skill

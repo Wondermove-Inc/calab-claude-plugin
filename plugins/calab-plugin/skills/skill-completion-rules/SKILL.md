@@ -34,7 +34,8 @@ user-invocable: false
 
 | 스킬 | 상황 | 권장 다음 단계 |
 |------|------|---------------|
-| `/dev --plan` | PRD 완료 | `/dev --design` |
+| `/dev --plan` | PRD 완료 | `/dev --discuss` 또는 `/dev --design` |
+| `/dev --discuss` | 논의 완료 | `/dev --design` |
 | `/dev --design` | 설계 완료 | `/dev --tasks` |
 | `/dev --tasks` | Task 분해 완료 | `/dev --build TASK-001` |
 | `/dev --build` | Task 구현 완료 | 다음 Task 또는 `/guard` |

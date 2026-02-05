@@ -1,6 +1,7 @@
 ---
 name: tdd-workflow
 description: 테스트 주도 개발(TDD) 워크플로우를 강제합니다. 테스트 먼저 작성, 80% 커버리지 요구.
+user-invocable: false
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 

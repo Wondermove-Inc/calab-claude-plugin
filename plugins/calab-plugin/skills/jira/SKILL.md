@@ -4,7 +4,7 @@ description: |
   JIRA 연동. 이슈 생성, 상태 업데이트, 동기화를 수행합니다.
 argument-hint: "[--sync|--create|--update|--link] [이슈키]"
 allowed-tools: [Read, Write, Grep, Glob, Bash, Task, mcp__claude_ai_Atlassian__getJiraIssue, mcp__claude_ai_Atlassian__createJiraIssue, mcp__claude_ai_Atlassian__editJiraIssue, mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql, mcp__claude_ai_Atlassian__transitionJiraIssue, mcp__claude_ai_Atlassian__addCommentToJiraIssue]
-skills: [project-rules, skill-completion-rules]
+skills: [project-rules, clarification-protocol, skill-completion-rules]
 agents:
   primary: jira-connector
   orchestration:

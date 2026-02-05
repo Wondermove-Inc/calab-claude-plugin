@@ -4,7 +4,7 @@ description: |
   보안 검사. OWASP Top 10, 시크릿 탐지, 의존성 취약점을 검사합니다.
 argument-hint: "[--owasp|--secrets|--deps|--full] [경로]"
 allowed-tools: [Read, Grep, Glob, Bash, Task]
-skills: [project-rules, skill-completion-rules]
+skills: [project-rules, clarification-protocol, skill-completion-rules]
 agents:
   primary: security-reviewer
   orchestration:
