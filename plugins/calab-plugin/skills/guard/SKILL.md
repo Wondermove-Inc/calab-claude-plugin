@@ -4,7 +4,7 @@ description: |
   규칙 검증. 프로젝트 규칙 준수 여부와 작업 맥락을 확인합니다.
 argument-hint: "[--rules|--context|--full]"
 allowed-tools: [Read, Grep, Glob, Task]
-skills: [project-rules, skill-completion-rules]
+skills: [project-rules, clarification-protocol, skill-completion-rules]
 agents:
   primary: project-guardian
   orchestration:

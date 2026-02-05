@@ -4,7 +4,7 @@ description: |
   웹 리서치. 기술 문서, 베스트 프랙티스, 최신 트렌드를 조사합니다.
 argument-hint: "[--deep|--compare] [주제]"
 allowed-tools: [Read, Write, Glob, Grep, WebSearch, WebFetch, Task, mcp__tavily__tavily-search, mcp__tavily__tavily-extract]
-skills: [project-rules, skill-completion-rules]
+skills: [project-rules, clarification-protocol, skill-completion-rules]
 agents:
   primary: web-researcher
   orchestration:

@@ -467,13 +467,17 @@ def main():
         if hook_event_name != 'SubagentStop':
             sys.exit(0)
 
-        # subagent_stats.json에서 에이전트 타입 조회
-        stats_file = STATE_PATH / 'subagent_stats.json'
-        stats = load_json(stats_file)
+        # 에이전트 타입 추출 (우선순위: stdin > subagent_stats.json)
+        # Claude Code v2.0.42+에서 SubagentStop stdin에 agent_type 직접 제공
+        agent_type = input_data.get('agent_type', '')
 
-        running = stats.get('running', {})
-        agent_info = running.get(agent_id, {})
-        agent_type = agent_info.get('type', 'unknown')
+        # stdin에 없으면 subagent_stats.json에서 조회 (fallback)
+        if not agent_type or agent_type in ('unknown', ''):
+            stats_file = STATE_PATH / 'subagent_stats.json'
+            stats = load_json(stats_file)
+            running = stats.get('running', {})
+            agent_info = running.get(agent_id, {})
+            agent_type = agent_info.get('type', 'unknown')
 
         # unknown이면 종료
         if agent_type == 'unknown':

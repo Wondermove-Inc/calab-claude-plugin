@@ -4,7 +4,7 @@ description: |
   문제 해결 프로세스. 체계적인 방법론으로 근본 원인을 분석하고 해결합니다.
 argument-hint: "[--5whys|--rca|--hypothesis|--binary] [문제 설명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search]
-skills: [code-quality, best-practices, project-rules, skill-completion-rules]
+skills: [code-quality, best-practices, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules]
 agents:
   primary: root-cause-finder
   orchestration:

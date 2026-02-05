@@ -59,16 +59,16 @@ def main():
     try:
         input_data = json.load(sys.stdin)
 
-        # 에이전트 정보 추출
-        agent_name = input_data.get('agent_name', '')
-        agent_type = input_data.get('subagent_type', '')
+        # 에이전트 정보 추출 (agent_type: Claude Code v2.0.42+ 공식 필드)
+        agent_type = (
+            input_data.get('agent_type', '') or
+            input_data.get('subagent_type', '') or
+            input_data.get('agent_name', '')
+        )
         output = input_data.get('output', '')
 
         # validator 에이전트인지 확인
-        is_validator = (
-            'validator' in agent_name.lower() or
-            'validator' in agent_type.lower()
-        )
+        is_validator = 'validator' in agent_type.lower() if agent_type else False
 
         if not is_validator:
             sys.exit(0)

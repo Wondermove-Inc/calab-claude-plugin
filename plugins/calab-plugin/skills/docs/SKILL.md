@@ -4,7 +4,7 @@ description: |
   문서 생성. API, 컴포넌트, 가이드 문서를 자동 생성합니다.
 argument-hint: "[--api|--component|--guide|--update] [대상]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Task]
-skills: [project-rules, code-quality, skill-completion-rules]
+skills: [project-rules, code-quality, clarification-protocol, skill-completion-rules]
 agents:
   primary: docs-generator
   orchestration:

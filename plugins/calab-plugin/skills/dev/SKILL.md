@@ -4,7 +4,7 @@ description: |
   통합 개발 워크플로우 매니저. Plan → Design → Tasks → Build 전체 사이클 관리.
 argument-hint: "[--plan|--design|--tasks|--build|--roadmap|--status] [기능명]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task, TaskCreate, TaskUpdate, TaskList, TaskGet, WebSearch, AskUserQuestion, EnterPlanMode, ExitPlanMode, mcp__tavily__tavily-search]
-skills: [code-quality, best-practices, tdd-workflow, project-rules, work-tracker, skill-completion-rules]
+skills: [code-quality, best-practices, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules]
 agents:
   primary: planner-phase
   orchestration:
@@ -15,6 +15,7 @@ agents:
     status: [calab-plugin:dev-workflow]
     validate: [calab-plugin:validator, calab-plugin:qa]
     fix: [calab-plugin:reinforcer]
+    build-error: [calab-plugin:build-error-resolver]
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"

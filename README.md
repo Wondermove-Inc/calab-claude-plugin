@@ -8,7 +8,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-7c3aed.svg)](https://claude.ai/code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
 
-A workflow automation plugin that brings **17 skills**, **23 specialized agents**, and **26 lifecycle hooks** to Claude Code — enforcing best practices, eliminating hallucinations, and maintaining full traceability from planning to deployment.
+A workflow automation plugin that brings **17 skills**, **23 specialized agents**, and **27 lifecycle hooks** to Claude Code — enforcing best practices, eliminating hallucinations, and maintaining full traceability from planning to deployment.
 
 [Quick Start](#quick-start) · [Architecture](#architecture) · [Commands](#commands) · [Agents](#agents) · [Contributing](#contributing)
 
@@ -73,7 +73,7 @@ graph TD
 | **Utility** | `/docs` · `/security` · `/research` · `/jira` · `/refactor` · `/e2e` · `/guard` | User-invoked |
 | **Passive** | best-practices · code-quality · tdd-workflow · project-rules · work-tracker · clarification-protocol · skill-completion-rules | Auto-loaded contextually |
 
-### Lifecycle Hooks (26)
+### Lifecycle Hooks (27)
 
 Session start/stop, pre-compact state save, code quality validation, worktree tracking, build error detection, artifact verification, confidence-based reinforcer escalation, and more — all running automatically in the background.
 
@@ -181,6 +181,7 @@ graph LR
 /solve --5whys                # Iterative root cause analysis
 /solve --rca                  # Systematic 8-step RCA
 /solve --hypothesis           # Hypothesis-driven debugging
+/solve --binary               # Binary search debugging
 /solve --log                  # View progress log
 /solve --report               # Generate resolution report
 ```
@@ -198,12 +199,12 @@ graph LR
 
 | Command | Purpose |
 |:--------|:--------|
-| `/docs --api\|--component\|--guide` | Generate documentation from code |
-| `/security --owasp\|--secrets\|--deps` | Security vulnerability scanning |
+| `/docs --api\|--component\|--guide\|--update` | Generate documentation from code |
+| `/security --owasp\|--secrets\|--deps\|--full` | Security vulnerability scanning |
 | `/research --deep\|--compare` | Web research with source analysis |
-| `/jira --sync\|--create\|--update` | Bidirectional JIRA synchronization |
-| `/refactor --dead-code\|--duplicates\|--imports` | Automated code cleanup |
-| `/e2e --run\|--debug\|--record` | Playwright/Puppeteer E2E testing |
+| `/jira --sync\|--create\|--update\|--link` | Bidirectional JIRA synchronization |
+| `/refactor --dead-code\|--duplicates\|--imports\|--cleanup` | Automated code cleanup |
+| `/e2e --run\|--debug\|--record\|--headed` | Playwright/Puppeteer E2E testing |
 | `/guard --rules\|--context\|--full` | Project rule compliance check |
 
 ---
@@ -386,7 +387,7 @@ calab-claude-plugin/
     │   ├── code-reviewer.md
     │   ├── security-reviewer.md
     │   └── ... (14 more)
-    └── hooks/                       # 26 lifecycle hooks
+    └── hooks/                       # 27 lifecycle hooks
         ├── session_start.py
         ├── pre_compact.py
         ├── code_quality_validator.py

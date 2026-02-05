@@ -4,7 +4,7 @@ description: |
   프로젝트 분석 및 컨텍스트 문서 생성.
 argument-hint: "[--quick|--full|--phase N] [--skip-domain]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task]
-skills: [project-rules, best-practices, skill-completion-rules]
+skills: [project-rules, best-practices, clarification-protocol, skill-completion-rules]
 agents:
   primary: project-onboarder
   orchestration:
@@ -80,13 +80,13 @@ Task(
 
 ### --full 모드 (Phase 3-4)
 
-**Routing**: `references/full.md` 참조
+**Routing**: `references/project-onboarding.md` 참조
 
 ```python
 Task(
     subagent_type="calab-plugin:project-onboarder",
     description="프로젝트 온보딩 및 컨텍스트 생성",
-    prompt="... (references/full.md 참조)"
+    prompt="... (references/project-onboarding.md 참조)"
 )
 ```
 
@@ -156,11 +156,11 @@ Phase 5: Domain Knowledge
 | 옵션 | 참조 파일 |
 |------|----------|
 | `--quick` | `references/quick.md` |
-| `--full` | `references/full.md` |
-| `--phase 1-2` | `references/discovery.md` |
-| `--phase 3` | `references/architecture.md` |
-| `--phase 4` | `references/context-gen.md` |
-| `--phase 5` | `references/domain.md` |
+| `--full` | `references/project-onboarding.md` |
+| `--phase 1-2` | `references/phases/01-discovery.md` |
+| `--phase 3` | `references/phases/02-architecture.md` |
+| `--phase 4` | `references/phases/03-context-gen.md` |
+| `--phase 5` | `references/phases/04-domain.md` |
 
 ---
 

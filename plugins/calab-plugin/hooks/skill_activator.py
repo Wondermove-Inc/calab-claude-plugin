@@ -39,14 +39,19 @@ SKILL_REFERENCES = {
         'base_path': 'skills/dev/references',
         'options': {
             'plan': ['plan-phase.md', 'plan.md'],
+            'discuss': ['plan.md'],
             'design': ['design-phase.md', 'design.md'],
             'tasks': ['tasks-phase.md', 'tasks.md'],
             'build': ['build-phase.md', 'build.md'],
+            'roadmap': ['roadmap-phase.md'],
+            'status': ['status.md'],
             'default': ['plan-phase.md']  # 옵션 없을 때
         },
         'templates': {
             'architecture': 'templates/architecture-template.md',
-            'erd': 'templates/erd-template.md'
+            'erd': 'templates/erd-template.md',
+            'prd': 'templates/prd-template.md',
+            'task': 'templates/task-template.md'
         },
         # 에이전트별 레퍼런스 (SubagentStart에서 사용)
         'agents': {
@@ -62,13 +67,17 @@ SKILL_REFERENCES = {
             '5whys': ['5whys.md'],
             'rca': ['rca.md'],
             'hypothesis': ['hypothesis.md'],
+            'binary': ['explore.md'],
             'log': ['log.md'],
             'report': ['report.md'],
+            'explore': ['explore.md'],
+            'fix': ['fix.md'],
             'default': ['testing.md']  # 기본 디버깅 참조
         },
         'templates': {
             'problem': 'templates/problem-definition.md',
-            'analysis': 'templates/analysis-report.md'
+            'analysis': 'templates/analysis-report.md',
+            'solution': 'templates/solution-report.md'
         }
     },
     'onboard': {
@@ -76,6 +85,8 @@ SKILL_REFERENCES = {
         'options': {
             'quick': ['quick.md'],
             'full': ['project-onboarding.md', 'clean-architecture.md'],
+            'phase': ['phases/01-discovery.md', 'phases/02-architecture.md',
+                      'phases/03-context-gen.md', 'phases/04-domain.md'],
             'default': ['quick.md']
         },
         'templates': {
@@ -140,12 +151,18 @@ def detect_option(prompt: str, skill_name: str) -> str:
     if skill_name == 'dev':
         if '--plan' in prompt_lower:
             return 'plan'
+        elif '--discuss' in prompt_lower:
+            return 'discuss'
         elif '--design' in prompt_lower:
             return 'design'
         elif '--tasks' in prompt_lower:
             return 'tasks'
         elif '--build' in prompt_lower:
             return 'build'
+        elif '--roadmap' in prompt_lower:
+            return 'roadmap'
+        elif '--status' in prompt_lower:
+            return 'status'
     elif skill_name == 'solve':
         if '--5whys' in prompt_lower:
             return '5whys'
@@ -153,6 +170,8 @@ def detect_option(prompt: str, skill_name: str) -> str:
             return 'rca'
         elif '--hypothesis' in prompt_lower:
             return 'hypothesis'
+        elif '--binary' in prompt_lower:
+            return 'binary'
         elif '--log' in prompt_lower:
             return 'log'
         elif '--report' in prompt_lower:
@@ -162,6 +181,10 @@ def detect_option(prompt: str, skill_name: str) -> str:
             return 'quick'
         elif '--full' in prompt_lower:
             return 'full'
+        elif '--phase' in prompt_lower:
+            return 'phase'
+        elif '--skip-domain' in prompt_lower:
+            return 'skip-domain'
 
     return 'default'
 

@@ -1,8 +1,9 @@
 ---
 name: project-rules
 description: 프로젝트 핵심 규칙을 참조합니다.
+user-invocable: false
 allowed-tools: Read, Grep, Glob
-agent: project-guardian
+agent: calab-plugin:project-guardian
 ---
 
 # Project Rules Skill
