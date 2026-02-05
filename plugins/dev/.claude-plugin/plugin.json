@@ -36,8 +36,8 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "matcher": "",
-        "command": ["python3", "${CLAUDE_PLUGIN_ROOT}/hooks/workflow-guard.py", "$PROMPT"]
+        "type": "command",
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/workflow-guard.py \"$PROMPT\""
       }
     ]
   }
