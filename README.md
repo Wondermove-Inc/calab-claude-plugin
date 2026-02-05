@@ -1,8 +1,8 @@
 <div align="center">
 
-# Calab Plugin for Claude Code
+# CALAB
 
-**Consistent development quality, every single time.**
+**Code Assurance Layer for AI Building**
 
 [![Version](https://img.shields.io/badge/version-2.9.0-0969da.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin/releases)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-7c3aed.svg)](https://claude.ai/code)
