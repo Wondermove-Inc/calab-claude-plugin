@@ -299,9 +299,9 @@ Planner가 작업 복잡도에 따라 필요한 단계만 실행합니다:
 | 작업 유형 | 실행 에이전트 |
 |----------|--------------|
 | 단순 버그 | coder |
-| 중간 작업 | coder → tester |
-| 복잡 기능 | architect → coder → tester → reviewer |
-| UI 기능 | designer → coder → tester → reviewer |
+| 중간 작업 | tester → coder |
+| 복잡 기능 | architect → tester → coder → reviewer |
+| UI 기능 | designer → tester → coder → reviewer |
 | 요구사항 모호 | interviewer → (이후 단계) |
 
 ---

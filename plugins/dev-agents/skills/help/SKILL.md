@@ -66,7 +66,7 @@ user-invocable: true
 └─────────────────────┘
     ↓ Gate 2: 설계 검증
 ┌─────────────────────────────┐
-│  Coder  │  Tester  │ Reviewer│
+│ Tester → Coder → Reviewer   │  ← TDD (RED→GREEN)
 └─────────────────────────────┘
     ↓ Gate 3: 최종 검증
     완료

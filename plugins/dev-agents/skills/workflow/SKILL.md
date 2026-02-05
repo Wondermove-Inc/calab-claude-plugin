@@ -95,7 +95,7 @@ Designer/Architect → ux-scenario.md, design.md
     ↓
 Gate 2: 설계 검증 ← 사용자 확인
     ↓
-Coder → Tester → Reviewer
+Tester (RED) → Coder (GREEN) → Reviewer
     ↓
 Gate 3: 최종 검증 ← 사용자 확인
 ```
