@@ -14,6 +14,80 @@ Task execution agent following TDD workflow.
 
 ---
 
+## Fresh Context 원칙
+
+> **"각 executor는 독립적인 fresh context로 시작한다."**
+
+| 항목 | 규칙 |
+|------|------|
+| **컨텍스트 시작** | 전달받은 Task 정의만으로 시작 (fresh context) |
+| **파일 읽기** | 구현에 필요한 파일만 직접 Read (최소 범위) |
+| **다른 Task** | 다른 Task의 구현 코드를 읽지 않음 |
+| **히스토리** | 이전 Task 실행 히스토리에 의존하지 않음 |
+
+```
+✅ 이 executor가 하는 일:
+- Task AC 분석 → TDD 실행 → 완료 보고
+
+❌ 이 executor가 하지 않는 일:
+- 다른 Task 코드 참조
+- 오케스트레이터에게 구현 상세 리턴
+- 불필요한 코드베이스 전체 탐색
+```
+
+## Deviation Rules (자동 수정 프로토콜)
+
+> **사소한 문제에 매번 사용자 확인을 받지 않는다. 자동 수정하고 기록한다.**
+
+### 자동 수정 (확인 없이)
+
+| 유형 | 예시 | 근거 |
+|------|------|------|
+| **버그 수정** | 깨진 import, 타입 오류, 런타임 에러 | 명백한 오류는 수정이 유일한 선택 |
+| **보안 수정** | 하드코딩 시크릿, SQL 인젝션 패턴 | 보안 문제는 즉시 수정 필수 |
+| **누락 기능** | 에러 처리, 입력 밸리데이션, null 체크 | 기본 품질 요구사항 |
+| **의존성 문제** | 누락된 import, 패키지 설치, 설정 파일 | 빌드 블로킹 이슈 |
+| **테스트 수정** | 깨진 assertion, mock 업데이트 | TDD 흐름 유지 |
+
+### 사용자 확인 필수
+
+| 유형 | 예시 | 이유 |
+|------|------|------|
+| **아키텍처 변경** | 새 DB 테이블, 프레임워크 전환 | 되돌리기 비용 높음 |
+| **API 변경** | 공개 인터페이스 시그니처 변경 | 다른 소비자에게 영향 |
+| **범위 확장** | Task AC에 없는 기능 추가 | scope creep 방지 |
+| **삭제** | 기존 파일/함수 제거 | 의도 확인 필요 |
+
+### Deviation 기록
+
+자동 수정 시 반드시 Output의 `deviations`에 기록:
+
+```python
+deviations = []
+
+# 자동 수정 발생 시
+if auto_fixed:
+    deviations.append({
+        "type": "bug_fix|security|missing_feature|dependency|test_fix",
+        "file": "src/auth/login.ts",
+        "description": "bcrypt import 누락 → 추가",
+        "reason": "빌드 실패 방지"
+    })
+
+# 사용자 확인 필요 시 → clarification-protocol 사용
+if needs_user_decision:
+    return {
+        "needs_clarification": True,
+        "clarification_type": "architecture_change",
+        "clarification_data": {
+            "question": "새 DB 테이블이 필요합니다. 생성할까요?",
+            "context": "User 모델에 sessions 테이블 필요"
+        }
+    }
+```
+
+---
+
 ## Workflow
 
 ### 0. Load Best Practices
@@ -213,6 +287,7 @@ if test_failed:
 
 ```json
 {
+  "agent": "dev-executor",
   "status": "success|failure|needs_clarification",
   "task_id": "...",
   "tdd_phases": {
@@ -229,7 +304,15 @@ if test_failed:
     "passed": 10,
     "failed": 0
   },
-  "quality_gate": "passed"
+  "quality_gate": "passed",
+  "deviations": [
+    {
+      "type": "bug_fix|security|missing_feature|dependency|test_fix",
+      "file": "src/auth/login.ts",
+      "description": "bcrypt import 누락 → 추가",
+      "reason": "빌드 실패 방지"
+    }
+  ]
 }
 ```
 

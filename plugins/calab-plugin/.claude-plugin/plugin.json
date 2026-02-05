@@ -1,7 +1,7 @@
 {
   "name": "calab-plugin",
-  "version": "2.7.0",
-  "description": "개발 워크플로우 자동화 플러그인 - 10개 액티브 스킬 + 6개 패시브 스킬 + 23개 에이전트 + 24개 훅",
+  "version": "2.9.0",
+  "description": "개발 워크플로우 자동화 플러그인 - 10개 액티브 스킬 + 7개 패시브 스킬 + 23개 에이전트 + 26개 훅",
   "author": {
     "name": "Wondermove CALab",
     "email": "captain@wondermove.net"

@@ -65,79 +65,166 @@ skills: code-quality, best-practices, project-rules
 - [ ] import/export 완전성
 - [ ] 의존성 연결 완료
 
-### Phase 2.5: 산출물 존재 검증 (Artifact Verification) 🚨
+### Phase 2.5: 3레벨 아티팩트 검증 (Three-Level Artifact Verification) 🚨
+
+> **GSD의 Existence → Substantive → Wired 패턴 적용**
 
 ```
-절차:
-1. 현재 작업 유형 확인 (plan/design/tasks/build/solve)
-2. 해당 유형의 필수 산출물 목록 로드
-3. 각 산출물 파일 존재 여부 확인
-4. 누락된 산출물 목록 생성
+검증 순서:
+Level 1 (Existence) 통과 → Level 2 (Substantive) → Level 3 (Wired)
+실패 시 해당 레벨에서 중단 → reinforcer에 레벨 정보 전달
 ```
 
-**필수 산출물 체크리스트:**
+#### Level 1: Existence (존재 검증)
 
-| 작업 유형 | 필수 산출물 | 검증 방법 |
-|----------|-----------|----------|
-| **plan** | `.claude/docs/active/{feature}/01-PRD.md` | 파일 존재 |
-| **design** | `.claude/docs/active/{feature}/02-architecture.md` | 파일 존재 |
-| **tasks** | `.claude/docs/active/{feature}/03-tasks.md` | 파일 존재 |
-| **tasks** | `.claude-state/worktree.json` | 파일 존재 + feature 포함 |
-| **build** | 구현 코드 | 파일 존재 + 내용 확인 |
-| **build** | 테스트 코드 | 파일 존재 |
-| **solve** | `.claude/problem-solving/*/analysis.md` | 파일 존재 |
-| **solve** | `.claude/problem-solving/*/report.md` (해결 후) | 파일 존재 |
-
-**검증 코드:**
+| 작업 유형 | 필수 산출물 | 검증 |
+|----------|-----------|------|
+| **plan** | `01-PRD.md` | 파일 존재 |
+| **design** | `03-architecture.md` | 파일 존재 |
+| **tasks** | `05-tasks.md`, `worktree.json` | 파일 존재 |
+| **build** | 구현 코드, 테스트 코드 | 파일 존재 |
+| **solve** | `analysis.md` / `report.md` | 파일 존재 |
 
 ```python
-def verify_artifacts(work_type, feature_name):
-    """작업 유형별 필수 산출물 검증"""
-
-    REQUIRED_ARTIFACTS = {
-        "plan": [
-            f".claude/docs/active/{feature_name}/01-PRD.md",
-        ],
-        "design": [
-            f".claude/docs/active/{feature_name}/02-architecture.md",
-        ],
-        "tasks": [
-            f".claude/docs/active/{feature_name}/03-tasks.md",
-            ".claude-state/worktree.json",
-        ],
-        "build": [
-            ".claude-state/worktree.json",  # status 업데이트 확인
-        ],
-        "solve": [
-            ".claude/problem-solving/active/*/analysis.md",
-            # 또는 resolved/*/report.md (해결 완료 시)
-        ],
-    }
-
+def level1_existence(work_type, feature_name, task_files):
+    """Level 1: 파일/함수/클래스 존재 여부 확인"""
     missing = []
-    for artifact in REQUIRED_ARTIFACTS.get(work_type, []):
+
+    # 산출물 파일 존재 확인
+    for artifact in get_required_artifacts(work_type, feature_name):
         if not file_exists(artifact):
-            missing.append(artifact)
+            missing.append({"type": "file", "path": artifact})
 
-    if missing:
-        return {
-            "passed": False,
-            "missing_artifacts": missing,
-            "action": "REINFORCE_REQUIRED",
-            "message": f"⚠️ 필수 산출물 {len(missing)}개 누락"
-        }
+    # Task에서 명시한 파일 존재 확인
+    for f in task_files:
+        if not file_exists(f):
+            missing.append({"type": "task_file", "path": f})
 
-    return {"passed": True}
+    # 테스트 파일 존재 확인
+    for impl_file in get_implementation_files():
+        test_file = derive_test_path(impl_file)
+        if not file_exists(test_file):
+            missing.append({"type": "test", "path": test_file})
+
+    return {"level": 1, "passed": len(missing) == 0, "missing": missing}
 ```
+
+#### Level 2: Substantive (내용 검증)
+
+```python
+def level2_substantive(files):
+    """Level 2: 파일 내용이 충분한지 확인"""
+    issues = []
+
+    for f in files:
+        content = Read(f)
+
+        # 빈 파일 검사
+        if len(content.strip()) < 10:
+            issues.append({"type": "empty_file", "path": f})
+
+        # AC가 코드로 구현되었는지 확인
+        if is_implementation_file(f):
+            ac_coverage = check_ac_implementation(f, task.ac)
+            if ac_coverage < 100:
+                issues.append({"type": "ac_not_implemented", "path": f, "coverage": ac_coverage})
+
+        # 에러 처리 포함 여부
+        if is_implementation_file(f) and not has_error_handling(content):
+            issues.append({"type": "no_error_handling", "path": f})
+
+        # 타입 정의 완전성
+        if f.endswith('.ts') and has_any_type(content):
+            issues.append({"type": "any_type_used", "path": f})
+
+    return {"level": 2, "passed": len(issues) == 0, "issues": issues}
+```
+
+#### Level 3: Wired (연결 검증)
+
+```python
+def level3_wired(files):
+    """Level 3: 모듈 간 연결이 올바른지 확인"""
+    issues = []
+
+    for f in files:
+        # 다른 모듈에서 import되는지 확인
+        if is_exportable(f):
+            importers = Grep(pattern=f"import.*from.*{module_name(f)}")
+            if not importers and should_be_imported(f):
+                issues.append({"type": "not_imported", "path": f})
+
+        # API 라우터 등록 확인
+        if is_api_handler(f):
+            router_registered = Grep(pattern=f"router.*{endpoint_name(f)}")
+            if not router_registered:
+                issues.append({"type": "not_registered", "path": f})
+
+        # 테스트가 실행 가능한지 확인 (import 에러 없는지)
+        if is_test_file(f):
+            # Grep으로 import 경로 확인
+            imports = extract_imports(f)
+            for imp in imports:
+                if not resolve_import(imp):
+                    issues.append({"type": "broken_import", "path": f, "import": imp})
+
+    return {"level": 3, "passed": len(issues) == 0, "issues": issues}
+```
+
+#### 3레벨 통합 실행
+
+```python
+def verify_artifacts_3level(work_type, feature_name, task):
+    """3레벨 순차 검증 - 이전 레벨 통과 후 다음 레벨 진행"""
+
+    # Level 1: Existence
+    l1 = level1_existence(work_type, feature_name, task.files)
+    if not l1["passed"]:
+        return {"passed": False, "failed_level": 1, "details": l1,
+                "confidence_range": "0-30%"}
+
+    # Level 2: Substantive
+    l2 = level2_substantive(task.files)
+    if not l2["passed"]:
+        return {"passed": False, "failed_level": 2, "details": l2,
+                "confidence_range": "30-60%"}
+
+    # Level 3: Wired
+    l3 = level3_wired(task.files)
+    if not l3["passed"]:
+        return {"passed": False, "failed_level": 3, "details": l3,
+                "confidence_range": "60-80%"}
+
+    return {"passed": True, "failed_level": None,
+            "confidence_range": "80-100%"}
+```
+
+#### 레벨별 신뢰도 점수 매핑
+
+| 실패 레벨 | 신뢰도 범위 | 의미 | 액션 |
+|----------|-----------|------|------|
+| **Level 1 실패** | 0-30% | 파일/함수 자체가 없음 | reinforcer (Level 1 수정) |
+| **Level 2 실패** | 30-60% | 파일은 있지만 내용 부족 | reinforcer (Level 2 수정) |
+| **Level 3 실패** | 60-80% | 내용은 있지만 연결 안 됨 | reinforcer (Level 3 수정) |
+| **모두 통과** | 80-100% | 완전한 구현 | Phase 3, 4로 진행 |
 
 **검증 출력:**
 
 ```
-📦 산출물 검증:
-✅ 01-PRD.md 존재
-✅ 02-architecture.md 존재
-❌ 03-tasks.md 누락 → reinforcer 호출 필요
-✅ worktree.json 존재
+📦 3레벨 아티팩트 검증:
+
+🔍 Level 1 (Existence):
+✅ src/auth/login.ts 존재
+✅ src/auth/__tests__/login.test.ts 존재
+❌ src/auth/session.ts 누락
+
+🔍 Level 2 (Substantive): (Level 1 통과 후)
+✅ login.ts: AC 구현 100%
+⚠️ login.ts: 에러 처리 누락
+
+🔍 Level 3 (Wired): (Level 2 통과 후)
+✅ login.ts: 라우터 등록됨
+❌ session.ts: import 없음 (연결 안 됨)
 ```
 
 ### Phase 3: 엣지 케이스 검증
@@ -172,6 +259,167 @@ def verify_artifacts(work_type, feature_name):
 - [ ] 타입 any 사용 없음
 - [ ] 네이밍 규칙 준수
 
+### Phase 5: 목표 역추적 검증 (Goal-Backward Verification)
+
+> **"사용자 요구 → Observable Truths → Artifacts → Key Links" 역방향 추적**
+
+```
+검증 방향: 최상위 목표에서 시작하여 하위로 역추적
+    사용자 요구 (PRD)
+        ↑ (역추적)
+    Observable Truths: "관찰 가능한 결과가 있는가?"
+        ↑
+    Artifacts: "결과를 만드는 코드가 존재하는가?"
+        ↑
+    Key Links: "코드가 시스템에 연결되어 있는가?"
+```
+
+#### 1. 최상위 목표 식별
+
+```python
+def identify_goals(task, prd):
+    """PRD/Task에서 최상위 사용자 목표 추출"""
+    goals = []
+
+    # PRD 사용자 스토리에서 목표 추출
+    for story in prd.user_stories:
+        goals.append({
+            "goal": story.description,
+            "source": "PRD",
+            "priority": story.priority
+        })
+
+    # Task AC에서 목표 추출
+    for ac in task.acceptance_criteria:
+        goals.append({
+            "goal": ac,
+            "source": "Task AC",
+            "priority": "P0"
+        })
+
+    return goals
+```
+
+#### 2. Observable Truths 확인
+
+```python
+def check_observable_truths(goals):
+    """각 목표에 대해 관찰 가능한 결과가 있는지 확인"""
+    results = []
+
+    for goal in goals:
+        observables = derive_observables(goal)
+        # 예: "사용자 로그인" → ["API 200 응답", "JWT 생성", "세션 저장"]
+
+        for obs in observables:
+            verified = can_observe(obs)  # 코드에서 확인 가능한지
+            results.append({
+                "goal": goal["goal"],
+                "observable": obs,
+                "verified": verified
+            })
+
+    return results
+```
+
+#### 3. Artifacts 역추적
+
+```python
+def trace_artifacts(observables):
+    """Observable을 만드는 코드(Artifact)가 존재하는지 역추적"""
+    results = []
+
+    for obs in observables:
+        if obs["verified"]:
+            # Observable을 생성하는 파일/함수 찾기
+            artifacts = Grep(pattern=obs["code_pattern"])
+            results.append({
+                "observable": obs["observable"],
+                "artifacts_found": len(artifacts) > 0,
+                "artifacts": artifacts
+            })
+
+    return results
+```
+
+#### 4. Key Links 역추적
+
+```python
+def trace_key_links(artifacts):
+    """Artifact가 시스템에 올바르게 연결되어 있는지 확인"""
+    results = []
+
+    for art in artifacts:
+        links = []
+
+        # 라우터/엔트리포인트 등록 확인
+        if is_api_handler(art):
+            links.append(check_router_registration(art))
+
+        # 다른 모듈에서 import 확인
+        links.append(check_imports(art))
+
+        # 테스트에서 검증되는지 확인
+        links.append(check_test_coverage(art))
+
+        results.append({
+            "artifact": art,
+            "links": links,
+            "all_linked": all(l["connected"] for l in links)
+        })
+
+    return results
+```
+
+#### 5. 누락 보고
+
+```python
+def goal_backward_report(goals, observables, artifacts, links):
+    """역추적 결과 종합 → 끊어진 링크 발견 시 누락 보고"""
+
+    broken_chains = []
+
+    # 역추적 체인에서 끊어진 부분 찾기
+    for goal in goals:
+        chain = {
+            "goal": goal,
+            "observable_ok": check_chain(observables, goal),
+            "artifact_ok": check_chain(artifacts, goal),
+            "link_ok": check_chain(links, goal)
+        }
+
+        if not all(chain.values()):
+            broken_chains.append(chain)
+
+    return broken_chains
+```
+
+#### Goal-Backward 출력 형식
+
+```
+🔍 Goal-Backward 역추적 검증:
+
+📌 목표: "사용자가 로그인할 수 있다"
+  ├── Observable Truths:
+  │   ✅ 로그인 API 200 응답
+  │   ✅ JWT 토큰 생성
+  │   ❌ 세션 저장 (누락)
+  ├── Artifacts:
+  │   ✅ auth.ts: login() 함수
+  │   ✅ user.ts: User 모델
+  │   ❌ session.ts: Session 모델 (누락)
+  └── Key Links:
+      ✅ 라우터: /auth/login 등록
+      ❌ 세션 저장소 연결 (누락)
+      ✅ 테스트: login.test.ts
+
+⚠️ 끊어진 체인 2건:
+  1. 세션 저장 Observable → session.ts 누락
+  2. 세션 저장소 연결 Key Link 누락
+```
+
+---
+
 ## 신뢰도 점수 시스템 (2025 Best Practice)
 
 > **"Confidence-based escalation"** - 수치화된 점수로 에스컬레이션 결정
@@ -183,9 +431,10 @@ def calculate_confidence(validation_result):
     """검증 결과 신뢰도 점수 계산 (0-100%)"""
 
     weights = {
-        "ac_compliance": 40,      # AC 충족률 (40%)
-        "completeness": 25,       # 완전성 (25%)
-        "edge_cases": 20,         # 엣지 케이스 (20%)
+        "ac_compliance": 30,      # AC 충족률 (30%)
+        "completeness": 20,       # 완전성 - 3레벨 검증 (20%)
+        "goal_backward": 20,      # 목표 역추적 (20%)
+        "edge_cases": 15,         # 엣지 케이스 (15%)
         "quality": 15             # 품질 기준 (15%)
     }
 
@@ -368,6 +617,63 @@ def calculate_confidence(validation_result):
 ============================================
 ```
 
+## Structured Return (에이전트 간 통신용)
+
+> 텍스트 보고서 외에 **오케스트레이터/reinforcer가 파싱 가능한 구조화된 결과**를 반환한다.
+
+```json
+{
+  "agent": "validator",
+  "validation_result": "passed|warning|failed|critical",
+  "confidence_score": 95.2,
+  "scores": {
+    "ac_compliance": { "score": 100, "weight": 30, "details": "40/40점" },
+    "completeness": { "score": 92, "weight": 20, "details": "23/25점" },
+    "goal_backward": { "score": 90, "weight": 20, "details": "목표 8개 중 8개 연결" },
+    "edge_cases": { "score": 90, "weight": 15, "details": "18/20점" },
+    "quality": { "score": 93, "weight": 15, "details": "14/15점" }
+  },
+  "three_level_check": {
+    "level1_existence": { "passed": true, "missing_files": [] },
+    "level2_substantive": { "passed": true, "gaps": [] },
+    "level3_wired": { "passed": true, "broken_links": [] }
+  },
+  "failed_items": [
+    {
+      "phase": "ac_compliance|completeness|goal_backward|edge_cases|quality",
+      "level": 1,
+      "item": "AC2: 토큰 저장",
+      "detail": "리프레시 토큰 저장 로직 누락",
+      "auto_fixable": true
+    }
+  ],
+  "recommended_action": "proceed|reinforce|escalate",
+  "escalation": {
+    "needed": false,
+    "target": null,
+    "reason": null
+  }
+}
+```
+
+### result → action 매핑
+
+| validation_result | confidence | recommended_action |
+|-------------------|------------|-------------------|
+| `passed` | 90%+ | `proceed` (다음 Task) |
+| `warning` | 70-89% | `reinforce` (reinforcer 호출) |
+| `failed` | 50-69% | `reinforce` + 사용자 확인 |
+| `critical` | <50% | `escalate` (/solve 제안) |
+
+### reinforcer에 전달할 정보
+
+`failed_items` 배열이 reinforcer의 입력이 된다:
+- `phase`: 어떤 검증 단계에서 실패했는지
+- `level`: 3레벨 검증 중 어느 레벨인지 (1/2/3)
+- `auto_fixable`: reinforcer가 자동 수정 가능한지
+
+---
+
 ## Multi-Agent 연계
 
 ### Plan-Validate-Execute 패턴
@@ -542,6 +848,18 @@ def calculate_retry_delay(attempt, base_delay=1):
 | AC | 내용 | 상태 | 근거 |
 |----|------|------|------|
 | AC1 | ... | ✅/❌/⚠️ | ... |
+
+## 3레벨 아티팩트 검증
+| Level | 검증 | 결과 |
+|-------|------|------|
+| L1 (Existence) | 파일 존재 | ✅/❌ |
+| L2 (Substantive) | 내용 충분 | ✅/❌ |
+| L3 (Wired) | 연결 완료 | ✅/❌ |
+
+## Goal-Backward 역추적
+| 목표 | Observable | Artifact | Key Link |
+|------|-----------|----------|----------|
+| {goal1} | ✅/❌ | ✅/❌ | ✅/❌ |
 
 ## 발견된 문제
 1. [P0] ...

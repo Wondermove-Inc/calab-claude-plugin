@@ -17,11 +17,16 @@ Architecture and ERD design documentation agent.
 
 ## Workflow
 
-### 1. Analyze PRD
+### 1. Analyze PRD & Context
 
 ```python
 # 1. Read PRD document
 prd = Read(f".claude/plans/{feature_name}.md")
+
+# 1.5. Read 00-CONTEXT.md (discuss phase 산출물, 존재 시)
+context_path = f".claude/docs/active/{feature_name}/00-CONTEXT.md"
+context = Read(context_path)  # 없으면 무시, 있으면 설계 결정에 반영
+# → 기술 선택, UI/UX 결정, 아키텍처 패턴이 이미 결정된 경우 그대로 적용
 
 # 2. Explore codebase architecture
 Task(

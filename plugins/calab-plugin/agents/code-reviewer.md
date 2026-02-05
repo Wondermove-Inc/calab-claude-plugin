@@ -129,6 +129,49 @@ skills: code-quality, project-rules, best-practices
 ============================================
 ```
 
+## Structured Return (에이전트 간 통신용)
+
+> 텍스트 출력 외에 **오케스트레이터가 파싱 가능한 구조화된 결과**를 반환한다.
+
+```json
+{
+  "agent": "code-reviewer",
+  "result": "passed|needs_improvement|failed",
+  "confidence": 85,
+  "summary": {
+    "files_reviewed": 3,
+    "passed": 2,
+    "warnings": 1,
+    "errors": 0
+  },
+  "issues": [
+    {
+      "severity": "warning|error",
+      "file": "src/services/user-service.ts",
+      "line": 145,
+      "rule": "file_size|comment_missing|naming|error_handling|duplication",
+      "message": "파일 350줄 → 분리 필요",
+      "auto_fixable": true
+    }
+  ],
+  "escalation": {
+    "needed": false,
+    "target": null,
+    "reason": null
+  }
+}
+```
+
+### result 판정 기준
+
+| result | 조건 |
+|--------|------|
+| `passed` | error 0개, warning 2개 이하 |
+| `needs_improvement` | error 0개, warning 3개+ |
+| `failed` | error 1개+ |
+
+---
+
 ## /dev 에스컬레이션 (2025 Best Practice)
 
 > **"Complex quality issues need architectural review"** - 구조적 문제는 재설계 필요

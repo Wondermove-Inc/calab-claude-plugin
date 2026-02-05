@@ -11,7 +11,18 @@ skills: project-rules
 
 # task-validator Agent
 
-Validation agent for Task decomposition quality assurance.
+**최종 검증** agent for Task decomposition quality assurance.
+
+> **planner-task의 자체 검증(Plan Checker Loop) 이후 최종 검증을 수행합니다.**
+> 일반적으로 planner-task가 3회 자체 검증 후에도 이슈가 남은 경우에만 호출됩니다.
+
+### 호출 시점
+
+| 시점 | 설명 |
+|------|------|
+| **planner-task 자체 검증 실패** | 3회 반복 후에도 이슈 남은 경우 |
+| **최종 품질 게이트** | 모든 Task 분해 완료 후 최종 확인 |
+| **수동 요청** | 사용자가 직접 검증 요청 시 |
 
 Ensures that:
 1. All PHASEs from planner-phase have corresponding Tasks
@@ -19,6 +30,7 @@ Ensures that:
 3. Task ordering respects PHASE dependencies
 4. Clean Architecture layer order is maintained
 5. Task completeness (required fields present)
+6. Wave assignment validity (no circular dependencies, correct wave numbers)
 
 ---
 
@@ -177,6 +189,45 @@ if incomplete_tasks:
 **Pass Criteria**:
 - All Tasks have required fields populated
 - Acceptance criteria are testable
+
+#### Check 5: Wave Assignment Validity
+
+```python
+# Verify Wave assignments are correct
+wave_issues = []
+
+for task in feature_tasks:
+    task_detail = TaskGet(taskId=task.id)
+    wave = task_detail.metadata.get("wave")
+    deps = task_detail.blockedBy or []
+
+    # Wave가 할당되었는지 확인
+    if wave is None:
+        wave_issues.append({
+            "task_id": task.id,
+            "reason": "Wave 미할당"
+        })
+        continue
+
+    # 의존 Task의 Wave가 현재보다 작은지 확인
+    for dep_id in deps:
+        dep = TaskGet(taskId=dep_id)
+        dep_wave = dep.metadata.get("wave", 0)
+        if dep_wave >= wave:
+            wave_issues.append({
+                "task_id": task.id,
+                "dependency": dep_id,
+                "reason": f"의존 Task(Wave {dep_wave})가 현재(Wave {wave})보다 같거나 늦음"
+            })
+
+if wave_issues:
+    add_issue("wave_assignment_invalid", wave_issues)
+```
+
+**Pass Criteria**:
+- All Tasks have wave assignment
+- Dependency Tasks always have lower wave numbers
+- No circular wave dependencies
 
 ### 3. Validation Result
 
