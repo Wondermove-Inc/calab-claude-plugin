@@ -1,5 +1,6 @@
 ---
 name: dev:setup
+user-invocable: true
 description: |
   dev 플러그인의 워크플로우 강제 Hook을 사용자 설정에 설치합니다.
   설치 후 개발 관련 요청 시 자동으로 /dev:workflow가 호출됩니다.
