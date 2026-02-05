@@ -39,6 +39,7 @@ permissionMode: default
 
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
+| **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, 상태 저장, 재개 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, RED 상태 확인 |
 | 언어별 가이드 | `guides/language-guide.md` | 테스트 패턴, 커버리지 명령어 |
 
@@ -73,6 +74,24 @@ TDD 워크플로우에서 테스트 작성 후 반드시:
 ```
 
 ## 작업 프로세스
+
+### 0단계: 시작 프로토콜
+
+> 상세 규칙은 `guides/context-management.md` 참조
+
+작업 시작 전 필수 단계:
+```bash
+# 1. 이슈 상태 확인
+bd show <issue-id>
+
+# 2. Epic 체크포인트 확인 (Epic이 있는 경우)
+bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Tester\]"
+
+# 3. 기존 테스트 파일 확인
+ls *_test.go *.test.ts 2>/dev/null
+```
+
+**재개 시**: 이전 체크포인트 이후부터 작업 계속
 
 ### 1단계: 테스트 대상 분석
 ```
@@ -174,6 +193,12 @@ TDD RED 상태일 경우:
 1. 모킹 전략 검토
 2. 테스트 격리 방안 적용
 3. 해결 불가 시 Planner에게 보고
+
+## 체크포인트
+
+> 형식 및 상세 규칙은 `guides/context-management.md` 참조
+
+**저장 타이밍**: 테스트 케이스 설계 완료, 단위 테스트 작성 완료, 컨텍스트 부족 예상 시
 
 ## 원칙
 

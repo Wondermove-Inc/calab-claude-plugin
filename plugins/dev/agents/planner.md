@@ -37,6 +37,7 @@ permissionMode: default
 
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
+| **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, Progress 파일, 재개 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
 | Git Worktree | `guides/worktree.md` | 격리 전략, 명령어 |
 | Quality Gate | `guides/gate-process.md` | Gate별 승인 프로세스 |
@@ -55,32 +56,43 @@ ls tree/ 2>/dev/null
 잔존 worktree가 있으면 사용자에게 알리고 정리 여부 확인 (상세: `guides/worktree.md`).
 
 #### 재개 요청 처리
+
+> 상세 규칙은 `guides/context-management.md` 참조
+
 요청이 `워크플로우 재개: <epic-id>` 형식인 경우:
 
 ```bash
 # 1. Sub-task 상태 확인 (주요 판단 기준)
 bd list --parent <epic-id>
 
-# 2. Epic 정보 및 코멘트 확인 (보조)
+# 2. Progress 파일 확인 (컨텍스트 복원)
+cat .dev/progress/<epic-id>.md 2>/dev/null
+
+# 3. Epic 정보 및 코멘트 확인 (체크포인트 확인)
 bd show <epic-id>
 bd comments <epic-id>
 
-# 3. 기존 worktree 존재 여부 확인
+# 4. 기존 worktree 존재 여부 확인
 ls tree/ 2>/dev/null
 
-# 4. 산출물 존재 여부 확인 (스킵 판단)
+# 5. 산출물 존재 여부 확인 (스킵 판단)
 ls docs/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 지점 결정 우선순위**:
-1. **Sub-task 상태 기반** (가장 신뢰):
+1. **Progress 파일** (가장 상세):
+   - "다음 세션 지침" 섹션 참조
+   - 구체적인 재개 지점과 남은 작업 파악
+2. **Sub-task 상태 기반**:
    - `in_progress` Sub-task → 해당 에이전트부터 재개
    - 모두 `open` → 처음부터 시작
    - 일부 `closed` → 다음 `open` Sub-task부터
-2. **산출물 존재 여부** (스킵 판단):
+3. **체크포인트 코멘트**:
+   - `[Checkpoint]` 코멘트 → 진행률 및 현재 상태 파악
+4. **산출물 존재 여부** (스킵 판단):
    - spec.md 존재 → Interviewer 스킵 가능
    - design.md 존재 → Architect 스킵 가능
-3. **코멘트 상태** (보조 정보):
+5. **Gate 상태**:
    - `[Gate N] 대기중` → 해당 Gate 승인 요청부터
 
 기존 worktree가 있으면 해당 worktree에서 작업을 계속합니다.
@@ -151,7 +163,58 @@ Task (subagent_type: dev:coder):
 
 ### 6단계: 진행 추적
 
-모든 상태 변경을 Epic 코멘트에 기록하여 재개 시 복원 가능하게 합니다.
+> 상세 규칙은 `guides/context-management.md` 참조
+
+모든 상태 변경을 Epic 코멘트와 Progress 파일에 기록하여 재개 시 복원 가능하게 합니다.
+
+#### Progress 파일 관리
+
+워크플로우 시작 시 Progress 파일 생성:
+```bash
+mkdir -p .dev/progress
+```
+
+Progress 파일 위치: `.dev/progress/<epic-id>.md`
+
+**Progress 파일 업데이트 타이밍**:
+- 워크플로우 시작 시: 초기 생성
+- 에이전트 완료 시: 현재 상태 업데이트
+- 에이전트 실패/중단 시: 다음 세션 지침 작성
+- 워크플로우 완료 시: 최종 상태 기록
+
+**Progress 파일 형식**:
+```markdown
+# Progress: <Epic 제목>
+
+## 메타데이터
+| 항목 | 값 |
+|------|-----|
+| Epic ID | bd-xxx |
+| 시작일 | YYYY-MM-DD |
+| 최종 업데이트 | YYYY-MM-DD HH:MM |
+
+## 현재 상태
+- **완료**: [완료된 에이전트/단계]
+- **진행중**: [현재 작업 중인 내용]
+- **대기**: [남은 에이전트/단계]
+
+## 최근 작업 (최신 3건)
+1. [YYYY-MM-DD HH:MM] <에이전트> - <결과>
+
+## 다음 세션 지침
+1. [구체적인 재개 지점]
+2. [남은 작업]
+
+## 알려진 이슈
+- [ ] [해결 필요한 이슈]
+```
+
+#### 체크포인트 코멘트
+
+에이전트가 중간 진행 상태를 보고할 때 Epic에 체크포인트 기록:
+```bash
+bd comments add <epic-id> "[Checkpoint] <에이전트명> <진행률>% - <현재상태>"
+```
 
 **코멘트 형식 (표준)**:
 ```bash

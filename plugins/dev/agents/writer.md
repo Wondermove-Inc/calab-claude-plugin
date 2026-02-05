@@ -58,7 +58,31 @@ permissionMode: default
 - [ ] 적절한 헤딩 레벨
 - [ ] 코드 블록 언어 지정
 
+## 참조 가이드
+
+| 가이드 | 위치 | 용도 |
+|--------|------|------|
+| **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, 상태 저장, 재개 |
+
 ## 작업 프로세스
+
+### 0단계: 시작 프로토콜
+
+> 상세 규칙은 `guides/context-management.md` 참조
+
+작업 시작 전 필수 단계:
+```bash
+# 1. 이슈 상태 확인
+bd show <issue-id>
+
+# 2. Epic 체크포인트 확인 (Epic이 있는 경우)
+bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Writer\]"
+
+# 3. 기존 문서 확인
+ls docs/{앱명}/{기능명}/ 2>/dev/null
+```
+
+**재개 시**: 이전 체크포인트 이후부터 작업 계속
 
 ### 1단계: 문서 수집
 ```
@@ -164,6 +188,12 @@ bd close <issue-id>
 | 응답 | 리스폰스, Response |
 | 인증 | Authentication |
 | 인가 | Authorization |
+
+## 체크포인트
+
+> 형식 및 상세 규칙은 `guides/context-management.md` 참조
+
+**저장 타이밍**: 개별 문서 검토 완료, index.md 생성 완료, 컨텍스트 부족 예상 시
 
 ## 원칙
 

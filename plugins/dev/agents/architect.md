@@ -31,6 +31,7 @@ permissionMode: default
 
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
+| **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, 상태 저장, 재개 |
 | Clean Architecture | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
 | Hexagonal Architecture | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
 | API 설계 | `guides/architecture/api-design.md` | RESTful API 설계 원칙 |
@@ -47,6 +48,24 @@ permissionMode: default
 **설계 전 반드시 해당 가이드를 읽고 원칙을 준수하세요.**
 
 ## 작업 프로세스
+
+### 0단계: 시작 프로토콜
+
+> 상세 규칙은 `guides/context-management.md` 참조
+
+작업 시작 전 필수 단계:
+```bash
+# 1. 이슈 상태 확인
+bd show <issue-id>
+
+# 2. Epic 체크포인트 확인 (Epic이 있는 경우)
+bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Architect\]"
+
+# 3. 기존 설계 문서 확인
+ls docs/{앱명}/{기능명}/ 2>/dev/null
+```
+
+**재개 시**: 이전 체크포인트 이후부터 작업 계속
 
 ### 1단계: 컨텍스트 파악
 ```
@@ -143,6 +162,12 @@ internal/
 ```
 완료: bd-abc123 (design.md)
 ```
+
+## 체크포인트
+
+> 형식 및 상세 규칙은 `guides/context-management.md` 참조
+
+**저장 타이밍**: 도메인 모델 설계 완료, API 설계 완료, 컨텍스트 부족 예상 시
 
 ## 원칙
 

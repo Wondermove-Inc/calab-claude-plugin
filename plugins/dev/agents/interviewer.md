@@ -78,7 +78,31 @@ Planner가 Interviewer를 호출할 때 다음 조건에 따라 문서를 관리
 
 **핵심 판단**: **"기존 spec.md의 요구사항이 변경되는가?"**
 
+## 참조 가이드
+
+| 가이드 | 위치 | 용도 |
+|--------|------|------|
+| **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, 상태 저장, 재개 |
+
 ## 작업 프로세스
+
+### 0단계: 시작 프로토콜
+
+> 상세 규칙은 `guides/context-management.md` 참조
+
+작업 시작 전 필수 단계:
+```bash
+# 1. 이슈 상태 확인
+bd show <issue-id>
+
+# 2. Epic 체크포인트 확인 (Epic이 있는 경우)
+bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Interviewer\]"
+
+# 3. 기존 스펙 문서 확인
+ls docs/{앱명}/{기능명}/spec.md 2>/dev/null
+```
+
+**재개 시**: 이전 체크포인트 이후부터 작업 계속
 
 ### 1단계: 컨텍스트 파악
 ```
@@ -196,6 +220,12 @@ bd close <issue-id>
 ```
 완료: bd-abc123 (spec.md)
 ```
+
+## 체크포인트
+
+> 형식 및 상세 규칙은 `guides/context-management.md` 참조
+
+**저장 타이밍**: 주요 질문 완료 (Level 별), 중간 요약 작성, 컨텍스트 부족 예상 시
 
 ## 원칙
 
