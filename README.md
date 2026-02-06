@@ -8,7 +8,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-7c3aed.svg)](https://claude.ai/code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
 
-A workflow automation plugin that brings **17 skills**, **23 specialized agents**, and **27 lifecycle hooks** to Claude Code — enforcing best practices, eliminating hallucinations, and maintaining full traceability from planning to deployment.
+A workflow automation plugin that brings **18 skills**, **24 specialized agents**, and **27 lifecycle hooks** to Claude Code — enforcing best practices, eliminating hallucinations, and maintaining full traceability from planning to deployment.
 
 [Quick Start](#quick-start) · [Architecture](#architecture) · [Commands](#commands) · [Agents](#agents) · [Contributing](#contributing)
 
@@ -71,7 +71,7 @@ graph TD
 |:------|:-------|:--------|
 | **Core** | `/dev` · `/solve` · `/onboard` | User-invoked |
 | **Utility** | `/docs` · `/security` · `/research` · `/jira` · `/refactor` · `/e2e` · `/guard` | User-invoked |
-| **Passive** | best-practices · code-quality · tdd-workflow · project-rules · work-tracker · clarification-protocol · skill-completion-rules | Auto-loaded contextually |
+| **Passive** | best-practices · code-quality · tdd-workflow · project-rules · work-tracker · clarification-protocol · skill-completion-rules · verify-agents | Auto-loaded contextually |
 
 ### Lifecycle Hooks (27)
 
@@ -211,7 +211,7 @@ graph LR
 
 ## Agents
 
-23 specialized agents, each with defined tools, permissions, and output contracts.
+24 specialized agents, each with defined tools, permissions, and output contracts.
 
 <details>
 <summary><strong>Workflow</strong> — 7 agents</summary>
@@ -241,13 +241,14 @@ graph LR
 </details>
 
 <details>
-<summary><strong>Verification</strong> — 3 agents</summary>
+<summary><strong>Verification</strong> — 4 agents</summary>
 
 | Agent | Role |
 |:------|:-----|
 | `validator` | 3-level artifact verification (Existence → Substantive → Wired) with goal-backward checking |
 | `task-validator` | Task-level acceptance criteria validation |
 | `reinforcer` | Confidence-based auto-remediation of validation failures |
+| `agent-verifier` | Parallel agent output audit — auto-triggers on batch completion |
 
 </details>
 
@@ -356,7 +357,7 @@ calab-claude-plugin/
 ├── README.md
 ├── link-skills.sh                   # Skill autocomplete setup
 └── plugins/calab-plugin/
-    ├── skills/                      # 17 skills (10 active + 7 passive)
+    ├── skills/                      # 18 skills (10 active + 8 passive)
     │   ├── dev/                     #   Development pipeline
     │   │   ├── SKILL.md
     │   │   └── references/          #   Phase-specific prompts
@@ -375,8 +376,9 @@ calab-claude-plugin/
     │   ├── project-rules/           #   (passive) Project conventions
     │   ├── work-tracker/            #   (passive) Worktree updates
     │   ├── clarification-protocol/  #   (passive) Subagent Q&A protocol
-    │   └── skill-completion-rules/  #   (passive) Skill completion gates
-    ├── agents/                      # 23 specialized agents
+    │   ├── skill-completion-rules/  #   (passive) Skill completion gates
+    │   └── verify-agents/           #   (passive) Parallel agent output audit
+    ├── agents/                      # 24 specialized agents
     │   ├── dev-workflow.md
     │   ├── planner-phase.md
     │   ├── planner-task.md
@@ -386,6 +388,7 @@ calab-claude-plugin/
     │   ├── reinforcer.md
     │   ├── code-reviewer.md
     │   ├── security-reviewer.md
+    │   ├── agent-verifier.md
     │   └── ... (14 more)
     └── hooks/                       # 27 lifecycle hooks
         ├── session_start.py
