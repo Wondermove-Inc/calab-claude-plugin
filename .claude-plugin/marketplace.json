@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "calab-marketplace",
   "version": "2.9.0",
-  "description": "Calab Plugin - 개발 워크플로우 자동화 플러그인 (17개 스킬 + 23개 에이전트 + 26개 훅)",
+  "description": "Calab Plugin - 개발 워크플로우 자동화 플러그인 (18개 스킬 + 24개 에이전트 + 27개 훅)",
   "owner": {
     "name": "Wondermove CALab",
     "email": "captain@wondermove.net"
