@@ -1,12 +1,22 @@
 ---
 name: dev:workflow
 description: |
-  멀티 에이전트 워크플로우를 시작합니다. 요청을 분석하고 적절한 에이전트를 조율하여 작업을 수행합니다.
-  
-  **자동 호출 규칙**: dev 플러그인이 활성화된 상태에서 다음 요청은 자동으로 이 스킬을 호출해야 합니다:
-  - 기능 개발/추가, 버그 수정, 리팩토링, 성능 최적화, 테스트 작성, 설계/아키텍처 작업
-  
-  예외 (직접 처리): 단순 질문, 슬래시 커맨드 호출, Git/빌드/배포 작업, 문서만 수정
+  멀티 에이전트 워크플로우로 소프트웨어 개발 작업을 수행합니다.
+  "기능 추가해줘", "버그 수정해줘", "리팩토링해줘", "테스트 작성해줘",
+  "설계해줘", "최적화해줘" 등 개발 작업 요청 시 사용합니다.
+  요구사항 분석부터 설계, 구현, 테스트, 리뷰까지 전체 개발 주기를 자동화하고
+  Quality Gates로 각 단계를 검증합니다.
+  단순 질문, Git 명령, 문서만 수정하는 경우에는 사용하지 마세요.
+  dev 플러그인이 활성화된 상태에서 기능 개발/추가, 버그 수정,
+  리팩토링, 성능 최적화, 테스트 작성, 설계/아키텍처 작업 요청은
+  자동으로 이 스킬을 호출해야 합니다.
+  예외(직접 처리) - 단순 질문, 슬래시 커맨드 호출, Git/빌드/배포 작업, 문서만 수정
+user-invocable: true
+metadata:
+  author: calab
+  version: 1.0.0
+  category: development
+  tags: [multi-agent, workflow, orchestration]
 ---
 
 # /dev:workflow 커맨드
@@ -292,6 +302,121 @@ flowchart LR
 - Planner → Main 반환값도 Epic ID + 상태만
 - 상세 내용 확인: `bd show <id>`
 - 불필요한 단계는 자동 스킵
+
+## 참조 문서
+
+상세 정보는 다음 파일을 참조하세요:
+
+### 에이전트 정의
+- `agents/planner.md`: 워크플로우 오케스트레이터
+- `agents/interviewer.md`: 요구사항 인터뷰어
+- `agents/architect.md`: 시스템 설계자
+- `agents/designer.md`: UX/UI 디자이너
+- `agents/coder.md`: 코드 구현자
+- `agents/tester.md`: 테스트 작성자
+- `agents/reviewer.md`: 코드 리뷰어
+- `agents/writer.md`: 문서 작성자
+
+### 개발 가이드
+- `guides/gate-process.md`: Quality Gate 프로세스
+- `guides/tdd-workflow.md`: TDD 워크플로우
+- `guides/worktree.md`: Git Worktree 사용법
+- `guides/context-management.md`: 컨텍스트 관리
+- `guides/language-guide.md`: 언어별 코딩 가이드
+
+### 설계 가이드
+- `guides/architecture/clean-architecture.md`
+- `guides/architecture/hexagonal-architecture.md`
+- `guides/architecture/api-design.md`
+- `guides/architecture/database.md`
+
+### 템플릿
+- `templates/architecture-template.md`: 설계 문서 템플릿
+- `templates/api-spec-template.md`: API 스펙 템플릿
+- `templates/erd-template.md`: ERD 템플릿
+
+## 성공 기준
+
+워크플로우가 성공적으로 완료되면 다음 조건을 충족해야 합니다:
+
+### 이슈 관리
+- beads에 Epic 이슈 생성됨
+- 필요한 Sub-task들이 Epic에 연결됨
+- 모든 이슈가 closed 상태
+
+### Quality Gates 통과
+- Gate 0: 초기 계획 승인 ✓
+- Gate 1: 요구사항 검증 ✓ (Interviewer 포함 시)
+- Gate 2: 설계 검증 ✓ (Architect/Designer 포함 시)
+- Gate 3: 최종 검증 ✓
+
+### 산출물 생성
+- `.dev/artifacts/{앱명}/{기능명}/` 디렉토리에 문서 생성
+- 포함된 에이전트에 따라: spec.md, design.md, ux-scenario.md, test.md
+
+### 코드 품질 (Coder/Tester 포함 시)
+- 테스트 통과
+- 빌드 성공
+- Reviewer 승인
+
+### Git 상태 (Worktree 사용 시)
+- 작업 브랜치 생성됨
+- Worktree 정리 완료
+
+## 사용 예시
+
+### 예시 1: 새 기능 개발
+사용자: "사용자 알림 기능 추가해줘"
+동작:
+1. Planner가 요청 분석 및 Epic 생성
+2. Interviewer가 요구사항 인터뷰 수행
+3. Architect가 기술 설계 작성
+4. Tester가 테스트 코드 작성 (RED)
+5. Coder가 구현 (GREEN)
+6. Reviewer가 코드 리뷰
+결과: 기능 구현 완료, Gate 1-3 모두 통과, beads 이슈 closed
+
+### 예시 2: 버그 수정
+사용자: "로그인 실패 시 에러 메시지가 안 보여"
+동작:
+1. Planner가 버그 분석 및 Epic 생성
+2. Interviewer 스킵 (명확한 버그)
+3. Coder가 버그 수정
+4. Tester가 회귀 테스트 추가
+5. Reviewer가 수정 검토
+결과: 버그 수정 완료, 테스트 추가됨
+
+### 예시 3: 리팩토링
+사용자: "인증 모듈 클린 아키텍처로 리팩토링해줘"
+동작:
+1. Planner가 리팩토링 범위 분석
+2. Architect가 새 구조 설계
+3. Tester가 기존 동작 보존 테스트 작성
+4. Coder가 리팩토링 수행
+5. Reviewer가 아키텍처 일관성 검토
+결과: 리팩토링 완료, 기존 테스트 모두 통과
+
+## 문제 해결
+
+### 워크플로우가 시작되지 않음
+- **원인**: beads CLI가 설치되지 않음
+- **해결**: `bd --version`으로 확인 후 설치
+
+### Gate에서 응답이 없음
+- **원인**: 에이전트 타임아웃 또는 세션 종료
+- **해결**: `--resume <epic-id>`로 재개
+
+### Worktree 충돌
+- **원인**: 이전 작업의 worktree가 남아있음
+- **해결**: `ls tree/`로 확인 후 `guides/worktree.md` 참조하여 정리
+
+### 에이전트 호출 실패
+- **원인**: Task 도구 권한 부족 또는 모델 제한
+- **해결**: 권한 확인, opus 모델 사용 확인
+
+### beads 이슈 생성 실패
+- **원인**: .beads/ 디렉토리 권한 또는 stealth 모드 설정
+- **해결**: `bd ready`로 상태 확인
 
 ## 지금 시작하세요
 

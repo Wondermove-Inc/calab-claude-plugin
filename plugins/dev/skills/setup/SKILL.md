@@ -1,7 +1,16 @@
 ---
 name: dev:setup
-description: dev 플러그인의 워크플로우 강제 Hook을 사용자 설정(~/.claude/settings.json)에 설치합니다.
+description: |
+  dev 플러그인의 워크플로우 자동 호출 Hook을 설치합니다.
+  "dev 설정해줘", "워크플로우 훅 설치해줘", "자동 호출 설정해줘" 등
+  dev 플러그인 초기 설정이 필요할 때 사용합니다.
+  설치 후 개발 관련 요청이 자동으로 /dev:workflow를 호출합니다.
 user-invocable: true
+metadata:
+  author: calab
+  version: 1.0.0
+  category: development
+  tags: [setup, hook, configuration]
 ---
 
 # /dev:setup 커맨드

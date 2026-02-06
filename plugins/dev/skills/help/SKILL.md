@@ -1,7 +1,15 @@
 ---
 name: dev:help
-description: dev 플러그인의 명령어와 에이전트 사용법을 안내합니다.
+description: |
+  dev 플러그인의 명령어, 에이전트, 워크플로우 사용법을 안내합니다.
+  "dev 도움말", "에이전트 뭐 있어", "워크플로우 어떻게 써",
+  "dev 명령어 알려줘" 등 dev 플러그인 사용법을 물어볼 때 사용합니다.
 user-invocable: true
+metadata:
+  author: calab
+  version: 1.0.0
+  category: development
+  tags: [help, documentation]
 ---
 
 # dev 플러그인 도움말
