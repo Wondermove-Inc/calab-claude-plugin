@@ -19,74 +19,80 @@ user-invocable: true
    - 변경의 주요 목적과 범위 파악
    - 테스트 코드 포함 여부 확인
 
-3. **커밋 메시지 생성**
-   - 다음 형식을 따름:
+3. **Jira ticket key 확인**
+   - 사용자에게 Jira ticket key를 반드시 입력받음
+   - 인자로 전달되지 않았으면 사용자에게 질문하여 받음
+
+4. **커밋 메시지 생성**
+   - 메시지 형식:
    ```
-   [type]: 간단 명료한 제목
+   [type]: 작업 내용, JIRA-KEY
 
    - 주요 변경사항 1
    - 주요 변경사항 2
-   - 주요 변경사항 3
 
    Co-Authored-By: Claude <noreply@anthropic.com>
    ```
 
+   - fix 타입인 경우 Jira 티켓 링크를 본문에 추가
+
    - Type 종류:
      - `feature`: 새로운 기능 추가
      - `fix`: 버그 수정
+     - `docs`: 문서 수정
+     - `style`: 코드 포맷팅, 세미콜론 누락 등
      - `refactor`: 코드 리팩토링
      - `test`: 테스트 코드 추가/수정
-     - `docs`: 문서 수정
      - `chore`: 기타 변경사항
 
-4. **사용자 확인 및 커밋**
+5. **사용자 확인 및 커밋**
    - 생성된 커밋 메시지를 사용자에게 보여주고 확인 요청
    - 승인 시 `git add` 및 `git commit` 실행
+
+## 사용 예시
+
+```
+/toolkit:code-commit                          # 변경사항 분석 후 Jira key 질문
+/toolkit:code-commit "인증 기능 수정"          # 힌트 제공, Jira key 질문
+/toolkit:code-commit PROJ-123                 # Jira key 직접 전달
+```
+
+## 커밋 메시지 예시
+
+```
+[feature]: Add login functionality, PROJ-123
+
+- OAuth2 기반 로그인 플로우 구현
+- 세션 관리 미들웨어 추가
+- 로그인/로그아웃 API 엔드포인트 추가
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+```
+[fix]: Correct typo in readme file, PROJ-456
+
+- README.md 설치 가이드 오탈자 수정
+
+Jira: https://jira.example.com/browse/PROJ-456
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+```
+[refactor]: Predicate 로직 개선 및 빈 Status 처리 추가, PROJ-789
+
+- hasStatusData 함수 재도입하여 빈 Status 명시적 처리
+- hasStatusChanged에 newStatus 데이터 존재 여부 체크 추가
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
 ## 주의사항
 
 - 민감한 정보(.env, credentials 등)가 포함된 파일은 경고
 - 바이너리 파일이나 빌드 결과물은 제외 확인
 - 테스트가 실패한 상태면 경고
-- 커밋 전에 린트 검사 수행 (선택적)
-
-## 사용 예시
-
-### 기본 사용
-```
-/toolkit:code-commit
-```
-→ 현재 변경사항 분석 후 커밋 메시지 생성
-
-### 메시지 힌트 제공
-```
-/toolkit:code-commit "인증 기능 수정"
-```
-→ 힌트를 바탕으로 커밋 메시지 생성
-
-## 커밋 메시지 예시
-
-```
-[refactor]: Predicate 로직 개선 및 빈 Status 처리 추가
-
-- hasStatusData 함수 재도입하여 빈 Status 명시적 처리
-- hasStatusChanged에 newStatus 데이터 존재 여부 체크 추가
-- Edge case 테스트 7개 추가 (총 13개 테스트 통과)
-- 코드 주석 및 문서화 개선
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-```
-[feature]: 사용자 알림 설정 기능 추가
-
-- NotificationSettings 컴포넌트 구현
-- 이메일/푸시 알림 토글 기능
-- 설정 변경 시 API 연동
-- 로딩/에러 상태 처리
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
 
 ## 민감 파일 경고 목록
 
