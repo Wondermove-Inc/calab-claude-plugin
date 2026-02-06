@@ -4,26 +4,11 @@
 
 ### 의존성 규칙 (The Dependency Rule)
 
-```
-                    ┌─────────────────────────┐
-                    │   Frameworks & Drivers  │  ← 가장 바깥
-                    │  (Infrastructure Layer) │
-                    └───────────┬─────────────┘
-                                ↓
-                    ┌───────────────────────┐
-                    │   Interface Adapters   │
-                    │    (Adapters Layer)    │
-                    └───────────┬────────────┘
-                                ↓
-                    ┌───────────────────────┐
-                    │      Use Cases         │
-                    │  (Application Layer)   │
-                    └───────────┬────────────┘
-                                ↓
-                    ┌───────────────────────┐
-                    │       Entities         │  ← 가장 안쪽
-                    │    (Domain Layer)      │
-                    └───────────────────────┘
+```mermaid
+graph TD
+    INFRA["Frameworks & Drivers<br/>(Infrastructure Layer)<br/>← 가장 바깥"] -->|의존| ADAPTER["Interface Adapters<br/>(Adapters Layer)"]
+    ADAPTER -->|의존| APP["Use Cases<br/>(Application Layer)"]
+    APP -->|의존| DOMAIN["Entities<br/>(Domain Layer)<br/>← 가장 안쪽"]
 ```
 
 **화살표 방향 = 의존 방향**

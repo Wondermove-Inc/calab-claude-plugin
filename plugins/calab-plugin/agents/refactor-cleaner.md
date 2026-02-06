@@ -282,7 +282,7 @@ if (true) {
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **리팩토링 보고서** | `.claude/docs/refactor/{timestamp}-refactor.md` | ✅ |
+| **리팩토링 보고서** | `.claude/docs/active/{feature}/refactor-report.md` | ✅ |
 | **백업** | `.claude-state/refactor-backup/{timestamp}/` | ✅ |
 
 ### 리팩토링 보고서 필수 항목

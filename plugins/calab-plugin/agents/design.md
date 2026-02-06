@@ -83,29 +83,26 @@ Generate `.claude/plans/{feature-name}-DESIGN.md`:
 
 ### 2.1 Component Diagram
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Presentation Layer                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  Component A │  │  Component B │  │  Component C │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Application Layer                       │
-│  ┌──────────────┐  ┌──────────────┐                        │
-│  │   Use Case A │  │   Use Case B │                        │
-│  └──────────────┘  └──────────────┘                        │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                        Domain Layer                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Entity A   │  │   Entity B   │  │ Value Object │      │
-│  └──────────────┘  └──────────────┘  └──────────────┘      │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph PRES["Presentation Layer"]
+        CA["Component A"]
+        CB["Component B"]
+        CC["Component C"]
+    end
+
+    subgraph APP["Application Layer"]
+        UCA["Use Case A"]
+        UCB["Use Case B"]
+    end
+
+    subgraph DOM["Domain Layer"]
+        EA["Entity A"]
+        EB["Entity B"]
+        VO["Value Object"]
+    end
+
+    PRES --> APP --> DOM
 ```
 
 ### 2.2 Layer Responsibilities
@@ -126,14 +123,19 @@ Generate `.claude/plans/{feature-name}-DESIGN.md`:
 
 ### 3.1 Entity Definitions
 
-```
-┌─────────────────┐       ┌─────────────────┐
-│     EntityA     │       │     EntityB     │
-├─────────────────┤       ├─────────────────┤
-│ id: string (PK) │──1:N──│ id: string (PK) │
-│ name: string    │       │ entityAId: FK   │
-│ createdAt: Date │       │ value: string   │
-└─────────────────┘       └─────────────────┘
+```mermaid
+erDiagram
+    EntityA ||--o{ EntityB : "1:N"
+    EntityA {
+        string id PK
+        string name
+        Date createdAt
+    }
+    EntityB {
+        string id PK
+        string entityAId FK
+        string value
+    }
 ```
 
 ### 3.2 Type Definitions

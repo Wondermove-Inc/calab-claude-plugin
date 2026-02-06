@@ -86,7 +86,7 @@ Task(
 
 | 산출물 | 경로 |
 |--------|------|
-| 테스트 결과 | `.claude/docs/e2e-report.md` |
+| 테스트 결과 | `.claude/docs/active/{feature}/e2e-report.md` |
 | 스크린샷 | `.claude/screenshots/` |
 
 ### 보고서 형식

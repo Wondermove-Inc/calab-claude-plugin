@@ -380,12 +380,14 @@ def create_checkpoint(type, context):
 
 ## 검증/보강 체인 (필수)
 
-```
-구현 (dev-executor)
-    ↓
-검증 (validator) ─────┬─ 성공 → 다음 Task
-    ↓                 │
-실패 → reinforcer ────┴─ 재검증 (validator)
+```mermaid
+graph TD
+    IMPL["구현 (dev-executor)"] --> VALIDATE["검증 (validator)"]
+    VALIDATE -->|성공| NEXT["다음 Task"]
+    VALIDATE -->|실패| REINFORCE["reinforcer"]
+    REINFORCE --> REVALIDATE["재검증 (validator)"]
+    REVALIDATE -->|성공| NEXT
+    REVALIDATE -->|실패| ESCALATE["사용자 결정"]
 ```
 
 **신뢰도 기반 에스컬레이션**:
@@ -397,18 +399,16 @@ def create_checkpoint(type, context):
 
 ## 워크플로우 다이어그램
 
-```
-PLAN ──→ DISCUSS ──→ DESIGN ─────────→ TASKS ──────→ BUILD
-  │        │           │                 │             │
-  ↓        ↓           ↓                 ↓             ↓
-01-brainstorm  00-CONTEXT  03-architecture  05-tasks   Wave 실행
-02-PRD         (선택적)    04-ERD          worktree     │
-                                          (wave 할당)   ↓
-                                                  ┌─────────────┐
-                                                  │ Wave 1: 병렬 │
-                                                  │ Wave 2: 병렬 │
-                                                  │ Wave N: 병렬 │
-                                                  └─────────────┘
+```mermaid
+graph LR
+    PLAN["PLAN<br/>01-brainstorm<br/>02-PRD"] --> DISCUSS["DISCUSS<br/>00-CONTEXT<br/>(선택적)"]
+    DISCUSS --> DESIGN["DESIGN<br/>03-architecture<br/>04-ERD"]
+    DESIGN --> TASKS["TASKS<br/>05-tasks<br/>worktree (wave 할당)"]
+    TASKS --> BUILD["BUILD"]
+
+    BUILD --> W1["Wave 1: 병렬"]
+    W1 --> W2["Wave 2: 병렬"]
+    W2 --> WN["Wave N: 병렬"]
 ```
 
 ---

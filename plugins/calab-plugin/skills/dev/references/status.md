@@ -61,11 +61,11 @@ Task(
 
 Phase 1 (Plan):
 - [ ] 01-brainstorm.md
-- [ ] 02-prd.md
+- [ ] 02-PRD.md
 
 Phase 2 (Design):
 - [ ] 03-architecture.md
-- [ ] 04-erd.md
+- [ ] 04-ERD.md
 
 Phase 3 (Tasks):
 - [ ] 05-tasks.md
@@ -108,11 +108,11 @@ percentage = (done / total) * 100
  ┌────────────────────────────────────────┐
  │ Phase 1: Plan                          │
  │   ├── 01-brainstorm.md        [✓]     │
- │   └── 02-prd.md               [✓]     │
+ │   └── 02-PRD.md               [✓]     │
  │                                        │
  │ Phase 2: Design                        │
  │   ├── 03-architecture.md      [✓]     │
- │   └── 04-erd.md               [✓]     │
+ │   └── 04-ERD.md               [✓]     │
  │                                        │
  │ Phase 3: Tasks                         │
  │   ├── 05-tasks.md             [✓]     │

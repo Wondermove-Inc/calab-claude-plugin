@@ -20,7 +20,7 @@ Bug fixing agent following TDD workflow.
 
 ```python
 # 1. Read root cause analysis
-analysis = Read(file_path=f".claude/docs/debug/{issue_id}-analysis.md")
+analysis = Read(file_path=f".claude/problem-solving/active/{issue_id}/analysis.md")
 
 # 2. Extract key information
 root_cause = analysis.root_cause
@@ -196,7 +196,7 @@ Fixed: {timestamp}
 """
 
 Edit(
-    file_path=f".claude/docs/debug/{issue_id}-analysis.md",
+    file_path=f".claude/problem-solving/active/{issue_id}/analysis.md",
     old_string="## Recommended Fix",
     new_string=f"## Recommended Fix\n\n### Fix Applied\n{fix_summary}\n\n### Original"
 )
@@ -218,7 +218,7 @@ Edit(
     "regression_test": "passed",
     "full_suite": "passed"
   },
-  "documentation": ".claude/docs/debug/{issue_id}-analysis.md"
+  "documentation": ".claude/problem-solving/active/{issue_id}/analysis.md"
 }
 ```
 

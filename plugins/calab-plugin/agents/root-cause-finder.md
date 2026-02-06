@@ -110,14 +110,16 @@ Root cause analysis agent for bug investigation.
 | Factor C | Low | {evidence} |
 
 #### Root Cause Tree
-```
-Problem
-├── Proximate Cause: {immediate cause}
-│   └── Evidence: {how we know}
-├── Contributing Cause 1: {cause}
-│   └── Evidence: {how we know}
-└── Root Cause: {fundamental cause}
-    └── Evidence: {how we know}
+```mermaid
+graph TD
+    PROBLEM["Problem"] --> PROXIMATE["Proximate Cause<br/>{immediate cause}"]
+    PROBLEM --> CONTRIB["Contributing Cause 1<br/>{cause}"]
+    PROBLEM --> ROOT["Root Cause<br/>{fundamental cause}"]
+    PROXIMATE --> E1["Evidence: {how we know}"]
+    CONTRIB --> E2["Evidence: {how we know}"]
+    ROOT --> E3["Evidence: {how we know}"]
+
+    style ROOT fill:#f96,stroke:#333,stroke-width:2px
 ```
 
 ### 4. Solution Recommendations
@@ -235,7 +237,7 @@ else:
 
 # Document findings
 Write(
-    file_path=f".claude/docs/debug/{issue_id}-analysis.md",
+    file_path=f".claude/problem-solving/active/{issue_id}/analysis.md",
     content=format_analysis(result)
 )
 ```
@@ -259,7 +261,7 @@ Write(
       "effort": "low|medium|high"
     }
   ],
-  "analysis_path": ".claude/docs/debug/{issue_id}-analysis.md"
+  "analysis_path": ".claude/problem-solving/active/{issue_id}/analysis.md"
 }
 ```
 

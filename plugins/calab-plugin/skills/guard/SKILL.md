@@ -62,7 +62,7 @@ Task(
 - Task AC 충족 여부
 - 작업 방향 이탈 감지
 
-[Output] .claude/docs/guard-report.md
+[Output] .claude/docs/active/{feature}/guardian-report.md
 """
 )
 ```
@@ -98,7 +98,7 @@ Task(
 
 | 산출물 | 경로 |
 |--------|------|
-| 검증 보고서 | `.claude/docs/guard-report.md` |
+| 검증 보고서 | `.claude/docs/active/{feature}/guardian-report.md` |
 
 ### 보고서 형식
 

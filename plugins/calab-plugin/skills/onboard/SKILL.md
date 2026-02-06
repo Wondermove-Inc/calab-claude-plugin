@@ -101,25 +101,14 @@ Task(
 
 ## 온보딩 프로세스
 
-```
-Phase 1-2: Discovery + Pattern
-├── 설정 파일 분석
-├── 기술 스택 식별
-└── 코드 패턴 추출
-        ↓
-Phase 3: Architecture (C4 Model)
-├── System Context (Level 1)
-├── Container (Level 2)
-└── Component (Level 3)
-        ↓
-Phase 4: Context Generation
-├── PROJECT_SUMMARY.md
-├── ARCHITECTURE.md
-├── CODE_PATTERNS.md
-└── CONVENTIONS.md
-        ↓
-Phase 5: Domain Knowledge
-└── DOMAIN_KNOWLEDGE.md (대화형)
+```mermaid
+graph TD
+    P12["Phase 1-2: Discovery + Pattern<br/>설정 파일 분석<br/>기술 스택 식별<br/>코드 패턴 추출"]
+    P3["Phase 3: Architecture (C4 Model)<br/>System Context (Level 1)<br/>Container (Level 2)<br/>Component (Level 3)"]
+    P4["Phase 4: Context Generation<br/>PROJECT_SUMMARY.md<br/>ARCHITECTURE.md<br/>CODE_PATTERNS.md<br/>CONVENTIONS.md"]
+    P5["Phase 5: Domain Knowledge<br/>DOMAIN_KNOWLEDGE.md (대화형)"]
+
+    P12 --> P3 --> P4 --> P5
 ```
 
 ---

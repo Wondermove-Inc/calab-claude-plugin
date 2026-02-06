@@ -31,6 +31,9 @@ ALLOWED_EXCEPTIONS = [
     'tokens.test.ts',      # 토큰 테스트 파일
     '*-tokens.spec.ts',    # E2E 토큰 테스트 파일
     'usage-tab-tokens.spec.ts',  # Usage 토큰 탭 E2E 테스트
+    'secret.yaml',         # 프로젝트 설정 파일
+    '.env',                # 환경 변수 파일
+    '.env.example',        # 환경 변수 예시 파일
 ]
 
 # 민감 파일 패턴 정의

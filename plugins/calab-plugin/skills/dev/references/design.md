@@ -35,7 +35,7 @@
 ### Step 1: PRD 분석
 
 ```
-.claude/docs/active/{feature-name}/01-PRD.md 읽기
+.claude/docs/active/{feature-name}/02-PRD.md 읽기
 - P0/P1 요구사항 추출
 - 비기능 요구사항 확인
 ```

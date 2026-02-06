@@ -5,8 +5,8 @@
 ## 사용법
 
 ```bash
-/dev --build TASK-001           # 일반 구현
-/dev --build TASK-001 --tdd     # TDD 모드
+/dev --build TASK-001           # TDD 기반 구현 (기본)
+/dev --build --all              # 전체 Wave 병렬 실행
 ```
 
 ---
@@ -15,6 +15,7 @@
 
 - [ ] `/dev --tasks` 완료됨
 - [ ] `05-tasks.md` 존재함
+
 - [ ] `worktree.json` 존재함
 - [ ] 해당 TASK의 의존성 완료됨
 
@@ -60,7 +61,7 @@
 ### Step 4: AC 확인
 
 ```
-03-tasks.md에서 해당 TASK의 Acceptance Criteria 추출
+05-tasks.md에서 해당 TASK의 Acceptance Criteria 추출
 
 TASK-001 AC:
 - [ ] AC1: ...
@@ -68,42 +69,17 @@ TASK-001 AC:
 - [ ] AC3: ...
 ```
 
-### Step 5: 구현 계획 수립
+### Step 5: TDD 구현
 
-```
-구현 순서 (일반 모드):
-1. Types 정의 → 2. Services 구현 → 3. Hooks 작성 →
-4. Components 개발 → 5. Tests 작성
-```
-
----
-
-## TDD 모드 (`--tdd`)
+> **모든 빌드는 TDD로 실행됩니다.** `--tdd` 플래그 없이도 항상 TDD 사이클을 따릅니다.
 
 ### TDD 사이클
 
-```
-┌──────────────────────────────────────────┐
-│              TDD Cycle                   │
-├──────────────────────────────────────────┤
-│                                          │
-│    ┌─────────┐                          │
-│    │  RED    │  ← 실패하는 테스트 작성    │
-│    └────┬────┘                          │
-│         │                                │
-│         ▼                                │
-│    ┌─────────┐                          │
-│    │  GREEN  │  ← 테스트 통과하는 최소 코드│
-│    └────┬────┘                          │
-│         │                                │
-│         ▼                                │
-│    ┌─────────┐                          │
-│    │REFACTOR │  ← 코드 개선 (테스트 유지) │
-│    └────┬────┘                          │
-│         │                                │
-│         └─────────────────► 반복         │
-│                                          │
-└──────────────────────────────────────────┘
+```mermaid
+graph TD
+    RED["🔴 RED<br/>실패하는 테스트 작성"] --> GREEN["🟢 GREEN<br/>테스트 통과하는 최소 코드"]
+    GREEN --> REFACTOR["🔵 REFACTOR<br/>코드 개선 (테스트 유지)"]
+    REFACTOR -->|반복| RED
 ```
 
 ### TDD 규칙
@@ -240,7 +216,7 @@ AC 100% 충족 시에만:
 
  📋 구현 결과:
  • Task: {Task 설명}
- • 모드: {일반/TDD}
+ • 모드: TDD (Red-Green-Refactor)
 
  ✅ AC 검증:
  • AC1: 충족 ✓

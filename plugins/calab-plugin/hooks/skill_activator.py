@@ -40,25 +40,18 @@ SKILL_REFERENCES = {
         'options': {
             'plan': ['plan-phase.md', 'plan.md'],
             'discuss': ['plan.md'],
-            'design': ['design-phase.md', 'design.md'],
+            'design': ['design-phase.md', 'design.md', 'clean-architecture.md', 'api-design.md'],
             'tasks': ['tasks-phase.md', 'tasks.md'],
             'build': ['build-phase.md', 'build.md'],
             'roadmap': ['roadmap-phase.md'],
             'status': ['status.md'],
-            'default': ['plan-phase.md']  # 옵션 없을 때
+            'default': ['plan-phase.md']
         },
-        'templates': {
-            'architecture': 'templates/architecture-template.md',
-            'erd': 'templates/erd-template.md',
-            'prd': 'templates/prd-template.md',
-            'task': 'templates/task-template.md'
-        },
-        # 에이전트별 레퍼런스 (SubagentStart에서 사용)
-        'agents': {
-            'planner-task': ['tasks-phase.md'],
-            'planner-phase': ['plan-phase.md'],
-            'design': ['design-phase.md'],
-            'dev-executor': ['build-phase.md']
+        # option → template 매핑 (레퍼런스와 함께 자동 로드)
+        'option_templates': {
+            'plan': ['prd-template.md'],
+            'design': ['architecture-template.md', 'erd-template.md'],
+            'tasks': ['task-template.md']
         }
     },
     'solve': {
@@ -72,12 +65,15 @@ SKILL_REFERENCES = {
             'report': ['report.md'],
             'explore': ['explore.md'],
             'fix': ['fix.md'],
-            'default': ['testing.md']  # 기본 디버깅 참조
+            'default': ['testing.md', 'history.md']
         },
-        'templates': {
-            'problem': 'templates/problem-definition.md',
-            'analysis': 'templates/analysis-report.md',
-            'solution': 'templates/solution-report.md'
+        'option_templates': {
+            'default': ['problem-definition.md'],
+            '5whys': ['analysis-report.md'],
+            'rca': ['analysis-report.md'],
+            'hypothesis': ['analysis-report.md'],
+            'report': ['solution-report.md'],
+            'fix': ['solution-report.md']
         }
     },
     'onboard': {
@@ -89,9 +85,9 @@ SKILL_REFERENCES = {
                       'phases/03-context-gen.md', 'phases/04-domain.md'],
             'default': ['quick.md']
         },
-        'templates': {
-            'analysis': 'templates/analysis-report.md',
-            'architecture': 'templates/architecture-template.md'
+        'option_templates': {
+            'full': ['analysis-report.md', 'architecture-template.md'],
+            'phase': ['analysis-report.md']
         }
     }
 }
@@ -191,7 +187,7 @@ def detect_option(prompt: str, skill_name: str) -> str:
 
 def load_reference_files(skill_name: str, option: str) -> str:
     """
-    스킬의 references 파일을 로드
+    스킬의 references + templates 파일을 로드
 
     Args:
         skill_name: 스킬 이름 (dev, solve, onboard)
@@ -206,7 +202,7 @@ def load_reference_files(skill_name: str, option: str) -> str:
     skill_ref = SKILL_REFERENCES[skill_name]
     base_path = Path(PLUGIN_ROOT) / skill_ref['base_path']
 
-    # 옵션에 해당하는 파일 목록
+    # 옵션에 해당하는 레퍼런스 파일 목록
     files_to_load = skill_ref['options'].get(option, skill_ref['options'].get('default', []))
 
     contents = []
@@ -215,10 +211,23 @@ def load_reference_files(skill_name: str, option: str) -> str:
         if file_path.exists():
             try:
                 content = file_path.read_text(encoding='utf-8')
-                # 파일 내용을 구분자로 감싸기
                 contents.append(f"\n<reference file=\"{filename}\">\n{content}\n</reference>\n")
             except Exception:
                 pass
+
+    # 옵션에 매핑된 템플릿 파일 로드
+    option_templates = skill_ref.get('option_templates', {})
+    templates_to_load = option_templates.get(option, [])
+    if templates_to_load:
+        template_base = Path(PLUGIN_ROOT) / skill_ref['base_path'].replace('/references', '/templates')
+        for filename in templates_to_load:
+            file_path = template_base / filename
+            if file_path.exists():
+                try:
+                    content = file_path.read_text(encoding='utf-8')
+                    contents.append(f"\n<template file=\"{filename}\">\n{content}\n</template>\n")
+                except Exception:
+                    pass
 
     return ''.join(contents)
 

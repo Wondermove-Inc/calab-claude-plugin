@@ -128,14 +128,14 @@ Task(
 
 ## 검증/보강 체인 (필수)
 
-```
-분석 (root-cause-finder)
-    ↓
-수정 (bug-fixer)
-    ↓
-검증 (validator) ─────┬─ 성공 → 지식베이스 등록
-    ↓                 │
-실패 → reinforcer ────┴─ 재검증 (validator)
+```mermaid
+graph TD
+    ANALYZE["분석 (root-cause-finder)"] --> FIX["수정 (bug-fixer)"]
+    FIX --> VALIDATE["검증 (validator)"]
+    VALIDATE -->|성공| KB["지식베이스 등록"]
+    VALIDATE -->|실패| REINFORCE["reinforcer"]
+    REINFORCE --> REVALIDATE["재검증 (validator)"]
+    REVALIDATE -->|성공| KB
 ```
 
 ---

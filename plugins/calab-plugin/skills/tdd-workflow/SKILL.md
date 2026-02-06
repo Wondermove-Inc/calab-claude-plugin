@@ -1,6 +1,6 @@
 ---
 name: tdd-workflow
-description: 테스트 주도 개발(TDD) 워크플로우를 강제합니다. 테스트 먼저 작성, 80% 커버리지 요구.
+description: 테스트 주도 개발(TDD) 워크플로우를 강제합니다. 모든 빌드에서 항상 활성화. 테스트 먼저 작성, 80% 커버리지 요구.
 user-invocable: false
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
@@ -11,20 +11,18 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ## 목적
 
-코드 품질과 안정성을 보장하기 위해 TDD 방법론을 강제합니다.
+코드 품질과 안정성을 보장하기 위해 TDD 방법론을 **모든 빌드에서 기본으로** 강제합니다.
+`--tdd` 플래그 없이도 `/dev --build` 실행 시 항상 TDD 사이클(Red → Green → Refactor)이 적용됩니다.
 
 ## 핵심 원칙
 
 ### 1. Red-Green-Refactor 사이클
 
-```
-🔴 RED: 실패하는 테스트 먼저 작성
-    ↓
-🟢 GREEN: 테스트를 통과하는 최소한의 코드 작성
-    ↓
-🔵 REFACTOR: 코드 개선 (테스트는 계속 통과)
-    ↓
-   반복
+```mermaid
+graph TD
+    RED["🔴 RED<br/>실패하는 테스트 먼저 작성"] --> GREEN["🟢 GREEN<br/>테스트를 통과하는 최소한의 코드 작성"]
+    GREEN --> REFACTOR["🔵 REFACTOR<br/>코드 개선 (테스트는 계속 통과)"]
+    REFACTOR -->|반복| RED
 ```
 
 ### 2. 커버리지 요구사항
@@ -37,19 +35,14 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### 3. 테스트 피라미드
 
-```
-        /\
-       /  \     E2E 테스트 (10%)
-      /    \    - 핵심 사용자 시나리오
-     /------\   - Playwright/Cypress
-    /        \
-   /          \  통합 테스트 (20%)
-  /            \ - API 테스트
- /--------------\- 데이터베이스 테스트
-/                \
-/                  \  단위 테스트 (70%)
-/                    \ - 함수/클래스 테스트
-/______________________\- 모킹 활용
+```mermaid
+graph TD
+    subgraph pyramid["테스트 피라미드"]
+        E2E["🔺 E2E 테스트 (10%)<br/>핵심 사용자 시나리오<br/>Playwright/Cypress"]
+        INT["🔶 통합 테스트 (20%)<br/>API 테스트<br/>데이터베이스 테스트"]
+        UNIT["🟩 단위 테스트 (70%)<br/>함수/클래스 테스트<br/>모킹 활용"]
+    end
+    E2E --- INT --- UNIT
 ```
 
 ## TDD 실행 프로토콜
@@ -340,4 +333,4 @@ src/
 ## 참조 파일
 
 - `.claude/best-practices/testing.md` - 테스트 베스트 프랙티스
-- `commands/dev-build.md` - --tdd 옵션 사용법
+- `skills/dev/references/build.md` - 빌드 구현 가이드 (TDD 기본)

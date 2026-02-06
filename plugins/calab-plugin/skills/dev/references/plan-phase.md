@@ -24,11 +24,13 @@ Task(
 
 ## Output (필수)
 **반드시 생성해야 할 파일:**
-.claude/docs/active/{feature_name}/01-PRD.md
+.claude/docs/active/{feature_name}/01-brainstorm.md
+.claude/docs/active/{feature_name}/02-PRD.md
 
 ## Workflow
 1. 기능 폴더 생성: .claude/docs/active/{feature_name}/
-2. PRD 문서 작성 (01-PRD.md)
+2. 브레인스토밍 문서 작성 (01-brainstorm.md)
+3. PRD 문서 작성 (02-PRD.md)
    - 문제 정의
    - 목표 사용자
    - 기능 요구사항 (P0/P1/P2)
@@ -37,7 +39,7 @@ Task(
 3. 완료 보고
 
 ## Constraints
-- 01-PRD.md 파일명 필수 (다른 이름 금지)
+- 01-brainstorm.md, 02-PRD.md 파일명 필수 (다른 이름 금지)
 - P0 요구사항 최소 1개 이상
 - 검증 가능한 수용 기준 포함
 
@@ -60,13 +62,14 @@ references/plan.md 참조
 ### Output (다음 단계로)
 | 산출물 | 다음 단계 |
 |--------|----------|
-| .claude/docs/active/{feature}/01-PRD.md | /dev --design |
+| .claude/docs/active/{feature}/01-brainstorm.md | /dev --design |
+| .claude/docs/active/{feature}/02-PRD.md | /dev --design |
 
 ---
 
 ## 검증
 
 산출물 검증은 `post_skill_artifact_check.py`에서 수행:
-- 패턴: `{docs}/*/01-PRD.md`
+- 패턴: `{docs}/*/01-brainstorm.md`, `{docs}/*/02-PRD.md`
 - 필수: Yes
 - 미생성 시: Exit Code 2 (차단)

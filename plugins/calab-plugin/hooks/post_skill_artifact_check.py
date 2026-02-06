@@ -6,9 +6,9 @@ Post Skill Artifact Check Hook - 스킬/에이전트 완료 후 산출물 검증
 동작: 에이전트 타입별 필수 산출물 존재 여부 검증
 
 산출물 검증 규칙 (CLAUDE.md 기반):
-- planner-phase → .claude/docs/active/{feature}/01-PRD.md
-- design → .claude/docs/active/{feature}/02-architecture.md
-- planner-task → .claude/docs/active/{feature}/03-tasks.md + .claude-state/worktree.json
+- planner-phase → .claude/docs/active/{feature}/01-brainstorm.md + 02-PRD.md
+- design → .claude/docs/active/{feature}/03-architecture.md + 04-ERD.md
+- planner-task → .claude/docs/active/{feature}/05-tasks.md + .claude-state/worktree.json
 - validator → .claude/docs/active/{feature}/validation-report.md
 - reinforcer → .claude/docs/active/{feature}/reinforcer-report.md
 - build-error-resolver → .claude/docs/active/{feature}/build-error-report.md
@@ -131,7 +131,6 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
     "calab-plugin:deep-researcher": {
         "name": "리서치 보고서",
         "patterns": [
-            "{docs}/**/research-report.md",
             "{root}/.claude/research/*.md",
         ],
         "required": True,
@@ -142,7 +141,6 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
     "calab-plugin:web-researcher": {
         "name": "웹 리서치 결과",
         "patterns": [
-            "{docs}/**/web-research.md",
             "{root}/.claude/research/*.md",
         ],
         "required": True,

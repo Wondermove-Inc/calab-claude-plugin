@@ -301,7 +301,7 @@ return {
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **검증 보고서** | `.claude/docs/validation/{feature}/task-validation.md` | ✅ |
+| **검증 보고서** | `.claude/docs/active/{feature}/task-validation.md` | ✅ |
 
 ### 검증 보고서 필수 항목
 

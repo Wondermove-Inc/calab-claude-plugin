@@ -133,28 +133,20 @@ skills: project-rules, work-tracker, code-quality
 
 ### 에스컬레이션 매트릭스
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    PROJECT GUARDIAN (이 에이전트)                   │
-│                       맥락 유지 + 규칙 검증                         │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-         ▼                   ▼                   ▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ code-reviewer   │ │ validator       │ │ reinforcer      │
-│ 품질 이슈 발견  │ │ AC 미충족 발견  │ │ 수정 필요 시    │
-└────────┬────────┘ └────────┬────────┘ └────────┬────────┘
-         │                   │                   │
-         ▼                   ▼                   ▼
-    ┌─────────────────────────────────────────────────┐
-    │              에스컬레이션 판단                   │
-    │  • 단순 수정 → reinforcer                       │
-    │  • 아키텍처 문제 → /dev --architecture          │
-    │  • 보안 문제 → security-reviewer                │
-    │  • 반복 실패 → /solve                           │
-    └─────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    GUARDIAN["PROJECT GUARDIAN<br/>맥락 유지 + 규칙 검증"] --> REVIEWER["code-reviewer<br/>품질 이슈 발견"]
+    GUARDIAN --> VALIDATOR["validator<br/>AC 미충족 발견"]
+    GUARDIAN --> REINFORCER["reinforcer<br/>수정 필요 시"]
+
+    REVIEWER --> ESCALATE["에스컬레이션 판단"]
+    VALIDATOR --> ESCALATE
+    REINFORCER --> ESCALATE
+
+    ESCALATE -->|단순 수정| R["reinforcer"]
+    ESCALATE -->|아키텍처 문제| D["/dev --architecture"]
+    ESCALATE -->|보안 문제| S["security-reviewer"]
+    ESCALATE -->|반복 실패| SOLVE["/solve"]
 ```
 
 ### 자동 에스컬레이션 규칙

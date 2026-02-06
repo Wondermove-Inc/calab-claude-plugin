@@ -67,7 +67,7 @@ JIRA_BASE_URL='https://your-domain.atlassian.net'
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **동기화 로그** | `.claude/logs/jira-sync.md` | ✅ |
+| **동기화 로그** | `.claude/docs/active/{feature}/jira-sync.md` | ✅ |
 | **이슈 매핑** | `.claude-state/jira-mapping.json` | ✅ |
 
 ### 동기화 로그 필수 항목

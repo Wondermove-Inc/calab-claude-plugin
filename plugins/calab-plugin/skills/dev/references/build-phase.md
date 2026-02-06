@@ -18,25 +18,23 @@ TDD 기반 구현 전문가
 '{task_id}' 태스크 구현 (Acceptance Criteria 100% 충족)
 
 ## Input (필수)
-- 태스크 목록: .claude/docs/active/{feature_name}/03-tasks.md
+- 태스크 목록: .claude/docs/active/{feature_name}/05-tasks.md
 - 워크트리: .claude-state/worktree.json
 - 프로젝트 규칙: .claude/memory/PROJECT_RULES.md
 
 ## Output
 - 소스 코드 (AC 충족)
-- 테스트 코드 (TDD 모드 시)
+- 테스트 코드 (TDD 필수)
 - worktree.json 상태 업데이트
 
 ## Workflow
-1. 03-tasks.md에서 {task_id} AC 추출
+1. 05-tasks.md에서 {task_id} AC 추출
 2. worktree.json에서 상태를 'in_progress'로 변경
-3. TDD 사이클 (--tdd 옵션 시):
+3. TDD 사이클 (항상 적용):
    - RED: 실패하는 테스트 작성
    - GREEN: 테스트 통과하는 최소 코드
    - REFACTOR: 코드 개선
-4. 일반 모드:
-   - Types 정의 → Services → Hooks → Components → Tests
-5. AC 검증 (모든 항목 충족 확인)
+4. AC 검증 (모든 항목 충족 확인)
 6. worktree.json 상태를 'done'으로 변경
 7. 완료 보고
 
@@ -45,7 +43,7 @@ TDD 기반 구현 전문가
 - 파일 500줄 이하
 - 모든 함수에 JSDoc 주석
 - 타입 100% 커버리지
-- TDD 모드 시 테스트 커버리지 80% 이상
+- 테스트 커버리지 80% 이상
 
 ## Template
 references/build.md 참조
@@ -60,7 +58,7 @@ references/build.md 참조
 ### Input (이전 단계에서)
 | 소스 | 데이터 |
 |------|--------|
-| /dev --tasks | .claude/docs/active/{feature}/03-tasks.md |
+| /dev --tasks | .claude/docs/active/{feature}/05-tasks.md |
 | /dev --tasks | .claude-state/worktree.json |
 
 ### Output
@@ -104,42 +102,34 @@ AC 체크리스트:
 
 ## Worktree 상태 전이
 
-```
-pending → in_progress → done
-                ↓
-            blocked (의존성 미완료 시)
+```mermaid
+stateDiagram-v2
+    pending --> in_progress
+    in_progress --> done
+    in_progress --> blocked: 의존성 미완료 시
+    blocked --> in_progress: 의존성 해소
 ```
 
 ---
 
-## TDD 사이클 (--tdd 모드)
+## TDD 사이클 (기본 구현 방식)
 
-```
-┌──────────┐
-│   RED    │ ← 실패하는 테스트 작성
-└────┬─────┘
-     │
-     ▼
-┌──────────┐
-│  GREEN   │ ← 테스트 통과하는 최소 코드
-└────┬─────┘
-     │
-     ▼
-┌──────────┐
-│ REFACTOR │ ← 코드 개선 (테스트 유지)
-└────┬─────┘
-     │
-     └─────► 반복
+```mermaid
+graph TD
+    RED["🔴 RED<br/>실패하는 테스트 작성"] --> GREEN["🟢 GREEN<br/>테스트 통과하는 최소 코드"]
+    GREEN --> REFACTOR["🔵 REFACTOR<br/>코드 개선 (테스트 유지)"]
+    REFACTOR -->|반복| RED
 ```
 
 ---
 
 ## 검증 체인
 
-```
-dev-executor (구현)
-    ↓
-validator (AC/완전성 검증) ──┬─ 성공 → 다음 Task
-    ↓                       │
-실패 → reinforcer ──────────┴─ 재검증 (validator)
+```mermaid
+graph TD
+    IMPL["dev-executor (구현)"] --> VALIDATE["validator (AC/완전성 검증)"]
+    VALIDATE -->|성공| NEXT["다음 Task"]
+    VALIDATE -->|실패| REINFORCE["reinforcer"]
+    REINFORCE --> REVALIDATE["재검증 (validator)"]
+    REVALIDATE -->|성공| NEXT
 ```

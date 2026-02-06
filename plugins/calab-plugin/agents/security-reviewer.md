@@ -235,7 +235,7 @@ def check_security_escalation(findings):
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **보안 검사 보고서** | `.claude/docs/security/{timestamp}-security-report.md` | ✅ |
+| **보안 검사 보고서** | `.claude/docs/active/{feature}/security-review.md` | ✅ |
 | **취약점 기록** | `.claude-state/security_findings.json` | ⚠️ (발견 시) |
 
 ### 보안 보고서 필수 항목

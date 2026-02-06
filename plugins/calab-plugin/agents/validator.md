@@ -79,7 +79,7 @@ Level 1 (Existence) 통과 → Level 2 (Substantive) → Level 3 (Wired)
 
 | 작업 유형 | 필수 산출물 | 검증 |
 |----------|-----------|------|
-| **plan** | `01-PRD.md` | 파일 존재 |
+| **plan** | `01-brainstorm.md`, `02-PRD.md` | 파일 존재 |
 | **design** | `03-architecture.md` | 파일 존재 |
 | **tasks** | `05-tasks.md`, `worktree.json` | 파일 존재 |
 | **build** | 구현 코드, 테스트 코드 | 파일 존재 |
@@ -263,15 +263,11 @@ def verify_artifacts_3level(work_type, feature_name, task):
 
 > **"사용자 요구 → Observable Truths → Artifacts → Key Links" 역방향 추적**
 
-```
-검증 방향: 최상위 목표에서 시작하여 하위로 역추적
-    사용자 요구 (PRD)
-        ↑ (역추적)
-    Observable Truths: "관찰 가능한 결과가 있는가?"
-        ↑
-    Artifacts: "결과를 만드는 코드가 존재하는가?"
-        ↑
-    Key Links: "코드가 시스템에 연결되어 있는가?"
+```mermaid
+graph BT
+    LINKS["Key Links<br/>코드가 시스템에 연결되어 있는가?"] -->|역추적| ARTIFACTS["Artifacts<br/>결과를 만드는 코드가 존재하는가?"]
+    ARTIFACTS -->|역추적| OBSERVABLE["Observable Truths<br/>관찰 가능한 결과가 있는가?"]
+    OBSERVABLE -->|역추적| GOAL["사용자 요구 (PRD)"]
 ```
 
 #### 1. 최상위 목표 식별
@@ -679,16 +675,15 @@ def calculate_confidence(validation_result):
 
 ### Plan-Validate-Execute 패턴
 
-```
-1. PLAN (계획 에이전트)
-   ↓
-2. EXECUTE (구현 에이전트)
-   ↓
-3. VALIDATE (이 에이전트) ← 필수
-   ↓
-4. [검증 실패 시] → REINFORCE (reinforcer 에이전트)
-   ↓
-5. RE-VALIDATE (이 에이전트) ← 재검증
+```mermaid
+graph TD
+    PLAN["1. PLAN<br/>계획 에이전트"] --> EXECUTE["2. EXECUTE<br/>구현 에이전트"]
+    EXECUTE --> VALIDATE["3. VALIDATE (필수)<br/>이 에이전트"]
+    VALIDATE -->|검증 실패| REINFORCE["4. REINFORCE<br/>reinforcer 에이전트"]
+    REINFORCE --> REVALIDATE["5. RE-VALIDATE (재검증)<br/>이 에이전트"]
+    VALIDATE -->|검증 성공| DONE["완료"]
+    REVALIDATE -->|성공| DONE
+    REVALIDATE -->|실패| ESCALATE["에스컬레이션"]
 ```
 
 ### 호출 예시

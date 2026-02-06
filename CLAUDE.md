@@ -271,6 +271,18 @@ User Goal → Observable Truth → Code Artifact → Key Link (reverse trace)
 planner-task → self_verify (3 rounds) → task-validator (final)
 ```
 
+### Post-Task Verification (Wave Completion)
+
+> After any multi-agent/parallel task wave completes, always verify all expected output files exist before reporting completion.
+
+```
+Wave complete → Glob/find all expected artifacts → Report missing files → Fix before proceeding
+```
+
+- Run a glob or find command to confirm every file referenced in the build plan was actually created
+- Do NOT report wave completion until all artifacts are verified to exist
+- If any file is missing, re-run the failing task or escalate before moving to the next wave
+
 ### Verification Bypass Prohibited
 
 | Scenario | Required Agent |
@@ -298,7 +310,7 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 |-------|---------|
 | `best-practices` | Technology keywords |
 | `code-quality` | Code generation / modification |
-| `tdd-workflow` | `--tdd`, test keywords |
+| `tdd-workflow` | Always active during `/dev --build` |
 | `project-rules` | All code writing |
 | `work-tracker` | Source file modification |
 | `clarification-protocol` | Subagent execution |
@@ -365,6 +377,37 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 | Function comments | Required on all functions |
 | Type definitions | 100% coverage |
 
+### Diagram Standard (Mermaid Only)
+
+> All diagrams in artifacts must use Mermaid syntax. ASCII art diagrams are prohibited.
+
+| Diagram Type | Mermaid Syntax |
+|-------------|---------------|
+| Flowchart / Workflow | `graph TD` or `graph LR` |
+| Sequence | `sequenceDiagram` |
+| ERD | `erDiagram` |
+| Class | `classDiagram` |
+| State | `stateDiagram-v2` |
+| Pie chart | `pie` |
+| Architecture (C4) | `graph TB` with subgraphs |
+
+- Use ````mermaid` code blocks for all diagrams
+- Directory tree structures (`├── └──`) are exempt (not diagrams)
+- Output format templates (with checkmarks) are exempt
+
+### Build Verification (TypeScript/TSX)
+
+> After generating or editing TypeScript/TSX files, always run the project's build/type-check command before considering the task complete.
+
+```bash
+# Run after any TS/TSX file change
+tsc --noEmit        # or: npm run build / npm run typecheck
+```
+
+- Fix any type errors or missing import issues immediately
+- Do NOT mark a task as complete if `tsc --noEmit` fails
+- This applies to both new file creation and existing file modification
+
 ### Test Coverage
 
 | Item | Minimum | Recommended |
@@ -376,6 +419,15 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 ---
 
 ## Session Management
+
+### Session Start Protocol (Multi-Wave Continuation)
+
+> When continuing a multi-wave build plan, always start by checking previous wave status.
+
+1. Read the current wave status document (worktree.json, ROADMAP.md)
+2. List: **(a)** what was completed in the last session, **(b)** what was left incomplete, **(c)** what files may be missing
+3. Do NOT proceed to new work until gaps from the previous wave are confirmed resolved
+4. If gaps exist, fix them first or escalate before starting the next wave
 
 ### State Files
 
@@ -410,10 +462,10 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 
 | Skill | Artifact | Path |
 |-------|----------|------|
-| `/dev --plan` | PRD + ROADMAP | `.claude/docs/active/{feature}/01-PRD.md`, `ROADMAP.md` |
+| `/dev --plan` | Brainstorm + PRD + ROADMAP | `.claude/docs/active/{feature}/01-brainstorm.md`, `02-PRD.md`, `ROADMAP.md` |
 | `/dev --discuss` | Implementation decisions | `.claude/docs/active/{feature}/00-CONTEXT.md` |
-| `/dev --design` | Architecture | `.claude/docs/active/{feature}/02-architecture.md` |
-| `/dev --tasks` | Task list | `.claude/docs/active/{feature}/03-tasks.md` |
+| `/dev --design` | Architecture + ERD | `.claude/docs/active/{feature}/03-architecture.md`, `04-ERD.md` |
+| `/dev --tasks` | Task list | `.claude/docs/active/{feature}/05-tasks.md` |
 | `/solve` | Resolution report | `.claude/problem-solving/resolved/{id}/report.md` |
 | `/onboard` | Context documents | `.claude/project-context/` |
 
@@ -424,6 +476,20 @@ planner-task → self_verify (3 rounds) → task-validator (final)
 | `validator` | `.claude/docs/active/{feature}/validation-report.md` |
 | `reinforcer` | `.claude/docs/active/{feature}/reinforcer-report.md` |
 | `build-error-resolver` | `.claude/docs/active/{feature}/build-error-report.md` |
+| `qa` | `.claude/docs/active/{feature}/qa-report.md` |
+| `code-reviewer` | `.claude/docs/active/{feature}/code-review.md` |
+| `security-reviewer` | `.claude/docs/active/{feature}/security-review.md` |
+| `task-validator` | `.claude/docs/active/{feature}/task-validation.md` |
+| `e2e-runner` | `.claude/docs/active/{feature}/e2e-report.md` |
+| `refactor-cleaner` | `.claude/docs/active/{feature}/refactor-report.md` |
+| `project-guardian` | `.claude/docs/active/{feature}/guardian-report.md` |
+| `jira-connector` | `.claude/docs/active/{feature}/jira-sync.md` |
+| `dev-executor` | `.claude/docs/active/{feature}/implementation-report.md` |
+| `dev-workflow` | `.claude/docs/active/{feature}/workflow-log.md` |
+| `doc-updater` | `.claude/docs/active/{feature}/doc-update-report.md` |
+| `docs-generator` | `.claude/docs/active/{feature}/generated-docs.md` |
+| `deep-researcher` | `.claude/research/{topic}.md` |
+| `web-researcher` | `.claude/research/{topic}.md` |
 
 > **Failure to produce artifacts is treated as task failure.**
 

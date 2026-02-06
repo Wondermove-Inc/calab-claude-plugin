@@ -512,7 +512,7 @@ def get_context_reminder(intent: Optional[dict]) -> str:
         'design': "📐 설계: /dev --design 명령으로 아키텍처 설계",
         'research': "🔎 리서치: /onboard 명령으로 프로젝트 분석",
         'document': "📝 문서화: 코드 주석과 README 동기화",
-        'test': "🧪 테스트: TDD 모드 --tdd 옵션 활용"
+        'test': "🧪 테스트: TDD는 모든 빌드에서 기본 적용"
     }
 
     return reminders.get(intent.get('type', ''), '')

@@ -274,7 +274,7 @@ await page.getByRole('button', { name: 'Submit' }).click();
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **테스트 리포트** | `.claude/docs/test/e2e-report.md` | ✅ |
+| **테스트 리포트** | `.claude/docs/active/{feature}/e2e-report.md` | ✅ |
 | **스크린샷** | `.playwright/screenshots/` | ⚠️ (실패 시) |
 | **트레이스** | `.playwright/traces/` | ⚠️ (실패 시) |
 

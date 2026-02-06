@@ -38,6 +38,58 @@ STATE_PATH = PROJECT_ROOT / '.claude-state'
 # 홈 디렉토리의 .claude-state도 체크
 HOME_STATE_PATH = Path.home() / '.claude' / 'state'
 
+# 플러그인 루트 경로
+PLUGIN_ROOT = os.environ.get('CLAUDE_PLUGIN_ROOT', '')
+if not PLUGIN_ROOT:
+    PLUGIN_ROOT = str(Path(__file__).parent.parent)
+
+
+# 에이전트별 레퍼런스/템플릿 파일 (SubagentStart 시 컨텍스트 주입)
+# 사용자 옵션 로드(skill_activator)와 별개로, 에이전트에 특화된 상세 레퍼런스 제공
+AGENT_REFERENCES = {
+    'calab-plugin:planner-phase': {
+        'references': 'skills/dev/references',
+        'files': ['plan-phase.md'],
+        'templates': 'skills/dev/templates',
+        'template_files': ['prd-template.md']
+    },
+    'calab-plugin:design': {
+        'references': 'skills/dev/references',
+        'files': ['design-phase.md', 'architecture-init.md', 'architecture-entity.md',
+                  'architecture-usecase.md', 'architecture-validate.md'],
+        'templates': 'skills/dev/templates',
+        'template_files': ['architecture-template.md', 'erd-template.md']
+    },
+    'calab-plugin:planner-task': {
+        'references': 'skills/dev/references',
+        'files': ['tasks-phase.md'],
+        'templates': 'skills/dev/templates',
+        'template_files': ['task-template.md']
+    },
+    'calab-plugin:dev-executor': {
+        'references': 'skills/dev/references',
+        'files': ['build-phase.md']
+    },
+    'calab-plugin:root-cause-finder': {
+        'references': 'skills/solve/references',
+        'files': ['rca.md'],
+        'templates': 'skills/solve/templates',
+        'template_files': ['analysis-report.md']
+    },
+    'calab-plugin:bug-fixer': {
+        'references': 'skills/solve/references',
+        'files': ['fix.md'],
+        'templates': 'skills/solve/templates',
+        'template_files': ['solution-report.md']
+    },
+    'calab-plugin:project-onboarder': {
+        'references': 'skills/onboard/references',
+        'files': ['project-onboarding.md'],
+        'templates': 'skills/onboard/templates',
+        'template_files': ['analysis-report.md']
+    }
+}
+
 
 # 에이전트별 필수 산출물 경로 (SubagentStart 시 주입)
 # {feature}는 현재 작업 중인 기능명으로 대체됨
@@ -183,6 +235,48 @@ def get_current_feature() -> str:
     return 'current-feature'
 
 
+def inject_reference_files(subagent_type: str) -> str:
+    """
+    에이전트 타입에 맞는 레퍼런스/템플릿 파일을 컨텍스트에 주입
+
+    Returns:
+        stdout으로 출력할 레퍼런스 컨텐츠
+    """
+    if subagent_type not in AGENT_REFERENCES:
+        return ''
+
+    ref_spec = AGENT_REFERENCES[subagent_type]
+    contents = []
+
+    # 레퍼런스 파일 로드
+    ref_base = Path(PLUGIN_ROOT) / ref_spec['references']
+    for filename in ref_spec.get('files', []):
+        file_path = ref_base / filename
+        if file_path.exists():
+            try:
+                content = file_path.read_text(encoding='utf-8')
+                contents.append(f"\n<reference file=\"{filename}\">\n{content}\n</reference>\n")
+            except Exception:
+                pass
+
+    # 템플릿 파일 로드
+    tmpl_base_path = ref_spec.get('templates')
+    if tmpl_base_path:
+        tmpl_base = Path(PLUGIN_ROOT) / tmpl_base_path
+        for filename in ref_spec.get('template_files', []):
+            file_path = tmpl_base / filename
+            if file_path.exists():
+                try:
+                    content = file_path.read_text(encoding='utf-8')
+                    contents.append(f"\n<template file=\"{filename}\">\n{content}\n</template>\n")
+                except Exception:
+                    pass
+
+    if contents:
+        return f"[AUTO-LOADED] Agent references for {subagent_type}:" + ''.join(contents)
+    return ''
+
+
 def inject_artifact_requirements(subagent_type: str) -> str:
     """
     에이전트 타입에 맞는 필수 산출물 경로를 주입 메시지로 생성
@@ -259,10 +353,15 @@ def track_subagent_start(session_id: str, agent_id: str, subagent_type: str, tra
 
     save_json(stats_file, stats)
 
+    # 레퍼런스/템플릿 주입 (SubagentStart 시 자동 로드)
+    ref_msg = inject_reference_files(subagent_type)
+    if ref_msg:
+        print(ref_msg)
+
     # 산출물 경로 주입 (stdout → Claude 컨텍스트에 자동 추가)
     artifact_msg = inject_artifact_requirements(subagent_type)
     if artifact_msg:
-        print(artifact_msg)  # stdout으로 Claude에게 주입
+        print(artifact_msg)
 
     # 로그 출력 (stderr로)
     print(f"[SUBAGENT] Started: {subagent_type} (id: {agent_id[:8]}...)", file=sys.stderr)

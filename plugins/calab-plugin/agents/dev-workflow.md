@@ -89,20 +89,23 @@ skills: code-quality, best-practices, tdd-workflow, project-rules, work-tracker
 
 #### 오케스트레이터 Checkpoint 배치
 
-```
-[Plan 완료] → human-verify (PRD 검토)
-    ↓
-[Discuss] → decision (기술 선택, 아키텍처 패턴)
-    ↓
-[Design 완료] → human-verify (아키텍처 검토)
-    ↓
-[Tasks 완료] → human-verify (Task 분해 검토)
-    ↓
-[Build 전] → human-action (외부 설정 필요 시만)
-    ↓
-[Wave 완료] → human-verify (검증 결과)
-    ↓
-[Phase 완료] → decision (다음 Phase 방향)
+```mermaid
+graph TD
+    PLAN["Plan 완료"] -->|human-verify| DISCUSS["Discuss"]
+    DISCUSS -->|decision| DESIGN["Design 완료"]
+    DESIGN -->|human-verify| TASKS["Tasks 완료"]
+    TASKS -->|human-verify| BUILD["Build 전"]
+    BUILD -->|human-action| WAVE["Wave 완료"]
+    WAVE -->|human-verify| PHASE["Phase 완료"]
+    PHASE -->|decision| NEXT["다음 Phase"]
+
+    PLAN -.- P1["PRD 검토"]
+    DISCUSS -.- P2["기술 선택, 아키텍처 패턴"]
+    DESIGN -.- P3["아키텍처 검토"]
+    TASKS -.- P4["Task 분해 검토"]
+    BUILD -.- P5["외부 설정 필요 시만"]
+    WAVE -.- P6["검증 결과"]
+    PHASE -.- P7["다음 Phase 방향"]
 ```
 
 #### Checkpoint 핵심 규칙
@@ -125,28 +128,22 @@ skills: code-quality, best-practices, tdd-workflow, project-rules, work-tracker
 
 ## 워크플로우
 
-```
-[기획] PRD 작성
-    ↓
-[논의] 구현 결정 수집 (--discuss, 선택적)
-    ↓
-[설계] 아키텍처 + ERD (00-CONTEXT.md 참조)
-    ↓
-[분해] Task 생성 + AC 정의 + Wave 할당
-    ↓
-[구현] Wave 기반 병렬 실행 또는 단일 Task 실행
-    ↓
-    ┌─────────────────────────────────┐
-    │  Wave 1: [TASK-001] [TASK-002]  │ ← 병렬
-    │  Wave 2: [TASK-003]             │ ← Wave 1 완료 후
-    │  Wave 3: [TASK-004] [TASK-005]  │ ← Wave 2 완료 후
-    └─────────────────────────────────┘
-    ↓
-[검증] 테스트 + 리뷰
-    ↓
-[Phase 완료] --roadmap complete N → 다음 Phase 활성화
-    ↓
-[마일스톤] --roadmap milestone "vX.Y.Z" (선택)
+```mermaid
+graph TD
+    PLAN["기획<br/>PRD 작성"] --> DISCUSS["논의<br/>구현 결정 수집 (선택적)"]
+    DISCUSS --> DESIGN["설계<br/>아키텍처 + ERD"]
+    DESIGN --> TASKS["분해<br/>Task 생성 + AC 정의 + Wave 할당"]
+    TASKS --> BUILD["구현<br/>Wave 기반 병렬 실행"]
+    BUILD --> WAVES
+
+    subgraph WAVES["Wave 실행"]
+        W1["Wave 1: TASK-001, TASK-002"] -->|병렬 완료 후| W2["Wave 2: TASK-003"]
+        W2 -->|완료 후| W3["Wave 3: TASK-004, TASK-005"]
+    end
+
+    WAVES --> VERIFY["검증<br/>테스트 + 리뷰"]
+    VERIFY --> PHASE["Phase 완료<br/>--roadmap complete N"]
+    PHASE --> MILESTONE["마일스톤 (선택)<br/>--roadmap milestone vX.Y.Z"]
 ```
 
 ## 출력 형식
@@ -173,17 +170,15 @@ skills: code-quality, best-practices, tdd-workflow, project-rules, work-tracker
 
 | 단계 | 산출물 | 파일 경로 | 필수 |
 |------|--------|----------|------|
-| **--plan** | PRD 문서 | `.claude/docs/active/{feature}/01-PRD.md` | ✅ |
-| **--plan** | 요구사항 체크리스트 | `.claude/docs/active/{feature}/01-requirements.md` | ✅ |
+| **--plan** | 브레인스토밍 | `.claude/docs/active/{feature}/01-brainstorm.md` | ✅ |
+| **--plan** | PRD 문서 | `.claude/docs/active/{feature}/02-PRD.md` | ✅ |
 | **--plan** | 로드맵 | `.claude/docs/active/{feature}/ROADMAP.md` | ✅ |
-| **--design** | 아키텍처 문서 | `.claude/docs/active/{feature}/02-architecture.md` | ✅ |
-| **--design** | ERD (해당 시) | `.claude/docs/active/{feature}/02-ERD.md` | ⚠️ |
-| **--design** | API 설계 (해당 시) | `.claude/docs/active/{feature}/02-API-design.md` | ⚠️ |
-| **--tasks** | Task 목록 | `.claude/docs/active/{feature}/03-tasks.md` | ✅ |
+| **--design** | 아키텍처 문서 | `.claude/docs/active/{feature}/03-architecture.md` | ✅ |
+| **--design** | ERD (해당 시) | `.claude/docs/active/{feature}/04-ERD.md` | ⚠️ |
+| **--tasks** | Task 목록 | `.claude/docs/active/{feature}/05-tasks.md` | ✅ |
 | **--tasks** | Worktree JSON | `.claude-state/worktree.json` | ✅ |
 | **--build** | 소스 코드 | `src/...` | ✅ |
 | **--build** | 테스트 코드 | `test/...` 또는 `*.test.ts` | ✅ |
-| **--build** | 변경 로그 | `.claude/docs/active/{feature}/04-changelog.md` | ✅ |
 
 ### 단계별 산출물 체크리스트
 
@@ -272,21 +267,16 @@ def save_workflow_state(stage, feature_name, artifacts):
 
 ### Build 단계 필수 검증 체인
 
-```
-Build 완료
-    ↓
-validator 호출 (필수)
-    ↓
-┌─────────────────────────────┐
-│ 신뢰도 90%+ → 완료          │
-│ 신뢰도 70-89% → reinforcer  │
-│ 신뢰도 50-69% → 사용자 확인 │
-│ 신뢰도 <50% → /solve 제안   │
-└─────────────────────────────┘
-    ↓
-reinforcer 후 재검증 (필수)
-    ↓
-최대 2회 반복 후 사용자 결정
+```mermaid
+graph TD
+    BUILD["Build 완료"] --> VALIDATOR["validator 호출 (필수)"]
+    VALIDATOR -->|"신뢰도 90%+"| DONE["완료"]
+    VALIDATOR -->|"신뢰도 70-89%"| REINFORCER["reinforcer"]
+    VALIDATOR -->|"신뢰도 50-69%"| USER["사용자 확인"]
+    VALIDATOR -->|"신뢰도 < 50%"| SOLVE["/solve 제안"]
+    REINFORCER --> REVALIDATE["재검증 (필수)"]
+    REVALIDATE -->|"최대 2회 반복"| VALIDATOR
+    REVALIDATE -->|"2회 초과"| USER
 ```
 
 ## Wave 기반 병렬 실행

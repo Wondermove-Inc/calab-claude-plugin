@@ -247,7 +247,7 @@ def check_quality_escalation(review_result):
 
 | 산출물 | 파일 경로 | 필수 |
 |--------|----------|------|
-| **리뷰 보고서** | `.claude/docs/reviews/{timestamp}-review.md` | ✅ |
+| **리뷰 보고서** | `.claude/docs/active/{feature}/code-review.md` | ✅ |
 | **품질 위반 기록** | `.claude-state/quality_violations.json` | ⚠️ (위반 시) |
 
 ### 리뷰 보고서 필수 항목

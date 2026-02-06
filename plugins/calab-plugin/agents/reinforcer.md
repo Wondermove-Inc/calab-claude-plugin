@@ -308,28 +308,18 @@ def get_retry_delay(attempt: int) -> int:
 
 ### 표준 플로우 (with 실패 분류)
 
-```
-validator 실패 (신뢰도 < 90%)
-    ↓
-실패 분류 (RETRIABLE / NON-RETRIABLE)
-    ↓
-┌─────────────────────────────────────┐
-│ RETRIABLE:                          │
-│   [reinforcer 호출]                  │
-│       ↓                             │
-│   수정 실행                          │
-│       ↓                             │
-│   [validator 재호출]                 │
-│       ↓                             │
-│   통과? → 완료                       │
-│   실패? → 2차 시도 (backoff)         │
-│       ↓                             │
-│   2차 실패? → 사용자 결정            │
-├─────────────────────────────────────┤
-│ NON-RETRIABLE:                      │
-│   → 즉시 사용자 결정 요청            │
-│   → /solve 또는 /dev 제안           │
-└─────────────────────────────────────┘
+```mermaid
+graph TD
+    FAIL["validator 실패 (신뢰도 < 90%)"] --> CLASSIFY["실패 분류"]
+    CLASSIFY -->|RETRIABLE| REINFORCE["reinforcer 호출"]
+    CLASSIFY -->|NON-RETRIABLE| USER_DECISION["즉시 사용자 결정 요청<br/>/solve 또는 /dev 제안"]
+
+    REINFORCE --> FIX["수정 실행"]
+    FIX --> REVALIDATE["validator 재호출"]
+    REVALIDATE -->|통과| DONE["완료"]
+    REVALIDATE -->|실패| RETRY["2차 시도 (backoff)"]
+    RETRY -->|통과| DONE
+    RETRY -->|실패| USER_DECISION
 ```
 
 ### 호출 예시
@@ -411,37 +401,18 @@ def should_rollback(modification_result):
 
 ### 롤백 수행 프로토콜
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  1. PRE-MODIFICATION SNAPSHOT                                    │
-│     - 수정 전 파일 상태 기록                                     │
-│     - 변경될 파일 목록 저장                                      │
-│     - .claude-state/pre_modification_snapshot.json               │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  2. MODIFICATION EXECUTION                                       │
-│     - 실제 코드 수정                                             │
-│     - 변경 사항 기록                                             │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────────┐
-│  3. POST-MODIFICATION VALIDATION                                 │
-│     - 빌드 체크 (tsc --noEmit)                                  │
-│     - 테스트 실행 (npm test)                                    │
-│     - 타입 에러 카운트                                          │
-└─────────────────────────────────────────────────────────────────┘
-                              ↓
-                         롤백 필요?
-                    ↙           ↘
-                 YES              NO
-                  ↓                ↓
-┌─────────────────────┐  ┌─────────────────────┐
-│ ROLLBACK EXECUTION  │  │ COMMIT CHANGES      │
-│ - 스냅샷 복원       │  │ - 스냅샷 삭제       │
-│ - 변경 취소         │  │ - 진행 계속         │
-│ - 사용자 알림       │  │                     │
-└─────────────────────┘  └─────────────────────┘
+```mermaid
+graph TD
+    SNAPSHOT["1. PRE-MODIFICATION SNAPSHOT<br/>수정 전 파일 상태 기록<br/>변경될 파일 목록 저장<br/>pre_modification_snapshot.json"]
+    MODIFY["2. MODIFICATION EXECUTION<br/>실제 코드 수정<br/>변경 사항 기록"]
+    VALIDATE["3. POST-MODIFICATION VALIDATION<br/>빌드 체크 (tsc --noEmit)<br/>테스트 실행 (npm test)<br/>타입 에러 카운트"]
+    CHECK{"롤백 필요?"}
+    ROLLBACK["ROLLBACK EXECUTION<br/>스냅샷 복원<br/>변경 취소<br/>사용자 알림"]
+    COMMIT["COMMIT CHANGES<br/>스냅샷 삭제<br/>진행 계속"]
+
+    SNAPSHOT --> MODIFY --> VALIDATE --> CHECK
+    CHECK -->|YES| ROLLBACK
+    CHECK -->|NO| COMMIT
 ```
 
 ### 스냅샷 JSON 형식

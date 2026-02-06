@@ -248,7 +248,7 @@ report = f"""
 Generated: {timestamp}
 """
 
-Write(file_path=f".claude/docs/active/{feature_name}/qa/report.md", content=report)
+Write(file_path=f".claude/docs/active/{feature_name}/qa-report.md", content=report)
 ```
 
 ---
@@ -354,7 +354,7 @@ def calculate_qa_confidence(qa_result):
     "reported": 5,
     "suppressed": 12
   },
-  "report_path": ".claude/docs/active/{feature}/qa/report.md",
+  "report_path": ".claude/docs/active/{feature}/qa-report.md",
   "next_action": "none|solve|reinforce",
   "escalation_reason": null
 }

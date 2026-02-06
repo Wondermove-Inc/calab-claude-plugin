@@ -73,7 +73,7 @@ Task(
 - npm audit / pip audit
 - CVE 취약점
 
-[Output] .claude/docs/security-report.md
+[Output] .claude/docs/active/{feature}/security-review.md
 """
 )
 ```
@@ -95,7 +95,7 @@ Task(
 
 | 산출물 | 경로 |
 |--------|------|
-| 보안 리포트 | `.claude/docs/security-report.md` |
+| 보안 리포트 | `.claude/docs/active/{feature}/security-review.md` |
 
 ### 리포트 형식
 

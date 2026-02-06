@@ -8,7 +8,7 @@
 | 작성일 | {날짜} |
 | 총 태스크 | {n}개 |
 | 상태 | In Progress |
-| 관련 PRD | `.claude/docs/active/{feature}/02-prd.md` |
+| 관련 PRD | `.claude/docs/active/{feature}/02-PRD.md` |
 | 관련 아키텍처 | `.claude/docs/active/{feature}/03-architecture.md` |
 
 ---
@@ -146,7 +146,7 @@ Feature: {기능명}
 |------|------|
 | 베스트 프랙티스 | `.claude/best-practices/{tech}.md` |
 | API 스펙 | `.claude/docs/active/{feature}/03-architecture.md` |
-| ERD | `.claude/docs/active/{feature}/04-erd.md` |
+| ERD | `.claude/docs/active/{feature}/04-ERD.md` |
 
 **예상 파일**
 
@@ -463,9 +463,9 @@ TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-005 → TASK-008
 ## 참조 문서
 
 ### 설계 문서
-- `.claude/docs/active/{feature}/02-prd.md` - PRD
+- `.claude/docs/active/{feature}/02-PRD.md` - PRD
 - `.claude/docs/active/{feature}/03-architecture.md` - 아키텍처
-- `.claude/docs/active/{feature}/04-erd.md` - ERD
+- `.claude/docs/active/{feature}/04-ERD.md` - ERD
 
 ### 베스트 프랙티스
 - `.claude/best-practices/typescript.md`

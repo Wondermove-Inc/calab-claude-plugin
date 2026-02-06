@@ -293,20 +293,14 @@ def create_milestone(feature, version):
 
 ### Phase 완료 → 다음 Phase 전환 흐름
 
-```
-Phase N의 모든 Task 완료
-    ↓
-validator 검증 (Phase 단위)
-    ↓
---roadmap complete N
-    ↓
-Phase N ✅ 완료 표시
-    ↓
-Phase N+1 🚧 활성화
-    ↓
---tasks (Phase N+1 Task 분해)
-    ↓
---build --all (Wave 실행)
+```mermaid
+graph TD
+    DONE["Phase N의 모든 Task 완료"] --> VALIDATE["validator 검증 (Phase 단위)"]
+    VALIDATE --> COMPLETE["--roadmap complete N"]
+    COMPLETE --> MARK["Phase N ✅ 완료 표시"]
+    MARK --> ACTIVATE["Phase N+1 🚧 활성화"]
+    ACTIVATE --> TASKS["--tasks (Phase N+1 Task 분해)"]
+    TASKS --> BUILD["--build --all (Wave 실행)"]
 ```
 
 ---

@@ -96,7 +96,7 @@ Task(
 
 | 산출물 | 경로 |
 |--------|------|
-| 리팩토링 보고서 | `.claude/docs/refactor-report.md` |
+| 리팩토링 보고서 | `.claude/docs/active/{feature}/refactor-report.md` |
 
 ### 보고서 형식
 

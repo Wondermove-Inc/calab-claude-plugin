@@ -272,27 +272,17 @@ def check_escalation(error, attempt_count):
 
 ### Circuit Breaker 상태
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                      Circuit Breaker States                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│   ┌──────────┐         실패율 > 50%        ┌──────────┐         │
-│   │  CLOSED  │ ─────────────────────────▶ │   OPEN   │         │
-│   │  (정상)   │                            │  (차단)   │         │
-│   └────┬─────┘                            └────┬─────┘         │
-│        │                                       │                │
-│        │ 성공                        cooldown 후 │                │
-│        │                                       │                │
-│        ▼                                       ▼                │
-│   ┌──────────┐                            ┌──────────┐         │
-│   │  통과    │ ◀──────── 성공 ─────────── │HALF-OPEN │         │
-│   │          │        │                   │  (시험)   │         │
-│   └──────────┘        │                   └────┬─────┘         │
-│                       │                        │                │
-│                       └─────────── 실패 ───────┘                │
-│                                  (다시 OPEN)                     │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> CLOSED
+    CLOSED --> OPEN: 실패율 > 50%
+    OPEN --> HALF_OPEN: cooldown 후
+    HALF_OPEN --> CLOSED: 성공 (통과)
+    HALF_OPEN --> OPEN: 실패 (다시 OPEN)
+
+    CLOSED: CLOSED (정상)
+    OPEN: OPEN (차단)
+    HALF_OPEN: HALF-OPEN (시험)
 ```
 
 ### Circuit Breaker 구현
@@ -435,27 +425,17 @@ class BulkheadManager:
 
 ### 통합 Resilience 패턴
 
-```
-빌드 요청
-    ↓
-[Circuit Breaker 체크] ─── OPEN ──▶ 즉시 거부 + cooldown 안내
-    │
-    │ CLOSED/HALF-OPEN
-    ↓
-[Bulkhead 체크] ─── FULL ──▶ 대기열 또는 거부
-    │
-    │ 슬롯 획득
-    ↓
-[Exponential Backoff + Jitter]
-    │
-    ↓
-빌드 실행
-    │
-    ├── 성공 → Circuit Breaker 성공 기록 → Bulkhead 해제
-    │
-    └── 실패 → Circuit Breaker 실패 기록 → Bulkhead 해제
-              ↓
-          3회 실패? → /solve 에스컬레이션
+```mermaid
+graph TD
+    REQ["빌드 요청"] --> CB{"Circuit Breaker 체크"}
+    CB -->|OPEN| REJECT["즉시 거부 + cooldown 안내"]
+    CB -->|CLOSED/HALF-OPEN| BH{"Bulkhead 체크"}
+    BH -->|FULL| QUEUE["대기열 또는 거부"]
+    BH -->|슬롯 획득| BACKOFF["Exponential Backoff + Jitter"]
+    BACKOFF --> BUILD["빌드 실행"]
+    BUILD -->|성공| SUCCESS["Circuit Breaker 성공 기록 → Bulkhead 해제"]
+    BUILD -->|실패| FAIL["Circuit Breaker 실패 기록 → Bulkhead 해제"]
+    FAIL -->|"3회 실패"| SOLVE["/solve 에스컬레이션"]
 ```
 
 ## 📦 산출물 (CRITICAL - 누락 금지)

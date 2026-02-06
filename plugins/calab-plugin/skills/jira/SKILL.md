@@ -95,10 +95,11 @@ Task(
 
 ## 산출물
 
-| 산출물 | 필수 |
-|--------|------|
-| 동기화 결과 로그 | Yes |
-| worktree.json 업데이트 | 조건부 |
+| 산출물 | 경로 | 필수 |
+|--------|------|------|
+| 동기화 로그 | `.claude/docs/active/{feature}/jira-sync.md` | Yes |
+| 이슈 매핑 | `.claude-state/jira-mapping.json` | Yes |
+| worktree.json 업데이트 | `.claude-state/worktree.json` | 조건부 |
 
 ---
 
