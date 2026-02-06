@@ -61,6 +61,11 @@ cat ~/.claude/settings.json 2>/dev/null || echo "{}"
 - `UserPromptSubmit` 배열이 없으면 추가
 - 이미 workflow-guard 관련 hook이 있으면 중복 추가하지 않음
 
+**기존 설정 보호 (필수):**
+- **Edit 도구로 부분 수정**하세요. Write 도구로 파일 전체를 덮어쓰지 마세요
+- `hooks.UserPromptSubmit` 배열만 수정하고, 기존의 다른 모든 키와 값을 **절대 변경하지 마세요**
+- `UserPromptSubmit` 배열에 이미 존재하는 다른 hook 항목도 반드시 보존하세요
+
 ### 4단계: 결과 출력
 
 설치 완료 후 다음 형식으로 결과를 출력:
@@ -86,8 +91,9 @@ Hook을 제거하려면: /dev:setup --uninstall
 인자로 `--uninstall`이 전달되면:
 
 1. `~/.claude/hooks/workflow-guard.py` 파일 삭제
-2. `~/.claude/settings.json`에서 workflow-guard.py 관련 hook 항목 제거
-3. 빈 배열이 되면 `UserPromptSubmit` 키 자체를 제거
+2. `~/.claude/settings.json`에서 workflow-guard.py 관련 hook 항목만 **Edit 도구로 부분 제거** (다른 설정 절대 변경 금지)
+3. `UserPromptSubmit` 배열의 다른 hook 항목은 반드시 보존
+4. 빈 배열이 되면 `UserPromptSubmit` 키 자체를 제거
 4. 결과 출력:
 
 ```
