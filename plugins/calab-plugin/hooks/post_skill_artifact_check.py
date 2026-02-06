@@ -293,6 +293,17 @@ AGENT_ARTIFACTS: Dict[str, Dict] = {
         "required": True,
         "description": "데드 코드 정리 및 리팩토링 결과"
     },
+
+    # agent-verifier: 에이전트 출력 검증 보고서
+    "calab-plugin:agent-verifier": {
+        "name": "에이전트 출력 검증 보고서",
+        "patterns": [
+            "{docs}/*/agent-verification-report.md",
+            "{docs}/**/agent-verification-report.md",
+        ],
+        "required": True,
+        "description": "병렬 에이전트 산출물 검증 보고서"
+    },
 }
 
 

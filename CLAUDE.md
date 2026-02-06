@@ -20,7 +20,7 @@
 ### Composition
 
 ```
-17 Skills (10 active + 7 passive) + 23 Agents + 27 Hooks
+18 Skills (10 active + 8 passive) + 24 Agents + 27 Hooks
 ```
 
 | Area | Automation |
@@ -36,7 +36,7 @@
 |------|--------|------|
 | **Active (Core)** | dev, solve, onboard | Development / Problem solving / Onboarding |
 | **Active (Utility)** | docs, security, research, jira, refactor, e2e, guard | Docs / Security / Research / JIRA / Refactoring / E2E / Rule enforcement |
-| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules | Auto-loaded |
+| **Passive** | best-practices, code-quality, tdd-workflow, project-rules, work-tracker, clarification-protocol, skill-completion-rules, verify-agents | Auto-loaded |
 
 ---
 
@@ -137,6 +137,7 @@
 | `e2e-runner` | E2E test execution |
 | `task-validator` | Task breakdown validation |
 | `dev-workflow` | Development workflow orchestration |
+| `agent-verifier` | Parallel agent output audit |
 
 ### Prompt Required 7 Elements (RGOSWOC)
 
@@ -315,6 +316,7 @@ Wave complete → Glob/find all expected artifacts → Report missing files → 
 | `work-tracker` | Source file modification |
 | `clarification-protocol` | Subagent execution |
 | `skill-completion-rules` | Active skill completion |
+| `verify-agents` | Parallel agent batch completion (auto-trigger) |
 
 ### Workflow Integration
 
@@ -489,6 +491,7 @@ tsc --noEmit        # or: npm run build / npm run typecheck
 | `doc-updater` | `.claude/docs/active/{feature}/doc-update-report.md` |
 | `docs-generator` | `.claude/docs/active/{feature}/generated-docs.md` |
 | `deep-researcher` | `.claude/research/{topic}.md` |
+| `agent-verifier` | `.claude/docs/active/{feature}/agent-verification-report.md` |
 | `web-researcher` | `.claude/research/{topic}.md` |
 
 > **Failure to produce artifacts is treated as task failure.**

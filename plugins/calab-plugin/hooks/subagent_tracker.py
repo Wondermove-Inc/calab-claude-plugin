@@ -345,6 +345,12 @@ def track_subagent_start(session_id: str, agent_id: str, subagent_type: str, tra
         'started_at': datetime.now().isoformat()
     }
 
+    # 병렬 배치 크기 추적 (verify-agents 패시브 트리거용)
+    running_count = len(stats.get('running', {}))
+    current_batch = stats.get('_parallel_batch_size', 0)
+    if running_count > current_batch:
+        stats['_parallel_batch_size'] = running_count
+
     # 전체 통계
     if 'total_starts' not in stats:
         stats['total_starts'] = 0
@@ -399,13 +405,47 @@ def track_subagent_stop(session_id: str, agent_id: str, agent_transcript_path: s
 
         stats['running'] = running
 
-        # 전체 통계
+        # 전체 통계 (항상 업데이트)
         if 'total_stops' not in stats:
             stats['total_stops'] = 0
         stats['total_stops'] += 1
         stats['last_stop'] = datetime.now().isoformat()
 
-        save_json(stats_file, stats)
+        # 병렬 에이전트 완료 감지: running이 비었고, 이전에 2개+ 에이전트가 실행 중이었으면
+        prev_batch = stats.get('_parallel_batch_size', 0)
+        if len(running) == 0 and prev_batch >= 2:
+            # agent-verifier 자체는 트리거 대상에서 제외
+            if subagent_type != 'calab-plugin:agent-verifier':
+                stats['_parallel_batch_size'] = 0
+                save_json(stats_file, stats)
+                # stdout → Claude 컨텍스트에 자동 주입 (논블로킹)
+                print(f"\n<verify-agents-trigger>")
+                print(f"[AUTO-TRIGGER] 병렬 에이전트 {prev_batch}개 완료 감지")
+                print(f"최근 완료: {subagent_type}")
+                print(f"")
+                print(f"## 자동 검증 (백그라운드, 논블로킹)")
+                print(f"병렬 에이전트가 모두 완료되었습니다.")
+                print(f"아래 호출을 **반드시 run_in_background=True**로 실행하세요.")
+                print(f"사용자 작업을 차단하지 마세요.")
+                print(f"")
+                print(f"```python")
+                print(f"Task(")
+                print(f"    subagent_type=\"calab-plugin:agent-verifier\",")
+                print(f"    description=\"병렬 에이전트 출력 자동 감사\",")
+                print(f"    run_in_background=True,")
+                print(f"    model=\"haiku\",")
+                print(f"    prompt=\"최근 완료된 병렬 에이전트({prev_batch}개)의 산출물을 검증하세요. "
+                       f".claude-state/subagent_stats.json과 subagent.log를 읽고, "
+                       f"각 에이전트의 기대 산출물 존재 여부와 내용 충분성을 확인하세요. "
+                       f"결과를 stdout으로 체크리스트 형태로 출력하세요.\"")
+                print(f")")
+                print(f"```")
+                print(f"</verify-agents-trigger>\n")
+            else:
+                stats['_parallel_batch_size'] = 0
+                save_json(stats_file, stats)
+        else:
+            save_json(stats_file, stats)
 
         # 로그 출력 (stderr로)
         print(f"[SUBAGENT] Stopped: {subagent_type} (duration: {duration:.1f}s)", file=sys.stderr)
@@ -454,6 +494,7 @@ def extract_type_from_description(description: str) -> str:
         'calab-plugin:refactor-cleaner',
         'calab-plugin:task-validator',
         'calab-plugin:dev-workflow',
+        'calab-plugin:agent-verifier',
         'Explore',
         'Plan',
         'general-purpose',
