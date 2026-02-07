@@ -1,22 +1,7 @@
 ---
-name: dev:workflow
-description: |
-  멀티 에이전트 워크플로우로 소프트웨어 개발 작업을 수행합니다.
-  "기능 추가해줘", "버그 수정해줘", "리팩토링해줘", "테스트 작성해줘",
-  "설계해줘", "최적화해줘" 등 개발 작업 요청 시 사용합니다.
-  요구사항 분석부터 설계, 구현, 테스트, 리뷰까지 전체 개발 주기를 자동화하고
-  Quality Gates로 각 단계를 검증합니다.
-  단순 질문, Git 명령, 문서만 수정하는 경우에는 사용하지 마세요.
-  dev 플러그인이 활성화된 상태에서 기능 개발/추가, 버그 수정,
-  리팩토링, 성능 최적화, 테스트 작성, 설계/아키텍처 작업 요청은
-  자동으로 이 스킬을 호출해야 합니다.
-  예외(직접 처리) - 단순 질문, 슬래시 커맨드 호출, Git/빌드/배포 작업, 문서만 수정
-user-invocable: true
-metadata:
-  author: calab
-  version: 1.0.0
-  category: development
-  tags: [multi-agent, workflow, orchestration]
+name: workflow
+description: 멀티 에이전트 워크플로우로 체계적인 개발 작업을 수행합니다.
+disable-model-invocation: true
 ---
 
 # /dev:workflow 커맨드
