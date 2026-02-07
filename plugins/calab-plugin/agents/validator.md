@@ -893,7 +893,9 @@ def calculate_retry_delay(attempt, base_delay=1):
 
 ## 참조 파일
 
-- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
-- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트 (선택적 — 없으면 건너뛰기)
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙 (선택적 — 없으면 건너뛰기)
 - `skills/code-quality/SKILL.md` - 코드 품질 규칙
 - `skills/best-practices/references/` - 기술별 규칙
+
+> **⚠️ `.claude/memory/` 파일은 선택적입니다. 파일이 없어도 검증을 정상 진행하세요. 읽기 거부 시 건너뛰고 계속하세요.**

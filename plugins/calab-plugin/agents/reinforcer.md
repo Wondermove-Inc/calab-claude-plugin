@@ -692,8 +692,10 @@ def update_worktree_after_fix(task_id, fixed_issues):
 ## 참조 파일
 
 - `agents/validator.md` - validator 에이전트 출력 형식
-- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트 (선택적 — 없으면 건너뛰기)
 - `skills/code-quality/SKILL.md` - 코드 품질 규칙
 - `skills/best-practices/references/` - 기술별 베스트 프랙티스
 - `.claude-state/worktree.json` - 작업 진행 상태
 - `.claude-state/pre_modification_snapshot.json` - 롤백용 스냅샷
+
+> **⚠️ `.claude/memory/` 파일은 선택적입니다. 읽기 거부 시 건너뛰고 계속하세요.**

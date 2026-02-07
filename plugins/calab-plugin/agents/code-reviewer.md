@@ -33,7 +33,8 @@ skills: code-quality, project-rules, best-practices
 ### 1. 코드 스타일 규칙 로드
 
 ```
-.claude/memory/CODE_STYLE.md 읽기
+.claude/memory/CODE_STYLE.md 읽기 (파일이 있을 때만 — 없으면 건너뛰기)
+⚠️ .claude/memory/ 파일은 선택적. 없어도 정상 진행.
 ```
 
 ### 2. 대상 파일 분석
@@ -281,6 +282,8 @@ def check_quality_escalation(review_result):
 
 ## 참조 파일
 
-- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙
-- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
+- `.claude/memory/CODE_STYLE.md` - 코드 스타일 규칙 (선택적 — 없으면 건너뛰기)
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙 (선택적 — 없으면 건너뛰기)
 - `.claude-state/quality_violations.json` - 품질 위반 기록
+
+> **⚠️ `.claude/memory/` 파일은 선택적입니다. 읽기 거부 시 건너뛰고 계속하세요.**

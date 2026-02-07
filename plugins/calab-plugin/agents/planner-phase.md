@@ -26,9 +26,10 @@ Strategic planning agent for PHASE-level decomposition.
 ### 1. Load Context
 
 ```python
-# 1. Read existing project context
-Read(".claude/memory/PROJECT_RULES.md")  # 프로젝트 규칙
-Read(".claude/memory/CURRENT_CONTEXT.md")  # 현재 컨텍스트
+# 1. Read existing project context (파일이 있을 때만 — 없으면 건너뛰기)
+# ⚠️ .claude/memory/ 파일은 선택적. 없어도 정상 진행.
+Glob(".claude/memory/*.md")  # 존재하는 파일만 확인 후 Read
+# → PROJECT_RULES.md, CURRENT_CONTEXT.md 등
 
 # 2. Explore codebase for patterns
 Task(

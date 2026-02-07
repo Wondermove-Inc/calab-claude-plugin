@@ -32,9 +32,10 @@ skills: project-rules, work-tracker, code-quality
 
 ```
 절차:
-1. .claude/memory/PROJECT_RULES.md 로드
+1. .claude/memory/PROJECT_RULES.md 로드 (파일이 있을 때만 — 없으면 건너뛰기)
 2. 변경된 코드와 규칙 대조
 3. 위반 사항 발견 시 즉시 보고
+⚠️ .claude/memory/ 파일은 선택적. 없어도 정상 진행.
 ```
 
 **검증 항목:**
@@ -48,7 +49,7 @@ skills: project-rules, work-tracker, code-quality
 
 ```
 절차:
-1. .claude/memory/CURRENT_CONTEXT.md 로드
+1. .claude/memory/CURRENT_CONTEXT.md 로드 (파일이 있을 때만 — 없으면 건너뛰기)
 2. 현재 작업이 목표와 일치하는지 확인
 3. 방향 이탈 감지 시 경고
 ```
@@ -221,11 +222,13 @@ def verify_context_consistency():
 
 ## 참조 파일
 
-- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙
-- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트
+- `.claude/memory/PROJECT_RULES.md` - 프로젝트 규칙 (선택적 — 없으면 건너뛰기)
+- `.claude/memory/CURRENT_CONTEXT.md` - 현재 작업 컨텍스트 (선택적 — 없으면 건너뛰기)
 - `.claude-state/recent_changes.json` - 최근 변경 파일 목록
 - `.claude-state/checkpoint.json` - 체크포인트 (체크섬 포함)
 - `.claude-state/worktree.json` - 작업 트리 상태
+
+> **⚠️ `.claude/memory/` 파일은 선택적입니다. 읽기 거부 시 건너뛰고 계속하세요.**
 
 ---
 
