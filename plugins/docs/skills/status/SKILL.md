@@ -1,8 +1,8 @@
 ---
-name: docs:status
+name: status
 description: 문서 커버리지, 품질, 최신성 확인. /docs status 또는 "문서 현황" 키워드 시 자동 활성화.
 allowed-tools: Read, Glob, Grep
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # /docs status - 문서 현황 확인
@@ -44,7 +44,7 @@ user-invocable: true
 
 문서와 소스 코드의 동기화 상태를 확인합니다.
 
-## 실행 결과
+## 사용 예시
 
 ```
 📊 문서 현황 리포트

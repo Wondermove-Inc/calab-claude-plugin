@@ -1,7 +1,8 @@
 ---
-name: onboarding:project
+name: project
 description: 프로젝트를 분석하고 컨텍스트 문서를 생성합니다. 프로젝트 분석, 코드베이스 학습, 온보딩 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Glob, Grep
+disable-model-invocation: true
 ---
 
 # Project Onboarding Skill

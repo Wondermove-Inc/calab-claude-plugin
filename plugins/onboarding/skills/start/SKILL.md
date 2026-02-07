@@ -1,8 +1,9 @@
 ---
-name: onboarding:start
+name: start
 description: 프로젝트를 전체 분석하여 5개 컨텍스트 문서를 생성합니다. 기존 프로젝트 분석, 코드베이스 학습, 온보딩 시 사용합니다.
 allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint: [--skip-domain]
+disable-model-invocation: true
 ---
 
 # /onboarding:start - 프로젝트 온보딩
@@ -1052,7 +1053,7 @@ Closes #123
 
 ---
 
-## 출력 예시
+## 사용 예시
 
 ```
 🔍 프로젝트 온보딩 시작...

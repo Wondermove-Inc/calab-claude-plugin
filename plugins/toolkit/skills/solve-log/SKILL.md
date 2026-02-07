@@ -1,8 +1,8 @@
 ---
-name: toolkit:solve-log
+name: solve-log
 description: 진행 중인 문제 해결 로그를 확인합니다. 현재 분석 상태와 수집된 정보를 표시합니다.
 allowed-tools: Read, Glob
-user-invocable: true
+disable-model-invocation: true
 argument-hint: [problem-id]
 ---
 

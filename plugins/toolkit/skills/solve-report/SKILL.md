@@ -1,8 +1,8 @@
 ---
-name: toolkit:solve-report
+name: solve-report
 description: 문제 해결 보고서를 생성합니다. 전체 분석 과정과 해결책을 문서화합니다.
 allowed-tools: Read, Write, Glob
-user-invocable: true
+disable-model-invocation: true
 argument-hint: [problem-id] [--draft | --full | --summary]
 ---
 

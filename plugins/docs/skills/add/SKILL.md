@@ -1,8 +1,8 @@
 ---
-name: docs:add
+name: add
 description: 특정 유형의 문서를 개별적으로 추가. /docs add 또는 "문서 추가" 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Edit, Glob, Grep
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # /docs add - 특정 유형 문서 추가
@@ -47,7 +47,7 @@ user-invocable: true
 
 **저장 위치:** `.claude/docs-site/[유형]/`
 
-## 실행 예시
+## 사용 예시
 
 ### API 문서 추가
 

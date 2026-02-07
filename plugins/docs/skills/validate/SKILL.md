@@ -1,8 +1,8 @@
 ---
-name: docs:validate
+name: validate
 description: 문서의 품질, 일관성, 완성도 검증. /docs validate 또는 "문서 검증" 키워드 시 자동 활성화.
 allowed-tools: Read, Glob, Grep
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # /docs validate - 문서 품질 검증
@@ -59,7 +59,7 @@ user-invocable: true
 | 빈 섹션 | 내용 없는 섹션 |
 | 플레이스홀더 | 임시 텍스트 |
 
-## 실행 결과
+## 사용 예시
 
 ```
 🔍 문서 검증 시작

@@ -1,8 +1,8 @@
 ---
-name: docs:generate
+name: generate
 description: 프로젝트 전체 문서를 자동 생성. /docs generate 또는 "전체 문서 생성" 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # /docs generate - 전체 문서 자동 생성

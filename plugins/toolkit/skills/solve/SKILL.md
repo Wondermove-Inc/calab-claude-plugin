@@ -1,8 +1,8 @@
 ---
-name: toolkit:solve
+name: solve
 description: 문제 해결 프로세스를 시작합니다. 체계적인 방법론으로 근본 원인을 분석하고 해결합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch
-user-invocable: true
+disable-model-invocation: true
 argument-hint: [문제 설명] [--5whys | --rca | --hypothesis | --binary]
 ---
 

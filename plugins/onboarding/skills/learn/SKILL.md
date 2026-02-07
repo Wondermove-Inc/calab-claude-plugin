@@ -1,8 +1,9 @@
 ---
-name: onboarding:learn
+name: learn
 description: 특정 영역을 심층 학습합니다. 파일이나 폴더를 분석하여 패턴과 구조를 파악합니다.
 allowed-tools: Read, Glob, Grep
 argument-hint: <path>
+disable-model-invocation: true
 ---
 
 # /onboarding:learn - 특정 영역 학습
@@ -82,7 +83,7 @@ argument-hint: <path>
 - 해당 영역 전용 섹션 생성
 ```
 
-## 출력 예시
+## 사용 예시
 
 ### 컴포넌트 폴더 학습
 

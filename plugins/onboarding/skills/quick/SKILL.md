@@ -1,7 +1,8 @@
 ---
-name: onboarding:quick
+name: quick
 description: 빠른 프로젝트 온보딩을 실행합니다. 핵심 정보만 분석하여 최소 컨텍스트를 구축합니다.
 allowed-tools: Read, Write, Glob, Bash
+disable-model-invocation: true
 ---
 
 # /onboarding:quick - 빠른 온보딩
@@ -159,7 +160,7 @@ src/
 
 ---
 
-## 출력 예시
+## 사용 예시
 
 ```
 ⚡ 빠른 온보딩 시작...

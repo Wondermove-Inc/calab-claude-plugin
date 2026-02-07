@@ -1,8 +1,8 @@
 ---
-name: toolkit:mongodb
+name: mongodb
 description: MongoDB 데이터베이스 작업. mongosh로 데이터 조회, 수정, 삭제, 집계를 수행합니다.
 allowed-tools: Bash, AskUserQuestion
-user-invocable: true
+disable-model-invocation: true
 argument-hint: [작업 설명]
 ---
 
@@ -182,7 +182,7 @@ mongosh --eval "printjson(db.{collection}.find().limit(5).toArray())"
 
 ---
 
-## 예시 워크플로우
+## 사용 예시
 
 ### 예시 1: 사용자 조회
 ```

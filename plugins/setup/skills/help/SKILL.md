@@ -1,7 +1,8 @@
 ---
-name: setup:help
+name: help
 description: setup 플러그인 사용법을 안내합니다. 도구별 상세 가이드를 제공합니다.
 allowed-tools: Read
+disable-model-invocation: true
 ---
 
 # /setup:help - 플러그인 도움말
@@ -71,7 +72,7 @@ Claude Code 터미널에 상태 정보를 표시하는 statusline을 설치하�
 | /setup:statusline 롤백 | 이전 설정으로 복원 |
 | /setup:statusline rollback | 이전 설정으로 복원 |
 
-## 표시 예시
+## 사용 예시
 
 [Opus 4.5] ██████░░░░ 60% | ➜ my-project git:(main)
 [Sonnet 4] ████░░░░░░ 40% | ➜ api-server git:(feature) ✗

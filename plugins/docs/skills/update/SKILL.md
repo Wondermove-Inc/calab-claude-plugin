@@ -1,8 +1,8 @@
 ---
-name: docs:update
+name: update
 description: 코드 변경사항을 반영하여 기존 문서 업데이트. /docs update 또는 "문서 업데이트" 키워드 시 자동 활성화.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-user-invocable: true
+disable-model-invocation: true
 ---
 
 # /docs update - 기존 문서 업데이트
@@ -42,7 +42,7 @@ user-invocable: true
 
 영향받는 문서만 선택적으로 업데이트합니다.
 
-## 실행 예시
+## 사용 예시
 
 ### 전체 업데이트
 

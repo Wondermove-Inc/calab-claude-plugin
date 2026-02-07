@@ -1,8 +1,9 @@
 ---
-name: onboarding:refresh
+name: refresh
 description: 프로젝트 컨텍스트 문서를 갱신합니다. 코드 변경 후 컨텍스트 동기화가 필요할 때 사용합니다.
 allowed-tools: Read, Write, Glob, Grep
 argument-hint: [patterns | architecture | domain]
+disable-model-invocation: true
 ---
 
 # /onboarding:refresh - 컨텍스트 갱신
@@ -54,7 +55,7 @@ argument-hint: [patterns | architecture | domain]
 변경 내용 반영
 ```
 
-## 출력 예시
+## 사용 예시
 
 ### 전체 갱신
 
