@@ -1,540 +1,78 @@
 ---
 name: help
-description: Docs 플러그인 도움말과 문서 작성 가이드라인을 표시합니다. 모든 명령어, 사용 예시, 문서 유형별 필수 항목을 확인할 수 있습니다.
-allowed-tools: Read
+description: Docs 플러그인 도움말을 표시합니다. 모든 명령어와 사용 예시를 확인할 수 있습니다.
 disable-model-invocation: true
 ---
 
-# /docs:help - Docs 플러그인 도움말
+# /docs help - Docs 플러그인 도움말
 
 ## 설명
-Docs 플러그인의 모든 명령어, 사용 예시, 문서 작성 가이드라인을 안내합니다.
+Docs 플러그인의 명령어와 사용법을 안내합니다.
 
 ## 출력 형식
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║              Docs Plugin v1.0.0                        ║
-║  Documentation Content Auto-Generation (Docusaurus)    ║
+║              Docs Plugin v2.0.0                        ║
+║  App Technical Documentation Generator                 ║
 ╚════════════════════════════════════════════════════════╝
 
 플러그인 개요
 ───────────────────────────────────────────────────────────────
-  프로젝트를 분석하여 전문적인 기술 문서 콘텐츠를 자동 생성합니다.
-  Docusaurus 기반의 문서 사이트 구조를 지원합니다.
+  특정 앱의 코드베이스를 분석하여 기술 문서를 자동 생성합니다.
+  사람과 AI 모두 앱의 스펙/기능/동작 원리를 파악할 수 있는
+  문서를 생성하고 유지보수합니다.
 
-  생성 문서 유형:
-    - Getting Started (시작하기)
-    - Architecture (아키텍처)
-    - API Reference (API 레퍼런스)
-    - Components (컴포넌트)
-    - Guides (가이드)
-    - Configuration (설정)
-    - FAQ / Troubleshooting
+  문서 목적:
+    - 사람: 앱의 전체 구조, 비즈니스 로직, API 스펙을 빠르게 파악
+    - AI: 코드 변경/수정 시 기존 로직과 영향 범위를 이해하고 안전하게 작업
 
 명령어
 ───────────────────────────────────────────────────────────────
-  /docs:generate
-      프로젝트 분석 후 전체 문서 자동 생성
-      옵션: --only, --force, --verbose, --skip-validation
-      예시: /docs:generate
-            /docs:generate --only=api,components
+  /docs generate
+      앱의 전체 기술 문서를 최초 생성합니다.
+      예시: /docs generate
 
-  /docs:add [type]
-      특정 유형의 문서 개별 추가
-      유형: getting-started, architecture, api, component, guide, config, faq, troubleshooting
-      예시: /docs:add api
-            /docs:add guide "인증 설정하기"
-            /docs:add component "Button"
-
-  /docs:update
-      코드 변경사항 반영하여 기존 문서 업데이트
-      옵션: --since, --regenerate, --dry-run, --force
-      예시: /docs:update
-            /docs:update --since="2024-01-01"
-
-  /docs:status
-      문서 커버리지 및 품질 현황 확인
-      옵션: --detailed, --json, --type
-      예시: /docs:status
-            /docs:status --detailed
-
-  /docs:validate
-      문서 품질 검증 (구조, 링크, 코드, 일관성, 완성도)
-      옵션: --fix, --strict, --json, --quiet
-      예시: /docs:validate
-            /docs:validate --fix
+  /docs update
+      기존 문서의 추가, 수정, 삭제, 검증을 수행합니다.
+      예시: /docs update
+            "API 문서에 새 엔드포인트 추가해줘"
+            "문서 검증해줘"
 
 자연어 사용 예시
 ───────────────────────────────────────────────────────────────
-  "문서 생성해줘"         → /docs:generate
-  "API 문서 추가해줘"     → /docs:add api
-  "문서 업데이트해줘"     → /docs:update
-  "문서 현황 보여줘"      → /docs:status
-  "문서 검증해줘"         → /docs:validate
+  "문서 생성해줘"              → /docs generate
+  "전체 문서 만들어줘"         → /docs generate
+  "문서 업데이트해줘"          → /docs update (수정)
+  "새 API 문서 추가해줘"       → /docs update (추가)
+  "삭제된 이벤트 문서 정리해줘" → /docs update (삭제)
+  "문서 검증해줘"              → /docs update (검증)
 
-문서 유형별 필수 항목
+생성 문서 구조
 ───────────────────────────────────────────────────────────────
-  Getting Started   15개 항목 (설치, 요구사항, 예시 등)
-  Architecture      12개 항목 (다이어그램 4개+ 필수)
-  API Reference     20개 항목/엔드포인트
-  Component         18개 항목/컴포넌트
-  Guide             10개 항목
-  Configuration      8개 항목/옵션
-  FAQ                5개 항목/질문
-  Troubleshooting    6개 항목/이슈
+  docs/{앱이름}/
+  ├── overview.md              # 앱 개요 및 빠른 이해 가이드
+  ├── architecture.md          # 아키텍처, 패턴, 의존성 규칙
+  ├── api-specification.md     # API 명세서
+  ├── event-specification.md   # 이벤트 명세서
+  ├── database.md              # DB 스키마, 인덱스, 데이터 흐름
+  ├── business-logic.md        # 비즈니스 로직 및 도메인 규칙
+  └── tech-stack.md            # 기술 스택 설명
 
-문서 생성 위치
+핵심 원칙
 ───────────────────────────────────────────────────────────────
-  .claude/docs-site/
-  ├── images/               # 스크린샷 저장
-  ├── getting-started/      # 시작 가이드
-  ├── architecture/         # 아키텍처 문서
-  ├── api-reference/        # API 레퍼런스
-  ├── components/           # 컴포넌트 문서
-  ├── guides/               # How-to 가이드
-  ├── configuration/        # 설정 문서
-  ├── faq.md                # 자주 묻는 질문
-  └── troubleshooting.md    # 문제 해결
+  • 예시 코드 금지 — 핵심 로직과 규칙만 서술
+  • Mermaid 시각화 필수 — 복잡한 개념은 다이어그램으로 표현
+  • 변경 영향도 명시 — 수정 시 영향 범위 기술
+  • 구현 의도 기록 — "왜 이렇게 했는가"를 기록
 
-시각화 규칙
+워크플로우
 ───────────────────────────────────────────────────────────────
-  Mermaid 다이어그램:
-    - 어두운 배경 → 밝은 글자 (#ffffff)
-    - 밝은 배경 → 어두운 글자 (#1e293b)
-    - Architecture 문서에 필수 4개 이상
-
-  스크린샷 플레이스홀더:
-    <!-- 스크린샷 필요: [설명] -->
-    ![스크린샷: 설명](./images/filename.png)
-
-관련 문서
-───────────────────────────────────────────────────────────────
-  • README.md - 플러그인 상세 문서
-
-팁
-───────────────────────────────────────────────────────────────
-  • 새 프로젝트 문서화 시 /docs:generate로 전체 생성
-  • 특정 영역만 필요하면 /docs:add [type] 사용
-  • 코드 변경 후 /docs:update로 문서 동기화
-  • /docs:validate로 문서 품질 주기적 점검
+  1. /docs generate      → 앱의 전체 기술 문서 최초 생성
+  2. /docs update        → 코드 변경 시 문서 추가/수정/삭제/검증
 ```
 
 ## 실행 방식
 
-1. 위 형식의 도움말을 콘솔에 출력
-2. 문서 생성 여부에 따라 다음 추천 명령어 안내
-
----
-
-## 핵심 원칙: 극도로 상세한 문서
-
-> **모든 생성 문서는 독자가 추가 질문 없이 완벽하게 이해하고 사용할 수 있어야 합니다.**
-
-### 상세도 기준
-
-| 기준 | 요구사항 |
-|------|----------|
-| **완전성** | 모든 파라미터, 옵션, 반환값, 에러 케이스 문서화 |
-| **예시 다양성** | 기본 + 고급 + 에지케이스 + 에러처리 (최소 4개) |
-| **실행 가능성** | 모든 코드 예시는 복사-붙여넣기로 즉시 실행 가능 |
-| **맥락 제공** | 왜 필요한지, 언제 사용하는지, 대안은 무엇인지 |
-| **시각화** | Mermaid 다이어그램으로 구조/흐름을 시각화 |
-| **스크린샷** | UI/결과물은 이미지 플레이스홀더로 명시 |
-
----
-
-## Mermaid 다이어그램 가이드
-
-> **복잡한 개념은 다이어그램으로 시각화하여 이해를 돕습니다.**
-
-### 적극 활용 필수 상황
-
-| 문서 유형 | 필수 다이어그램 |
-|----------|----------------|
-| **Architecture** | 시스템 개요, 컴포넌트 의존성, 데이터 흐름 |
-| **API** | 요청-응답 시퀀스, 인증 흐름 |
-| **Guide** | 프로세스 흐름, 상태 전이 |
-| **Component** | 컴포넌트 계층 구조, 상태 머신 |
-
-### 가독성 규칙 (필수)
-
-> **배경색과 텍스트색의 대비를 확보하여 가독성을 보장합니다.**
-
-```
-🎨 색상 대비 원칙:
-- 어두운 배경 → 밝은 글자 (흰색, 밝은 노랑, 밝은 하늘색)
-- 밝은 배경 → 어두운 글자 (검정, 진한 파랑, 진한 회색)
-```
-
-### 권장 색상 팔레트
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#3730a3', 'lineColor': '#6366f1', 'secondaryColor': '#f0fdf4', 'tertiaryColor': '#fef3c7'}}}%%
-```
-
-**어두운 배경 노드 (권장):**
-```
-style NodeA fill:#4f46e5,stroke:#3730a3,color:#ffffff
-style NodeB fill:#059669,stroke:#047857,color:#ffffff
-style NodeC fill:#dc2626,stroke:#b91c1c,color:#ffffff
-style NodeD fill:#7c3aed,stroke:#6d28d9,color:#ffffff
-```
-
-**밝은 배경 노드 (권장):**
-```
-style NodeE fill:#f0fdf4,stroke:#86efac,color:#166534
-style NodeF fill:#fef3c7,stroke:#fcd34d,color:#92400e
-style NodeG fill:#f1f5f9,stroke:#cbd5e1,color:#1e293b
-```
-
-### 다이어그램 유형별 예시
-
-**1. 시스템 아키텍처 (flowchart)**
-```mermaid
-flowchart TB
-    subgraph Client["🖥️ Client Layer"]
-        A[Web App]
-        B[Mobile App]
-    end
-
-    subgraph Server["⚙️ Server Layer"]
-        C[API Gateway]
-        D[Auth Service]
-        E[Core Service]
-    end
-
-    subgraph Data["💾 Data Layer"]
-        F[(PostgreSQL)]
-        G[(Redis)]
-    end
-
-    A --> C
-    B --> C
-    C --> D
-    C --> E
-    E --> F
-    E --> G
-
-    style A fill:#4f46e5,stroke:#3730a3,color:#ffffff
-    style B fill:#4f46e5,stroke:#3730a3,color:#ffffff
-    style C fill:#059669,stroke:#047857,color:#ffffff
-    style D fill:#7c3aed,stroke:#6d28d9,color:#ffffff
-    style E fill:#7c3aed,stroke:#6d28d9,color:#ffffff
-    style F fill:#f0fdf4,stroke:#86efac,color:#166534
-    style G fill:#fef3c7,stroke:#fcd34d,color:#92400e
-```
-
-**2. 시퀀스 다이어그램 (sequence)**
-```mermaid
-sequenceDiagram
-    participant U as 👤 User
-    participant C as 🖥️ Client
-    participant A as 🔐 Auth
-    participant S as ⚙️ Server
-
-    U->>C: 로그인 요청
-    C->>A: 인증 요청
-    A->>A: 토큰 생성
-    A-->>C: JWT 토큰
-    C->>S: API 요청 + 토큰
-    S-->>C: 응답 데이터
-    C-->>U: 화면 표시
-```
-
-**3. 상태 다이어그램 (stateDiagram)**
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Loading: fetch()
-    Loading --> Success: 200 OK
-    Loading --> Error: 4xx/5xx
-    Success --> Idle: reset()
-    Error --> Loading: retry()
-    Error --> Idle: dismiss()
-```
-
----
-
-## 이미지 플레이스홀더 가이드
-
-> **실제 스크린샷이 필요한 위치에 명시적으로 표기합니다.**
-
-### 플레이스홀더 형식
-
-```markdown
-<!-- 📸 스크린샷 필요: [설명] -->
-![스크린샷: 설명](./images/placeholder-screenshot-name.png)
-*캡션: [상세 설명]*
-```
-
-### 스크린샷 필수 포함 상황
-
-| 상황 | 필수 여부 | 예시 |
-|------|----------|------|
-| **설치 결과 화면** | 필수 | 터미널 출력, 성공 메시지 |
-| **UI 컴포넌트** | 필수 | 버튼 변형, 모달 등 |
-| **설정 화면** | 필수 | 환경 설정, 옵션 패널 |
-| **에러 화면** | 필수 | 에러 메시지, 디버깅 화면 |
-| **대시보드** | 필수 | 메인 화면, 통계 |
-| **워크플로우** | 권장 | 단계별 진행 화면 |
-
-### 이미지 파일 구조
-
-```
-.claude/docs-site/
-├── images/                    # 📁 이미지 저장 폴더
-│   ├── getting-started/       # 시작하기 관련
-│   ├── architecture/          # 아키텍처 관련
-│   ├── components/            # 컴포넌트 관련
-│   └── guides/                # 가이드 관련
-```
-
----
-
-## 문서 유형별 필수 포함 항목
-
-### 1. Getting Started (시작하기) - 필수 15개 항목
-
-```
-□ 프로젝트 한 줄 소개
-□ 프로젝트가 해결하는 문제
-□ 주요 기능 목록 (최소 5개)
-□ 시스템 요구사항 (OS, Node 버전, 메모리 등)
-□ 설치 방법 (npm, yarn, pnpm, Docker 모두)
-□ 환경별 설정 (Development, Staging, Production)
-□ 첫 번째 실행까지의 단계별 가이드
-□ 기본 사용 예시 (3개 이상)
-□ 예상 결과/출력 스크린샷
-□ 흔한 설치 오류 및 해결책 (5개 이상)
-□ 프록시/방화벽 환경 설정
-□ 오프라인 설치 방법
-□ 업그레이드 가이드
-□ 롤백 방법
-□ 다음 단계 안내
-```
-
-### 2. Architecture (아키텍처) - 필수 12개 항목
-
-```
-□ 시스템 전체 개요 다이어그램
-□ 핵심 컴포넌트 설명 (각각 상세히)
-□ 컴포넌트 간 의존성 다이어그램
-□ 데이터 흐름 다이어그램
-□ 요청-응답 시퀀스 다이어그램
-□ 디렉토리 구조 및 각 폴더 역할
-□ 핵심 디자인 패턴 설명
-□ 확장 포인트 (어디서 커스터마이징 가능한지)
-□ 성능 고려사항
-□ 보안 아키텍처
-□ 배포 아키텍처 (선택적)
-□ 기술 선택 이유 (Why 문서)
-```
-
-### 3. API Reference - 필수 20개 항목 (엔드포인트당)
-
-```
-□ 엔드포인트 URL 및 HTTP 메서드
-□ 한 줄 설명
-□ 상세 설명 (언제 사용하는지)
-□ 인증 요구사항 (토큰 타입, 권한 등)
-□ Rate Limiting 정보
-□ Path 파라미터 (타입, 필수여부, 설명, 예시)
-□ Query 파라미터 (타입, 필수여부, 기본값, 유효값 범위)
-□ Request Header (필수/선택)
-□ Request Body 전체 스키마 (중첩 객체 포함)
-□ 각 필드별 유효성 검사 규칙
-□ 성공 응답 (200, 201 등) 전체 스키마
-□ 에러 응답 (400, 401, 403, 404, 500) 각각의 스키마
-□ 에러 코드별 원인 및 해결 방법
-□ curl 예시
-□ JavaScript/TypeScript 예시
-□ Python 예시 (선택적)
-□ 페이지네이션 방식 (있는 경우)
-□ 필터링/정렬 옵션 (있는 경우)
-□ Webhook 연동 (있는 경우)
-□ Deprecation 정보 (있는 경우)
-```
-
-### 4. Components (컴포넌트) - 필수 18개 항목 (컴포넌트당)
-
-```
-□ 컴포넌트 이름 및 한 줄 설명
-□ 언제 사용하는지 (Use Cases)
-□ 언제 사용하지 말아야 하는지
-□ 설치/Import 방법
-□ 기본 사용 예시
-□ 모든 Props 테이블 (타입, 기본값, 필수, 상세 설명)
-□ 복합 타입 Props의 상세 스키마
-□ 조건부 Props 설명 (A가 있으면 B 필수 등)
-□ 모든 이벤트/콜백 목록 및 파라미터
-□ Slots/Children 사용법
-□ Ref로 접근 가능한 메서드
-□ CSS Variables 목록
-□ 커스텀 Class Names
-□ 테마/변형(Variants) 예시
-□ 제어/비제어 컴포넌트 패턴
-□ 접근성(a11y) 정보 (ARIA, 키보드 내비게이션)
-□ 성능 최적화 팁 (memo, useCallback 등)
-□ 관련 컴포넌트 링크
-```
-
-### 5. Guides (가이드) - 필수 10개 항목
-
-```
-□ 가이드 목적 한 줄 설명
-□ 이 가이드가 필요한 상황
-□ 사전 요구사항 체크리스트
-□ 예상 소요 시간
-□ 단계별 절차 (각 단계에 코드 예시)
-□ 각 단계별 예상 결과
-□ 흔한 실수 및 해결책
-□ 고급 옵션/커스터마이징
-□ 완료 후 검증 방법
-□ 다음 단계/관련 가이드
-```
-
-### 6. Configuration (설정) - 필수 8개 항목 (옵션당)
-
-```
-□ 옵션 이름
-□ 타입 및 기본값
-□ 설명 (무엇을 제어하는지)
-□ 유효한 값 범위/목록
-□ 환경별 권장값 (dev/staging/prod)
-□ 관련된 다른 옵션
-□ 설정 예시 (최소 2개)
-□ 잘못 설정 시 발생하는 문제
-```
-
-### 7. FAQ - 필수 형식
-
-```
-□ 질문 (자연스러운 문장)
-□ 짧은 답변 (1-2문장)
-□ 상세 설명 (필요시)
-□ 코드 예시 (해당시)
-□ 관련 문서 링크
-```
-
-### 8. Troubleshooting - 필수 형식
-
-```
-□ 에러 메시지/증상
-□ 발생 원인 (가능한 모든 원인)
-□ 해결 방법 (단계별)
-□ 해결 코드 예시
-□ 예방 방법
-□ 관련 이슈 링크 (있는 경우)
-```
-
----
-
-## 코드 예시 필수 요건
-
-### 모든 기능에 최소 4가지 예시
-
-```
-1. 기본 예시 (가장 단순한 사용법)
-2. 실전 예시 (실제 프로젝트에서 사용하는 방식)
-3. 고급 예시 (모든 옵션 활용)
-4. 에러 처리 예시 (예외 상황 처리)
-```
-
-### 코드 예시 필수 포함 항목
-
-```typescript
-// ✅ 좋은 예시
-import { createUser } from '@/api/users';  // import문 필수
-
-// 사용 목적 설명
-// 새 사용자를 생성하고 환영 이메일을 발송합니다.
-
-async function example() {
-  try {
-    const user = await createUser({
-      email: 'user@example.com',  // 실제 동작하는 값
-      name: 'John Doe',
-      role: 'admin',  // 가능한 값: 'admin' | 'user' | 'guest'
-    });
-
-    console.log(user);
-    // 예상 출력:
-    // {
-    //   id: 'usr_abc123',
-    //   email: 'user@example.com',
-    //   name: 'John Doe',
-    //   role: 'admin',
-    //   createdAt: '2024-01-20T10:30:00Z'
-    // }
-  } catch (error) {
-    // 에러 처리 방법
-    if (error.code === 'USER_EXISTS') {
-      console.error('이미 존재하는 이메일입니다.');
-    }
-  }
-}
-```
-
----
-
-## 문서 저장 위치
-
-생성된 문서는 `.claude/docs-site/` 폴더에 저장됩니다:
-
-```
-.claude/docs-site/
-├── getting-started/
-│   ├── introduction.md
-│   ├── installation.md
-│   ├── quick-start.md
-│   └── basic-usage.md
-├── architecture/
-│   ├── overview.md
-│   ├── components.md
-│   ├── data-flow.md
-│   └── diagrams.md
-├── api-reference/
-│   ├── overview.md
-│   ├── authentication.md
-│   ├── endpoints/
-│   │   └── [resource].md
-│   ├── types.md
-│   └── errors.md
-├── components/
-│   └── [component-name].md
-├── guides/
-│   └── [guide-name].md
-├── configuration/
-│   ├── environment.md
-│   └── options.md
-├── faq.md
-└── troubleshooting.md
-```
-
----
-
-## 문서 검증 기준
-
-### 완성도 체크리스트
-
-모든 문서는 다음을 만족해야 합니다:
-
-| 항목 | 기준 |
-|------|------|
-| 필수 섹션 | 해당 문서 유형의 모든 필수 항목 포함 |
-| 코드 예시 | 기능당 최소 4개 예시 |
-| 실행 가능성 | 모든 코드가 복사-붙여넣기로 실행 가능 |
-| 링크 유효성 | 모든 내부/외부 링크 동작 |
-| 일관성 | 용어, 포맷, 스타일 통일 |
-
-### 자동 검증 항목
-
-```
-✓ TypeScript 코드 컴파일 검증
-✓ import 경로 유효성 검증
-✓ 내부 링크 존재 여부 검증
-✓ 필수 섹션 포함 여부 검증
-✓ 코드 예시 개수 검증 (최소 4개)
-✓ 예상 출력 포함 여부 검증
-```
+1. 위 형식의 도움말을 출력
+2. 현재 문서 생성 여부에 따라 다음 추천 명령어 안내

@@ -1,7 +1,7 @@
 {
   "name": "docs",
-  "version": "1.0.0",
-  "description": "문서 콘텐츠 자동 생성 - Docusaurus 기반",
+  "version": "2.0.0",
+  "description": "앱 기술 문서 자동 생성 및 유지보수",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -11,16 +11,11 @@
   "keywords": [
     "docs",
     "documentation",
-    "docusaurus",
     "technical-writing"
   ],
   "skills": [
     "./skills/help",
-    "./skills/docs",
-    "./skills/add",
     "./skills/generate",
-    "./skills/status",
-    "./skills/update",
-    "./skills/validate"
+    "./skills/update"
   ]
 }

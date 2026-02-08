@@ -1,77 +1,49 @@
 # docs 플러그인
 
-> 프로젝트 분석 후 전문적인 기술 문서 콘텐츠를 자동 생성합니다 (Docusaurus 기반)
+> 특정 앱의 코드베이스를 분석하여 사람과 AI 모두를 위한 기술 문서를 자동 생성합니다
 
 ## 스킬 목록
 
 | 스킬 | 설명 |
 |------|------|
-| `/docs:help` | 도움말, 문서 작성 가이드라인 |
-| `/docs:generate` | 프로젝트 분석 후 전체 문서 자동 생성 |
-| `/docs:add [type]` | 특정 유형의 문서 추가 |
-| `/docs:update` | 코드 변경 시 기존 문서 업데이트 |
-| `/docs:status` | 문서 커버리지 및 품질 현황 |
-| `/docs:validate` | 문서 품질 검증 (링크, 일관성, 완성도) |
+| `/docs help` | 도움말 및 사용법 안내 |
+| `/docs generate` | 앱의 전체 기술 문서 최초 생성 |
+| `/docs update` | 기존 문서의 추가, 수정, 삭제, 검증 |
 
 ## 빠른 시작
 
 ```bash
-# 전체 문서 생성
-/docs:generate
+# 전체 문서 최초 생성
+/docs generate
 
-# API 문서 추가
-/docs:add api
-
-# 가이드 문서 추가
-/docs:add guide "인증 설정하기"
-
-# 문서 현황 확인
-/docs:status
-
-# 품질 검증
-/docs:validate
+# 문서 유지보수 (추가/수정/삭제/검증)
+/docs update
 ```
 
-## 문서 유형
+## 문서의 목적
 
-| 유형 | 설명 |
-|------|------|
-| Getting Started | 설치, 빠른 시작, 기본 사용법 |
-| Architecture | 시스템 구조, 컴포넌트, 데이터 흐름 |
-| API Reference | 엔드포인트, 파라미터, 응답 스키마 |
-| Components | UI 컴포넌트 Props, 이벤트, 사용 예시 |
-| Guides | 단계별 가이드, 튜토리얼 |
-| Configuration | 설정 옵션, 환경 변수 |
-| FAQ | 자주 묻는 질문 |
-| Troubleshooting | 에러 해결 가이드 |
+1. **사람** — 앱의 전체 구조, 비즈니스 로직, API 스펙을 빠르게 파악
+2. **AI** — 코드 변경/수정 시 기존 로직, 의존 관계, 사이드 이펙트를 정확히 이해하고 안전하게 작업
 
-## 출력 구조
+## 생성 문서 구조
 
 ```
-.claude/docs-site/
-├── getting-started/
-│   ├── introduction.md
-│   ├── installation.md
-│   └── quick-start.md
-├── architecture/
-│   ├── overview.md
-│   └── data-flow.md
-├── api-reference/
-│   ├── overview.md
-│   └── endpoints/
-├── components/
-├── guides/
-├── configuration/
-├── faq.md
-└── troubleshooting.md
+docs/{앱이름}/
+├── overview.md              # 앱 개요 및 빠른 이해 가이드
+├── architecture.md          # 아키텍처, 패턴, 의존성 규칙
+├── api-specification.md     # API 명세서
+├── event-specification.md   # 이벤트 명세서
+├── database.md              # DB 스키마, 인덱스, 데이터 흐름
+├── business-logic.md        # 비즈니스 로직 및 도메인 규칙
+└── tech-stack.md            # 기술 스택 설명
 ```
 
-## 문서 품질 기준
+## 핵심 원칙
 
-- 모든 코드 예시는 복사-붙여넣기로 즉시 실행 가능
-- 기능당 최소 4개 예시 (기본, 실전, 고급, 에러 처리)
-- Mermaid 다이어그램으로 구조/흐름 시각화
-- 스크린샷 플레이스홀더로 UI 위치 명시
+- **예시 코드 금지** — 핵심 로직과 규칙만 서술
+- **Mermaid 시각화 필수** — 복잡한 개념은 다이어그램으로 표현 (layout: elk)
+- **변경 영향도 명시** — 주요 컴포넌트/로직마다 수정 시 영향 범위 기술
+- **구현 의도 기록** — "무엇을 하는가"가 아닌 "왜 이렇게 했는가"를 기록
 
 ## 플러그인 구조
 
@@ -80,11 +52,8 @@ plugins/docs/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── skills/
-│   ├── docs/SKILL.md       # 메인 스킬
-│   ├── add/SKILL.md
-│   ├── generate/SKILL.md
-│   ├── status/SKILL.md
-│   ├── update/SKILL.md
-│   └── validate/SKILL.md
+│   ├── help/SKILL.md         # 도움말
+│   ├── generate/SKILL.md     # 최초 문서 생성
+│   └── update/SKILL.md       # 추가/수정/삭제/검증
 └── README.md
 ```
