@@ -1,10 +1,10 @@
 ---
 name: help
-description: dev 플러그인의 명령어와 에이전트 사용법을 안내합니다.
+description: workflow 플러그인의 명령어와 에이전트 사용법을 안내합니다.
 disable-model-invocation: true
 ---
 
-# dev 플러그인 도움말
+# workflow 플러그인 도움말
 
 멀티 에이전트 오케스트레이션 시스템으로 체계적인 개발 워크플로우를 제공합니다.
 
@@ -12,8 +12,8 @@ disable-model-invocation: true
 
 | 명령어 | 설명 |
 |--------|------|
-| `/dev:workflow <요청>` | 멀티 에이전트 워크플로우 시작 |
-| `/dev:help` | 도움말 표시 |
+| `/workflow:start <요청>` | 멀티 에이전트 워크플로우 시작 |
+| `/workflow:help` | 도움말 표시 |
 
 > **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
 
@@ -85,17 +85,17 @@ disable-model-invocation: true
 
 ### 새 기능 개발
 ```
-/dev:workflow 사용자 알림 기능 추가
+/workflow:start 사용자 알림 기능 추가
 ```
 
 ### 버그 수정
 ```
-/dev:workflow 로그인 실패 시 에러 메시지 표시 안됨
+/workflow:start 로그인 실패 시 에러 메시지 표시 안됨
 ```
 
 ### 리팩토링
 ```
-/dev:workflow 인증 모듈 클린 아키텍처로 리팩토링
+/workflow:start 인증 모듈 클린 아키텍처로 리팩토링
 ```
 
 ## Quality Gates

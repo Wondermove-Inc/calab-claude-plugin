@@ -1,5 +1,5 @@
 ---
-name: dev:planner
+name: workflow:planner
 description: |
   모든 작업 요청을 분석하고 적절한 에이전트를 선정하여 워크플로우를 오케스트레이션합니다.
   /workflow 커맨드의 핵심 에이전트로, beads 이슈 관리와 에이전트 조율을 담당합니다.
@@ -157,7 +157,7 @@ bd comments add <epic-id> "[Workflow] 시작"
 **이슈 ID만 전달** (토큰 효율화):
 
 ```
-Task (subagent_type: dev:coder):
+Task (subagent_type: workflow:coder):
 "bd-xxx 작업 수행. bd show로 상세 확인."
 ```
 

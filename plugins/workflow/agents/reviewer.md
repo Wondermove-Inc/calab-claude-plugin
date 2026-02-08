@@ -1,5 +1,5 @@
 ---
-name: dev:reviewer
+name: workflow:reviewer
 description: |
   설계 문서와 코드를 리뷰하고 품질을 검증합니다.
   SOLID 원칙, 클린 코드, 아키텍처 일관성을 기준으로 피드백을 제공합니다.

@@ -1,5 +1,5 @@
 ---
-name: dev:designer
+name: workflow:designer
 description: |
   UX/UI 디자인을 담당합니다. shadcn/ui 디자인 시스템을 기반으로 현대적이고 세련된 인터페이스를 설계하고 구현합니다.
 

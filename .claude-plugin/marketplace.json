@@ -10,18 +10,11 @@
   },
   "plugins": [
     {
-      "name": "dev",
-      "source": "./plugins/dev",
+      "name": "workflow",
+      "source": "./plugins/workflow",
       "description": "멀티 에이전트 워크플로우 + Clean/Hexagonal Architecture 가이드",
       "category": "development",
       "tags": ["multi-agent", "workflow", "architecture", "clean-architecture", "hexagonal"]
-    },
-    {
-      "name": "onboarding",
-      "source": "./plugins/onboarding",
-      "description": "프로젝트 분석 및 온보딩 자동화",
-      "category": "productivity",
-      "tags": ["onboarding", "analysis", "context"]
     },
     {
       "name": "toolkit",

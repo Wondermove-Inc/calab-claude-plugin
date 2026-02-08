@@ -12,8 +12,7 @@
 
 | 플러그인 | 설명 | 스킬 수 |
 |----------|------|----------|
-| **[dev](plugins/dev/)** | 멀티 에이전트 워크플로우 + 코딩 원칙 + 코드 리뷰/커밋 | 4개 + 8 에이전트 |
-| **[onboarding](plugins/onboarding/)** | 프로젝트 분석 및 온보딩 자동화 | 7개 |
+| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 + 코딩 원칙 + 코드 리뷰/커밋 | 2개 + 8 에이전트 |
 | **[toolkit](plugins/toolkit/)** | 리서치 및 문제 해결 | 6개 |
 | **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads) | 3개 |
 | **[docs](plugins/docs/)** | 문서 콘텐츠 자동 생성 (Docusaurus) | 6개 |
@@ -33,8 +32,7 @@
 ### 플러그인 설치
 
 ```bash
-/plugin install dev@calab-marketplace --scope user     # 멀티 에이전트 워크플로우
-/plugin install onboarding@calab-marketplace --scope user     # 온보딩
+/plugin install workflow@calab-marketplace --scope user  # 멀티 에이전트 워크플로우
 /plugin install toolkit@calab-marketplace --scope user        # 리서치/문제해결
 /plugin install setup@calab-marketplace --scope user          # CLI 설정
 /plugin install docs@calab-marketplace --scope user           # 문서 생성
@@ -44,9 +42,9 @@
 
 | 용도 | 설치할 플러그인 |
 |------|----------------|
-| **Full** | dev, onboarding, toolkit, setup, docs |
-| **Core** | dev, onboarding |
-| **Minimal** | dev |
+| **Full** | workflow, toolkit, setup, docs |
+| **Core** | workflow, toolkit |
+| **Minimal** | workflow |
 
 ### 로컬 설치 (대안)
 
@@ -54,7 +52,7 @@
 git clone git@github.com:Wondermove-Inc/calab-claude-plugin.git ~/workspace/calab-claude-plugin
 cd ~/workspace/calab-claude-plugin && git checkout marketplace
 /plugin marketplace add ~/workspace/calab-claude-plugin
-/plugin install dev@calab-marketplace --scope user
+/plugin install workflow@calab-marketplace --scope user
 ```
 
 ---
@@ -63,10 +61,9 @@ cd ~/workspace/calab-claude-plugin && git checkout marketplace
 
 | 상황 | 명령어 |
 |------|--------|
-| 새 기능 개발 | `/dev:workflow [기능]` |
+| 새 기능 개발 | `/workflow:start [기능]` |
 | 코드 리뷰 | `/toolkit:code-review` |
 | 커밋 생성 | `/toolkit:code-commit` |
-| 기존 프로젝트 투입 | `/onboarding:start` |
 | 기술 조사 | `/toolkit:research [주제]` |
 | 버그 원인 분석 | `/toolkit:solve [문제]` |
 
@@ -81,8 +78,7 @@ calab-claude-plugin/
 ├── .claude-plugin/
 │   └── marketplace.json      # 마켓플레이스 정의
 ├── plugins/
-│   ├── dev/                  # 멀티 에이전트 + 코딩 원칙
-│   ├── onboarding/           # 프로젝트 온보딩
+│   ├── workflow/              # 멀티 에이전트 + 코딩 원칙
 │   ├── toolkit/              # 리서치 + 문제해결 + 리뷰/커밋
 │   ├── setup/                # CLI 환경 설정
 │   └── docs/                 # 문서 자동 생성

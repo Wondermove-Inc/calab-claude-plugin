@@ -1,5 +1,5 @@
 ---
-name: dev:architect
+name: workflow:architect
 description: |
   소프트웨어 아키텍처 설계, 기술 스펙 작성, API 설계를 담당합니다.
   새로운 기능의 구조를 정의하고 기존 시스템과의 통합 방안을 설계합니다.
