@@ -230,7 +230,8 @@ TaskOutput (task_id: {designer_task_id}, block: true, timeout: 300000)
 
 ## 이슈 작성 규칙
 
-**중요: 모든 에이전트는 작업 완료 시 이슈에 상세 내용을 작성해야 합니다.**
+**중요: 이슈 작성은 반드시 `guides/beads-issue-guide.md`를 읽고 계층 구조, 제목 형식, 템플릿을 준수합니다.**
+**주의: 가이드 문서가 정본(Single Source of Truth)입니다. 이슈 계층, 제목 형식, 라벨 등의 내용을 이 문서에 중복 작성하지 마세요.**
 
 ### 이슈 업데이트 명령어
 ```bash
@@ -303,6 +304,7 @@ flowchart LR
 - `agents/writer.md`: 문서 작성자
 
 ### 개발 가이드
+- `guides/beads-issue-guide.md`: 이슈 계층 구조 및 작성 가이드라인
 - `guides/gate-process.md`: Quality Gate 프로세스
 - `guides/tdd-workflow.md`: TDD 워크플로우
 - `guides/worktree.md`: Git Worktree 사용법

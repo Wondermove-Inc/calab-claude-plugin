@@ -37,6 +37,7 @@ permissionMode: default
 
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
+| **이슈 작성 가이드** | `guides/beads-issue-guide.md` | 계층 구조, 제목 형식, 템플릿 |
 | **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, Progress 파일, 재개 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
 | Git Worktree | `guides/worktree.md` | 격리 전략, 명령어 |
@@ -109,11 +110,15 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 ### 2단계: beads 이슈 생성
 
+> **반드시 `guides/beads-issue-guide.md`를 읽고 계층 구조, 제목 형식, 템플릿을 준수합니다.**
+> **가이드 문서가 정본(Single Source of Truth)입니다. 여기에는 실행에 필요한 명령어만 유지합니다.**
+
+#### 일반 워크플로우 (Epic + Sub-task)
 ```bash
 # Epic 생성
-bd create "[epic] 기능명" --type epic --priority 2
+bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2
 
-# Sub-task 생성
+# Sub-task 생성 (에이전트별 라벨 필수)
 bd create "요구사항: ..." --parent <epic-id> --labels "requirements,interviewer"
 bd create "설계: ..." --parent <epic-id> --labels "design,architect"
 bd create "구현: ..." --parent <epic-id> --labels "implementation,coder"
@@ -347,6 +352,9 @@ bd comments add <epic-id> "[Workflow] 완료 - 설계/구현/테스트 완료, �
 
 ## 라벨 컨벤션
 
+> 상세 라벨 목록은 `guides/beads-issue-guide.md`의 "라벨 컨벤션" 참조
+
+### 에이전트별 라벨
 | 라벨 | 담당 |
 |-----|------|
 | `interviewer`, `requirements` | 인터뷰어 |
@@ -355,6 +363,9 @@ bd comments add <epic-id> "[Workflow] 완료 - 설계/구현/테스트 완료, �
 | `coder`, `implementation` | 코더 |
 | `tester`, `test` | 테스터 |
 | `reviewer`, `review` | 리뷰어 |
+
+### 기타 라벨 (영역별, 클라우드별, 타입별)
+`guides/beads-issue-guide.md`의 "라벨 컨벤션" 참조
 
 ## 원칙
 

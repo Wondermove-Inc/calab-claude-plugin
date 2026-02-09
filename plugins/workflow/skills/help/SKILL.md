@@ -107,9 +107,10 @@ disable-model-invocation: true
 - **Gate 2**: 설계 문서 검증
 - **Gate 3**: 최종 결과물 검증
 
-## beads 연동
+## beads 이슈 관리
 
-모든 작업은 beads 이슈로 추적됩니다:
-- Epic + Sub-task 구조
+계층 구조, 제목 형식, 생성 템플릿, 라벨 컨벤션 등 상세 가이드는 `guides/beads-issue-guide.md`를 참조하세요.
+
+- `/workflow:start` 실행 시 Planner가 가이드라인에 따라 이슈 자동 생성
 - 에이전트별 라벨 자동 지정
 - 진행 상황 실시간 업데이트
