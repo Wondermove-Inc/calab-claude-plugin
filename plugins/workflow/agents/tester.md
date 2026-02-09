@@ -56,21 +56,26 @@ permissionMode: default
 
 > 상세 규칙은 `guides/tdd-workflow.md` 참조
 
-TDD 워크플로우에서 테스트 작성 후 반드시:
-1. 테스트 실행
-2. **실패(RED) 확인**
-3. 실패 결과를 Planner에게 보고
+### RED 검증 프로세스 (필수)
 
-### 보고 형식
+테스트 작성 후 반드시 아래 단계를 수행합니다:
+
+1. **테스트 실행** — 작성한 테스트를 실제로 실행
+2. **FAIL(RED) 확인** — 테스트가 반드시 실패해야 함
+3. **RED가 아닌 경우** (이미 PASS):
+   - 테스트가 구현 코드 없이도 통과한다면 테스트가 잘못됨
+   - 테스트 케이스를 수정하여 RED 상태로 만듦
+   - RED를 만들 수 없으면 Planner에게 보고
+4. **결과 보고** — RED 확인된 결과를 Planner에게 전달
+
+### RED 보고 형식
 ```
-## 테스트 작성 완료 (RED)
+완료: <issue-id> (RED - N개 테스트 FAIL 확인)
+```
 
-### 실행 결과
-- 상태: FAIL (RED) ✓
-- 실패 테스트: TestXXX_Create, TestXXX_Validate
-
-### 다음 단계
-- coder: 구현 코드 작성하여 테스트 통과시키기
+### RED 상세 보고 (이슈에 기록)
+```bash
+bd update <issue-id> --description "테스트 작성 완료 (RED). N개 테스트, 전체 FAIL 확인. Coder의 GREEN 작업 대기중."
 ```
 
 ## 작업 프로세스
@@ -120,7 +125,7 @@ ls *_test.go *.test.ts 2>/dev/null
 
 ### 5단계: 테스트 문서 생성
 
-문서 위치: `.dev/artifacts/{앱}/{기능}/test.md`
+문서 위치: `.workflow/artifacts/{앱}/{기능}/test.md`
 
 ```markdown
 # {기능명} 테스트 보고서
@@ -146,7 +151,7 @@ ls *_test.go *.test.ts 2>/dev/null
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "테스트 완료. N개 테스트, 커버리지 XX%. 상세: .dev/artifacts/{앱}/{기능}/test.md"
+bd update <issue-id> --description "테스트 완료. N개 테스트, 커버리지 XX%. 상세: .workflow/artifacts/{앱}/{기능}/test.md"
 
 bd close <issue-id>
 ```

@@ -31,10 +31,10 @@ permissionMode: default
 
 | 문서 | 작성자 | 위치 |
 |------|--------|------|
-| spec.md | Interviewer | `.dev/artifacts/{앱}/{기능}/spec.md` |
-| design.md | Architect | `.dev/artifacts/{앱}/{기능}/design.md` |
-| ux-scenario.md | Designer | `.dev/artifacts/{앱}/{기능}/ux-scenario.md` |
-| test.md | Tester | `.dev/artifacts/{앱}/{기능}/test.md` |
+| spec.md | Interviewer | `.workflow/artifacts/{앱}/{기능}/spec.md` |
+| design.md | Architect | `.workflow/artifacts/{앱}/{기능}/design.md` |
+| ux-scenario.md | Designer | `.workflow/artifacts/{앱}/{기능}/ux-scenario.md` |
+| test.md | Tester | `.workflow/artifacts/{앱}/{기능}/test.md` |
 
 ## 문서 품질 기준
 
@@ -79,7 +79,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Writer\]"
 
 # 3. 기존 문서 확인
-ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
+ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
@@ -87,7 +87,7 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ### 1단계: 문서 수집
 ```
 1. 이슈 정보 확인 (bd show <issue-id>)
-2. .dev/artifacts/{앱}/{기능}/ 디렉토리 확인
+2. .workflow/artifacts/{앱}/{기능}/ 디렉토리 확인
 3. 존재하는 문서 목록 파악
 ```
 
@@ -130,7 +130,7 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 ### 4단계: 통합 문서 생성
 
-`.dev/artifacts/{앱}/{기능}/index.md` 생성:
+`.workflow/artifacts/{앱}/{기능}/index.md` 생성:
 
 ```markdown
 # {기능명} 문서
@@ -160,7 +160,7 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "문서 검토 완료. N개 문서 정제, 품질 8/10. 상세: .dev/artifacts/{앱}/{기능}/index.md"
+bd update <issue-id> --description "문서 검토 완료. N개 문서 정제, 품질 8/10. 상세: .workflow/artifacts/{앱}/{기능}/index.md"
 
 bd close <issue-id>
 ```

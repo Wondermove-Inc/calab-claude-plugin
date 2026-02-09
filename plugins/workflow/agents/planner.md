@@ -67,7 +67,7 @@ ls tree/ 2>/dev/null
 bd list --parent <epic-id>
 
 # 2. Progress 파일 확인 (컨텍스트 복원)
-cat .dev/progress/<epic-id>.md 2>/dev/null
+cat .workflow/progress/<epic-id>.md 2>/dev/null
 
 # 3. Epic 정보 및 코멘트 확인 (체크포인트 확인)
 bd show <epic-id>
@@ -77,7 +77,7 @@ bd comments <epic-id>
 ls tree/ 2>/dev/null
 
 # 5. 산출물 존재 여부 확인 (스킵 판단)
-ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
+ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 지점 결정 우선순위**:
@@ -113,49 +113,67 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 > **반드시 `guides/beads-issue-guide.md`를 읽고 계층 구조, 제목 형식, 템플릿을 준수합니다.**
 > **가이드 문서가 정본(Single Source of Truth)입니다. 여기에는 실행에 필요한 명령어만 유지합니다.**
 
-#### 일반 워크플로우 (Epic + Sub-task)
-```bash
-# Epic 생성
-bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2
+#### 필수: 1단계 분석 결과를 Description에 기록
 
-# Sub-task 생성 (에이전트별 라벨 필수)
-bd create "요구사항: ..." --parent <epic-id> --labels "requirements,interviewer"
-bd create "설계: ..." --parent <epic-id> --labels "design,architect"
-bd create "구현: ..." --parent <epic-id> --labels "implementation,coder"
-bd create "테스트: ..." --parent <epic-id> --labels "test,tester"
-bd create "리뷰: ..." --parent <epic-id> --labels "review,reviewer"
+이슈 생성 시 **반드시 `guides/beads-issue-guide.md`의 "워크플로우 Description 템플릿"을 사용**합니다.
+
+- **Epic**: "워크플로우 Epic Description" 템플릿 사용. 1단계에서 분석한 요청 내용, 작업 유형, 복잡도, 실행 계획(에이전트 순서, 스킵 단계 포함), 기술 고려사항, 완료 조건을 모두 포함합니다.
+- **Sub-task**: 해당 에이전트별 Sub-task Description 템플릿 사용. 목표, 맥락, 기대 산출물, AC를 포함합니다.
+
+#### 일반 워크플로우 (Epic + Sub-task)
+
+> **Description 템플릿**: `guides/beads-issue-guide.md`의 "워크플로우 Description 템플릿" 섹션 참조
+
+```bash
+# Epic 생성 (--description 필수, "워크플로우 Epic Description" 템플릿 사용)
+bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2 \
+  --description "$(cat <<'EOF'
+(guides/beads-issue-guide.md의 "워크플로우 Epic Description" 템플릿에 따라 작성)
+EOF
+)"
+
+# Sub-task 생성 (에이전트별 라벨 + --description 필수, 에이전트별 템플릿 사용)
+bd create "요구사항: ..." --parent <epic-id> --labels "requirements,interviewer" --description "..."
+bd create "설계: ..." --parent <epic-id> --labels "design,architect" --description "..."
+bd create "구현: ..." --parent <epic-id> --labels "implementation,coder" --description "..."
+bd create "테스트: ..." --parent <epic-id> --labels "test,tester" --description "..."
+bd create "리뷰: ..." --parent <epic-id> --labels "review,reviewer" --description "..."
 
 # 워크플로우 시작 코멘트
 bd comments add <epic-id> "[Workflow] 시작"
 ```
 
-### 3단계: 실행 계획 미리보기
+### 3단계: Gate 0 승인 (실행 계획 확인)
+
+2단계에서 생성한 Epic의 description이 곧 실행 계획입니다.
+Epic description에 기록된 내용을 기반으로 사용자에게 Gate 0 승인을 요청합니다.
 
 ```
 ## 워크플로우 실행 계획
 
-### 요청 분석
-- 유형: [새 기능 개발 / 버그 수정 / 리팩토링]
-- 복잡도: [단순 / 중간 / 복잡]
+Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 
-### 실행 프로세스
-(에이전트 실행 순서 시각화)
+### 요약
+- 유형: [작업 유형]
+- 복잡도: [복잡도]
 
-### 스킵되는 단계
-- [에이전트명]: [스킵 사유]
+### 실행 순서
+(Epic description의 실행 계획 테이블 요약)
+
+### 스킵 단계
+(Epic description의 스킵 단계 요약)
 
 이 계획대로 진행할까요?
 ```
 
-### 4단계: Gate 승인
-
 > 상세 프로세스는 `guides/gate-process.md` 참조
 
-`AskUserQuestion` 도구로 각 Gate에서 승인 요청:
-- Gate 0: 초기 계획
-- Gate 1: 요구사항 (Interviewer 실행 시)
-- Gate 2: 설계 (Architect/Designer 실행 시)
-- Gate 3: 최종 결과물
+### 4단계: Gate 승인 (이후 단계)
+
+`AskUserQuestion` 도구로 각 Gate에서 승인 요청 (상세: `guides/gate-process.md`):
+- Gate 1: 요구사항 검증 (Interviewer 실행 시)
+- Gate 2: 설계 검증 (Architect/Designer 실행 시)
+- Gate 3: 최종 검증
 
 ### 5단계: 에이전트 호출
 
@@ -176,10 +194,10 @@ Task (subagent_type: workflow:coder):
 
 워크플로우 시작 시 Progress 파일 생성:
 ```bash
-mkdir -p .dev/progress
+mkdir -p .workflow/progress
 ```
 
-Progress 파일 위치: `.dev/progress/<epic-id>.md`
+Progress 파일 위치: `.workflow/progress/<epic-id>.md`
 
 **Progress 파일 업데이트 타이밍**:
 - 워크플로우 시작 시: 초기 생성
@@ -272,28 +290,46 @@ bd comments add <epic-id> "[Workflow] 완료"
 | interviewer | 단순 버그 수정, 중간 작업 (기존 스펙 내 변경) |
 | architect | 기존 설계 내 작업, API 변경 없음 |
 | designer | UI 변경 없음, 백엔드만 작업 |
-| tester | 기존 테스트가 변경 범위 커버 |
+| tester | 코드 로직 변경이 없는 경우만 (설정, 문서, 오타) |
 | reviewer | 3줄 미만 단순 수정 |
 | writer | 문서 1개 이하 생성, 단순 수정 |
 
-## TDD 워크플로우
+## TDD 워크플로우 (필수)
 
 > 상세 규칙은 `guides/tdd-workflow.md` 참조
 
 **호출 순서**: Tester (RED) → Coder (GREEN) → Coder (REFACTOR, 선택)
 
+**TDD 검증 체크리스트**:
+1. Tester 완료 후: 테스트가 FAIL(RED) 상태인지 확인
+2. Coder 완료 후: 테스트가 PASS(GREEN) 상태인지 확인
+3. GREEN 실패 시: Coder 재호출 (최대 3회)
+
 **절대 금지**:
 - ❌ Coder를 Tester보다 먼저 호출
 - ❌ 테스트 없이 구현 코드 작성
+- ❌ Tester의 RED 확인 없이 Coder 호출
+- ❌ Coder 완료 후 GREEN 미확인
 
 ## 적응적 워크플로우
 
+> **TDD 필수**: 모든 코딩 작업은 반드시 `tester → coder` 순서를 포함합니다.
+> TDD 스킵은 설정 파일, 문서, 오타 수정 등 코드 로직 변경이 없는 경우에만 허용됩니다.
+> 상세: `guides/tdd-workflow.md`
+
 ```
-단순 버그           → coder
+버그 수정 (로직 변경) → tester → coder
 중간 작업           → tester → coder
 복잡 기능 (문서 2+) → interviewer → architect → tester → coder → reviewer → writer
 복잡 기능 (문서 1-) → interviewer → architect → tester → coder → reviewer
 UI 기능            → interviewer → designer → tester → coder → reviewer
+```
+
+### TDD 스킵 허용 (코드 로직 변경 없는 경우만)
+```
+설정 변경           → coder
+문서 수정           → coder (또는 writer)
+단순 오타           → coder
 ```
 
 ## 에러 핸들링

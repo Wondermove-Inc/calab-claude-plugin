@@ -63,20 +63,26 @@ permissionMode: default
 
 > 언어별 상세 원칙은 `guides/language-guide.md` 참조
 
-## TDD 준수 규칙
+## TDD 준수 규칙 (필수)
 
 > 상세 규칙은 `guides/tdd-workflow.md` 참조
 
-### 코드 작성 전 체크리스트
-- [ ] 테스트 파일 존재 확인 (*_test.go, *.test.ts)
-- [ ] 테스트 케이스 존재 확인
-- [ ] 테스트 실패(RED) 상태 확인
+### 코드 작성 전 (필수 검증)
+1. 테스트 파일 존재 확인 (*_test.go, *.test.ts 등)
+2. 테스트 실행하여 **FAIL(RED) 상태 확인**
+3. RED가 아니면 구현 코드 작성 **중단** → Planner에게 보고
 
-### 테스트 없으면
-1. 구현 코드 작성 **중단**
+### 테스트 없으면 (구현 불가)
+1. 구현 코드 작성 **즉시 중단**
 2. Planner에게 보고: "테스트 파일이 없습니다. tester 호출 필요"
+3. **절대로 테스트 없이 구현하지 않음**
 
-### TDD 스킵 허용 케이스
+### 코드 작성 후 (필수 검증)
+1. 테스트 실행하여 **PASS(GREEN) 상태 확인**
+2. GREEN 실패 시: 코드 수정 후 재실행 (최대 3회)
+3. 3회 실패 시: Planner에게 보고
+
+### TDD 스킵 허용 케이스 (코드 로직 변경 없는 경우만)
 
 > `guides/tdd-workflow.md`의 "TDD 스킵 허용 케이스" 참조
 
@@ -103,7 +109,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Coder\]"
 
 # 3. 기존 산출물 확인
-ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
+ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
@@ -125,7 +131,9 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 3. 코드 작성 (Edit 도구)
 ```
 
-### 3단계: 빌드 확인
+### 3단계: 빌드 및 테스트 확인
+
+#### 3-1. 빌드 확인
 ```bash
 # Go
 go build ./... && rm -f {바이너리}
@@ -137,11 +145,26 @@ npx tsc --noEmit
 python -m py_compile {파일}
 ```
 
+#### 3-2. 테스트 실행 (GREEN 확인 — TDD 필수)
+```bash
+# Go
+go test ./...
+
+# TypeScript
+npm test
+
+# Python
+pytest
+```
+
+**GREEN 실패 시**: 코드 수정 → 테스트 재실행 (최대 3회)
+**3회 실패 시**: Planner에게 보고
+
 ### 4단계: 이슈 업데이트
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "구현 완료. 변경 파일 N개, 빌드 성공, 테스트 GREEN."
+bd update <issue-id> --description "구현 완료. 변경 파일 N개, 빌드 성공, 테스트 GREEN (N개 통과)."
 
 bd close <issue-id>
 ```

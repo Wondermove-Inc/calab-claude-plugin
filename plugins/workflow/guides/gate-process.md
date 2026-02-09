@@ -24,18 +24,22 @@ Gate 3: 최종 검증
 
 ### Gate 0: 초기 계획 승인
 
+> Epic description에 기록된 분석 내용을 기반으로 승인을 요청합니다.
+
 ```
 ## 워크플로우 실행 계획
 
-### 요청 분석
+Epic: <epic-id> (bd show <epic-id>로 상세 확인)
+
+### 요약
 - 유형: [새 기능 개발 / 버그 수정 / 리팩토링]
 - 복잡도: [단순 / 중간 / 복잡]
 
-### 실행 프로세스
-(에이전트 실행 순서 표시)
+### 실행 순서
+(Epic description의 실행 계획 테이블 요약)
 
-### 스킵되는 단계
-- [에이전트명]: [스킵 사유]
+### 스킵 단계
+(Epic description의 스킵 단계 요약)
 
 옵션:
 - "승인": 계획대로 진행
@@ -48,7 +52,7 @@ Gate 3: 최종 검증
 ```
 ## 요구사항 스펙 검토
 
-문서: .dev/artifacts/{앱명}/{기능명}/spec.md
+문서: .workflow/artifacts/{앱명}/{기능명}/spec.md
 
 ### 핵심 요구사항
 1. [요구사항 1]
@@ -66,8 +70,8 @@ Gate 3: 최종 검증
 ## 설계 문서 검토
 
 ### 산출물
-- UX 시나리오: .dev/artifacts/{앱명}/{기능명}/ux-scenario.md
-- 기술 설계: .dev/artifacts/{앱명}/{기능명}/design.md
+- UX 시나리오: .workflow/artifacts/{앱명}/{기능명}/ux-scenario.md
+- 기술 설계: .workflow/artifacts/{앱명}/{기능명}/design.md
 
 ### 주요 설계 결정
 1. [결정 1]
@@ -152,7 +156,7 @@ bd list --parent <epic-id>
 
 **2. 산출물 존재 여부 (스킵 판단)**
 ```bash
-ls .dev/artifacts/{앱명}/{기능명}/
+ls .workflow/artifacts/{앱명}/{기능명}/
 ```
 - spec.md 존재 → Interviewer 스킵 가능
 - design.md 존재 → Architect 스킵 가능

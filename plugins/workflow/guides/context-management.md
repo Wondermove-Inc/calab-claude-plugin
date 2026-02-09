@@ -52,10 +52,10 @@ bd show <issue-id>
 bd comments <epic-id>
 
 # 3. 기존 산출물 확인
-ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
+ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 # 4. Progress 파일 확인 (있는 경우)
-cat .dev/progress/<epic-id>.md 2>/dev/null
+cat .workflow/progress/<epic-id>.md 2>/dev/null
 ```
 
 ### 시작 프로토콜 목적
@@ -99,7 +99,7 @@ bd comments add bd-epic-123 "[Checkpoint] Tester 80% - 단위 테스트 완료, 
 ### 파일 위치
 
 ```
-.dev/progress/<epic-id>.md
+.workflow/progress/<epic-id>.md
 ```
 
 ### 파일 형식
@@ -200,7 +200,7 @@ git add -A && git commit -m "WIP: <작업내용>"
 bd list --parent <epic-id>
 
 # 2. Progress 파일 확인
-cat .dev/progress/<epic-id>.md
+cat .workflow/progress/<epic-id>.md
 
 # 3. 체크포인트 코멘트 확인
 bd comments <epic-id>

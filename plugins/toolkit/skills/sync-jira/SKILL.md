@@ -1,7 +1,7 @@
 ---
 name: toolkit:sync-jira
 description: beads 이슈를 Jira 티켓으로 동기화합니다. 이슈 내용을 그대로 Jira에 생성하며, 부모 티켓 지정이 필수입니다.
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash, AskUserQuestion, mcp__atlassian__jira_create_issue, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search
 disable-model-invocation: true
 argument-hint: <beads-issue-id> [--all]
 ---
@@ -34,6 +34,7 @@ beads에서 관리하는 로컬 이슈를 Jira 티켓으로 동기화합니다.
 
 **질문 내용:**
 - Jira 부모 티켓 키 (예: `PROJ-123`) 또는 Jira 티켓 URL
+- 보고자 (Reporter): 기본값은 Jira 인증 사용자. 변경이 필요하면 이름을 입력
 
 인자로 전달되지 않았으면 반드시 사용자에게 질문하여 받습니다.
 이 단계를 건너뛰지 않습니다.
@@ -56,11 +57,10 @@ JSON 출력에서 다음 필드를 추출합니다:
 | `status` | Jira 상태 매핑 |
 | `labels` | Jira 라벨 |
 
-**고정값 필드:**
+**보고자(Reporter) 설정:**
 
-| 필드 | 값 | 비고 |
-|------|-----|------|
-| 보고자 (Reporter) | 장재원 | 항상 고정, 사용자에게 질문하지 않음 |
+Step 1에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
+기본값은 Jira 인증 사용자(API 토큰 소유자)이며, 사용자가 별도 지정할 수 있습니다.
 
 ### Step 3: 필드 매핑
 
@@ -104,7 +104,7 @@ JSON 출력에서 다음 필드를 추출합니다:
  타입:         {issue_type} → {jira_type}
  우선순위:      P{n} → {jira_priority}
  라벨:         {labels}
- 보고자:       장재원
+ 보고자:       {reporter}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  설명 미리보기:
  {description 첫 5줄}
@@ -126,7 +126,7 @@ Atlassian MCP의 Jira 도구를 사용하여 이슈를 생성합니다.
 - **이슈 타입**: 매핑된 Jira 타입
 - **우선순위**: 매핑된 Jira 우선순위
 - **라벨**: beads 라벨
-- **보고자**: 장재원 (고정값, 변경 불가)
+- **보고자**: Step 1에서 확인한 보고자 (기본값: Jira 인증 사용자)
 
 ### Step 6: 완료 보고
 

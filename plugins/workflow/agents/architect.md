@@ -62,7 +62,7 @@ bd show <issue-id>
 bd comments <epic-id> | grep -E "\[Checkpoint\]|\[Architect\]"
 
 # 3. 기존 설계 문서 확인
-ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
+ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 **재개 시**: 이전 체크포인트 이후부터 작업 계속
@@ -84,7 +84,7 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
 ### 3단계: 문서화
-설계 문서를 `.dev/artifacts/{앱명}/{기능명}/design.md`에 작성:
+설계 문서를 `.workflow/artifacts/{앱명}/{기능명}/design.md`에 작성:
 - 개요 및 목적
 - 컴포넌트 다이어그램
 - 인터페이스 정의
@@ -94,7 +94,7 @@ ls .dev/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 **이슈 description은 3-5줄 요약만 (토큰 효율화)**
 ```bash
-bd update <issue-id> --description "설계 완료. 주요 결정 N건, 영향 파일 N개. 상세: .dev/artifacts/{앱명}/{기능명}/design.md"
+bd update <issue-id> --description "설계 완료. 주요 결정 N건, 영향 파일 N개. 상세: .workflow/artifacts/{앱명}/{기능명}/design.md"
 
 bd close <issue-id>
 ```
