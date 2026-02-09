@@ -1,5 +1,5 @@
 ---
-name: start
+name: workflow:start
 description: 멀티 에이전트 워크플로우를 시작합니다. 요청을 분석하고 적절한 에이전트를 조율하여 작업을 수행합니다.
 disable-model-invocation: true
 ---

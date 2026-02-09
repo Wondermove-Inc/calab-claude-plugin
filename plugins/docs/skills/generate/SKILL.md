@@ -1,5 +1,5 @@
 ---
-name: generate
+name: docs:generate
 description: 특정 앱의 전체 기술 문서를 자동 생성. /docs generate 또는 "문서 생성" 키워드 시 자동 활성화.
 disable-model-invocation: true
 ---

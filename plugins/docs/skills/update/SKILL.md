@@ -1,5 +1,5 @@
 ---
-name: update
+name: docs:update
 description: 기존 앱 문서의 추가, 수정, 삭제, 검증을 수행. /docs update 또는 "문서 수정/추가/삭제/검증" 키워드 시 자동 활성화.
 disable-model-invocation: true
 ---

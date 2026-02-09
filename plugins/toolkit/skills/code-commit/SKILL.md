@@ -1,5 +1,5 @@
 ---
-name: code-commit
+name: toolkit:code-commit
 description: 현재 변경사항을 분석하고 커밋 메시지를 생성합니다
 disable-model-invocation: true
 ---

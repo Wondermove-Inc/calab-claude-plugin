@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: toolkit:code-review
 description: 최근 변경사항을 리뷰하고 개선점을 제안합니다
 disable-model-invocation: true
 ---

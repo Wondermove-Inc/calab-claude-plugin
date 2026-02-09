@@ -1,5 +1,5 @@
 ---
-name: research
+name: toolkit:research
 description: 심층 리서치를 수행합니다. 주제에 대해 5-10회 검색 후 핵심 요약을 제공합니다. 리서치, 조사, 알아봐 요청 시 사용합니다.
 allowed-tools: Read, Write, WebSearch, WebFetch, Glob
 disable-model-invocation: true

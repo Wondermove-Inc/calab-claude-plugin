@@ -1,5 +1,5 @@
 ---
-name: solve
+name: toolkit:solve
 description: 문제 해결 프로세스를 시작합니다. 체계적인 방법론으로 근본 원인을 분석하고 해결합니다.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch
 disable-model-invocation: true

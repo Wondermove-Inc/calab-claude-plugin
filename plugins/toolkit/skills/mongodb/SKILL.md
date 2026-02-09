@@ -1,5 +1,5 @@
 ---
-name: mongodb
+name: toolkit:mongodb
 description: MongoDB 데이터베이스 작업. mongosh로 데이터 조회, 수정, 삭제, 집계를 수행합니다.
 allowed-tools: Bash, AskUserQuestion
 disable-model-invocation: true
