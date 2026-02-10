@@ -114,10 +114,12 @@ bd comments add bd-epic-123 "[Checkpoint] Tester 80% - 단위 테스트 완료, 
 | 시작일 | YYYY-MM-DD |
 | 최종 업데이트 | YYYY-MM-DD HH:MM |
 
-## 현재 상태
-- **완료**: 분석, 설계
-- **진행중**: 구현 (UserService 50%)
-- **대기**: 테스트, 리뷰
+## 진행 상태
+- [x] Interviewer - spec.md 생성 (YYYY-MM-DD HH:MM)
+- [x] Architect - design.md 생성 (YYYY-MM-DD HH:MM)
+- [ ] **Coder** - 구현 중 (UserService 50%)
+- [ ] Tester
+- [ ] Reviewer
 
 ## 최근 작업 (최신 3건)
 1. [YYYY-MM-DD HH:MM] Architect - design.md 작성 완료
@@ -132,6 +134,11 @@ bd comments add bd-epic-123 "[Checkpoint] Tester 80% - 단위 테스트 완료, 
 ## 알려진 이슈
 - [ ] ErrorHandler 패턴 결정 필요
 ```
+
+**체크박스 규칙**:
+- `- [ ]` : 대기 중 (에이전트명만 표시)
+- `- [ ] **에이전트명**` : 현재 진행 중 (굵게 표시, 상태 설명 추가)
+- `- [x]` : 완료 (산출물과 완료 시각 표시)
 
 ### Progress 파일 업데이트 규칙
 

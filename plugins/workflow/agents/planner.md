@@ -88,8 +88,8 @@ ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 
 **재개 지점 결정 우선순위**:
 1. **Progress 파일** (가장 상세):
-   - "다음 세션 지침" 섹션 참조
-   - 구체적인 재개 지점과 남은 작업 파악
+   - "진행 상태" 체크박스에서 `- [ ] **굵게**` 항목이 재개 지점
+   - "다음 세션 지침" 섹션으로 구체적인 남은 작업 파악
 2. **Sub-task 상태 기반**:
    - `in_progress` Sub-task → 해당 에이전트부터 재개
    - 모두 `open` → 처음부터 시작
@@ -147,10 +147,16 @@ bd create "리뷰: ..." --parent <epic-id> --labels "review,reviewer" --descript
 
 # 워크플로우 시작 코멘트
 bd comments add <epic-id> "[Workflow] 시작"
+```
 
-# Progress 파일 초기 생성 (형식: guides/context-management.md 참조)
+#### Progress 파일 초기 생성 (필수)
+
+> **모든 워크플로우에서 무조건 생성**: Epic/Task 이슈 생성 직후, 워크플로우 유형(단순/복잡)에 관계없이 반드시 Progress 파일을 생성합니다.
+
+```bash
 mkdir -p .workflow/progress
-# .workflow/progress/<epic-id>.md 생성 (현재 상태: 대기, 다음 세션 지침: Gate 0 승인 대기)
+# .workflow/progress/<epic-id>.md 생성 (형식: guides/context-management.md 참조)
+# 진행 상태: 실행 계획의 전체 에이전트를 - [ ] 체크박스로 나열
 ```
 
 ### 3단계: Gate 0 승인 (실행 계획 확인)
@@ -197,7 +203,7 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 ```bash
 bd update <subtask-id> --status in_progress
 bd comments add <epic-id> "[<에이전트명>] 시작 - <subtask-id>"
-# Progress 파일: "진행중" 업데이트
+# Progress 파일: 해당 에이전트를 - [ ] **에이전트명** (굵게, 진행중) 으로 업데이트
 ```
 
 #### 에이전트 호출
@@ -221,9 +227,8 @@ bd close <subtask-id>
 bd comments add <epic-id> "[<에이전트명>] 완료 - <산출물>"
 
 # 3. Progress 파일 업데이트
-#    - "완료" 목록에 에이전트 추가
-#    - "진행중" 업데이트 (다음 에이전트 또는 "Gate N 승인 대기")
-#    - "대기" 목록에서 완료된 에이전트 제거
+#    - 완료한 에이전트: - [ ] → - [x] 에이전트명 - 산출물 (시각)
+#    - 다음 에이전트: - [ ] → - [ ] **에이전트명** (굵게, 진행중 표시)
 #    - "최근 작업" 상위에 완료 기록 추가 (최신 3건 유지)
 #    - "최종 업데이트" 시각 갱신
 ```
@@ -263,8 +268,7 @@ bd comments add <epic-id> "[<에이전트명>] 실패 - 수동 개입 필요"
 
 ```bash
 # 1. Progress 파일 최종 업데이트
-#    - 완료: 전체 에이전트 목록
-#    - 진행중/대기: 없음
+#    - 모든 에이전트 체크박스를 - [x] 로 변경
 #    - 다음 세션 지침: "워크플로우 완료"
 #    - 최종 업데이트 시각 갱신
 
