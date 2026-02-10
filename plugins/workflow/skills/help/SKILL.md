@@ -13,6 +13,7 @@ disable-model-invocation: true
 | 명령어 | 설명 |
 |--------|------|
 | `/workflow:start <요청>` | 멀티 에이전트 워크플로우 시작 |
+| `/workflow:compound <epic-id>` | 워크플로우 회고 분석 및 복리화 |
 | `/workflow:help` | 도움말 표시 |
 
 > **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
@@ -29,6 +30,7 @@ disable-model-invocation: true
 | `tester` | 테스트 코드 작성, 커버리지 관리 | 노랑 |
 | `reviewer` | 코드/설계 리뷰, 품질 평가 | 빨강 |
 | `writer` | 문서 품질 검토, 일관성 보장 | 주황 |
+| `compound` | 워크플로우 회고 분석, 시스템 복리화 | 금색 |
 
 ## 코딩 가이드
 
@@ -69,7 +71,11 @@ disable-model-invocation: true
 │ Tester → Coder → Reviewer   │  ← TDD (RED→GREEN)
 └─────────────────────────────┘
     ↓ Gate 3: 최종 검증
-    완료
+┌─────────────┐
+│  Compound   │  ← 회고 분석, 복리화 (선택)
+└─────────────┘
+    ↓
+    완료 (학습 누적)
 ```
 
 ## 산출물
@@ -80,6 +86,7 @@ disable-model-invocation: true
 | UX 설계 | ux-scenario.md | `.workflow/artifacts/{앱}/{기능}/ux-scenario.md` |
 | 기술 설계 | design.md | `.workflow/artifacts/{앱}/{기능}/design.md` |
 | 테스트 | test.md | `.workflow/artifacts/{앱}/{기능}/test.md` |
+| 회고 분석 | compound.md | `.workflow/compound/<epic-id>.md` |
 
 ## 사용 예시
 

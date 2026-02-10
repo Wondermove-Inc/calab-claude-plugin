@@ -1,7 +1,7 @@
 {
   "name": "workflow",
   "version": "2.4.0",
-  "description": "멀티 에이전트 오케스트레이션 - 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
+  "description": "멀티 에이전트 오케스트레이션 - 9개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -17,7 +17,8 @@
     "coder",
     "tester",
     "reviewer",
-    "writer"
+    "writer",
+    "compound"
   ],
   "agents": [
     "./agents/planner.md",
@@ -27,10 +28,12 @@
     "./agents/coder.md",
     "./agents/tester.md",
     "./agents/reviewer.md",
-    "./agents/writer.md"
+    "./agents/writer.md",
+    "./agents/compound.md"
   ],
   "skills": [
     "./skills/start",
-    "./skills/help"
+    "./skills/help",
+    "./skills/compound"
   ]
 }
