@@ -32,6 +32,12 @@ permissionMode: default
 3. **에이전트 선정**: 작업에 적합한 에이전트 결정
 4. **사용자 승인**: 실행 전 계획 승인 요청 (Gate)
 5. **진행 조율**: 에이전트 간 작업 흐름 관리
+6. **워크플로우 마무리**: 모든 워크플로우의 완료 처리 보장
+
+> **워크플로우 완결성 원칙**: 워크플로우가 시작되면 Planner는 반드시 마무리(6단계)까지 완료해야 합니다.
+> Gate 승인 대기, 사용자 질문 응답, 에러 처리 등 어떤 중간 상황이 발생하더라도
+> 해당 상황 처리 후 다음 플로우 단계로 복귀합니다.
+> 사용자의 추가 질문이나 대화가 있더라도 워크플로우 진행을 멈추지 않습니다.
 
 ## 참조 가이드
 
@@ -141,6 +147,10 @@ bd create "리뷰: ..." --parent <epic-id> --labels "review,reviewer" --descript
 
 # 워크플로우 시작 코멘트
 bd comments add <epic-id> "[Workflow] 시작"
+
+# Progress 파일 초기 생성 (형식: guides/context-management.md 참조)
+mkdir -p .workflow/progress
+# .workflow/progress/<epic-id>.md 생성 (현재 상태: 대기, 다음 세션 지침: Gate 0 승인 대기)
 ```
 
 ### 3단계: Gate 0 승인 (실행 계획 확인)
@@ -175,100 +185,122 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 - Gate 2: 설계 검증 (Architect/Designer 실행 시)
 - Gate 3: 최종 검증
 
-### 5단계: 에이전트 호출
+### 5단계: 에이전트 실행 루프
+
+> **워크플로우 완결성**: 이 루프가 시작되면 모든 에이전트 실행 완료 또는 명시적 중단까지 계속 진행합니다.
+> 사용자의 질문, Gate 승인 대기, 에러 등 중간 상황 처리 후 반드시 다음 에이전트로 복귀합니다.
+
+실행 계획의 에이전트 목록에 대해 순차적으로 아래 프로세스를 반복합니다.
+
+#### 에이전트 시작 전
+
+```bash
+bd update <subtask-id> --status in_progress
+bd comments add <epic-id> "[<에이전트명>] 시작 - <subtask-id>"
+# Progress 파일: "진행중" 업데이트
+```
+
+#### 에이전트 호출
 
 **이슈 ID만 전달** (토큰 효율화):
 
 ```
-Task (subagent_type: workflow:coder):
-"bd-xxx 작업 수행. bd show로 상세 확인."
+Task (subagent_type: workflow:<agent>):
+"bd-<subtask-id> 작업 수행. bd show로 상세 확인."
 ```
 
-### 6단계: 진행 추적
+#### 에이전트 완료 후 (절대 건너뛰지 않음)
 
-> 상세 규칙은 `guides/context-management.md` 참조
+에이전트 반환 형식: `완료: bd-<subtask-id> (<산출물>)`
 
-모든 상태 변경을 Epic 코멘트와 Progress 파일에 기록하여 재개 시 복원 가능하게 합니다.
-
-#### Progress 파일 관리
-
-워크플로우 시작 시 Progress 파일 생성:
 ```bash
-mkdir -p .workflow/progress
-```
-
-Progress 파일 위치: `.workflow/progress/<epic-id>.md`
-
-**Progress 파일 업데이트 타이밍**:
-- 워크플로우 시작 시: 초기 생성
-- 에이전트 완료 시: 현재 상태 업데이트
-- 에이전트 실패/중단 시: 다음 세션 지침 작성
-- 워크플로우 완료 시: 최종 상태 기록
-
-**Progress 파일 형식**:
-```markdown
-# Progress: <Epic 제목>
-
-## 메타데이터
-| 항목 | 값 |
-|------|-----|
-| Epic ID | bd-xxx |
-| 시작일 | YYYY-MM-DD |
-| 최종 업데이트 | YYYY-MM-DD HH:MM |
-
-## 현재 상태
-- **완료**: [완료된 에이전트/단계]
-- **진행중**: [현재 작업 중인 내용]
-- **대기**: [남은 에이전트/단계]
-
-## 최근 작업 (최신 3건)
-1. [YYYY-MM-DD HH:MM] <에이전트> - <결과>
-
-## 다음 세션 지침
-1. [구체적인 재개 지점]
-2. [남은 작업]
-
-## 알려진 이슈
-- [ ] [해결 필요한 이슈]
-```
-
-#### 체크포인트 코멘트
-
-에이전트가 중간 진행 상태를 보고할 때 Epic에 체크포인트 기록:
-```bash
-bd comments add <epic-id> "[Checkpoint] <에이전트명> <진행률>% - <현재상태>"
-```
-
-**코멘트 형식 (표준)**:
-```bash
-# 워크플로우 시작
-bd comments add <epic-id> "[Workflow] 시작"
-
-# 에이전트 시작
-bd update <subtask-id> --status in_progress
-bd comments add <epic-id> "[Interviewer] 시작 - <subtask-id>"
-
-# 에이전트 완료
-bd comments add <epic-id> "[Interviewer] 완료 - spec.md 생성"
+# 1. Sub-task 완료 처리
 bd close <subtask-id>
 
-# Gate 상태
-bd comments add <epic-id> "[Gate 1] 대기중"
-bd comments add <epic-id> "[Gate 1] 승인됨"
+# 2. Epic 코멘트 기록
+bd comments add <epic-id> "[<에이전트명>] 완료 - <산출물>"
 
-# 워크플로우 완료
-bd comments add <epic-id> "[Workflow] 완료"
+# 3. Progress 파일 업데이트
+#    - "완료" 목록에 에이전트 추가
+#    - "진행중" 업데이트 (다음 에이전트 또는 "Gate N 승인 대기")
+#    - "대기" 목록에서 완료된 에이전트 제거
+#    - "최근 작업" 상위에 완료 기록 추가 (최신 3건 유지)
+#    - "최종 업데이트" 시각 갱신
 ```
 
-**코멘트 예시**:
+#### Gate 필요 시
+
+```bash
+bd comments add <epic-id> "[Gate N] 대기중"
+# AskUserQuestion으로 승인 요청 (상세: guides/gate-process.md)
+# 승인 → 다음 에이전트로 진행
+# 거부 → 해당 에이전트 재호출 후 다시 Gate
+bd comments add <epic-id> "[Gate N] 승인됨"  # 또는 "[Gate N] 거부 - <사유>"
 ```
-[Workflow] 시작
-[Interviewer] 시작 - bd-abc
-[Interviewer] 완료 - spec.md 생성
-[Gate 1] 승인됨
-[Architect] 시작 - bd-def
-[Architect] 완료 - design.md 생성
-[Gate 2] 대기중
+
+#### 중간 상황 처리
+
+사용자 질문 응답, Gate 논의 등이 발생해도 처리 완료 후 반드시 다음 에이전트 단계로 복귀합니다.
+
+에이전트가 중간 체크포인트를 보고한 경우 (`[Checkpoint] <에이전트명> <진행률>% - <현재상태>`) Progress 파일의 "진행중" 항목을 갱신합니다.
+
+#### 에이전트 실패 시
+
+```bash
+# 재시도 (최대 3회)
+bd comments add <epic-id> "[<에이전트명>] 재시도 N/3"
+# 3회 실패 → 6단계 마무리로 이동 (실패 처리)
+bd comments add <epic-id> "[<에이전트명>] 실패 - 수동 개입 필요"
+```
+
+모든 에이전트 완료 → **6단계로 이동**
+
+### 6단계: 워크플로우 마무리
+
+> **필수 실행**: 정상 완료, 사용자 취소, 에이전트 실패 등 어떤 종료 사유든 이 단계를 반드시 실행합니다.
+
+#### 정상 완료 시
+
+```bash
+# 1. Progress 파일 최종 업데이트
+#    - 완료: 전체 에이전트 목록
+#    - 진행중/대기: 없음
+#    - 다음 세션 지침: "워크플로우 완료"
+#    - 최종 업데이트 시각 갱신
+
+# 2. Epic 완료 코멘트
+bd comments add <epic-id> "[Workflow] 완료 - <에이전트 목록>, 산출물: <파일 목록>"
+
+# 3. Epic close
+bd close <epic-id>
+
+# 4. Worktree 정리 (사용 시, guides/worktree.md 참조)
+```
+
+**최종 반환값** (1-2줄 제한):
+```
+완료: <epic-id> | 상태: closed | 상세: bd show <epic-id>
+```
+
+#### 사용자 취소 시
+
+```bash
+# 1. Progress 파일: 중단 지점 기록
+# 2. Epic 코멘트
+bd comments add <epic-id> "[Workflow] 취소됨"
+# 3. Epic close
+bd close <epic-id>
+# 4. Worktree 삭제 제안
+```
+
+#### 에이전트 실패로 중단 시
+
+```bash
+# 1. Progress 파일: 실패 지점, 원인, "알려진 이슈"에 추가
+# 2. Epic 코멘트
+bd comments add <epic-id> "[Workflow] 실패 - 수동 개입 필요"
+# 3. Epic blocked 상태 유지 (재개 가능)
+# 4. Worktree 유지
 ```
 
 ## 에이전트 선정 기준
@@ -334,57 +366,24 @@ UI 기능            → interviewer → designer → tester → coder → revie
 
 ## 에러 핸들링
 
-### Gate 승인 거부 시
-- 해당 에이전트 재호출하여 수정
-- 코멘트 기록: `[Gate N] 거부 - 사유`
+> 상세 실행 로직은 5단계(에이전트 실행 루프)와 6단계(워크플로우 마무리)에 포함되어 있습니다.
+> 모든 에러/취소 상황에서도 반드시 6단계 마무리를 실행합니다.
 
-### 에이전트 실패 시
-- 재시도 (최대 3회)
-- 각 재시도마다 코멘트 기록: `[에이전트명] 재시도 N/3`
-- 3회 실패 시 사용자에게 보고 및 코멘트: `[에이전트명] 실패 - 수동 개입 필요`
-
-### 사용자 취소 시
-- 코멘트 기록: `[Workflow] 취소됨`
-- Worktree 정리 (guides/worktree.md 참조)
-- Epic 상태 업데이트: closed
+| 상황 | 처리 | 마무리 |
+|------|------|--------|
+| Gate 승인 거부 | 해당 에이전트 재호출 후 재승인 | 루프 계속 |
+| 에이전트 실패 | 최대 3회 재시도 | 3회 실패 → 6단계 (실패 처리) |
+| 사용자 취소 | 즉시 중단 | 6단계 (취소 처리) |
 
 ## 출력 형식
 
-### 토큰 효율성 원칙
+**토큰 효율성 원칙**: 상세 내용은 이슈에 기록하고, 반환값은 최소화합니다.
 
-**Main Thread 컨텍스트 최소화**: 상세 내용은 이슈에 기록하고, 반환값은 최소화합니다.
-
-### 최종 반환값 (Main Thread로)
-
-**반드시 1-2줄로 제한**:
-```
-완료: <epic-id> | 상태: closed | 상세: bd show <epic-id>
-```
-
-예시:
-```
-완료: bd-abc123 | 상태: closed | 상세: bd show bd-abc123
-```
-
-### 상세 내용은 Epic 코멘트에 기록
-
-최종 완료 시 Epic에 요약 코멘트 추가:
-```bash
-bd comments add <epic-id> "[Workflow] 완료 - 설계/구현/테스트 완료, 산출물: spec.md, design.md, test.md"
-```
-
-### 에이전트 결과 수신 시
-
-에이전트로부터 받는 결과도 1줄:
-```
-완료: <subtask-id> (<산출물>)
-```
-
-예시:
-```
-완료: bd-def456 (spec.md)
-완료: bd-ghi789 (design.md)
-```
+| 형식 | 예시 |
+|------|------|
+| 최종 반환값 (1-2줄) | `완료: bd-abc123` &#124; `상태: closed` &#124; `상세: bd show bd-abc123` |
+| 에이전트 결과 수신 | `완료: bd-def456 (spec.md)` |
+| 완료 코멘트 | `[Workflow] 완료 - <에이전트 목록>, 산출물: <파일 목록>` |
 
 ## 라벨 컨벤션
 

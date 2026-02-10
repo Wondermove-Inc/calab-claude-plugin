@@ -152,7 +152,7 @@ bd close <issue-id>
 # 2. 체크포인트 기록
 bd comments add <epic-id> "[<에이전트명>] 완료 - <산출물>"
 
-# 3. Progress 업데이트 (Planner가 수행)
+# 3. Progress 업데이트 (Planner가 수행, planner.md 5단계 참조)
 ```
 
 ### 중단 시 (컨텍스트 부족 예상)
