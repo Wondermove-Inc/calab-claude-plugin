@@ -104,7 +104,8 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 옵션:
 - "승인": 작업 완료
 - "승인 + 테스트 보강": 커버리지 미달 보강
-- "수정 필요": 피드백 반영
+- "Coder 재작업": Coder 서브에이전트를 재호출하여 수정 후 Reviewer 재리뷰
+- "Reviewer 재리뷰": Reviewer 서브에이전트만 재호출
 - "취소": 작업 중단
 ```
 
@@ -115,7 +116,8 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 | Gate 0 | 사용자 피드백 반영하여 계획 재수립 |
 | Gate 1 | Interviewer 재호출, spec.md 수정 |
 | Gate 2 | Architect/Designer 재호출, 문서 수정 |
-| Gate 3 | Coder 재호출, 피드백 반영 |
+| Gate 3 (Coder 재작업) | Coder 서브에이전트 재호출 → Reviewer 서브에이전트 재호출 |
+| Gate 3 (Reviewer 재리뷰) | Reviewer 서브에이전트만 재호출 |
 
 ## 취소 시 처리
 

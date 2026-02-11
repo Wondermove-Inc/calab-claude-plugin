@@ -229,6 +229,54 @@ bash .workflow/scripts/update-progress.sh complete <epic-id> <에이전트명> <
 bash .workflow/scripts/update-progress.sh complete <epic-id> <에이전트명> <산출물>
 ```
 
+#### Reviewer 결과에 따른 분기 (필수)
+
+Reviewer 완료 시 반환값을 반드시 확인하고 분기합니다:
+
+**승인** (`완료: <id> (승인, C:0/M:N)`):
+- Gate 3으로 진행
+
+**수정필요** (`완료: <id> (수정필요, C:N/M:N)`):
+- Reviewer 이슈의 description에서 수정 항목 확인
+- **Coder 서브에이전트를 재호출**하여 수정 수행 (메인 스레드에서 직접 수정 금지)
+
+```bash
+# 1. 재작업 횟수 확인 (rework label 이슈 수 카운트)
+REWORK_COUNT=$(bd list --parent <epic-id> --labels rework --format count)
+```
+
+3회 미만인 경우 아래 절차를 진행합니다:
+
+```bash
+# 2. Coder 재작업 Sub-task 생성
+bd create "수정: 리뷰 피드백 반영 (N차)" --parent <epic-id> --labels "implementation,coder,rework"
+```
+
+```
+# 3. Coder 서브에이전트 호출 (리뷰 피드백 참조 지시)
+Task (subagent_type: workflow:coder):
+"bd-<new-subtask-id> 작업 수행. 리뷰 피드백: bd show <reviewer-subtask-id> 참조."
+```
+
+```bash
+# 4. Coder 완료 후 → Reviewer 재호출
+bd create "재리뷰: 수정사항 검증 (N차)" --parent <epic-id> --labels "review,reviewer,rework"
+```
+
+```
+# 5. Reviewer 서브에이전트 호출
+Task (subagent_type: workflow:reviewer):
+"bd-<new-subtask-id> 작업 수행. 이전 리뷰: bd show <prev-reviewer-subtask-id> 참조."
+```
+
+**재작업 제한**: 최대 3회 반복 (`REWORK_COUNT >= 6`이면 Coder+Reviewer 쌍이 3회). 초과 시 현재 상태로 Gate 3에서 사용자 판단 요청.
+
+```bash
+# 3회 초과 시
+bd comments add <epic-id> "[Reviewer] 3회 재작업 후에도 수정필요 - 사용자 판단 요청"
+# Gate 3으로 이동하여 사용자에게 현황 보고
+```
+
 #### Gate 필요 시
 
 ```bash
@@ -238,6 +286,12 @@ bd comments add <epic-id> "[Gate N] 대기중"
 # 거부 → 해당 에이전트 재호출 후 다시 Gate
 bd comments add <epic-id> "[Gate N] 승인됨"  # 또는 "[Gate N] 거부 - <사유>"
 ```
+
+**Gate 3 세분화 옵션 처리**:
+
+Gate 3에서는 사용자가 세분화된 옵션을 선택할 수 있습니다:
+- **"Coder 재작업"**: 위 Reviewer 분기의 수정필요 프로세스와 동일 (Coder → Reviewer 순차 재호출)
+- **"Reviewer 재리뷰"**: Reviewer 서브에이전트만 재호출 (코드 수정 없이 재검토)
 
 #### 중간 상황 처리
 
@@ -384,6 +438,7 @@ UI 기능            → interviewer → designer → tester → coder → revie
 | 상황 | 처리 | 마무리 |
 |------|------|--------|
 | Gate 승인 거부 | 해당 에이전트 재호출 후 재승인 | 루프 계속 |
+| Reviewer 수정요청 | Coder 서브에이전트 재호출 → Reviewer 재호출 (최대 3회) | 3회 초과 → Gate 3 사용자 판단 |
 | 에이전트 실패 | 최대 3회 재시도 | 3회 실패 → 6단계 (실패 처리) |
 | 사용자 취소 | 즉시 중단 | 6단계 (취소 처리) |
 

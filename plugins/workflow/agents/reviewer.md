@@ -168,8 +168,24 @@ bd close <issue-id>
 ```
 
 #### 수정 요청 시
+
+**Coder가 재작업할 수 있도록 구체적 수정 항목을 반드시 포함합니다:**
+
+> **Note**: heredoc 내 마크다운 테이블(`|`)이 bd CLI에서 정상 처리되는지 확인 필요. 문제 시 테이블 대신 리스트(`- Critical: ...`) 형식 사용.
+
 ```bash
-bd update <issue-id> --description "리뷰 수정필요. Critical N건, Major N건. 수정 후 재리뷰 필요."
+bd update <issue-id> --description "$(cat <<'EOFD'
+리뷰 수정필요. Critical N건, Major N건.
+
+## 수정 항목
+| # | 등급 | 파일 | 내용 | 수정 방안 |
+|---|------|------|------|----------|
+| 1 | Critical | path/to/file.go | [문제 설명] | [구체적 수정 방안] |
+| 2 | Major | path/to/file.go | [문제 설명] | [구체적 수정 방안] |
+
+수정 후 재리뷰 필요.
+EOFD
+)"
 ```
 
 ## 출력 형식 (토큰 효율화)
