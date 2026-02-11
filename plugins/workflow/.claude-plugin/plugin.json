@@ -1,7 +1,7 @@
 {
   "name": "workflow",
-  "version": "1.0.0",
-  "description": "멀티 에이전트 오케스트레이션 - 9개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
+  "version": "2.0.0",
+  "description": "멀티 에이전트 워크플로우 - Plan → Work → Review → Compound 루프 기반 체계적 개발.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -10,25 +10,17 @@
   "license": "MIT",
   "keywords": [
     "multi-agent",
-    "orchestration",
     "workflow",
     "planner",
-    "architect",
-    "coder",
-    "tester",
+    "worker",
     "reviewer",
-    "writer",
-    "compound"
+    "compound",
+    "tdd"
   ],
   "agents": [
     "./agents/planner.md",
-    "./agents/interviewer.md",
-    "./agents/architect.md",
-    "./agents/designer.md",
-    "./agents/coder.md",
-    "./agents/tester.md",
+    "./agents/worker.md",
     "./agents/reviewer.md",
-    "./agents/writer.md",
     "./agents/compound.md"
   ],
   "skills": [

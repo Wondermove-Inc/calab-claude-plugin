@@ -1,6 +1,6 @@
 # beads 이슈 작성 가이드라인
 
-> 이 문서는 Planner 에이전트가 beads 이슈를 생성할 때 참조합니다.
+> 이 문서는 start 스킬(오케스트레이터)이 beads 이슈를 생성할 때 참조합니다.
 
 ## 이슈 계층 구조
 
@@ -212,7 +212,7 @@ EOF
 `feature`, `improvement`, `refactoring`, `patch`, `hotfix`
 
 ### 에이전트별 (워크플로우 전용)
-`interviewer`, `requirements`, `architect`, `design`, `designer`, `ui`, `ux`, `coder`, `implementation`, `tester`, `test`, `reviewer`, `review`
+`planner`, `plan`, `worker`, `implementation`, `test`, `reviewer`, `review`
 
 ## 우선순위 매핑
 
@@ -267,26 +267,22 @@ open (생성) → in_progress (작업 시작) → closed (완료)
 ### 단순 작업 (버그 수정 등)
 ```
 Epic
-└── Sub-task: coder
+└── Sub-task: worker
 ```
 
 ### 중간 작업
 ```
 Epic
-├── Sub-task: tester
-└── Sub-task: coder
+├── Sub-task: worker
+└── Sub-task: reviewer
 ```
 
 ### 복잡 작업 (새 기능 등)
 ```
 Epic
-├── Sub-task: interviewer (requirements)
-├── Sub-task: architect (design)
-├── Sub-task: designer (ux) ── 선택
-├── Sub-task: tester (test)
-├── Sub-task: coder (implementation)
-├── Sub-task: reviewer (review)
-└── Sub-task: writer (docs) ── 선택
+├── Sub-task: planner (plan)
+├── Sub-task: worker (implementation + test)
+└── Sub-task: reviewer (review)
 ```
 
 ### Initiative 포함 대규모 작업
@@ -304,7 +300,7 @@ Initiative
 ## 워크플로우 Description 템플릿
 
 > Planner가 이슈를 생성할 때 반드시 아래 템플릿을 사용하여 description을 작성합니다.
-> Gate 0 분석 내용을 이슈에 기록하여 작업 맥락을 보존합니다.
+> 분석 내용을 이슈에 기록하여 작업 맥락을 보존합니다.
 
 ### 워크플로우 Epic Description
 
@@ -326,13 +322,11 @@ Initiative
 * 구체적 변경 내용
 
 ## 실행 계획
-| 순서 | 에이전트 | 작업 | 산출물 |
-|------|---------|------|--------|
-| 1 | interviewer | 요구사항 명확화 | spec.md |
-| 2 | architect | 기술 설계 | design.md |
-| 3 | tester | 테스트 작성 (RED) | test code |
-| 4 | coder | 구현 (GREEN) | implementation |
-| 5 | reviewer | 코드 리뷰 | 피드백 |
+| 순서 | 에이전트 | 작업 |
+|------|---------|------|
+| 1 | planner | 요청 분석, 설계 → Epic 이슈에 작성 |
+| 2 | worker | TDD 구현 → 하위 이슈에 작업 내용 작성 |
+| 3 | reviewer | 코드 리뷰 → 하위 이슈에 리뷰 결과 작성 |
 
 ### 스킵 단계
 - [에이전트명]: [스킵 사유]
@@ -345,97 +339,40 @@ Initiative
 * AC2: 조건 2
 ```
 
-### 워크플로우 Sub-task Description (에이전트별)
+### 워크플로우 Sub-task Description (에이전트가 직접 생성 및 기록)
 
-#### Interviewer (요구사항)
+> Sub-task는 **각 에이전트가 작업 시작 시 직접 생성**합니다. 아래 템플릿은 에이전트가 작업 완료 후 이슈 description에 기록하는 형식입니다.
+
+#### Planner (Plan)
 ```markdown
 ## 목표
-어떤 요구사항을 명확히 해야 하는가
+어떤 요구사항을 분석하고 설계를 수립해야 하는가
 
 ## 맥락
 * Epic에서 파악된 배경
 * 불명확한 부분, 확인이 필요한 사항
 
-## 기대 산출물
-* spec.md (요구사항 스펙)
-
 ## Acceptance Criteria
-* AC1: 핵심 요구사항이 정의됨
-* AC2: 비기능 요구사항이 식별됨
-* AC3: 엣지 케이스가 정리됨
+* AC1: 핵심 요구사항이 이슈에 정의됨
+* AC2: 아키텍처/인터페이스가 설계됨
+* AC3: 구현 가이드가 포함됨
 ```
 
-#### Architect (설계)
+#### Worker (구현)
 ```markdown
 ## 목표
-어떤 아키텍처/설계를 수립해야 하는가
+어떤 코드를 TDD로 구현해야 하는가
 
 ## 맥락
-* 요구사항 스펙 참조: spec.md
-* 기존 아키텍처와의 관계
-
-## 기대 산출물
-* design.md (기술 설계)
-
-## Acceptance Criteria
-* AC1: 컴포넌트 구조가 정의됨
-* AC2: API 인터페이스가 설계됨
-* AC3: 기존 코드와의 통합 방안이 명시됨
-```
-
-#### Designer (UX/UI)
-```markdown
-## 목표
-어떤 화면/인터페이스를 설계해야 하는가
-
-## 맥락
-* 요구사항 스펙 참조: spec.md
-* 기존 UI 패턴
-
-## 기대 산출물
-* ux-scenario.md (UX 시나리오)
-
-## Acceptance Criteria
-* AC1: 사용자 흐름이 정의됨
-* AC2: 컴포넌트 구성이 설계됨
-```
-
-#### Tester (테스트)
-```markdown
-## 목표
-어떤 테스트를 작성해야 하는가
-
-## 맥락
-* 설계 문서 참조: design.md
-* 테스트 대상 범위
-
-## 기대 산출물
-* 테스트 코드 (TDD RED 단계)
-
-## Acceptance Criteria
-* AC1: 핵심 기능에 대한 테스트 케이스가 작성됨
-* AC2: 엣지 케이스 테스트가 포함됨
-* AC3: 테스트가 실패 상태 (RED)
-```
-
-#### Coder (구현)
-```markdown
-## 목표
-어떤 코드를 구현해야 하는가
-
-## 맥락
-* 설계 문서 참조: design.md
-* 테스트 코드 참조 (TDD GREEN 단계)
+* Planner 이슈 참조 (요구사항, 설계, 구현 가이드)
 
 ## 구현 범위
 * 변경/생성할 파일과 컴포넌트
 
-## 기대 산출물
-* 구현 코드
-
 ## Acceptance Criteria
 * AC1: 모든 테스트가 통과함 (GREEN)
-* AC2: 설계 문서의 인터페이스를 준수함
+* AC2: Planner 이슈의 설계를 준수함
+* AC3: 빌드 성공
 ```
 
 #### Reviewer (리뷰)
@@ -444,35 +381,17 @@ Initiative
 어떤 관점에서 리뷰해야 하는가
 
 ## 맥락
-* 설계 문서 참조: design.md
+* Planner 이슈 참조 (설계 기준)
+* Worker 이슈 참조 (작업 내용, 테스트 결과)
 * 구현 코드 범위
 
 ## 리뷰 포인트
 * SOLID 원칙 준수
-* 기존 코드 스타일 일관성
-* 에러 처리, 보안
-
-## 기대 산출물
-* 리뷰 피드백
+* Planner 이슈 설계 대비 구현 일관성
+* 이슈 품질 (Planner, Worker)
 
 ## Acceptance Criteria
 * AC1: 코드 품질 검증 완료
 * AC2: 설계 일관성 확인
-```
-
-#### Writer (문서)
-```markdown
-## 목표
-어떤 문서의 품질과 일관성을 검토/정제해야 하는가
-
-## 맥락
-* 검토 대상 문서 목록
-* 문서 간 상호 참조 관계
-
-## 기대 산출물
-* 정제된 문서
-
-## Acceptance Criteria
-* AC1: 문서 간 용어/표현 일관성 확보
-* AC2: 상호 참조가 정확함
+* AC3: 이슈 품질 확인
 ```

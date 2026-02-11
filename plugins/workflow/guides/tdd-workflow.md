@@ -1,6 +1,6 @@
 # TDD 워크플로우 가이드
 
-> 이 문서는 Planner, Tester, Coder 에이전트가 공통으로 참조합니다.
+> 이 문서는 Worker 에이전트가 참조합니다.
 
 ## 핵심 규칙
 
@@ -8,44 +8,44 @@
 
 | 규칙 | 위반 시 처리 |
 |------|------------|
-| Coder 호출 전 Tester 호출 필수 | Planner가 Tester 먼저 호출 |
-| Tester는 RED 상태를 검증해야 함 | RED 미확인 시 Planner에게 보고 |
-| Coder는 GREEN 상태를 검증해야 함 | GREEN 미확인 시 Planner에게 보고 |
-| 테스트 없이 구현 코드 작성 금지 | Coder가 즉시 중단, Planner에게 보고 |
+| 구현 전 테스트 작성 필수 | Worker가 RED 먼저 수행 |
+| RED 상태를 검증해야 함 | RED 미확인 시 오케스트레이터에 보고 |
+| GREEN 상태를 검증해야 함 | GREEN 미확인 시 오케스트레이터에 보고 |
+| 테스트 없이 구현 코드 작성 금지 | Worker가 즉시 중단, 오케스트레이터에 보고 |
 
 ## TDD 원칙
 
 **RED → GREEN → REFACTOR** 사이클을 준수합니다.
 
 ```
-1. RED: 실패하는 테스트 작성 (Tester)
+1. RED: 실패하는 테스트 작성 (Worker)
    └─ 테스트 실행 → FAIL 확인
 
-2. GREEN: 테스트 통과하는 코드 작성 (Coder)
+2. GREEN: 테스트 통과하는 코드 작성 (Worker)
    └─ 테스트 실행 → PASS 확인
 
-3. REFACTOR: 코드 개선 (Coder, 선택)
+3. REFACTOR: 코드 개선 (Worker, 선택)
    └─ 테스트 실행 → PASS 유지
 ```
 
 ## 호출 순서
 
 ```
-Planner
+Worker (단일 에이전트에서 수행)
    │
-   ├─→ Tester: 테스트 작성
-   │      └─→ 테스트 실행 → FAIL (RED) 확인
+   ├─→ RED: 테스트 작성
+   │      └─→ 테스트 실행 → FAIL 확인
    │
-   ├─→ Coder: 구현 코드 작성
-   │      └─→ 테스트 실행 → PASS (GREEN) 확인
+   ├─→ GREEN: 구현 코드 작성
+   │      └─→ 테스트 실행 → PASS 확인
    │
-   └─→ Coder: 리팩토링 (선택)
+   └─→ REFACTOR: 코드 개선 (선택)
           └─→ 테스트 실행 → PASS 유지 확인
 ```
 
 ## 절대 금지
 
-- ❌ Coder를 Tester보다 먼저 호출
+- ❌ GREEN(구현)을 RED(테스트) 이전에 수행
 - ❌ 테스트 없이 구현 코드 작성
 - ❌ 테스트 실패 확인 없이 구현 진행
 
@@ -70,14 +70,14 @@ Planner
 
 ## 테스트 실패 핸들링
 
-### RED 단계 (Tester 완료 후)
+### RED 단계 (테스트 작성 후)
 - 테스트 FAIL = 정상 동작
-- Coder에게 GREEN 작업 전달
+- Worker가 GREEN 단계로 진행
 
-### GREEN 단계 (Coder 완료 후)
+### GREEN 단계 (구현 완료 후)
 - 테스트 PASS = 성공
-- 테스트 FAIL = Coder 재호출 (최대 3회)
-- 3회 연속 실패 시 사용자에게 보고
+- 테스트 FAIL = Worker가 코드 수정 후 재실행 (최대 3회)
+- 3회 연속 실패 시 오케스트레이터에 보고
 
 ### REFACTOR 단계
 - 테스트 PASS 유지 필수

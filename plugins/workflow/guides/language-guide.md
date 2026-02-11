@@ -1,6 +1,6 @@
 # 코딩 가이드
 
-> 이 문서는 Coder, Tester, Reviewer 에이전트가 참조합니다.
+> 이 문서는 Worker, Reviewer 에이전트가 참조합니다.
 
 ---
 

@@ -1,19 +1,21 @@
 # Quality Gate 프로세스
 
-> 이 문서는 Planner 에이전트가 참조합니다.
+> 이 문서는 start 스킬(오케스트레이터)이 참조합니다.
 
 ## Gate 개요
 
-각 단계 완료 시 사용자 승인을 요청합니다.
+2개의 Gate로 워크플로우 품질을 관리합니다.
 
 ```
-Gate 0: 계획 승인
+Planner → 이슈 (요구사항, 설계)
     ↓
-Gate 1: 요구사항 검증 (Interviewer 실행 시)
+Plan Gate: 요구사항 + 설계 통합 검증
     ↓
-Gate 2: 설계 검증 (Architect/Designer 실행 시)
+Worker → 코드, 이슈 (작업 내용, 테스트 결과)
+    ↓ (자동 전환)
+Reviewer → 이슈 (코드 리뷰)
     ↓
-Gate 3: 최종 검증
+Review Gate: 사용자 판단 (승인 / Worker 재작업 / Reviewer 재리뷰)
 ```
 
 ## Gate 적용 원칙
@@ -22,122 +24,65 @@ Gate 3: 최종 검증
 
 ## Gate 상세
 
-### Gate 0: 초기 계획 승인
+### Plan Gate: 계획 승인
 
-> Epic description에 기록된 분석 내용을 기반으로 승인을 요청합니다.
+> Planner가 작성한 이슈를 기반으로 승인을 요청합니다.
 
 ```
-## 워크플로우 실행 계획
+## Plan 검토
 
-Epic: <epic-id> (bd show <epic-id>로 상세 확인)
+이슈: bd show <planner-subtask-id>
 
 ### 요약
 - 유형: [새 기능 개발 / 버그 수정 / 리팩토링]
 - 복잡도: [단순 / 중간 / 복잡]
-
-### 실행 순서
-(Epic description의 실행 계획 테이블 요약)
-
-### 스킵 단계
-(Epic description의 스킵 단계 요약)
+- 주요 변경: [요약]
 
 옵션:
-- "승인": 계획대로 진행
-- "수정 필요": 피드백 반영 후 재계획
+- "승인": Worker 단계로 진행
+- "수정 필요": Planner 재호출, 이슈 수정
 - "취소": 작업 중단
 ```
 
-### Gate 1: 요구사항 검증
+### Review Gate: 사용자 판단
+
+> Reviewer 완료 시 **항상** 사용자 판단을 거칩니다.
 
 ```
-## 요구사항 스펙 검토
+## Review 완료
 
-문서: .workflow/artifacts/{앱명}/{기능명}/spec.md
-
-### 핵심 요구사항
-1. [요구사항 1]
-2. [요구사항 2]
+- 결정: [승인 / 수정필요]
+- 품질: N/10
+- Critical: N건, Major: N건
+- 리뷰 상세: bd show <reviewer-subtask-id>
 
 옵션:
-- "승인": 설계 단계로 진행
-- "수정 필요": 요구사항 재검토
+- "승인": 워크플로우 완료
+- "Worker 재작업": Worker가 수정 후 Reviewer 재리뷰
+- "Reviewer 재리뷰": 코드 수정 없이 Reviewer만 재검토
 - "취소": 작업 중단
 ```
 
-### Gate 2: 설계 검증
+사용자 선택에 따라 기존 이슈를 **reopen**하여 Worker/Reviewer를 재호출하고, 완료 후 **다시 Review Gate로 복귀**합니다.
+새로운 이슈를 생성하지 않으며, 재작업 이력은 이슈 코멘트로 추적합니다.
 
-```
-## 설계 문서 검토
-
-### 산출물
-- UX 시나리오: .workflow/artifacts/{앱명}/{기능명}/ux-scenario.md
-- 기술 설계: .workflow/artifacts/{앱명}/{기능명}/design.md
-
-### 주요 설계 결정
-1. [결정 1]
-2. [결정 2]
-
-옵션:
-- "승인": 구현 단계로 진행
-- "수정 필요": 설계 재검토
-- "취소": 작업 중단
-```
-
-### Gate 3: 최종 검증
-
-```
-## 최종 결과물 검토
-
-### 구현 완료
-- 변경 파일: N개
-- 테스트: 통과/실패
-- 리뷰: 승인/수정필요
-
-### 커버리지 현황
-| 패키지 | 커버리지 | 상태 |
-|--------|----------|------|
-| ... | 85% | OK |
-
-### Reviewer 피드백
-[피드백 요약]
-
-옵션:
-- "승인": 작업 완료
-- "승인 + 테스트 보강": 커버리지 미달 보강
-- "Coder 재작업": Coder 서브에이전트를 재호출하여 수정 후 Reviewer 재리뷰
-- "Reviewer 재리뷰": Reviewer 서브에이전트만 재호출
-- "취소": 작업 중단
-```
-
-## 승인 거부 시 처리
+## Gate 거부 시 처리
 
 | Gate | 처리 |
 |------|------|
-| Gate 0 | 사용자 피드백 반영하여 계획 재수립 |
-| Gate 1 | Interviewer 재호출, spec.md 수정 |
-| Gate 2 | Architect/Designer 재호출, 문서 수정 |
-| Gate 3 (Coder 재작업) | Coder 서브에이전트 재호출 → Reviewer 서브에이전트 재호출 |
-| Gate 3 (Reviewer 재리뷰) | Reviewer 서브에이전트만 재호출 |
+| Plan Gate | Planner 재호출, 이슈 수정 |
+| Review Gate (Worker 재작업) | 기존 이슈 reopen → Worker → Reviewer → Review Gate 복귀 |
+| Review Gate (Reviewer 재리뷰) | 기존 이슈 reopen → Reviewer → Review Gate 복귀 |
 
 ## 취소 시 처리
 
 1. 진행 중인 에이전트 작업 중단
 2. Epic 코멘트 추가: `[Workflow] 사용자 취소`
-3. Epic 상태 업데이트: closed (사용자 취소)
+3. Epic close
 
----
+## 세션 중단/재개
 
-## 세션 중단/재개 가이드
-
-Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행해야 할 경우를 위한 가이드입니다.
-
-### 코멘트 기록 형식
-
-> 상세 형식 및 예시는 `agents/planner.md`의 "6단계: 진행 추적" 섹션 참조
-
-### 세션 재개 방법
-
-중단된 워크플로우를 재개하려면:
+Gate 승인 대기 중 세션이 종료된 경우:
 
 ```
 /workflow:start --resume <epic-id>
@@ -145,32 +90,6 @@ Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행해야 �
 
 ### 재개 지점 결정 (우선순위)
 
-Planner는 다음 순서로 재개 지점을 결정합니다:
-
-**1. Sub-task 상태 (주요 기준)**
-```bash
-bd list --parent <epic-id>
-```
-- `in_progress` Sub-task → 해당 에이전트부터 재개
-- 모두 `open` → 처음부터 시작
-- 일부 `closed` → 다음 `open` Sub-task부터
-
-**2. 산출물 존재 여부 (스킵 판단)**
-```bash
-ls .workflow/artifacts/{앱명}/{기능명}/
-```
-- spec.md 존재 → Interviewer 스킵 가능
-- design.md 존재 → Architect 스킵 가능
-
-**3. 코멘트 상태 (보조 정보)**
-```bash
-bd comments <epic-id>
-```
-- `[Gate N] 대기중` → 해당 Gate 승인 요청부터
-
-### 재개 불가능한 경우
-
-다음 상황에서는 새 워크플로우를 시작하는 것을 권장합니다:
-- Epic이 closed 상태인 경우
-- 관련 문서나 코드가 삭제된 경우
-- 요구사항이 크게 변경된 경우
+1. **Sub-task 상태** (주요 기준): `in_progress` → 해당 에이전트부터 재개
+2. **Planner 이슈 상태** (스킵 판단): closed → Planner 스킵
+3. **코멘트 상태** (보조 정보): `[Gate] 대기중` → 해당 Gate부터

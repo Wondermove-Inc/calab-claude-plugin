@@ -6,42 +6,95 @@ disable-model-invocation: true
 
 # workflow 플러그인 도움말
 
-멀티 에이전트 오케스트레이션 시스템으로 체계적인 개발 워크플로우를 제공합니다.
+Plan → Work → Review → Compound 루프 기반 멀티 에이전트 워크플로우입니다.
 
 ## 명령어
 
 | 명령어 | 설명 |
 |--------|------|
-| `/workflow:start <요청>` | 멀티 에이전트 워크플로우 시작 |
-| `/workflow:compound <epic-id>` | 워크플로우 회고 분석 및 복리화 |
+| `/workflow:start <요청>` | 워크플로우 시작 (오케스트레이터) |
+| `/workflow:start --resume <epic-id>` | 중단된 워크플로우 재개 |
+| `/workflow:compound` | 최근 1주일 워크플로우 회고 분석 및 복리화 |
 | `/workflow:help` | 도움말 표시 |
 
-> **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
+## 에이전트 목록 (3+1)
 
-## 에이전트 목록
+| 에이전트 | 역할 | 산출물 | 모델 | 색상 |
+|----------|------|--------|------|------|
+| `planner` | 요청 분석, 요구사항 명확화, 설계 | 이슈 (요구사항, 스펙, 설계) | opus | 파랑 |
+| `worker` | TDD 기반 테스트 작성 + 코드 구현 | 이슈 (작업 내용, 테스트 결과), 코드 | sonnet | 초록 |
+| `reviewer` | 코드/설계 리뷰, 품질 검증 | 이슈 (코드 리뷰) | opus | 빨강 |
+| `compound` | 워크플로우 회고 분석 (수동 호출만) | compound.md | opus | 금색 |
 
-| 에이전트 | 역할 | 색상 |
-|----------|------|------|
-| `planner` | 워크플로우 오케스트레이터, 작업 분석 및 에이전트 조율 | 파랑 |
-| `interviewer` | 요구사항 명확화, 스펙 문서 작성 | 청록 |
-| `architect` | 아키텍처 설계, 기술 스펙 정의 | 보라 |
-| `designer` | UX/UI 디자인, shadcn/ui 활용 | 분홍 |
-| `coder` | 코드 구현, 수정, 리팩토링 | 초록 |
-| `tester` | 테스트 코드 작성, 커버리지 관리 | 노랑 |
-| `reviewer` | 코드/설계 리뷰, 품질 평가 | 빨강 |
-| `writer` | 문서 품질 검토, 일관성 보장 | 주황 |
-| `compound` | 워크플로우 회고 분석, 시스템 복리화 | 금색 |
+## 워크플로우 흐름
+
+```
+사용자 요청
+    ↓
+┌─────────────┐
+│   Planner   │  ← 요청 분석, 이슈에 계획 작성
+└─────────────┘
+    ↓ Plan Gate: 계획 승인
+┌─────────────┐
+│   Worker    │  ← TDD (RED→GREEN→REFACTOR)
+└─────────────┘
+    ↓ Work Gate: 빌드 + 테스트 검증
+┌─────────────┐
+│  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
+└─────────────┘
+    ↓ Review Gate: 승인/수정필요
+    │
+    ├─ 승인 → 완료
+    └─ 수정필요 → Worker → Reviewer (자동 반복, 최대 3회)
+```
+
+## Quality Gates (3개)
+
+| Gate | 검증 대상 | 시점 |
+|------|----------|------|
+| Plan Gate | 요구사항 + 설계 (Planner 이슈) | Planner 완료 후 |
+| Work Gate | 빌드 + 테스트 | Worker 완료 후 |
+| Review Gate | 코드 품질 (Reviewer 이슈) | Reviewer 완료 후 |
+
+## 산출물
+
+모든 산출물은 beads 이슈에 작성됩니다:
+
+```
+Epic (Planner): 요구사항, 기능 스펙, 설계
+├── Worker 이슈: 상세 작업 내용, 테스트 결과
+└── Reviewer 이슈: 코드 리뷰
+```
+
+## 사용 예시
+
+### 새 기능 개발
+```
+/workflow:start 사용자 알림 기능 추가
+```
+Planner(이슈) → Plan Gate → Worker(TDD) → Work Gate → Reviewer(이슈) → Review Gate → 완료
+
+### 버그 수정
+```
+/workflow:start 로그인 실패 시 에러 메시지 표시 안됨
+```
+Planner(간소) → Worker(TDD) → Reviewer → 완료
+
+### 리팩토링
+```
+/workflow:start 인증 모듈 클린 아키텍처로 리팩토링
+```
+Planner(설계 포함) → Worker(TDD) → Reviewer → 완료
+
+### 워크플로우 회고
+```
+/workflow:compound
+```
+최근 1주일 워크플로우 전체 분석 → compound.md
 
 ## 코딩 가이드
 
 `guides/language-guide.md`에서 다음 원칙들을 참조합니다:
-
-### 공통 원칙
-- **SOLID**: 단일 책임, 개방-폐쇄, 리스코프 치환, 인터페이스 분리, 의존성 역전
-- **DRY/KISS**: 중복 제거, 단순함 우선
-- **보안**: 입력 검증, 민감 정보 관리, 최소 권한
-
-### 언어별 주요 원칙
 
 | 언어 | 핵심 원칙 |
 |------|-----------|
@@ -50,74 +103,9 @@ disable-model-invocation: true
 | **React** | 단일 책임 컴포넌트 / Props drilling 지양 / Custom Hooks |
 | **Python** | 타입 힌트 100% / Pydantic 검증 / async/await |
 
-## 워크플로우 흐름
-
-```
-사용자 요청
-    ↓
-┌─────────────┐
-│   Planner   │  ← 요청 분석, 계획 수립
-└─────────────┘
-    ↓ Gate 0: 계획 승인
-┌─────────────┐
-│ Interviewer │  ← 요구사항 명확화 (필수)
-└─────────────┘
-    ↓ Gate 1: 요구사항 검증
-┌─────────────────────┐
-│ Architect │ Designer│  ← 설계 (조건부)
-└─────────────────────┘
-    ↓ Gate 2: 설계 검증
-┌─────────────────────────────┐
-│ Tester → Coder → Reviewer   │  ← TDD (RED→GREEN)
-└─────────────────────────────┘
-    ↓ Gate 3: 최종 검증
-┌─────────────┐
-│  Compound   │  ← 회고 분석, 복리화 (선택)
-└─────────────┘
-    ↓
-    완료 (학습 누적)
-```
-
-## 산출물
-
-| 단계 | 문서 | 위치 |
-|------|------|------|
-| 요구사항 | spec.md | `.workflow/artifacts/{앱}/{기능}/spec.md` |
-| UX 설계 | ux-scenario.md | `.workflow/artifacts/{앱}/{기능}/ux-scenario.md` |
-| 기술 설계 | design.md | `.workflow/artifacts/{앱}/{기능}/design.md` |
-| 테스트 | test.md | `.workflow/artifacts/{앱}/{기능}/test.md` |
-| 회고 분석 | compound.md | `.workflow/compound/<epic-id>.md` |
-
-## 사용 예시
-
-### 새 기능 개발
-```
-/workflow:start 사용자 알림 기능 추가
-```
-
-### 버그 수정
-```
-/workflow:start 로그인 실패 시 에러 메시지 표시 안됨
-```
-
-### 리팩토링
-```
-/workflow:start 인증 모듈 클린 아키텍처로 리팩토링
-```
-
-## Quality Gates
-
-각 단계 완료 시 사용자 승인을 요청합니다:
-
-- **Gate 0**: 작업 계획 승인
-- **Gate 1**: 요구사항 스펙 검증
-- **Gate 2**: 설계 문서 검증
-- **Gate 3**: 최종 결과물 검증
-
 ## beads 이슈 관리
 
-계층 구조, 제목 형식, 생성 템플릿, 라벨 컨벤션 등 상세 가이드는 `guides/beads-issue-guide.md`를 참조하세요.
-
-- `/workflow:start` 실행 시 Planner가 가이드라인에 따라 이슈 자동 생성
+상세 가이드는 `guides/beads-issue-guide.md`를 참조하세요.
+- `/workflow:start` 실행 시 자동으로 Epic + Sub-task 생성
 - 에이전트별 라벨 자동 지정
 - 진행 상황 실시간 업데이트
