@@ -11,7 +11,7 @@ plugins/workflow/
 ├── agents/           # 8개 에이전트 정의
 ├── guides/           # 공통 가이드
 │   ├── architecture/ # 아키텍처 가이드 (Clean, Hexagonal)
-│   └── ...           # 코딩, TDD, Worktree, Gate
+│   └── ...           # 코딩, TDD, Gate
 ├── templates/        # 설계 문서 템플릿
 └── skills/           # 스킬 (start, help)
 ```
@@ -31,7 +31,6 @@ plugins/workflow/
 |--------|------|------|
 | 코딩 가이드 | `guides/language-guide.md` | SOLID, DRY, KISS + Go, TypeScript, React, Python |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | RED-GREEN-REFACTOR 사이클 |
-| Git Worktree | `guides/worktree.md` | 코드 변경 격리 전략 |
 | Quality Gate | `guides/gate-process.md` | Gate 0~3 승인 프로세스 |
 
 ---
@@ -307,10 +306,8 @@ Planner가 작업 복잡도에 따라 필요한 단계만 실행합니다:
 | UI 기능 | designer → tester → coder → reviewer |
 | 요구사항 모호 | interviewer → (이후 단계) |
 
+### 병렬 실행
+
+의존성이 없는 에이전트는 병렬 실행하여 효율을 높입니다 (예: architect + designer 동시 실행).
+
 ---
-
-## 병렬 처리
-
-- **다중 워크플로우**: 독립적인 요청은 병렬 실행
-- **단일 요청 내 다중 작업**: 독립적 작업은 병렬, 의존적 작업은 순차 진행
-- **에이전트 호출**: `run_in_background: true`로 백그라운드 실행

@@ -46,21 +46,11 @@ permissionMode: default
 | **이슈 작성 가이드** | `guides/beads-issue-guide.md` | 계층 구조, 제목 형식, 템플릿 |
 | **컨텍스트 관리** | `guides/context-management.md` | 체크포인트, Progress 파일, 재개 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
-| Git Worktree | `guides/worktree.md` | 격리 전략, 명령어 |
 | Quality Gate | `guides/gate-process.md` | Gate별 승인 프로세스 |
 
 ## 작업 프로세스
 
-### 0단계: 사전 검사 및 재개 확인
-
-#### Worktree 잔존 확인
-새 워크플로우 시작 전 기존 worktree 확인:
-
-```bash
-ls tree/ 2>/dev/null
-```
-
-잔존 worktree가 있으면 사용자에게 알리고 정리 여부 확인 (상세: `guides/worktree.md`).
+### 0단계: 재개 확인
 
 #### 재개 요청 처리
 
@@ -79,10 +69,7 @@ cat .workflow/progress/<epic-id>.md 2>/dev/null
 bd show <epic-id>
 bd comments <epic-id>
 
-# 4. 기존 worktree 존재 여부 확인
-ls tree/ 2>/dev/null
-
-# 5. 산출물 존재 여부 확인 (스킵 판단)
+# 4. 산출물 존재 여부 확인 (스킵 판단)
 ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 ```
 
@@ -102,8 +89,6 @@ ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 5. **Gate 상태**:
    - `[Gate N] 대기중` → 해당 Gate 승인 요청부터
 
-기존 worktree가 있으면 해당 worktree에서 작업을 계속합니다.
-
 ### 1단계: 요청 분석
 
 ```
@@ -111,7 +96,6 @@ ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 2. 작업 유형 분류 (feature/bug/refactor/docs)
 3. 복잡도 평가 (단순/중간/복잡)
 4. 필요 에이전트 목록 도출
-5. Worktree 사용 여부 결정 (guides/worktree.md 참조)
 ```
 
 ### 2단계: beads 이슈 생성
@@ -196,7 +180,8 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 > **워크플로우 완결성**: 이 루프가 시작되면 모든 에이전트 실행 완료 또는 명시적 중단까지 계속 진행합니다.
 > 사용자의 질문, Gate 승인 대기, 에러 등 중간 상황 처리 후 반드시 다음 에이전트로 복귀합니다.
 
-실행 계획의 에이전트 목록에 대해 순차적으로 아래 프로세스를 반복합니다.
+실행 계획의 에이전트 목록에 대해 아래 프로세스를 반복합니다.
+의존성이 없는 에이전트는 병렬로 실행하고, 의존성이 있는 에이전트는 선행 에이전트 완료 후 순차 실행합니다.
 
 #### 에이전트 시작 전
 
@@ -278,7 +263,6 @@ bd comments add <epic-id> "[Workflow] 완료 - <에이전트 목록>, 산출물:
 # 3. Epic close
 bd close <epic-id>
 
-# 4. Worktree 정리 (사용 시, guides/worktree.md 참조)
 ```
 
 **최종 반환값** (1-2줄 제한):
@@ -294,7 +278,6 @@ bd close <epic-id>
 bd comments add <epic-id> "[Workflow] 취소됨"
 # 3. Epic close
 bd close <epic-id>
-# 4. Worktree 삭제 제안
 ```
 
 #### 에이전트 실패로 중단 시
@@ -304,7 +287,6 @@ bd close <epic-id>
 # 2. Epic 코멘트
 bd comments add <epic-id> "[Workflow] 실패 - 수동 개입 필요"
 # 3. Epic blocked 상태 유지 (재개 가능)
-# 4. Worktree 유지
 ```
 
 ## 에이전트 선정 기준

@@ -32,19 +32,6 @@ Gate 승인 대기 중 세션이 종료되거나 다른 작업을 진행한 후,
 
 ## 워크플로우 단계
 
-### 0단계: 사전 검사 (Worktree 정리)
-
-워크플로우 시작 전 기존 worktree 잔존 여부를 확인합니다:
-
-```bash
-ls tree/ 2>/dev/null
-```
-
-`tree/` 디렉토리에 내용이 있으면:
-1. 사용자에게 알림 (이전 워크플로우의 잔여물)
-2. 정리 또는 계속 진행 여부 확인
-3. 상세 정리 방법은 `guides/worktree.md` 참조
-
 ### 1단계: 플래너 에이전트 호출
 
 #### 새 워크플로우
@@ -133,65 +120,6 @@ Gate 3: 최종 검증 ← 사용자 확인
 
 ### 5단계: 완료 보고
 모든 작업 완료 후 플래너가 결과 보고
-
-## Git Worktree 브랜치 전략
-
-복잡한 작업은 Git Worktree를 사용하여 메인 디렉토리와 격리합니다.
-
-### 디렉토리 구조
-```
-project/
-├── tree/                    # Worktree 루트
-│   ├── feature-xxx/         # 기능 A 작업
-│   └── bugfix-yyy/          # 버그 B 작업
-├── .git/
-└── (메인 작업 디렉토리)
-```
-
-### 브랜치 네이밍 규칙
-| 유형 | 브랜치명 | Worktree 경로 |
-|------|----------|---------------|
-| 새 기능 | `plan/feature-xxx` | `tree/feature-xxx/` |
-| 버그 수정 | `plan/bugfix-xxx` | `tree/bugfix-xxx/` |
-| 리팩토링 | `plan/refactor-xxx` | `tree/refactor-xxx/` |
-
-### 워크플로우
-```
-1. Planner: Worktree 생성 결정
-   ↓
-2. git worktree add tree/{name} -b plan/{name}
-   ↓
-3. Coder/Tester: tree/{name}/ 에서 작업
-   ↓
-4. 완료 후: 병합 또는 삭제
-   - 성공: git merge plan/{name}
-   - 실패: git worktree remove --force tree/{name}
-```
-
-### 적용 기준
-| 작업 유형 | Worktree | 이유 |
-|----------|----------|------|
-| 새 기능 구현 | ✓ 사용 | 격리 필요, 롤백 용이 |
-| 복잡한 버그 | ✓ 사용 | 안전한 실험 가능 |
-| 단순 수정 | ✗ 불필요 | 오버헤드 |
-| 문서 작업 | ✗ 불필요 | 충돌 위험 낮음 |
-
-## 병렬 처리
-
-### 다중 /workflow 동시 실행
-여러 `/workflow:start` 요청은 독립적으로 병렬 실행됩니다.
-각 워크플로우는 별도 Worktree에서 격리되어 작업합니다.
-
-### 단일 요청 내 다중 작업
-```
-/workflow:start "A 기능 추가, B 버그 수정"
-```
-- 독립적 작업: 병렬 진행 (각각 별도 Worktree)
-- 의존적 작업: 순차 진행 (동일 Worktree)
-
-### Worktree 정리
-작업 완료 후 Planner가 Worktree를 정리합니다.
-상세 프로세스는 `agents/planner.md`의 "Worktree 정리" 섹션 참조.
 
 ## 에이전트 호출 규칙
 
@@ -307,7 +235,6 @@ flowchart LR
 - `guides/beads-issue-guide.md`: 이슈 계층 구조 및 작성 가이드라인
 - `guides/gate-process.md`: Quality Gate 프로세스
 - `guides/tdd-workflow.md`: TDD 워크플로우
-- `guides/worktree.md`: Git Worktree 사용법
 - `guides/context-management.md`: 컨텍스트 관리
 - `guides/language-guide.md`: 언어별 코딩 가이드
 
@@ -345,10 +272,6 @@ flowchart LR
 - 테스트 통과
 - 빌드 성공
 - Reviewer 승인
-
-### Git 상태 (Worktree 사용 시)
-- 작업 브랜치 생성됨
-- Worktree 정리 완료
 
 ## 사용 예시
 
@@ -392,10 +315,6 @@ flowchart LR
 ### Gate에서 응답이 없음
 - **원인**: 에이전트 타임아웃 또는 세션 종료
 - **해결**: `--resume <epic-id>`로 재개
-
-### Worktree 충돌
-- **원인**: 이전 작업의 worktree가 남아있음
-- **해결**: `ls tree/`로 확인 후 `guides/worktree.md` 참조하여 정리
 
 ### 에이전트 호출 실패
 - **원인**: Task 도구 권한 부족 또는 모델 제한

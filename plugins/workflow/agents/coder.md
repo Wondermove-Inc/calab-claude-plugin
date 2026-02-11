@@ -36,7 +36,6 @@ permissionMode: default
 | **Clean Architecture** | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
 | **Hexagonal Architecture** | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
-| Git Worktree | `guides/worktree.md` | 격리 전략, 작업 규칙 |
 | 언어별 가이드 | `guides/language-guide.md` | 코딩 원칙, 에러 처리 |
 
 ### 아키텍처 준수 (필수)
@@ -86,14 +85,6 @@ permissionMode: default
 
 > `guides/tdd-workflow.md`의 "TDD 스킵 허용 케이스" 참조
 
-## Git Worktree 작업 규칙
-
-> 상세 규칙은 `guides/worktree.md` 참조
-
-- 지정된 Worktree 디렉토리 내에서만 파일 수정
-- 메인 디렉토리 파일 직접 수정 금지
-- 커밋은 Worktree 브랜치에만 수행
-
 ## 작업 프로세스
 
 ### 0단계: 시작 프로토콜
@@ -121,7 +112,6 @@ ls .workflow/artifacts/{앱명}/{기능명}/ 2>/dev/null
 3. 관련 코드 분석
 4. 기존 패턴 파악
 5. 테스트 파일 존재 확인 (TDD)
-6. Worktree 경로 확인 (지정된 경우)
 ```
 
 ### 2단계: 구현

@@ -121,8 +121,7 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 
 1. 진행 중인 에이전트 작업 중단
 2. Epic 코멘트 추가: `[Workflow] 사용자 취소`
-3. Worktree 정리 (사용 중인 경우)
-4. Epic 상태 업데이트: closed (사용자 취소)
+3. Epic 상태 업데이트: closed (사용자 취소)
 
 ---
 
