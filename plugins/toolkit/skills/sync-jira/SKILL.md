@@ -3,7 +3,7 @@ name: toolkit:sync-jira
 description: beads 이슈를 Jira 티켓으로 동기화합니다. 이슈 내용을 그대로 Jira에 생성하며, 부모 티켓 지정이 필수입니다.
 allowed-tools: Bash, AskUserQuestion, mcp__atlassian__jira_create_issue, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search
 disable-model-invocation: true
-argument-hint: <beads-issue-id> [--all]
+argument-hint: <beads-issue-id>
 ---
 
 # /sync-jira - beads 이슈를 Jira로 동기화
@@ -23,14 +23,20 @@ beads에서 관리하는 로컬 이슈를 Jira 티켓으로 동기화합니다.
 ```bash
 /toolkit:sync-jira <beads-issue-id>       # 단일 이슈 동기화
 /toolkit:sync-jira <id1> <id2> <id3>      # 복수 이슈 동기화
-/toolkit:sync-jira --all                  # open 상태 전체 이슈 동기화
 ```
+
+> **참고**: beads 이슈 번호를 입력하지 않으면 사용자에게 반드시 질문하여 받습니다.
 
 ## 실행 절차
 
-### Step 1: Jira 부모 티켓 확인 (필수)
+### Step 1: beads 이슈 번호 확인 (필수)
 
-사용자에게 Jira 부모 티켓 정보를 반드시 질문합니다.
+인자로 beads 이슈 번호가 전달되지 않았으면, **반드시** 사용자에게 질문하여 받습니다.
+이 단계를 건너뛰지 않습니다. 임의로 추측하거나 자동 선택하지 않습니다.
+
+### Step 2: Jira 부모 티켓 확인 (필수)
+
+사용자에게 Jira 부모 티켓 정보를 **반드시** 질문합니다.
 
 **질문 내용:**
 - Jira 부모 티켓 키 (예: `PROJ-123`) 또는 Jira 티켓 URL
@@ -42,7 +48,7 @@ beads에서 관리하는 로컬 이슈를 Jira 티켓으로 동기화합니다.
 **기본 보고자 확인 방법:**
 부모 티켓 조회(`mcp__atlassian__jira_get_issue`) 시 응답의 `reporter` 필드에서 현재 인증 사용자 정보를 참조하거나, 사용자가 별도 지정하지 않으면 Jira API의 인증 계정이 자동으로 보고자가 됩니다.
 
-### Step 2: beads 이슈 조회
+### Step 3: beads 이슈 조회
 
 ```bash
 bd show <issue-id> --json
@@ -62,10 +68,10 @@ JSON 출력에서 다음 필드를 추출합니다:
 
 **보고자(Reporter) 설정:**
 
-Step 1에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
+Step 2에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
 기본값은 Jira 인증 사용자(API 토큰 소유자)이며, 사용자가 별도 지정할 수 있습니다.
 
-### Step 3: 필드 매핑
+### Step 4: 필드 매핑
 
 #### 이슈 타입 매핑
 
@@ -93,7 +99,7 @@ Step 1에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
 | `in_progress` | In Progress |
 | `closed` | Done |
 
-### Step 4: 사용자 확인
+### Step 5: 사용자 확인
 
 동기화 전에 매핑 결과를 사용자에게 보여주고 확인을 받습니다.
 
@@ -117,21 +123,21 @@ Step 1에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
 
 사용자가 승인하면 다음 단계로 진행합니다.
 
-### Step 5: Jira 이슈 생성
+### Step 6: Jira 이슈 생성
 
 Atlassian MCP의 Jira 도구를 사용하여 이슈를 생성합니다.
 
 **생성 시 포함할 정보:**
 - **프로젝트**: 부모 티켓에서 추출한 프로젝트 키
-- **부모 티켓**: Step 1에서 받은 부모 티켓 키
+- **부모 티켓**: Step 2에서 받은 부모 티켓 키
 - **제목**: beads 이슈 제목
 - **설명**: beads 이슈 설명 (Atlassian MCP가 마크다운을 ADF로 자동 변환)
 - **이슈 타입**: 매핑된 Jira 타입
 - **우선순위**: 매핑된 Jira 우선순위
 - **라벨**: beads 라벨
-- **보고자**: Step 1에서 확인한 보고자 (기본값: Jira 인증 사용자)
+- **보고자**: Step 2에서 확인한 보고자 (기본값: Jira 인증 사용자)
 
-### Step 6: 완료 보고
+### Step 7: 완료 보고
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -144,15 +150,6 @@ Atlassian MCP의 Jira 도구를 사용하여 이슈를 생성합니다.
  상태:         생성 완료
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
-
-## --all 옵션 동작
-
-`--all` 옵션 사용 시:
-
-1. `bd list --status open --json`으로 open 상태 이슈 전체 조회
-2. 이슈 목록을 사용자에게 보여주고 동기화할 이슈 선택 확인
-3. 선택된 이슈를 순차적으로 동기화
-4. 전체 결과 요약 보고
 
 ## 복수 이슈 동기화 시 결과 요약
 

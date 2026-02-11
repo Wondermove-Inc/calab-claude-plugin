@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "2.6.0"
+    "version": "1.0.0"
   },
   "plugins": [
     {

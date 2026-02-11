@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Private](https://img.shields.io/badge/Repo-Private-orange.svg)]()
-[![Version](https://img.shields.io/badge/Version-3.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)]()
 
 > Claude Code 플러그인 모음 - 반복 작업 자동화, 코드 품질 표준화 (사내 전용)
 
@@ -12,10 +12,10 @@
 
 | 플러그인 | 설명 | 스킬 수 |
 |----------|------|----------|
-| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 + 코딩 원칙 + 코드 리뷰/커밋 | 2개 + 8 에이전트 |
-| **[toolkit](plugins/toolkit/)** | 리서치 및 문제 해결 | 6개 |
+| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 + 아키텍처 가이드 | 3개 + 9 에이전트 |
+| **[toolkit](plugins/toolkit/)** | 리서치, 문제 해결, 코드 리뷰/커밋, DB 작업 | 11개 |
 | **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads) | 3개 |
-| **[docs](plugins/docs/)** | 문서 콘텐츠 자동 생성 (Docusaurus) | 6개 |
+| **[docs](plugins/docs/)** | 문서 콘텐츠 자동 생성 (Docusaurus) | 3개 |
 
 ---
 
@@ -62,10 +62,13 @@ cd ~/workspace/calab-claude-plugin && git checkout marketplace
 | 상황 | 명령어 |
 |------|--------|
 | 새 기능 개발 | `/workflow:start [기능]` |
-| 코드 리뷰 | `/toolkit:code-review` |
-| 커밋 생성 | `/toolkit:code-commit` |
+| 워크플로우 회고 | `/workflow:compound` |
 | 기술 조사 | `/toolkit:research [주제]` |
 | 버그 원인 분석 | `/toolkit:solve [문제]` |
+| 코드 리뷰 | `/toolkit:code-review` |
+| 커밋 생성 | `/toolkit:code-commit` |
+| 이슈 생성 | `/toolkit:create-issue` |
+| DB 작업 | `/toolkit:mongodb` |
 
 각 플러그인의 상세 사용법은 해당 플러그인의 README를 참조하세요.
 

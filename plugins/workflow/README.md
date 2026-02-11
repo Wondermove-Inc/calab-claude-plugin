@@ -1,6 +1,6 @@
 # workflow 플러그인
 
-> 멀티 에이전트 오케스트레이션: 8개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우
+> 멀티 에이전트 오케스트레이션: 9개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우
 
 ---
 
@@ -8,12 +8,12 @@
 
 ```
 plugins/workflow/
-├── agents/           # 8개 에이전트 정의
+├── agents/           # 9개 에이전트 정의
 ├── guides/           # 공통 가이드
 │   ├── architecture/ # 아키텍처 가이드 (Clean, Hexagonal)
 │   └── ...           # 코딩, TDD, Gate
 ├── templates/        # 설계 문서 템플릿
-└── skills/           # 스킬 (start, help)
+└── skills/           # 스킬 (start, help, compound)
 ```
 
 ### 아키텍처 가이드
@@ -40,7 +40,7 @@ plugins/workflow/
 | 문제점 | 솔루션 |
 |--------|--------|
 | 요구사항 누락, 설계 없이 구현 | 체계적 워크플로우 + Quality Gates 검증 |
-| 혼자 모든 것 처리하는 비효율 | 8개 전문 에이전트 분업 |
+| 혼자 모든 것 처리하는 비효율 | 9개 전문 에이전트 분업 |
 | 리뷰 없이 배포되는 품질 문제 | Gate 3 최종 검증 + Reviewer 자동 리뷰 |
 | AI가 가정하고 구현하는 문제 | Interviewer 심층 인터뷰로 요구사항 명확화 |
 | 일관성 없는 코드 품질 | 통합 코딩 가이드 (SOLID, 언어별 원칙) |
@@ -52,6 +52,7 @@ plugins/workflow/
 | 명령어 | 설명 |
 |--------|------|
 | `/workflow:start <요청>` | 멀티 에이전트 워크플로우 시작 |
+| `/workflow:compound` | 완료된 워크플로우 회고 분석 |
 | `/workflow:help` | 도움말 표시 |
 
 > **참고**: 코드 리뷰와 커밋은 `/toolkit:code-review`, `/toolkit:code-commit`으로 이동했습니다.
@@ -70,13 +71,14 @@ plugins/workflow/
 | `tester` | 테스트 작성 + 커버리지 | sonnet | 🟡 |
 | `reviewer` | 코드/설계 리뷰 | opus | 🔴 |
 | `writer` | 문서 품질/일관성 보장 | sonnet | 🟠 |
+| `compound` | 워크플로우 회고 분석 및 개선 | opus | 🟤 |
 
 ### 모델 선택 기준
 
 | 기준 | opus | sonnet |
 |------|------|--------|
 | 용도 | 복잡한 판단, 설계, 리뷰 | 명확한 지시에 따른 구현 |
-| 에이전트 | planner, interviewer, architect, designer, reviewer | coder, tester, writer |
+| 에이전트 | planner, interviewer, architect, designer, reviewer, compound | coder, tester, writer |
 | 비용 | 높음 | opus 대비 약 1/15 |
 | 선택 근거 | 다단계 추론, 아키텍처 결정, 품질 평가 등 높은 인지 능력 필요 | 명확한 설계/테스트 케이스 기반 코드 생성에 충분 |
 

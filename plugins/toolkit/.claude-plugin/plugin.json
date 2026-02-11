@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "2.4.0",
+  "version": "1.0.0",
   "description": "리서치, 문제 해결, 이슈 생성, 코드 리뷰/커밋, DB 작업, Jira 동기화 도구",
   "author": {
     "name": "wondermove lab",

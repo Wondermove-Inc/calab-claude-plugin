@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.4.0",
+  "version": "1.0.0",
   "description": "멀티 에이전트 오케스트레이션 - 9개 전문 에이전트와 Quality Gates를 통한 체계적인 개발 워크플로우.",
   "author": {
     "name": "wondermove lab",

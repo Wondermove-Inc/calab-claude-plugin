@@ -56,6 +56,13 @@
 | `/toolkit:code-commit` | "커밋해줘" | 변경사항 분석 후 커밋 메시지 생성 |
 | `/toolkit:code-commit [힌트]` | "인증 수정 커밋해줘" | 힌트 기반 커밋 메시지 생성 |
 
+### 이슈 관리
+
+| 명령어 | 자연어 | 설명 |
+|--------|--------|------|
+| `/toolkit:create-issue` | "이슈 만들어줘" | beads 이슈 생성 |
+| `/toolkit:sync-jira` | "Jira 동기화해줘" | Jira 이슈와 동기화 |
+
 ---
 
 ## 주요 기능 상세
@@ -220,6 +227,8 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
 | `mongodb` | DB 작업 요청 시 | 인터뷰 기반 MongoDB 쿼리 실행 |
 | `code-review` | 코드 리뷰 요청 시 | 변경사항 분석 및 개선점 제안 |
 | `code-commit` | 커밋 요청 시 | 변경사항 분석 및 커밋 메시지 생성 |
+| `create-issue` | 이슈 생성 요청 시 | beads 이슈 자동 생성 |
+| `sync-jira` | Jira 동기화 요청 시 | Jira 이슈 동기화 |
 
 **자동 적용 내용:**
 - "~에 대해 알아봐줘" → research 스킬 활성화
@@ -285,6 +294,8 @@ Why 5: 왜 커넥션이 반환되지 않았는가?
   - `mongodb/` - MongoDB 데이터베이스 작업
   - `code-review/` - 코드 리뷰 및 개선점 제안
   - `code-commit/` - 변경사항 분석 및 커밋
+  - `create-issue/` - 이슈 생성
+  - `sync-jira/` - Jira 이슈 동기화
   - `help/` - 플러그인 도움말
 - **skills/solve/methods/**:
   - five-whys.md
