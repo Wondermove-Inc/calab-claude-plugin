@@ -138,9 +138,12 @@ bd comments add <epic-id> "[Workflow] 시작"
 > **모든 워크플로우에서 무조건 생성**: Epic/Task 이슈 생성 직후, 워크플로우 유형(단순/복잡)에 관계없이 반드시 Progress 파일을 생성합니다.
 
 ```bash
-mkdir -p .workflow/progress
+mkdir -p .workflow/progress .workflow/scripts
 # .workflow/progress/<epic-id>.md 생성 (형식: guides/context-management.md 참조)
 # 진행 상태: 실행 계획의 전체 에이전트를 - [ ] 체크박스로 나열
+
+# Progress 유틸리티 스크립트 복사 (최초 1회)
+cp ~/.claude/plugins/cache/calab-marketplace/workflow/*/scripts/update-progress.sh .workflow/scripts/ 2>/dev/null || true
 ```
 
 ### 3단계: Gate 0 승인 (실행 계획 확인)
@@ -188,7 +191,12 @@ Epic: <epic-id> (bd show <epic-id>로 상세 확인)
 ```bash
 bd update <subtask-id> --status in_progress
 bd comments add <epic-id> "[<에이전트명>] 시작 - <subtask-id>"
-# Progress 파일: 해당 에이전트를 - [ ] **에이전트명** (굵게, 진행중) 으로 업데이트
+```
+
+**Progress 파일 업데이트** (반드시 실행):
+
+```bash
+bash .workflow/scripts/update-progress.sh start <epic-id> <에이전트명>
 ```
 
 #### 에이전트 호출
@@ -210,12 +218,15 @@ bd close <subtask-id>
 
 # 2. Epic 코멘트 기록
 bd comments add <epic-id> "[<에이전트명>] 완료 - <산출물>"
+```
 
-# 3. Progress 파일 업데이트
-#    - 완료한 에이전트: - [ ] → - [x] 에이전트명 - 산출물 (시각)
-#    - 다음 에이전트: - [ ] → - [ ] **에이전트명** (굵게, 진행중 표시)
-#    - "최근 작업" 상위에 완료 기록 추가 (최신 3건 유지)
-#    - "최종 업데이트" 시각 갱신
+**3. Progress 파일 업데이트** (반드시 실행):
+
+```bash
+# 다음 에이전트가 있는 경우
+bash .workflow/scripts/update-progress.sh complete <epic-id> <에이전트명> <산출물> <다음에이전트명>
+# 마지막 에이전트인 경우
+bash .workflow/scripts/update-progress.sh complete <epic-id> <에이전트명> <산출물>
 ```
 
 #### Gate 필요 시
@@ -234,6 +245,10 @@ bd comments add <epic-id> "[Gate N] 승인됨"  # 또는 "[Gate N] 거부 - <사
 
 에이전트가 중간 체크포인트를 보고한 경우 (`[Checkpoint] <에이전트명> <진행률>% - <현재상태>`) Progress 파일의 "진행중" 항목을 갱신합니다.
 
+```bash
+bash .workflow/scripts/update-progress.sh checkpoint <epic-id> <에이전트명> <진행률> <현재상태>
+```
+
 #### 에이전트 실패 시
 
 ```bash
@@ -251,12 +266,13 @@ bd comments add <epic-id> "[<에이전트명>] 실패 - 수동 개입 필요"
 
 #### 정상 완료 시
 
-```bash
-# 1. Progress 파일 최종 업데이트
-#    - 모든 에이전트 체크박스를 - [x] 로 변경
-#    - 다음 세션 지침: "워크플로우 완료"
-#    - 최종 업데이트 시각 갱신
+**1. Progress 파일 최종 업데이트** (반드시 실행):
 
+```bash
+bash .workflow/scripts/update-progress.sh finish <epic-id>
+```
+
+```bash
 # 2. Epic 완료 코멘트
 bd comments add <epic-id> "[Workflow] 완료 - <에이전트 목록>, 산출물: <파일 목록>"
 
@@ -272,8 +288,13 @@ bd close <epic-id>
 
 #### 사용자 취소 시
 
+**1. Progress 파일 중단 지점 기록** (반드시 실행):
+
 ```bash
-# 1. Progress 파일: 중단 지점 기록
+bash .workflow/scripts/update-progress.sh cancel <epic-id>
+```
+
+```bash
 # 2. Epic 코멘트
 bd comments add <epic-id> "[Workflow] 취소됨"
 # 3. Epic close
@@ -282,8 +303,13 @@ bd close <epic-id>
 
 #### 에이전트 실패로 중단 시
 
+**1. Progress 파일 실패 기록** (반드시 실행):
+
 ```bash
-# 1. Progress 파일: 실패 지점, 원인, "알려진 이슈"에 추가
+bash .workflow/scripts/update-progress.sh fail <epic-id> <에이전트명> "<실패 원인>"
+```
+
+```bash
 # 2. Epic 코멘트
 bd comments add <epic-id> "[Workflow] 실패 - 수동 개입 필요"
 # 3. Epic blocked 상태 유지 (재개 가능)
