@@ -132,7 +132,7 @@ format_usage_limits() {
     if [ "$five_int" -lt 50 ]; then
         five_color="\033[32m"  # Green
     elif [ "$five_int" -lt 80 ]; then
-        five_color="\033[32m"  # Yellow
+        five_color="\033[33m"  # Yellow
     else
         five_color="\033[31m"  # Red
     fi
@@ -195,7 +195,7 @@ create_gauge() {
     if [ $pct -lt 50 ]; then
         color="\033[32m"  # Green
     elif [ $pct -lt 70 ]; then
-        color="\033[32m"  # Yellow
+        color="\033[33m"  # Yellow
     else
         color="\033[31m"  # Red
     fi
@@ -287,7 +287,7 @@ fi
 
 # Add folder and git branch
 if [ -n "$git_branch" ]; then
-    printf " | %s | [32m[0m %s\n" "$folder_display" "$git_branch"
+    printf " | %s | \033[32mgit:(%s)\033[0m\n" "$folder_display" "$git_branch"
 else
     printf " | %s\n" "$folder_display"
 fi
