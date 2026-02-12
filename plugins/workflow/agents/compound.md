@@ -136,7 +136,58 @@ PROJECT_SESSIONS=~/.claude/projects/<프로젝트경로>
 grep -l "<epic-id>" "$PROJECT_SESSIONS"/*.jsonl 2>/dev/null
 ```
 
-#### 1-2. 핵심 분석 포인트
+#### 1-2. 세션 대화 추출 및 분석
+
+```bash
+# 세션의 사용자/어시스턴트 메시지 요약 추출
+# NOTE: Claude Code 세션 JSONL 포맷(2025.05 기준). 포맷 변경 시 스크립트 업데이트 필요.
+python3 -c "
+import sys, json
+
+with open(sys.argv[1]) as f:
+    for line in f:
+        try:
+            obj = json.loads(line)
+            if not isinstance(obj, dict):
+                continue
+            t = obj.get('type')
+            if t == 'summary':
+                print(f\"[SUMMARY] {obj.get('summary','')}\")
+            elif t == 'user' and not obj.get('isMeta'):
+                msg = obj.get('message',{})
+                content = msg.get('content','')
+                if isinstance(content, str):
+                    text = content[:200]
+                elif isinstance(content, list):
+                    texts = [i.get('text','')[:200] for i in content if isinstance(i,dict) and i.get('type')=='text']
+                    text = ' | '.join(texts)
+                else:
+                    text = ''
+                if text:
+                    print(f\"[USER {obj.get('timestamp','')}] {text}\")
+            elif t == 'assistant':
+                msg = obj.get('message',{})
+                content = msg.get('content','')
+                tools = []
+                texts = []
+                if isinstance(content, list):
+                    for item in content:
+                        if isinstance(item, dict):
+                            if item.get('type') == 'tool_use':
+                                tools.append(item.get('name',''))
+                            elif item.get('type') == 'text':
+                                texts.append(item.get('text','')[:150])
+                if tools:
+                    print(f\"[ASSISTANT {obj.get('timestamp','')}] tools={tools}\")
+                if texts:
+                    for t_text in texts:
+                        print(f\"[ASSISTANT {obj.get('timestamp','')}] {t_text}\")
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            print(f'[WARN] 파싱 실패 (line skipped): {e}', file=sys.stderr)
+" <세션파일.jsonl>
+```
+
+#### 1-3. 핵심 분석 포인트
 
 | 신호 | 의미 | 개선 방향 |
 |------|------|----------|

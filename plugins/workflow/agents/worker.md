@@ -180,8 +180,10 @@ python -m py_compile {파일}
 
 ```bash
 bd update <worker-subtask-id> --description "<위 내용>"
-bd close <worker-subtask-id>
+bd comments add <worker-subtask-id> "[Worker] 완료"
 ```
+
+> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Review Gate 승인 후 오케스트레이터가 일괄 처리합니다.
 
 ## 리뷰 피드백 반영 모드
 

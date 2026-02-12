@@ -109,7 +109,14 @@ Task (subagent_type: workflow:planner, model: opus, run_in_background: true):
 "Epic bd-<epic-id> 작업 수행. bd show로 상세 확인."
 ```
 
-Planner 완료 후 (`완료: <planner-subtask-id>`):
+완료 대기:
+```
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 결과 확인 후 다음 단계
+→ timeout: 사용자에게 "Planner 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+```
+
+완료 시:
 ```bash
 bd comments add <epic-id> "[Planner] 완료"
 ```
@@ -143,7 +150,14 @@ Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
 "Epic bd-<epic-id> 작업 수행. bd show로 상세 확인."
 ```
 
-Worker 완료 후 (`완료: <worker-subtask-id> (N개 파일, 테스트 N개 PASS, 빌드 성공)`):
+완료 대기:
+```
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 결과 확인 후 다음 단계
+→ timeout: 사용자에게 "Worker 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+```
+
+완료 시:
 ```bash
 bd comments add <epic-id> "[Worker] 완료"
 ```
@@ -159,10 +173,16 @@ Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
 
 ### 5단계: Review Gate
 
-Reviewer 완료 후 **항상** `AskUserQuestion`으로 사용자 판단을 요청합니다:
+완료 대기:
+```
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 결과 확인 후 다음 단계
+→ timeout: 사용자에게 "Reviewer 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+```
+
+완료 시 **항상** `AskUserQuestion`으로 사용자 판단을 요청합니다:
 
 ```bash
-bd close <reviewer-subtask-id>
 bd comments add <epic-id> "[Reviewer] 완료"
 ```
 
@@ -197,19 +217,31 @@ Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
 "bd-<worker-subtask-id> 재작업. 리뷰 피드백: bd show <reviewer-subtask-id> 참조."
 ```
 
+```
+# 3. Worker 완료 대기
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 다음 단계
+→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
+```
+
 ```bash
-# 3. Worker 완료 후 → Reviewer 이슈 reopen
+# 4. Worker 완료 → Reviewer 이슈 reopen
 bd update <reviewer-subtask-id> --status in_progress
 bd comments add <reviewer-subtask-id> "[Rework] 수정사항 검증 (N차)"
 ```
 
 ```
-# 4. Reviewer 호출 (기존 이슈 ID 전달)
+# 5. Reviewer 호출 (기존 이슈 ID 전달)
 Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
 "bd-<reviewer-subtask-id> 재리뷰. bd show로 상세 확인."
 ```
 
-→ Reviewer 완료 후 **다시 5단계(Review Gate)로 복귀**
+```
+# 6. Reviewer 완료 대기
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 5단계(Review Gate)로 복귀
+→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
+```
 
 #### Reviewer 재리뷰 선택 시
 
@@ -227,12 +259,24 @@ Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
 "bd-<reviewer-subtask-id> 재리뷰. bd show로 상세 확인."
 ```
 
-→ Reviewer 완료 후 **다시 5단계(Review Gate)로 복귀**
+```
+# 3. Reviewer 완료 대기
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 5단계(Review Gate)로 복귀
+→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
+```
 
-### 6단계: 워크플로우 완료
+### 6단계: 워크플로우 완료 — 티켓 일괄 close
+
+Review Gate 승인 시, 모든 Sub-task와 Epic을 일괄 close합니다.
 
 ```bash
-# Epic 완료
+# 모든 Sub-task close
+bd close <planner-subtask-id>
+bd close <worker-subtask-id>
+bd close <reviewer-subtask-id>
+
+# Epic close
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
@@ -280,8 +324,25 @@ bd comments <epic-id>
 ## 에이전트 호출 규칙
 
 - 모든 Task 호출 시 `run_in_background: true` 사용
-- `TaskOutput` 도구로 결과 확인 (timeout: 300000)
 - 에이전트 호출 시 이슈 ID만 전달 (토큰 효율화)
+
+### 완료 대기 패턴
+
+```
+# 1. 에이전트 호출 (background)
+Task (run_in_background: true) → task_id 획득
+
+# 2. 완료 대기 (최대 10분, 완료 시 즉시 반환)
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 결과 처리, 다음 단계 진행
+→ timeout: 사용자에게 "{에이전트명} 에이전트가 10분 내 완료되지 않았습니다" 알림
+          AskUserQuestion으로 "재대기 / 취소" 선택 요청
+```
+
+**timeout 처리**:
+- timeout 발생 시 반드시 사용자에게 알림
+- `AskUserQuestion`으로 "재대기(10분 추가)" 또는 "취소" 선택
+- 재대기 선택 시 동일한 task_id로 `TaskOutput` 재호출
 
 ## 토큰 효율성
 
@@ -302,6 +363,7 @@ flowchart LR
 | Review Gate: Worker 재작업 | Worker → Reviewer → Review Gate 복귀 |
 | Review Gate: Reviewer 재리뷰 | Reviewer → Review Gate 복귀 |
 | 에이전트 실패 | 최대 3회 재시도, 3회 실패 → 사용자 보고 |
+| 대기 timeout (10분) | 사용자에게 알림 → 재대기 또는 취소 선택 |
 | 사용자 취소 | Epic 코멘트 기록 후 close |
 
 ## 참조 문서

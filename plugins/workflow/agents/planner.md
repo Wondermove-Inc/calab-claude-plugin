@@ -199,8 +199,10 @@ internal/
 
 ```bash
 bd update <plan-subtask-id> --description "<5단계 내용>"
-bd close <plan-subtask-id>
+bd comments add <plan-subtask-id> "[Planner] 완료"
 ```
+
+> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Review Gate 승인 후 오케스트레이터가 일괄 처리합니다.
 
 ## 스킵 판단 기준
 

@@ -225,8 +225,10 @@ bd show <worker-subtask-id>
 #### 승인 시
 ```bash
 bd update <reviewer-subtask-id> --description "리뷰 승인. 품질 N/10, Critical 0건, Major N건."
-bd close <reviewer-subtask-id>
+bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (승인)"
 ```
+
+> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Review Gate 승인 후 오케스트레이터가 일괄 처리합니다.
 
 #### 수정필요 시
 
@@ -245,6 +247,7 @@ bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
 수정 후 재리뷰 필요.
 EOFD
 )"
+bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요)"
 ```
 
 ## 출력 형식

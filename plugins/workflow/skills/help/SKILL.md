@@ -38,22 +38,22 @@ Plan → Work → Review → Compound 루프 기반 멀티 에이전트 워크�
 ┌─────────────┐
 │   Worker    │  ← TDD (RED→GREEN→REFACTOR)
 └─────────────┘
-    ↓ Work Gate: 빌드 + 테스트 검증
+    ↓ (자동 전환)
 ┌─────────────┐
 │  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
 └─────────────┘
-    ↓ Review Gate: 승인/수정필요
+    ↓ Review Gate: 사용자 판단
     │
     ├─ 승인 → 완료
-    └─ 수정필요 → Worker → Reviewer (자동 반복, 최대 3회)
+    ├─ Worker 재작업 → Worker → Reviewer → Review Gate
+    └─ Reviewer 재리뷰 → Reviewer → Review Gate
 ```
 
-## Quality Gates (3개)
+## Quality Gates (2개)
 
 | Gate | 검증 대상 | 시점 |
 |------|----------|------|
 | Plan Gate | 요구사항 + 설계 (Planner 이슈) | Planner 완료 후 |
-| Work Gate | 빌드 + 테스트 | Worker 완료 후 |
 | Review Gate | 코드 품질 (Reviewer 이슈) | Reviewer 완료 후 |
 
 ## 산출물
@@ -72,7 +72,7 @@ Epic (Planner): 요구사항, 기능 스펙, 설계
 ```
 /workflow:start 사용자 알림 기능 추가
 ```
-Planner(이슈) → Plan Gate → Worker(TDD) → Work Gate → Reviewer(이슈) → Review Gate → 완료
+Planner(이슈) → Plan Gate → Worker(TDD) → Reviewer(이슈) → Review Gate → 완료
 
 ### 버그 수정
 ```

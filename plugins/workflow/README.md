@@ -59,24 +59,24 @@ plugins/workflow/
 ┌─────────────┐
 │   Worker    │  ← TDD (RED→GREEN→REFACTOR)
 └─────────────┘
-    ↓ Work Gate: 빌드 + 테스트 검증
+    ↓ (자동 전환)
 ┌─────────────┐
 │  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
 └─────────────┘
-    ↓ Review Gate: 승인/수정필요
+    ↓ Review Gate: 사용자 판단
     │
     ├─ 승인 → 완료
-    └─ 수정필요 → Worker → Reviewer (자동 반복, 최대 3회)
+    ├─ Worker 재작업 → Worker → Reviewer → Review Gate
+    └─ Reviewer 재리뷰 → Reviewer → Review Gate
 ```
 
 ---
 
-## Quality Gates (3개)
+## Quality Gates (2개)
 
 | Gate | 검증 대상 | 참조 |
 |------|----------|------|
 | Plan Gate | 요구사항 + 설계 | Planner 이슈 |
-| Work Gate | 빌드 + 테스트 | Worker 이슈 |
 | Review Gate | 코드 품질 | Reviewer 이슈 |
 
 ---
@@ -149,6 +149,5 @@ Epic: [epic] 기능명
 |--------|------|------|
 | 코딩 가이드 | `guides/language-guide.md` | SOLID, DRY, KISS + Go, TypeScript, React, Python |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | RED-GREEN-REFACTOR 사이클 |
-| Quality Gate | `guides/gate-process.md` | Plan/Work/Review Gate 프로세스 |
+| Quality Gate | `guides/gate-process.md` | Plan/Review Gate 프로세스 |
 | 이슈 작성 | `guides/beads-issue-guide.md` | beads 이슈 계층 구조 및 템플릿 |
-| 컨텍스트 관리 | `guides/context-management.md` | 에이전트 상태 관리 전략 |
