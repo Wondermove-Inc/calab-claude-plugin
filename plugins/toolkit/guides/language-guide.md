@@ -1,8 +1,6 @@
 # 코드 품질 가이드 (Code Quality Guide)
 
 > 이 문서는 toolkit:code-review 스킬이 참조합니다.
->
-> **역할 분리**: 아키텍처/설계는 [workflow 가이드](../../workflow/guides/language-guide.md) 참조
 
 ---
 
