@@ -1,7 +1,7 @@
 ---
 name: toolkit:help
 description: Toolkit 플러그인 도움말을 표시합니다. 모든 명령어와 사용 예시를 확인할 수 있습니다.
-allowed-tools: Read
+allowed-tools: Read, Glob
 disable-model-invocation: true
 ---
 

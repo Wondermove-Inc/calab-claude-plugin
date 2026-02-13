@@ -1,6 +1,7 @@
 ---
 name: workflow:help
 description: workflow 플러그인의 명령어와 에이전트 사용법을 안내합니다.
+allowed-tools: Read
 disable-model-invocation: true
 ---
 

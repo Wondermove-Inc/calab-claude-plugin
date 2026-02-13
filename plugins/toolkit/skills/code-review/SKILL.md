@@ -1,6 +1,7 @@
 ---
 name: toolkit:code-review
 description: 코드 품질(보안/성능/언어별 권장사항)을 검증하고 개선점을 제안합니다
+allowed-tools: Bash, Read, Grep, Glob
 disable-model-invocation: true
 ---
 

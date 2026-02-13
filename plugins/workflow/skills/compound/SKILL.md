@@ -1,6 +1,7 @@
 ---
 name: workflow:compound
 description: 최근 1주일간 완료된 워크플로우를 전체 분석하여 성공/개선 패턴을 추출하고 시스템 개선안을 제안합니다.
+allowed-tools: Bash, Task, TaskOutput, Read
 disable-model-invocation: true
 ---
 

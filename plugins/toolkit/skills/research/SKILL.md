@@ -1,7 +1,7 @@
 ---
 name: toolkit:research
 description: 심층 리서치를 수행합니다. 주제에 대해 5-10회 검색 후 핵심 요약을 제공합니다. 리서치, 조사, 알아봐 요청 시 사용합니다.
-allowed-tools: Read, Write, WebSearch, WebFetch, Glob
+allowed-tools: Read, Write, WebSearch, WebFetch, Glob, mcp__tavily__tavily_search, mcp__tavily__tavily_extract
 disable-model-invocation: true
 argument-hint: <주제> [--quick | --deep]
 ---

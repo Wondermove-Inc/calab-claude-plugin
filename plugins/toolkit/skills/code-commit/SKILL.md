@@ -1,6 +1,7 @@
 ---
 name: toolkit:code-commit
 description: 현재 변경사항을 분석하고 커밋 메시지를 생성합니다
+allowed-tools: Bash, Read, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -20,8 +21,11 @@ disable-model-invocation: true
    - 테스트 코드 포함 여부 확인
 
 3. **Jira ticket key 확인**
-   - 사용자에게 Jira ticket key를 반드시 입력받음
-   - 인자로 전달되지 않았으면 사용자에게 질문하여 받음
+   - 인자로 전달되지 않은 경우 `AskUserQuestion` 툴을 사용하여 Jira ticket key 입력받음
+   - 질문 형식:
+     - question: "이 커밋과 연관된 Jira 티켓 키를 입력해주세요"
+     - header: "Jira 티켓"
+     - 옵션 제공 불필요 (사용자가 직접 입력)
 
 4. **커밋 메시지 생성**
    - 메시지 형식:
@@ -46,8 +50,12 @@ disable-model-invocation: true
      - `chore`: 기타 변경사항
 
 5. **사용자 확인 및 커밋**
-   - 생성된 커밋 메시지를 사용자에게 보여주고 확인 요청
-   - 승인 시 `git add` 및 `git commit` 실행
+   - 생성된 커밋 메시지를 사용자에게 보여주고 `AskUserQuestion` 툴로 확인 요청
+   - 질문 형식:
+     - question: "이 커밋 메시지로 커밋하시겠습니까?"
+     - header: "커밋 확인"
+     - options: [{"label": "예", "description": "커밋 진행"}, {"label": "아니오", "description": "취소"}]
+   - "예" 선택 시 `git add` 및 `git commit` 실행
 
 ## 사용 예시
 

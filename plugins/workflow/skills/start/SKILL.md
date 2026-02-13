@@ -1,6 +1,7 @@
 ---
 name: workflow:start
 description: 워크플로우를 시작합니다. start 스킬이 오케스트레이터로서 Planner→Worker→Reviewer 흐름을 관리합니다.
+allowed-tools: Bash, Task, TaskOutput, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -131,8 +132,23 @@ bd comments add <epic-id> "[Planner] 완료"
 
 ### 2단계: Plan Gate
 
-`AskUserQuestion`으로 계획 승인 요청:
+`AskUserQuestion` 툴을 사용하여 계획 승인을 요청합니다.
 
+**질문 형식:**
+
+```
+question: "Planner가 작성한 계획을 검토해주세요"
+header: "Plan Gate"
+options:
+  - label: "승인"
+    description: "Worker 단계로 진행"
+  - label: "수정 필요"
+    description: "Planner 재호출"
+  - label: "취소"
+    description: "작업 중단"
+```
+
+**질문 전 요약 표시:**
 ```
 ## Plan 검토
 
@@ -142,11 +158,6 @@ bd comments add <epic-id> "[Planner] 완료"
 - 유형: [작업 유형]
 - 복잡도: [복잡도]
 - 주요 변경: [요약]
-
-옵션:
-- "승인": Worker 단계로 진행
-- "수정 필요": Planner 재호출
-- "취소": 작업 중단
 ```
 
 ### 3단계: Worker 호출
@@ -268,8 +279,22 @@ bd comments add <epic-id> "[Reviewer] 승인 - Completion Gate 진입"
 
 ### 6단계: Completion Gate — 최종 완료 검토
 
-Reviewer 승인 시 사용자에게 최종 완료 검토를 요청합니다.
+Reviewer 승인 시 `AskUserQuestion` 툴을 사용하여 최종 완료 검토를 요청합니다.
 
+**질문 형식:**
+```
+question: "워크플로우를 완료하시겠습니까?"
+header: "Completion Gate"
+options:
+  - label: "완료"
+    description: "워크플로우 종료 및 모든 이슈 close"
+  - label: "수정 필요"
+    description: "Reviewer가 수정 계획 업데이트 → Worker 재작업"
+  - label: "취소"
+    description: "작업 중단"
+```
+
+**질문 전 요약 표시:**
 ```
 ## 워크플로우 완료 검토
 
@@ -278,22 +303,21 @@ Reviewer 승인 시 사용자에게 최종 완료 검토를 요청합니다.
 - Critical: 0건, Major: N건
 - 자동 반복: ${iteration_count}/3회
 - 리뷰 상세: bd show <reviewer-subtask-id>
-
-옵션:
-- "완료": 워크플로우 종료 및 모든 이슈 close
-- "수정 필요": Reviewer가 수정 계획 업데이트 → Worker 재작업
-- "취소": 작업 중단
 ```
 
-**3회 자동 반복 도달 시 추가 경고**:
+**3회 자동 반복 도달 시 추가 경고 및 질문 형식:**
 ```
-⚠️ 자동 반복 최대 도달 (3/3회) - 품질 재검토 권장
-
-추가 옵션:
-- "완료": 현재 상태로 워크플로우 종료
-- "수정 필요 (재시도)": 자동 반복 카운터 초기화 후 Worker 재작업 (최대 3회)
-- "수정 필요 (1회)": 카운터 초기화 없이 Worker 1회 재작업
-- "취소": 작업 중단
+question: "⚠️ 자동 반복 최대 도달 (3/3회) - 품질 재검토 후 선택해주세요"
+header: "Completion Gate"
+options:
+  - label: "완료"
+    description: "현재 상태로 워크플로우 종료"
+  - label: "수정 필요 (재시도)"
+    description: "자동 반복 카운터 초기화 후 Worker 재작업 (최대 3회)"
+  - label: "수정 필요 (1회)"
+    description: "카운터 초기화 없이 Worker 1회 재작업"
+  - label: "취소"
+    description: "작업 중단"
 ```
 
 #### 완료 선택 시
@@ -444,9 +468,18 @@ TaskOutput(task_id, block: true, timeout: 600000)
           AskUserQuestion으로 "재대기 / 취소" 선택 요청
 ```
 
-**timeout 처리**:
+**timeout 처리 및 질문 형식:**
 - timeout 발생 시 반드시 사용자에게 알림
-- `AskUserQuestion`으로 "재대기(10분 추가)" 또는 "취소" 선택
+- `AskUserQuestion` 툴로 선택 요청:
+```
+question: "{에이전트명} 에이전트가 10분 내 완료되지 않았습니다. 어떻게 하시겠습니까?"
+header: "Timeout"
+options:
+  - label: "재대기 (10분 추가)"
+    description: "계속 대기"
+  - label: "취소"
+    description: "작업 중단"
+```
 - 재대기 선택 시 동일한 task_id로 `TaskOutput` 재호출
 
 ## 토큰 효율성
