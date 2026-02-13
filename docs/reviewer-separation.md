@@ -5,7 +5,7 @@
 두 리뷰어의 역할을 명확히 분리하여 중복을 제거하고 효율성을 극대화합니다.
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'16px'}, 'elk': {'mergeEdges': true}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'16px', 'primaryColor':'#fff', 'primaryTextColor':'#000', 'primaryBorderColor':'#333', 'lineColor':'#666', 'secondaryColor':'#f4f4f4', 'tertiaryColor':'#fff'}, 'elk': {'mergeEdges': true}}}%%
 flowchart LR
     Code[코드 변경사항]
 
@@ -18,9 +18,11 @@ flowchart LR
     WR -->|승인/수정필요| Gate[Completion Gate]
     TR -->|리포트만| Dev[개발자]
 
-    style WR fill:#ff9999
-    style TR fill:#99ccff
-    style Gate fill:#99ff99
+    style WR fill:#ff9999,stroke:#666,color:#000
+    style TR fill:#99ccff,stroke:#666,color:#000
+    style Gate fill:#99ff99,stroke:#666,color:#000
+    style Code stroke:#666,color:#000
+    style Dev stroke:#666,color:#000
 ```
 
 ---
@@ -230,7 +232,7 @@ bandit -r .
 ### 시나리오 1: 워크플로우 내 개발
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}, 'elk': {'mergeEdges': true}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px', 'actorBkg':'#f4f4f4', 'actorBorder':'#666', 'actorTextColor':'#000', 'actorLineColor':'#666', 'signalColor':'#666', 'signalTextColor':'#000', 'labelBoxBkgColor':'#f4f4f4', 'labelBoxBorderColor':'#666', 'labelTextColor':'#000', 'loopTextColor':'#000', 'noteBkgColor':'#fff9e6', 'noteBorderColor':'#666', 'noteTextColor':'#000', 'activationBkgColor':'#ddd', 'activationBorderColor':'#666', 'sequenceNumberColor':'#000'}, 'elk': {'mergeEdges': true}}}%%
 sequenceDiagram
     participant Dev as 개발자
     participant Worker as workflow:worker
@@ -279,7 +281,7 @@ sequenceDiagram
 ### 시나리오 3: 병행 사용 (권장)
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}, 'elk': {'mergeEdges': true}}}%%
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px', 'primaryColor':'#fff', 'primaryTextColor':'#000', 'primaryBorderColor':'#333', 'lineColor':'#666', 'secondaryColor':'#f4f4f4', 'tertiaryColor':'#fff'}, 'elk': {'mergeEdges': true}}}%%
 flowchart TD
     A[구현 완료] --> B{개발 중?}
 
@@ -298,9 +300,17 @@ flowchart TD
     I -->|수정필요| K[Worker 재작업]
     K --> G
 
-    style C fill:#99ccff
-    style G fill:#ff9999
-    style J fill:#99ff99
+    style A stroke:#666,color:#000
+    style B stroke:#666,color:#000
+    style C fill:#99ccff,stroke:#666,color:#000
+    style D stroke:#666,color:#000
+    style E stroke:#666,color:#000
+    style F stroke:#666,color:#000
+    style G fill:#ff9999,stroke:#666,color:#000
+    style H stroke:#666,color:#000
+    style I stroke:#666,color:#000
+    style J fill:#99ff99,stroke:#666,color:#000
+    style K stroke:#666,color:#000
 ```
 
 **효과**:
