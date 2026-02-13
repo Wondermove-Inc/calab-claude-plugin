@@ -200,8 +200,8 @@ bd show <reviewer-subtask-id> | grep "결정:"
 # Epic 생성 시 초기화
 max_iterations=3
 
-# 현재 반복 횟수 확인 (코멘트 파싱)
-iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
+# 현재 반복 횟수 확인 (코멘트 파싱, 실패 시 0으로 fallback)
+iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복" || echo "0")
 ```
 
 #### Case 1: 수정필요 판정 (자동 반복)

@@ -1,12 +1,12 @@
 ---
 name: toolkit:code-review
-description: 최근 변경사항을 리뷰하고 개선점을 제안합니다
+description: 코드 품질(보안/성능/언어별 권장사항)을 검증하고 개선점을 제안합니다
 disable-model-invocation: true
 ---
 
 # Code Review Command
 
-최근 변경된 코드를 분석하여 보안, 정확성, 성능, 유지보수성을 검토하고 개선점을 제안합니다.
+변경된 코드를 분석하여 **보안, 성능, 코드 품질, 언어별 권장사항**을 검토하고 개선점을 제안합니다.
 
 ## 작업 순서
 
@@ -30,17 +30,29 @@ disable-model-invocation: true
 - Quality Score: X/10
 - Issues Found: X (Critical: X, Warning: X, Suggestion: X)
 
-### Critical Issues
-- 반드시 수정 필요 (보안 취약점, 정확성 결함)
+### Critical Issues (보안 취약점)
+| # | 파일 | 내용 | 수정 방안 |
+|---|------|------|----------|
+| 1 | path/to/file:line | [취약점 유형] | [구체적 수정 방안] |
 
-### Warnings
-- 머지 전 수정 권장 (성능 문제, 버그 가능성)
+### Warnings (성능/에러 처리)
+| # | 파일 | 내용 | 수정 방안 |
+|---|------|------|----------|
+| 1 | path/to/file:line | [문제] | [구체적 수정 방안] |
 
-### Suggestions
-- 선택적 개선 (유지보수성, 스타일)
+### Suggestions (코드 품질)
+| # | 파일 | 내용 | 수정 방안 |
+|---|------|------|----------|
+| 1 | path/to/file:line | [개선점] | [제안] |
+
+### Language-Specific Issues
+- **Go**: [발견 사항]
+- **TypeScript**: [발견 사항]
+- **React**: [발견 사항]
+- **Python**: [발견 사항]
 
 ### Good Points
-- 잘 작성된 부분들
+- [잘 작성된 부분들]
 
 ### Recommendations
 - 전반적인 개선 방향
@@ -56,20 +68,27 @@ disable-model-invocation: true
 
 ---
 
+## 참조 가이드
+
+- **언어별 가이드**: `guides/language-guide.md` - 코드 품질, 보안, 성능 기준
+
 ## 리뷰 원칙
 
 - **변경 코드 집중**: 기존 코드가 아닌 새로 도입된 이슈만 보고
+- **코드 품질 중심**: 보안, 성능, 언어별 권장사항에 집중
 - **높은 확신도만 보고**: 추측성 지적보다 명확한 이슈에 집중
 - **프로젝트 컨벤션 우선**: 일반 규칙보다 프로젝트의 기존 패턴을 우선
-- **과도한 추상화보다 단순명료함 우선**
-- **심각도 분류 엄격 적용**: Critical은 보안/정확성 결함에만, 스타일 이슈는 Suggestion으로
+- **심각도 분류 엄격 적용**: Critical은 보안 취약점에만, 성능은 Warning, 스타일은 Suggestion
 
 ---
 
 ## 리뷰 기준
 
+> 상세 기준은 `guides/language-guide.md` 참조
+
 ### 1. 보안 (Security) — Critical 우선
 
+#### 필수 검증 항목
 - **입력 검증**: 모든 외부 입력에 검증이 적용되는가 (화이트리스트 선호)
 - **인젝션 방지**: SQL, XSS, Command Injection 등 인젝션 취약점이 없는가
 - **인증/인가**: 적절한 권한 검사가 있는가, 인증 우회가 불가능한가
@@ -77,14 +96,50 @@ disable-model-invocation: true
 - **민감 정보 노출**: 로그, 에러 메시지, 응답에 민감 정보가 노출되지 않는가
 - **의존성 보안**: 알려진 취약점이 있는 의존성을 사용하지 않는가
 
-### 2. 정확성 (Correctness) — Critical 우선
+#### 자동화 스캔 명령어
 
-- **로직 정합성**: 변경 의도와 실제 구현이 일치하는가
-- **Edge case**: 경계값, 빈 값, null/undefined 케이스가 처리되는가
+**Secrets 스캔**:
+```bash
+# gitleaks (권장)
+gitleaks detect --source . --verbose
+
+# truffleHog
+trufflehog filesystem . --json
+```
+
+**의존성 취약점**:
+```bash
+# Go
+go list -json -m all | nancy sleuth
+
+# Node.js
+npm audit
+yarn audit
+
+# Python
+pip-audit
+safety check
+```
+
+**정적 분석**:
+```bash
+# Go
+gosec ./...
+
+# TypeScript/JavaScript
+npm run lint
+eslint --ext .ts,.tsx src/
+
+# Python
+bandit -r .
+```
+
+### 2. 정확성 (Correctness) — Warning 우선
+
 - **에러 핸들링**: 에러가 무시되지 않고 적절히 처리되는가, 컨텍스트가 보존되는가
-- **경쟁 조건**: 동시성 문제 (race condition, deadlock)가 없는가
 - **타입 안전성**: 타입 단언/캐스팅 남용, 타입 검증 누락이 없는가
 - **리소스 관리**: 파일, 연결, 메모리 등 리소스가 적절히 해제되는가
+- **동시성 구현**: race condition, deadlock 가능성
 
 ### 3. 성능 (Performance) — Warning 우선
 
@@ -96,21 +151,54 @@ disable-model-invocation: true
 - **캐싱 기회**: 반복 호출되는 비용이 큰 연산에 캐싱이 고려되었는가
 - **I/O 최적화**: 불필요한 네트워크/디스크 호출이 없는가
 
-### 4. 유지보수성 (Maintainability) — Suggestion 우선
+### 4. 코드 품질 (Code Quality) — Suggestion 우선
 
-- **단일 책임**: 함수/클래스가 하나의 명확한 책임만 갖는가
-- **코드 중복**: 동일 로직의 불필요한 반복이 없는가 (DRY)
-- **인지 복잡도**: 중첩 깊이 3단계 이하, 함수 길이 적절한가
 - **네이밍 명확성**: 변수/함수/타입명이 의도를 명확히 드러내는가
-- **과잉 엔지니어링**: 불필요한 추상화, 사용되지 않는 코드가 없는가 (KISS)
-- **테스트 동반**: 주요 변경에 테스트가 포함되어 있는가
+- **함수 크기**: 함수가 적절한 길이인가 (너무 길지 않은가)
+- **중첩 깊이**: 3단계 이하로 유지되는가
+- **코드 중복**: 동일 로직의 불필요한 반복이 없는가 (DRY)
+- **불필요한 코드**: Dead code, unused imports, 미사용 변수 제거
+- **주석 품질**:
+  - 불필요한 주석 제거 (코드가 설명하는 것을 반복)
+  - 오래된 주석 업데이트 또는 제거
+  - 복잡한 로직에만 "왜"를 설명
+- **과잉 엔지니어링**: 불필요한 추상화 제거 (KISS)
 
-### 5. 아키텍처 일관성 (Architecture)
+### 5. 언어별 권장사항
 
-- **의존성 방향**: 의존성 역전 원칙이 지켜지는가, 순환 의존이 없는가
-- **레이어 분리**: 관심사 분리가 적절한가 (비즈니스 로직과 인프라 분리)
-- **기존 패턴 준수**: 프로젝트의 기존 구조/패턴과 일관성이 있는가
-- **Breaking changes**: 기존 API/인터페이스 호환성이 유지되는가
+#### Go
+- **함수 길이**: 50줄 이상 함수 분리 검토
+- **중첩 깊이**: 3단계 이상 시 리팩토링
+- **타입**: `any` (interface{}) 남용 지양
+- **에러 처리**:
+  - 에러 무시 금지 (`_ = err` 지양)
+  - 에러 래핑 (`fmt.Errorf("context: %w", err)`)
+- **네이밍**:
+  - 패키지명 소문자 단수형
+  - Getter에 Get 접두사 사용 안 함
+
+#### TypeScript
+- **타입 안전성**:
+  - `any` 타입 지양 (unknown 또는 구체적 타입 사용)
+  - 타입 단언 최소화 (as 연산자)
+  - `@ts-ignore` 남용 금지
+- **null 안전성**: Optional chaining (`?.`), Nullish coalescing (`??`)
+- **불변성**: `const` 우선, `readonly` 적극 사용
+
+#### React
+- **컴포넌트 크기**: 100줄 이상 시 분리 검토
+- **Props**: 3단계 이상 prop drilling 시 Context/상태 관리 고려
+- **Hook 규칙**:
+  - 최상위에서만 호출
+  - 조건문/반복문 내 Hook 금지
+  - 의존성 배열 정확히 명시
+- **리렌더링**: useMemo, useCallback 적절히 사용
+
+#### Python
+- **타입 힌트**: 함수 시그니처에 타입 명시
+- **예외 처리**: Bare except 금지 (`except Exception:` 명시)
+- **기본 인자**: Mutable 객체 (`[]`, `{}`) 기본값 금지
+- **Comprehension**: 복잡한 로직은 일반 반복문 사용
 
 ### 6. AI 생성 코드 검증
 
