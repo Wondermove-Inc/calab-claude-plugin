@@ -34,8 +34,14 @@ Reviewer가 "수정필요" 판정 시 **사용자 개입 없이 자동으로** W
 - 3회 초과 시 Reviewer가 승인하더라도 Completion Gate에서 사용자에게 보고
 
 ### 반복 카운터 추적
-Epic 코멘트로 추적:
-```
+
+Epic 코멘트로 추적하며, 오케스트레이터가 실시간으로 파싱합니다:
+
+```bash
+# 현재 반복 횟수 확인
+iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
+
+# 코멘트 예시
 [Workflow] Worker-Reviewer 자동 반복 (1/3)
 [Workflow] Worker-Reviewer 자동 반복 (2/3)
 [Workflow] Worker-Reviewer 자동 반복 (3/3) - 최대 도달

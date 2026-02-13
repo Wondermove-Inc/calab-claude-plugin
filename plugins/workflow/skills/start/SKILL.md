@@ -27,13 +27,21 @@ disable-model-invocation: true
 /workflow:start --resume calab-claude-plugin-abc123
 ```
 
+## 용어 정리
+
+| 용어 | 정의 | 카운터 방식 |
+|------|------|------------|
+| **자동 반복** | Reviewer 수정필요 시 자동 Worker 재작업 (최대 3회) | Epic 코멘트 파싱: `grep -c "Worker-Reviewer 자동 반복"` |
+| **재작업 차수** | Completion Gate 피드백 포함 총 재작업 횟수 (무제한) | Worker 이슈 코멘트: `[Auto-Rework]`, `[Completion-Rework]` |
+
 ## 핵심 원칙
 
 1. **start 스킬이 오케스트레이터**: Planner는 이슈에 계획을 작성하고, 흐름 제어는 이 스킬이 담당
 2. **릴레이 방식**: 각 에이전트가 beads 이슈를 보고 독립적으로 이어받음
 3. **beads가 Single Source of Truth**: 이슈 상태로 추적
 4. **Work → Review 자동 진입**: Worker 완료 시 사용자 승인 없이 Reviewer로 전환
-5. **Review Gate 필수**: Reviewer 완료 시 항상 사용자 승인을 거침 (승인/수정필요 모두)
+5. **자동 반복 로직**: Reviewer 수정필요 시 Worker 자동 재작업 (최대 3회)
+6. **Completion Gate**: Reviewer 승인 시에만 사용자 최종 검토
 
 ## 워크플로우 흐름
 
@@ -51,11 +59,11 @@ disable-model-invocation: true
 ┌─────────────┐
 │  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
 └─────────────┘
-    ↓ Review Gate: 사용자 판단
-    │
-    ├─ 승인 → 완료
-    ├─ Worker 재작업 → Worker → Reviewer → Review Gate
-    └─ Reviewer 재리뷰 → Reviewer → Review Gate
+    ├─ 수정필요 → Worker 재작업 ⟲ (최대 3회 자동)
+    └─ 승인 ↓
+    Completion Gate: 최종 완료 검토 (사용자 승인)
+    ├─ 완료 → 워크플로우 종료
+    └─ 수정 → Reviewer 수정 계획 → Worker 재작업
 ```
 
 ## 오케스트레이션 프로세스
@@ -171,104 +179,126 @@ Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
 "Epic bd-<epic-id> 작업 수행. bd show로 상세 확인."
 ```
 
-### 5단계: Review Gate
+### 5단계: Reviewer 완료 후 자동 반복 로직
 
 완료 대기:
 ```
 TaskOutput(task_id, block: true, timeout: 600000)
-→ 완료: 결과 확인 후 다음 단계
+→ 완료: Reviewer 결과 확인
 → timeout: 사용자에게 "Reviewer 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
 ```
 
-완료 시 **항상** `AskUserQuestion`으로 사용자 판단을 요청합니다:
+#### Reviewer 결과 분석
+
+Reviewer 이슈의 description에서 결정 확인:
+```bash
+bd show <reviewer-subtask-id> | grep "결정:"
+```
+
+**반복 카운터 관리**: Epic 코멘트에서 실시간 파싱
+```bash
+# Epic 생성 시 초기화
+max_iterations=3
+
+# 현재 반복 횟수 확인 (코멘트 파싱)
+iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
+```
+
+#### Case 1: 수정필요 판정 (자동 반복)
+
+반복 제한 확인:
+```bash
+# 최대 반복 도달 여부 확인
+if [ "$iteration_count" -lt "$max_iterations" ]; then
+    # 자동 Worker 재작업
+    new_iteration=$((iteration_count + 1))
+else
+    # Completion Gate 진입 (최대 반복 도달 경고)
+    # Case 2로 분기
+fi
+```
+
+**자동 Worker 재작업**:
+```bash
+# 1. 반복 카운터 기록
+bd comments add <epic-id> "[Workflow] Worker-Reviewer 자동 반복 (${new_iteration}/3)"
+
+# 2. Worker 이슈 reopen
+bd update <worker-subtask-id> --status in_progress
+bd comments add <worker-subtask-id> "[Auto-Rework] Reviewer 피드백 반영 (${new_iteration}차)"
+```
+
+```
+# 3. Worker 호출
+Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
+"bd-<worker-subtask-id> 재작업. Reviewer 피드백: bd show <reviewer-subtask-id> 참조."
+```
+
+```
+# 4. Worker 완료 대기
+TaskOutput(task_id, block: true, timeout: 600000)
+→ 완료: 다음 단계
+→ timeout: 사용자에게 알림
+```
 
 ```bash
-bd comments add <epic-id> "[Reviewer] 완료"
+# 5. Reviewer 이슈 reopen
+bd update <reviewer-subtask-id> --status in_progress
+bd comments add <reviewer-subtask-id> "[Auto-Review] 수정사항 검증 (${new_iteration}차)"
 ```
 
 ```
-## Review 완료
+# 6. Reviewer 호출
+Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
+"bd-<reviewer-subtask-id> 재리뷰. Worker 수정사항 검증."
+```
 
-- 결정: [승인 / 수정필요]
+```
+# 7. 5단계로 복귀 (재귀)
+→ Reviewer 결과 분석
+```
+
+#### Case 2: 승인 판정 (Completion Gate 진입)
+
+```bash
+bd comments add <epic-id> "[Reviewer] 승인 - Completion Gate 진입"
+```
+
+→ **6단계(Completion Gate)로 진행**
+
+### 6단계: Completion Gate — 최종 완료 검토
+
+Reviewer 승인 시 사용자에게 최종 완료 검토를 요청합니다.
+
+```
+## 워크플로우 완료 검토
+
+- Reviewer 결정: 승인
 - 품질: N/10
-- Critical: N건, Major: N건
+- Critical: 0건, Major: N건
+- 자동 반복: ${iteration_count}/3회
 - 리뷰 상세: bd show <reviewer-subtask-id>
 
 옵션:
-- "승인": 워크플로우 완료
-- "Worker 재작업": Worker가 수정 후 Reviewer 재리뷰
-- "Reviewer 재리뷰": 코드 수정 없이 Reviewer만 재검토
+- "완료": 워크플로우 종료 및 모든 이슈 close
+- "수정 필요": Reviewer가 수정 계획 업데이트 → Worker 재작업
 - "취소": 작업 중단
 ```
 
-#### Worker 재작업 선택 시
-
-기존 Worker/Reviewer 이슈를 reopen하여 재사용합니다.
-
-```bash
-# 1. Worker 이슈 reopen
-bd update <worker-subtask-id> --status in_progress
-bd comments add <worker-subtask-id> "[Rework] 리뷰 피드백 반영 (N차)"
+**3회 자동 반복 도달 시 추가 경고**:
 ```
+⚠️ 자동 반복 최대 도달 (3/3회) - 품질 재검토 권장
 
-```
-# 2. Worker 호출 (기존 이슈 ID 전달)
-Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
-"bd-<worker-subtask-id> 재작업. 리뷰 피드백: bd show <reviewer-subtask-id> 참조."
+추가 옵션:
+- "완료": 현재 상태로 워크플로우 종료
+- "수정 필요 (재시도)": 자동 반복 카운터 초기화 후 Worker 재작업 (최대 3회)
+- "수정 필요 (1회)": 카운터 초기화 없이 Worker 1회 재작업
+- "취소": 작업 중단
 ```
 
-```
-# 3. Worker 완료 대기
-TaskOutput(task_id, block: true, timeout: 600000)
-→ 완료: 다음 단계
-→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
-```
+#### 완료 선택 시
 
-```bash
-# 4. Worker 완료 → Reviewer 이슈 reopen
-bd update <reviewer-subtask-id> --status in_progress
-bd comments add <reviewer-subtask-id> "[Rework] 수정사항 검증 (N차)"
-```
-
-```
-# 5. Reviewer 호출 (기존 이슈 ID 전달)
-Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
-"bd-<reviewer-subtask-id> 재리뷰. bd show로 상세 확인."
-```
-
-```
-# 6. Reviewer 완료 대기
-TaskOutput(task_id, block: true, timeout: 600000)
-→ 완료: 5단계(Review Gate)로 복귀
-→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
-```
-
-#### Reviewer 재리뷰 선택 시
-
-기존 Reviewer 이슈를 reopen하여 재사용합니다.
-
-```bash
-# 1. Reviewer 이슈 reopen
-bd update <reviewer-subtask-id> --status in_progress
-bd comments add <reviewer-subtask-id> "[Rework] 재검토 (N차)"
-```
-
-```
-# 2. Reviewer 호출 (기존 이슈 ID 전달)
-Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
-"bd-<reviewer-subtask-id> 재리뷰. bd show로 상세 확인."
-```
-
-```
-# 3. Reviewer 완료 대기
-TaskOutput(task_id, block: true, timeout: 600000)
-→ 완료: 5단계(Review Gate)로 복귀
-→ timeout: 사용자에게 알림, 재대기 또는 취소 선택
-```
-
-### 6단계: 워크플로우 완료 — 티켓 일괄 close
-
-Review Gate 승인 시, 모든 Sub-task와 Epic을 일괄 close합니다.
+모든 Sub-task와 Epic을 일괄 close합니다.
 
 ```bash
 # 모든 Sub-task close
@@ -281,10 +311,85 @@ bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
 
-사용자에게 결과 보고:
+**사용자에게 간결한 결과 보고** (불필요한 중복 제거):
+
+```markdown
+🎯 워크플로우 완료
+
+## 전체 에이전트 실행 통계
+| 에이전트 | 실행 | 토큰 사용 | 소요 시간 | 도구 사용 | 결과 |
+|---------|------|----------|----------|----------|------|
+| Planner | 1회 | {tokens} | {time} | {tools}회 | ✅ 완료 |
+| Worker (1차) | 1회 | {tokens} | {time} | {tools}회 | ✅ 완료 |
+| Reviewer (1차) | 1회 | {tokens} | {time} | {tools}회 | ✅ {decision} |
+| Worker (재작업) | N회 | {tokens} | {time} | {tools}회 | ✅ 피드백 반영 |
+| Reviewer (재리뷰) | N회 | {tokens} | {time} | {tools}회 | ✅ {score}/10점 |
+| **총계** | **N회** | **~{total_tokens}** | **~{total_time}** | **{total_tools}회** | **✅ 100%** |
+
+Epic: {epic-id} (CLOSED)
+상세: bd show {epic-id}
 ```
-완료: <epic-id> | 상태: closed | 상세: bd show <epic-id>
+
+**주의사항**:
+- 위 통계 표만 출력 (다른 요약, 타임라인, 산출물 목록 등은 생략)
+- 재작업이 없었다면 해당 행 제외
+- 토큰/시간/도구 사용은 실제 값으로 대체
+
+#### 수정 필요 선택 시
+
+Reviewer가 수정 계획을 작성하고 Worker가 재작업합니다.
+
+```bash
+# 1. Reviewer가 수정 계획 작성 (수동 또는 재호출)
+bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
+[Completion Gate 피드백 반영]
+
+## 사용자 피드백
+[사용자가 요청한 수정 사항]
+
+## 수정 계획
+| # | 파일 | 수정 내용 | 우선순위 |
+|---|------|----------|----------|
+| 1 | path/to/file | [구체적 수정 계획] | High |
+
+Worker 재작업 지시.
+EOFD
+)"
+
+# 2. Worker 이슈 reopen
+bd update <worker-subtask-id> --status in_progress
+bd comments add <worker-subtask-id> "[Completion-Rework] Gate 피드백 반영"
 ```
+
+```
+# 3. Worker 호출
+Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
+"bd-<worker-subtask-id> 재작업. Completion Gate 피드백: bd show <reviewer-subtask-id> 참조."
+```
+
+```
+# 4. Worker 완료 대기
+TaskOutput(task_id, block: true, timeout: 600000)
+```
+
+```bash
+# 5. Reviewer 이슈 reopen
+bd update <reviewer-subtask-id> --status in_progress
+bd comments add <reviewer-subtask-id> "[Completion-Review] Gate 피드백 검증"
+```
+
+```
+# 6. Reviewer 호출
+Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
+"bd-<reviewer-subtask-id> 재리뷰. Completion Gate 피드백 검증."
+```
+
+```
+# 7. Reviewer 승인 시 Completion Gate 복귀
+→ 6단계로 복귀
+```
+
+### 7단계: 워크플로우 종료
 
 ## 재개 프로세스 (--resume)
 
@@ -360,8 +465,8 @@ flowchart LR
 | 상황 | 처리 |
 |------|------|
 | Plan Gate 거부 | Planner 재호출 |
-| Review Gate: Worker 재작업 | Worker → Reviewer → Review Gate 복귀 |
-| Review Gate: Reviewer 재리뷰 | Reviewer → Review Gate 복귀 |
+| Completion Gate (수정 필요) | Reviewer 수정 계획 → Worker 재작업 → Completion Gate 복귀 |
+
 | 에이전트 실패 | 최대 3회 재시도, 3회 실패 → 사용자 보고 |
 | 대기 timeout (10분) | 사용자에게 알림 → 재대기 또는 취소 선택 |
 | 사용자 취소 | Epic 코멘트 기록 후 close |

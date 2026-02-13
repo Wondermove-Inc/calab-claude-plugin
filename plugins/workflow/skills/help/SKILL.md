@@ -42,11 +42,11 @@ Plan → Work → Review → Compound 루프 기반 멀티 에이전트 워크�
 ┌─────────────┐
 │  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
 └─────────────┘
-    ↓ Review Gate: 사용자 판단
-    │
-    ├─ 승인 → 완료
-    ├─ Worker 재작업 → Worker → Reviewer → Review Gate
-    └─ Reviewer 재리뷰 → Reviewer → Review Gate
+    ├─ 수정필요 → Worker 재작업 ⟲ (최대 3회 자동)
+    └─ 승인 ↓
+    Completion Gate: 최종 완료 검토 (사용자 승인)
+    ├─ 완료 → 워크플로우 종료
+    └─ 수정 → Reviewer 수정 계획 → Worker 재작업
 ```
 
 ## Quality Gates (2개)
@@ -54,7 +54,9 @@ Plan → Work → Review → Compound 루프 기반 멀티 에이전트 워크�
 | Gate | 검증 대상 | 시점 |
 |------|----------|------|
 | Plan Gate | 요구사항 + 설계 (Planner 이슈) | Planner 완료 후 |
-| Review Gate | 코드 품질 (Reviewer 이슈) | Reviewer 완료 후 |
+| Completion Gate | 최종 완료 검토 (Reviewer 승인 후) | Reviewer 승인 시 |
+
+**자동 반복 로직**: Reviewer 수정필요 시 Worker 자동 재작업 (최대 3회, 사용자 개입 없음)
 
 ## 산출물
 
@@ -72,7 +74,7 @@ Epic (Planner): 요구사항, 기능 스펙, 설계
 ```
 /workflow:start 사용자 알림 기능 추가
 ```
-Planner(이슈) → Plan Gate → Worker(TDD) → Reviewer(이슈) → Review Gate → 완료
+Planner(이슈) → Plan Gate → Worker(TDD) → Reviewer(이슈) ⟲ (자동 반복 최대 3회) → Completion Gate → 완료
 
 ### 버그 수정
 ```
