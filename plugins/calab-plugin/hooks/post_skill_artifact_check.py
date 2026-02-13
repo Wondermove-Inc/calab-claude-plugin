@@ -28,6 +28,19 @@ STATE_PATH = PROJECT_ROOT / '.claude-state'
 DOCS_PATH = PROJECT_ROOT / '.claude' / 'docs' / 'active'
 CONTEXT_PATH = PROJECT_ROOT / '.claude' / 'project-context'
 
+# Write 도구가 없는 Read-only 에이전트 목록
+# 이 에이전트들은 산출물 파일을 직접 생성할 수 없으므로 block 대신 warn 처리
+READ_ONLY_AGENTS = {
+    "calab-plugin:validator",        # Read, Grep, Glob, TaskGet, TaskList
+    "calab-plugin:code-reviewer",    # Read, Grep, Glob
+    "calab-plugin:task-validator",   # Read, Glob, Grep, TaskList, TaskGet
+    "calab-plugin:project-guardian", # Read, Grep, Glob
+    "calab-plugin:agent-verifier",   # Read, Grep, Glob, TaskGet, TaskList
+}
+
+# 동일 에이전트 최대 차단 횟수 (무한 루프 방지)
+MAX_BLOCK_RETRIES = 2
+
 
 # 에이전트별 필수 산출물 정의
 AGENT_ARTIFACTS: Dict[str, Dict] = {
@@ -452,6 +465,35 @@ def update_stats(agent_type: str, passed: bool):
     save_json(stats_file, stats)
 
 
+def get_block_count(agent_type: str, agent_id: str) -> int:
+    """동일 에이전트의 차단 횟수 조회"""
+    counter_file = STATE_PATH / 'artifact_block_counter.json'
+    counters = load_json(counter_file)
+    key = f"{agent_type}:{agent_id}"
+    return counters.get(key, 0)
+
+
+def increment_block_count(agent_type: str, agent_id: str) -> int:
+    """차단 횟수 증가 후 현재 값 반환"""
+    counter_file = STATE_PATH / 'artifact_block_counter.json'
+    counters = load_json(counter_file)
+    key = f"{agent_type}:{agent_id}"
+    counters[key] = counters.get(key, 0) + 1
+    counters['_last_updated'] = datetime.now().isoformat()
+    save_json(counter_file, counters)
+    return counters[key]
+
+
+def clear_block_count(agent_type: str, agent_id: str):
+    """차단 횟수 초기화 (성공 시)"""
+    counter_file = STATE_PATH / 'artifact_block_counter.json'
+    counters = load_json(counter_file)
+    key = f"{agent_type}:{agent_id}"
+    if key in counters:
+        del counters[key]
+        save_json(counter_file, counters)
+
+
 def main():
     """
     메인 함수 - Hook Entry Point
@@ -512,30 +554,57 @@ def main():
             if len(files) > 5:
                 print(f"  ... 외 {len(files) - 5}개", file=sys.stderr)
 
-        # 필수 산출물 미생성 시 차단
-        # 베스트 프랙티스: JSON decision: block (exit 0) 사용
+        # 필수 산출물 미생성 시 처리
         if not passed:
             spec = AGENT_ARTIFACTS.get(agent_type, {})
             if spec.get('required', False):
-                # JSON 응답 (decision: block)
+                artifact_name = spec.get('name', 'unknown')
+                pattern_hint = spec.get('patterns', ['unknown'])[0]
+
+                # Case 1: Read-only 에이전트 → block 대신 warn (무한 루프 방지)
+                # Write 도구가 없어 파일 생성 불가능하므로 호출자가 직접 생성해야 함
+                if agent_type in READ_ONLY_AGENTS:
+                    print(f"\n[WARN] Read-only 에이전트 산출물 미생성 (호출자가 직접 생성 필요)", file=sys.stderr)
+                    print(f"   에이전트: {agent_type}", file=sys.stderr)
+                    print(f"   필수 산출물: {artifact_name}", file=sys.stderr)
+                    print(f"   예상 경로: {pattern_hint}", file=sys.stderr)
+                    print(f"   → 이 에이전트는 Write 도구가 없으므로 차단하지 않습니다.", file=sys.stderr)
+                    # block하지 않고 통과 (exit 0, JSON 없음)
+                    sys.exit(0)
+
+                # Case 2: 재시도 횟수 초과 → block 해제 (무한 루프 방지)
+                block_count = increment_block_count(agent_type, agent_id)
+                if block_count > MAX_BLOCK_RETRIES:
+                    print(f"\n[WARN] 최대 차단 횟수 초과 ({block_count}/{MAX_BLOCK_RETRIES}) - 강제 통과", file=sys.stderr)
+                    print(f"   에이전트: {agent_type}", file=sys.stderr)
+                    print(f"   필수 산출물: {artifact_name}", file=sys.stderr)
+                    print(f"   → 무한 루프 방지를 위해 차단 해제합니다.", file=sys.stderr)
+                    # 카운터 초기화 후 통과
+                    clear_block_count(agent_type, agent_id)
+                    sys.exit(0)
+
+                # Case 3: Write 가능 에이전트 + 재시도 여유 → block
                 response = {
                     "decision": "block",
-                    "reason": f"필수 산출물 미생성: {spec.get('name', 'unknown')}",
+                    "reason": f"필수 산출물 미생성: {artifact_name}",
                     "systemMessage": f"에이전트 {agent_type}의 필수 산출물이 생성되지 않았습니다. "
-                                    f"예상 경로: {spec.get('patterns', ['unknown'])[0]}. "
-                                    f"산출물을 생성한 후 다시 시도하세요."
+                                    f"예상 경로: {pattern_hint}. "
+                                    f"산출물을 생성한 후 다시 시도하세요. "
+                                    f"(재시도 {block_count}/{MAX_BLOCK_RETRIES})"
                 }
                 print(json.dumps(response, ensure_ascii=False))
 
                 # stderr로도 출력 (사용자 피드백)
-                print(f"\n⚠️  산출물 미생성으로 에이전트 종료 차단", file=sys.stderr)
+                print(f"\n⚠️  산출물 미생성으로 에이전트 종료 차단 ({block_count}/{MAX_BLOCK_RETRIES})", file=sys.stderr)
                 print(f"   에이전트: {agent_type}", file=sys.stderr)
-                print(f"   필수 산출물: {spec.get('name', 'unknown')}", file=sys.stderr)
-                print(f"   예상 경로: {spec.get('patterns', ['unknown'])[0]}", file=sys.stderr)
-                print(f"\n📋 산출물 생성 후 다시 시도하세요.", file=sys.stderr)
+                print(f"   필수 산출물: {artifact_name}", file=sys.stderr)
+                print(f"   예상 경로: {pattern_hint}", file=sys.stderr)
 
-                # Exit 0 (JSON decision: block이 차단 처리)
                 sys.exit(0)
+
+        # 성공 시 차단 카운터 초기화
+        if passed:
+            clear_block_count(agent_type, agent_id)
 
     except json.JSONDecodeError:
         pass
