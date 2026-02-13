@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "멀티 에이전트 워크플로우 - Plan → Work → Review → Compound 루프 기반 체계적 개발.",
   "author": {
     "name": "wondermove lab",

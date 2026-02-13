@@ -335,29 +335,28 @@ bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
 
-**사용자에게 간결한 결과 보고** (불필요한 중복 제거):
+**사용자에게 간결한 결과 보고**:
 
 ```markdown
 🎯 워크플로우 완료
 
-## 전체 에이전트 실행 통계
-| 에이전트 | 실행 | 토큰 사용 | 소요 시간 | 도구 사용 | 결과 |
-|---------|------|----------|----------|----------|------|
-| Planner | 1회 | {tokens} | {time} | {tools}회 | ✅ 완료 |
-| Worker (1차) | 1회 | {tokens} | {time} | {tools}회 | ✅ 완료 |
-| Reviewer (1차) | 1회 | {tokens} | {time} | {tools}회 | ✅ {decision} |
-| Worker (재작업) | N회 | {tokens} | {time} | {tools}회 | ✅ 피드백 반영 |
-| Reviewer (재리뷰) | N회 | {tokens} | {time} | {tools}회 | ✅ {score}/10점 |
-| **총계** | **N회** | **~{total_tokens}** | **~{total_time}** | **{total_tools}회** | **✅ 100%** |
+| 에이전트 | 토큰 | 시간 | 도구 | 결과 |
+|---------|------|------|------|------|
+| Planner | {tokens} | {time} | {tools}회 | ✅ |
+| Worker (1차) | {tokens} | {time} | {tools}회 | ✅ |
+| Reviewer (1차) | {tokens} | {time} | {tools}회 | ✅/{score} |
+| Worker (재작업) | {tokens} | {time} | {tools}회 | ✅ |
+| Reviewer (재리뷰) | {tokens} | {time} | {tools}회 | ✅/{score} |
+| **총계** | **{total}** | **{total}** | **{total}** | **✅** |
 
-Epic: {epic-id} (CLOSED)
-상세: bd show {epic-id}
+Epic: {epic-id} (CLOSED) | `bd show {epic-id}`
 ```
 
-**주의사항**:
-- 위 통계 표만 출력 (다른 요약, 타임라인, 산출물 목록 등은 생략)
-- 재작업이 없었다면 해당 행 제외
-- 토큰/시간/도구 사용은 실제 값으로 대체
+**필수 규칙**:
+- **절대로** 통계 표를 2번 이상 출력하지 말 것
+- **절대로** 타임라인, 주요 성과, 완료된 이슈, 산출물 등 추가 요약을 작성하지 말 것
+- **오직** 위 표 하나만 출력
+- 재작업이 없었다면 해당 행 제거
 
 #### 수정 필요 선택 시
 
