@@ -39,11 +39,11 @@ permissionMode: default
 | 가이드 | 위치 | 용도 |
 |--------|------|------|
 | **TDD 워크플로우** | `guides/tdd-workflow.md` | TDD 순서, 스킵 조건 |
+| **아키텍처 원칙** | `guides/language-guide.md` | SOLID 원칙, Clean/Hexagonal Architecture |
 | Clean Architecture | `guides/architecture/clean-architecture.md` | 4-레이어 구조, 의존성 규칙 |
 | Hexagonal Architecture | `guides/architecture/hexagonal-architecture.md` | Port/Adapter 패턴 |
 | API 설계 | `guides/architecture/api-design.md` | RESTful API 설계 원칙 |
 | 데이터베이스 | `guides/architecture/database.md` | 스키마 설계, ERD 작성 |
-| 언어별 가이드 | `guides/language-guide.md` | 코딩 원칙, 테스트 패턴 |
 
 ## TDD 사이클 (필수)
 
@@ -132,10 +132,15 @@ bd show <planner-subtask-id>
 ### 4단계: REFACTOR — 코드 개선 (선택)
 
 ```
-1. 중복 제거, 네이밍 개선
-2. SOLID 원칙 검증
-3. 테스트 실행 → PASS 유지 확인
+1. 아키텍처 검증 (guides/language-guide.md 참조)
+   - SOLID 원칙 (SRP, OCP, LSP, ISP, DIP)
+   - 의존성 방향 (Domain ← Application ← Infrastructure)
+   - 중복 제거, 네이밍 개선
+
+2. 테스트 실행 → PASS 유지 확인
 ```
+
+**참고**: 보안/성능 등 코드 품질은 Reviewer가 검증합니다.
 
 ### 5단계: 빌드 확인
 
