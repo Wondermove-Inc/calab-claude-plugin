@@ -63,11 +63,11 @@ plugins/workflow/
 ┌─────────────┐
 │  Reviewer   │  ← 코드 리뷰, 이슈에 결과 작성
 └─────────────┘
-    ↓ Review Gate: 사용자 판단
-    │
-    ├─ 승인 → 완료
-    ├─ Worker 재작업 → Worker → Reviewer → Review Gate
-    └─ Reviewer 재리뷰 → Reviewer → Review Gate
+    ├─ 수정필요 → Worker 재작업 ⟲ (최대 3회 자동 반복)
+    └─ 승인 ↓
+Completion Gate: 최종 완료 검토 (사용자 승인)
+    ├─ 완료 → 워크플로우 종료
+    └─ 수정 → Reviewer가 수정 계획 업데이트 → Worker 재작업 → Completion Gate 복귀
 ```
 
 ---
@@ -77,7 +77,12 @@ plugins/workflow/
 | Gate | 검증 대상 | 참조 |
 |------|----------|------|
 | Plan Gate | 요구사항 + 설계 | Planner 이슈 |
-| Review Gate | 코드 품질 | Reviewer 이슈 |
+| Completion Gate | 코드 품질 + 최종 완료 | Reviewer 이슈 |
+
+### 자동 반복 로직 (Worker ↔ Reviewer)
+- Reviewer가 "수정필요" 판정 시 **사용자 개입 없이 자동으로** Worker 재작업
+- **최대 3회** 자동 반복 후 Reviewer 승인 시 Completion Gate로 이동
+- Epic 코멘트로 반복 카운터 추적: `[Workflow] Worker-Reviewer 자동 반복 (1/3)`
 
 ---
 
@@ -149,5 +154,5 @@ Epic: [epic] 기능명
 |--------|------|------|
 | 코딩 가이드 | `guides/language-guide.md` | SOLID, DRY, KISS + Go, TypeScript, React, Python |
 | TDD 워크플로우 | `guides/tdd-workflow.md` | RED-GREEN-REFACTOR 사이클 |
-| Quality Gate | `guides/gate-process.md` | Plan/Review Gate 프로세스 |
+| Quality Gate | `guides/gate-process.md` | Plan/Completion Gate 프로세스 |
 | 이슈 작성 | `guides/beads-issue-guide.md` | beads 이슈 계층 구조 및 템플릿 |

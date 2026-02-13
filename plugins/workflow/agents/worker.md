@@ -183,21 +183,65 @@ bd update <worker-subtask-id> --description "<위 내용>"
 bd comments add <worker-subtask-id> "[Worker] 완료"
 ```
 
-> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Review Gate 승인 후 오케스트레이터가 일괄 처리합니다.
+> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Completion Gate 승인 후 오케스트레이터가 일괄 처리합니다.
 
-## 리뷰 피드백 반영 모드
+## Reviewer 피드백 기반 자동 재작업
 
-Reviewer가 수정을 요청한 경우, 이슈에 리뷰 피드백이 포함됩니다:
+### 재작업 트리거
+
+Reviewer가 "수정필요" 판정 시 **오케스트레이터가 자동으로 Worker를 재호출**합니다.
+
+### 재작업 모드 감지
+
+Worker Sub-task의 코멘트를 확인:
+```bash
+bd show <worker-subtask-id> | grep "\[Reviewer\].*수정필요"
+```
+
+코멘트에 `[Reviewer] 완료 (수정필요)`가 있으면 **재작업 모드**로 진입합니다.
+
+### 재작업 프로세스
 
 ```
-1. 리뷰 이슈 확인 (bd show <reviewer-issue-id>)
+1. Reviewer 이슈 확인 (bd show <reviewer-subtask-id>)
 2. 수정 항목 목록 파악
 3. 각 수정 항목에 대해:
-   - Critical/Major: 반드시 수정
+   - Critical: 반드시 수정 (최우선)
+   - Major: 반드시 수정
    - Minor/Suggestion: 판단하여 수정
 4. 수정 후 테스트 실행 → PASS 확인
 5. 빌드 확인
+6. Worker 이슈 description 업데이트 (재작업 내역 추가)
 ```
+
+### 재작업 이슈 업데이트 형식
+
+기존 description에 **재작업 섹션 추가**:
+```markdown
+## 재작업 N차 (Reviewer 피드백 반영)
+
+### 수정 항목
+| # | 등급 | 파일 | 수정 내용 |
+|---|------|------|----------|
+| 1 | Critical | path/to/file | [수정 내용] |
+| 2 | Major | path/to/file | [수정 내용] |
+
+### 테스트 결과
+- 전체: N개, 통과: N개, 실패: 0개
+- 빌드: 성공
+```
+
+```bash
+bd update <worker-subtask-id> --description "<기존 + 재작업 섹션>"
+bd comments add <worker-subtask-id> "[Worker] 재작업 N차 완료"
+```
+
+### Completion Gate 피드백 반영
+
+Completion Gate에서 사용자가 "수정 필요"를 선택한 경우:
+1. Reviewer가 **수정 계획**을 작성
+2. Worker는 수정 계획을 기반으로 재작업
+3. 재작업 섹션에 "Completion Gate 피드백 반영" 명시
 
 ## 출력 형식
 
@@ -205,7 +249,14 @@ Reviewer가 수정을 요청한 경우, 이슈에 리뷰 피드백이 포함됩�
 
 **반드시 1줄로 제한**:
 ```
-완료: <worker-subtask-id> (N개 파일, 테스트 N개 PASS, 빌드 성공)
+완료: <worker-subtask-id> (N개 파일, 테스트 N개 PASS, 빌드 성공, 재작업:N차)
+```
+
+예시:
+```
+완료: bd-abc123 (5개 파일, 테스트 12개 PASS, 빌드 성공, 재작업:0차) → 최초 구현
+완료: bd-abc123 (2개 파일, 테스트 12개 PASS, 빌드 성공, 재작업:1차) → Reviewer 피드백 반영
+완료: bd-abc123 (1개 파일, 테스트 12개 PASS, 빌드 성공, 재작업:2차) → Completion Gate 피드백 반영
 ```
 
 ## 에러 핸들링

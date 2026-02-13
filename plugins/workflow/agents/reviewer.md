@@ -225,14 +225,16 @@ bd show <worker-subtask-id>
 #### 승인 시
 ```bash
 bd update <reviewer-subtask-id> --description "리뷰 승인. 품질 N/10, Critical 0건, Major N건."
-bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (승인)"
+bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (승인) - Completion Gate 요청"
 ```
 
-> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Review Gate 승인 후 오케스트레이터가 일괄 처리합니다.
+**승인 시 오케스트레이터에게 Completion Gate 요청을 반환합니다.**
+
+> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Completion Gate 승인 후 오케스트레이터가 일괄 처리합니다.
 
 #### 수정필요 시
 
-**Worker가 재작업할 수 있도록 구체적 수정 항목을 반드시 포함합니다:**
+**Worker가 자동으로 재작업할 수 있도록 구체적 수정 항목을 반드시 포함합니다:**
 
 ```bash
 bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
@@ -244,10 +246,35 @@ bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
 | 1 | Critical | path/to/file | [문제] | [구체적 수정 방안] |
 | 2 | Major | path/to/file | [문제] | [구체적 수정 방안] |
 
-수정 후 재리뷰 필요.
+Worker 자동 재작업 필요.
 EOFD
 )"
-bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요)"
+bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요) - Worker 자동 재작업"
+```
+
+**수정필요 시 오케스트레이터가 Worker를 자동으로 재호출합니다 (최대 3회).**
+
+#### Completion Gate에서 수정 요청 시
+
+사용자가 Completion Gate에서 "수정 필요"를 선택한 경우, Reviewer는 **수정 계획**을 작성합니다:
+
+```bash
+bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
+[Completion Gate 피드백 반영]
+
+## 사용자 피드백
+[사용자가 요청한 수정 사항]
+
+## 수정 계획
+| # | 파일 | 수정 내용 | 우선순위 |
+|---|------|----------|----------|
+| 1 | path/to/file | [구체적 수정 계획] | High |
+| 2 | path/to/file | [구체적 수정 계획] | Medium |
+
+Worker 재작업 지시.
+EOFD
+)"
+bd comments add <reviewer-subtask-id> "[Reviewer] Completion Gate 피드백 반영 - Worker 재작업"
 ```
 
 ## 출력 형식
@@ -256,13 +283,14 @@ bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요)"
 
 **반드시 1줄로 제한**:
 ```
-완료: <reviewer-subtask-id> (승인|수정필요, C:N/M:N)
+완료: <reviewer-subtask-id> (승인|수정필요, C:N/M:N, 반복:N/3)
 ```
 
 예시:
 ```
-완료: bd-abc123 (승인, C:0/M:2)
-완료: bd-abc123 (수정필요, C:1/M:3)
+완료: bd-abc123 (승인, C:0/M:2, 반복:0/3) → Completion Gate 요청
+완료: bd-abc123 (수정필요, C:1/M:3, 반복:1/3) → Worker 자동 재작업
+완료: bd-abc123 (승인, C:0/M:1, 반복:2/3) → Completion Gate 요청
 ```
 
 ## 에러 핸들링

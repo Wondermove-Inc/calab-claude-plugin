@@ -4,23 +4,42 @@
 
 ## Gate 개요
 
-2개의 Gate로 워크플로우 품질을 관리합니다.
+2개의 Gate와 자동 반복 로직으로 워크플로우 품질을 관리합니다.
 
 ```
 Planner → 이슈 (요구사항, 설계)
     ↓
-Plan Gate: 요구사항 + 설계 통합 검증
+Plan Gate: 계획 검토 (사용자 승인)
     ↓
-Worker → 코드, 이슈 (작업 내용, 테스트 결과)
-    ↓ (자동 전환)
-Reviewer → 이슈 (코드 리뷰)
+Worker → 코드 구현
     ↓
-Review Gate: 사용자 판단 (승인 / Worker 재작업 / Reviewer 재리뷰)
+Reviewer → 코드 리뷰
+    ├─ 수정필요 → Worker 재작업 ⟲ (최대 3회 자동 반복)
+    └─ 승인 ↓
+Completion Gate: 최종 완료 검토 (사용자 승인)
+    ├─ 완료 → 워크플로우 종료
+    └─ 수정 → Reviewer가 수정 계획 업데이트 → Worker 재작업 → Completion Gate 복귀
 ```
 
 ## Gate 적용 원칙
 
 **해당 단계가 실행된 경우에만 Gate 검증**
+
+## 자동 반복 로직 (Worker ↔ Reviewer)
+
+Reviewer가 "수정필요" 판정 시 **사용자 개입 없이 자동으로** Worker 재작업을 수행합니다.
+
+### 반복 제한
+- **최대 3회** 자동 반복 (Worker → Reviewer)
+- 3회 초과 시 Reviewer가 승인하더라도 Completion Gate에서 사용자에게 보고
+
+### 반복 카운터 추적
+Epic 코멘트로 추적:
+```
+[Workflow] Worker-Reviewer 자동 반복 (1/3)
+[Workflow] Worker-Reviewer 자동 반복 (2/3)
+[Workflow] Worker-Reviewer 자동 반복 (3/3) - 최대 도달
+```
 
 ## Gate 상세
 
@@ -44,35 +63,69 @@ Review Gate: 사용자 판단 (승인 / Worker 재작업 / Reviewer 재리뷰)
 - "취소": 작업 중단
 ```
 
-### Review Gate: 사용자 판단
+### Completion Gate: 최종 완료 검토
 
-> Reviewer 완료 시 **항상** 사용자 판단을 거칩니다.
+> Reviewer가 **승인** 판정 시 사용자에게 최종 완료 검토를 요청합니다.
 
 ```
-## Review 완료
+## 워크플로우 완료 검토
 
-- 결정: [승인 / 수정필요]
+- Reviewer 결정: 승인
 - 품질: N/10
-- Critical: N건, Major: N건
+- Critical: 0건, Major: N건
+- 자동 반복: N/3회
 - 리뷰 상세: bd show <reviewer-subtask-id>
 
 옵션:
-- "승인": 워크플로우 완료
-- "Worker 재작업": Worker가 수정 후 Reviewer 재리뷰
-- "Reviewer 재리뷰": 코드 수정 없이 Reviewer만 재검토
+- "완료": 워크플로우 종료 및 모든 이슈 close
+- "수정 필요": Reviewer가 수정 계획 업데이트 → Worker 재작업
 - "취소": 작업 중단
 ```
 
-사용자 선택에 따라 기존 이슈를 **reopen**하여 Worker/Reviewer를 재호출하고, 완료 후 **다시 Review Gate로 복귀**합니다.
-새로운 이슈를 생성하지 않으며, 재작업 이력은 이슈 코멘트로 추적합니다.
+#### 3회 자동 반복 도달 시 추가 옵션
+
+자동 반복이 3/3회에 도달한 경우 Completion Gate에서 추가 옵션을 제공합니다:
+
+```
+⚠️ 자동 반복 최대 도달 (3/3회) - 품질 재검토 권장
+
+추가 옵션:
+- "완료": 현재 상태로 워크플로우 종료
+- "수정 필요 (재시도)": 자동 반복 카운터를 초기화하고 Worker 재작업 (최대 3회 재시도)
+- "수정 필요 (1회)": 카운터 초기화 없이 Worker 1회 재작업 후 Completion Gate 복귀
+- "취소": 작업 중단
+```
+
+재시도 선택 시 Epic 코멘트 추가:
+```
+[Workflow] 자동 반복 카운터 초기화 (사용자 요청)
+[Workflow] Worker-Reviewer 자동 반복 (1/3) - 2차 시도
+```
+
+#### 완료 선택 시
+```bash
+# 모든 Sub-task close
+bd close <planner-subtask-id>
+bd close <worker-subtask-id>
+bd close <reviewer-subtask-id>
+
+# Epic close
+bd close <epic-id>
+bd comments add <epic-id> "[Workflow] 완료"
+```
+
+#### 수정 필요 선택 시
+1. Reviewer가 이슈 description에 **수정 계획** 작성
+2. Worker Sub-task reopen → Worker 재작업
+3. Reviewer 자동 리뷰
+4. Reviewer 승인 시 **다시 Completion Gate 복귀**
 
 ## Gate 거부 시 처리
 
 | Gate | 처리 |
 |------|------|
 | Plan Gate | Planner 재호출, 이슈 수정 |
-| Review Gate (Worker 재작업) | 기존 이슈 reopen → Worker → Reviewer → Review Gate 복귀 |
-| Review Gate (Reviewer 재리뷰) | 기존 이슈 reopen → Reviewer → Review Gate 복귀 |
+| Completion Gate (수정) | Reviewer가 수정 계획 작성 → Worker 재작업 → Reviewer 리뷰 → Completion Gate 복귀 |
 
 ## 취소 시 처리
 
