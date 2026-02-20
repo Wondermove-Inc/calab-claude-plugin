@@ -50,10 +50,11 @@ disable-model-invocation: true
      - `chore`: 기타 변경사항
 
 5. **사용자 확인 및 커밋**
-   - 생성된 커밋 메시지를 사용자에게 보여주고 `AskUserQuestion` 툴로 확인 요청
+   - 생성된 커밋 메시지를 채팅 창에 코드블록으로 표시
+   - `AskUserQuestion` 툴로 승인 여부만 확인
    - 질문 형식:
-     - question: "이 커밋 메시지로 커밋하시겠습니까?"
-     - header: "커밋 확인"
+     - question: "커밋하시겠습니까?"
+     - header: "커밋"
      - options: [{"label": "예", "description": "커밋 진행"}, {"label": "아니오", "description": "취소"}]
    - "예" 선택 시 `git add` 및 `git commit` 실행
 

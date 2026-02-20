@@ -344,10 +344,10 @@ bd close <epic-id>
 |---------|------|------|------|------|
 | Planner | {tokens} | {time} | {tools}회 | ✅ |
 | Worker (1차) | {tokens} | {time} | {tools}회 | ✅ |
-| Reviewer (1차) | {tokens} | {time} | {tools}회 | ✅/{score} |
+| Reviewer (1차) | {tokens} | {time} | {tools}회 | {decision} {score}/10 |
 | Worker (재작업) | {tokens} | {time} | {tools}회 | ✅ |
-| Reviewer (재리뷰) | {tokens} | {time} | {tools}회 | ✅/{score} |
-| **총계** | **{total}** | **{total}** | **{total}** | **✅** |
+| Reviewer (재리뷰) | {tokens} | {time} | {tools}회 | {decision} {score}/10 |
+| **총계** | **{total}** | **{total}** | **{total}** | |
 
 Epic: {epic-id} (CLOSED) | `bd show {epic-id}`
 ```
