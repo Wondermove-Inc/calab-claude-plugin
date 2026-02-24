@@ -84,7 +84,7 @@ disable-model-invocation: true
 | Review Sub-task | Reviewer 에이전트 | 4단계 시작 시 |
 
 ```bash
-# Epic 생성 (워크플로우 Epic Description 템플릿 사용)
+# Epic 생성 (워크플로우 Epic 필드 사용법 참조)
 bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2 \
   --description "$(cat <<'EOF'
 ## 요청 분석
@@ -98,8 +98,9 @@ bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2 \
 | 1 | planner | 요청 분석, 설계 → 자기 이슈에 작성 |
 | 2 | worker | TDD 구현 → 자기 이슈에 작업 내용 작성 |
 | 3 | reviewer | 코드 리뷰 → 자기 이슈에 리뷰 결과 작성 |
-
-## 완료 조건
+EOF
+)" \
+  --acceptance "$(cat <<'EOF'
 - [ ] AC1: ...
 - [ ] AC2: ...
 EOF
@@ -364,7 +365,8 @@ Reviewer가 수정 계획을 작성하고 Worker가 재작업합니다.
 
 ```bash
 # 1. Reviewer가 수정 계획 작성 (수동 또는 재호출)
-bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
+bd update <reviewer-subtask-id> \
+  --description "$(cat <<'EOFD'
 [Completion Gate 피드백 반영]
 
 ## 사용자 피드백
@@ -377,7 +379,8 @@ bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
 
 Worker 재작업 지시.
 EOFD
-)"
+)" \
+  --acceptance "<리뷰 체크리스트 업데이트>"
 
 # 2. Worker 이슈 reopen
 bd update <worker-subtask-id> --status in_progress

@@ -299,10 +299,12 @@ Initiative
 
 ## 워크플로우 Description 템플릿
 
-> Planner가 이슈를 생성할 때 반드시 아래 템플릿을 사용하여 description을 작성합니다.
+> Planner가 이슈를 생성할 때 반드시 아래 가이드에 따라 beads 필드(description, acceptance, design, notes)에 분리 작성합니다.
 > 분석 내용을 이슈에 기록하여 작업 맥락을 보존합니다.
 
-### 워크플로우 Epic Description
+### 워크플로우 Epic 필드 사용법
+
+#### description (핵심 정보)
 
 ```markdown
 ## 요청 분석
@@ -324,74 +326,87 @@ Initiative
 ## 실행 계획
 | 순서 | 에이전트 | 작업 |
 |------|---------|------|
-| 1 | planner | 요청 분석, 설계 → Epic 이슈에 작성 |
-| 2 | worker | TDD 구현 → 하위 이슈에 작업 내용 작성 |
-| 3 | reviewer | 코드 리뷰 → 하위 이슈에 리뷰 결과 작성 |
+| 1 | planner | 요청 분석, 설계 → 자기 이슈에 작성 |
+| 2 | worker | TDD 구현 → 자기 이슈에 작업 내용 작성 |
+| 3 | reviewer | 코드 리뷰 → 자기 이슈에 리뷰 결과 작성 |
 
 ### 스킵 단계
 - [에이전트명]: [스킵 사유]
 
 ## 기술 고려사항
 * 기존 코드와의 호환성, 의존성, 제약 등
-
-## 완료 조건
-* AC1: 조건 1
-* AC2: 조건 2
 ```
 
-### 워크플로우 Sub-task Description (에이전트가 직접 생성 및 기록)
+#### acceptance (완료 조건)
 
-> Sub-task는 **각 에이전트가 작업 시작 시 직접 생성**합니다. 아래 템플릿은 에이전트가 작업 완료 후 이슈 description에 기록하는 형식입니다.
-
-#### Planner (Plan)
 ```markdown
-## 목표
-어떤 요구사항을 분석하고 설계를 수립해야 하는가
-
-## 맥락
-* Epic에서 파악된 배경
-* 불명확한 부분, 확인이 필요한 사항
-
-## Acceptance Criteria
-* AC1: 핵심 요구사항이 이슈에 정의됨
-* AC2: 아키텍처/인터페이스가 설계됨
-* AC3: 구현 가이드가 포함됨
+- [ ] AC1: 조건 1
+- [ ] AC2: 조건 2
 ```
 
-#### Worker (구현)
-```markdown
-## 목표
-어떤 코드를 TDD로 구현해야 하는가
+#### Epic 생성 명령어
 
-## 맥락
-* Planner 이슈 참조 (요구사항, 설계, 구현 가이드)
-
-## 구현 범위
-* 변경/생성할 파일과 컴포넌트
-
-## Acceptance Criteria
-* AC1: 모든 테스트가 통과함 (GREEN)
-* AC2: Planner 이슈의 설계를 준수함
-* AC3: 빌드 성공
+```bash
+bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2 \
+  --description "<요청분석+실행계획>" \
+  --acceptance "<완료 조건>"
 ```
 
-#### Reviewer (리뷰)
-```markdown
-## 목표
-어떤 관점에서 리뷰해야 하는가
+### 워크플로우 Sub-task 필드 사용법 (에이전트가 직접 생성 및 기록)
 
-## 맥락
-* Planner 이슈 참조 (설계 기준)
-* Worker 이슈 참조 (작업 내용, 테스트 결과)
-* 구현 코드 범위
+> Sub-task는 **각 에이전트가 작업 시작 시 직접 생성**합니다. 아래는 에이전트가 작업 완료 후 이슈 필드에 기록하는 방식입니다.
 
-## 리뷰 포인트
-* SOLID 원칙 준수
-* Planner 이슈 설계 대비 구현 일관성
-* 이슈 품질 (Planner, Worker)
+#### 필드 매핑 전략
 
-## Acceptance Criteria
-* AC1: 코드 품질 검증 완료
-* AC2: 설계 일관성 확인
-* AC3: 이슈 품질 확인
+| 필드 | 용도 |
+|------|------|
+| `--description` | 핵심 정보 (각 에이전트별 주요 산출물) |
+| `--acceptance` | 완료 조건 / 체크리스트 |
+| `--design` | 설계 산출물 (Planner만 사용, 조건부) |
+| `--notes` | 부가 정보 (기술 결정, UX, 개선 제안 등, 조건부) |
+
+#### Planner (Plan) — 4개 필드
+
+```bash
+# 단일 호출 (조건부 필드는 해당 시에만 포함, 없으면 옵션 생략)
+bd update <plan-subtask-id> \
+  --description "<개요+요구사항+구현가이드>" \
+  --acceptance "<완료 조건 AC 체크리스트>" \
+  --design "<아키텍처+인터페이스 정의>" \
+  --notes "<기술 결정사항+UX 설계>"
 ```
+
+| 필드 | 포함 조건 |
+|------|----------|
+| `--description` | 항상 (개요+요구사항+구현가이드) |
+| `--acceptance` | 항상 (완료 조건) |
+| `--design` | 새 기능, 아키텍처/API/인터페이스 변경 시 |
+| `--notes` | 기술 결정이 필요하거나 UI 변경 시 |
+
+#### Worker (구현) — 2개 필드
+
+```bash
+bd update <worker-subtask-id> \
+  --description "<작업요약+변경내역+테스트결과+빌드>" \
+  --acceptance "<Planner AC 대비 달성 상태>"
+```
+
+| 필드 | 내용 |
+|------|------|
+| `--description` | 작업 요약, 변경 내역, 테스트 결과, 빌드 상태 |
+| `--acceptance` | Planner AC 대비 달성 상태 체크리스트 |
+
+#### Reviewer (리뷰) — 3개 필드
+
+```bash
+bd update <reviewer-subtask-id> \
+  --description "<리뷰결과+요약+피드백항목>" \
+  --acceptance "<리뷰 체크리스트 달성 상태>" \
+  --notes "<장점+개선제안>"
+```
+
+| 필드 | 내용 |
+|------|------|
+| `--description` | 리뷰 결과, 요약, 아키텍처 리뷰, 피드백 항목 |
+| `--acceptance` | 리뷰 체크리스트 달성 상태 (SOLID, 아키텍처, 테스트 등) |
+| `--notes` | 장점, 개선 제안(Suggestion) |

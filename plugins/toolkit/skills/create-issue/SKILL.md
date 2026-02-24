@@ -60,7 +60,7 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 - **Initiative**: 배경, 목적, 주요 업무 카테고리, 기대효과
 - **Epic**: 개요, 배경, 주요 내용(Backend/Frontend/Infrastructure), 일정(Week 단위)
 - **Task**: 개요, 변경 대상(컴포넌트/파일별), 기술 스펙
-- **Sub-task**: 설명, Acceptance Criteria, 구현 위치
+- **Sub-task**: 설명, 구현 위치, Acceptance Criteria (→ acceptance 필드)
 - **Bug**: 현상, 재현 방법, 예상 동작, 실제 동작, 환경, 영향 범위
 
 ### Step 3: 제목 생성
@@ -77,12 +77,22 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 | Sub-task | `[YY.Q.N] 구체적 작업 내용` | `[26.1.2] Azure Cost API 클라이언트 구현` |
 | Bug | `[YY.Q.N][영역] 버그 현상` | `[26.1.2][Azure] 비용 데이터 수집 시 타임아웃 발생` |
 
-### Step 4: 설명 생성
+### Step 4: 필드별 내용 생성
 
-타입별 템플릿에 맞춰 설명(description)을 마크다운으로 작성합니다.
+타입별 템플릿에 맞춰 **4개 필드**에 분리 작성합니다.
+
+#### 필드 분리 전략
+
+| 필드 | 용도 |
+|------|------|
+| `--description` | 핵심 정보 (개요, 배경, 주요 내용) |
+| `--acceptance` | 완료/성공 조건 (AC 체크리스트) |
+| `--design` | 설계/기술 산출물 (기술 스펙, 아키텍처, 인터페이스) |
+| `--notes` | 부가 정보 (일정, 비고, 참조, 환경 등) |
 
 #### Initiative 템플릿
 
+**description:**
 ```markdown
 ## 배경
 {왜 이번 릴리즈가 필요한가}
@@ -96,17 +106,23 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 
 ### {카테고리 2}
 * {항목}
+```
 
-## 기대효과
-* {정량적 목표}
+**acceptance:**
+```markdown
+- [ ] {기대효과 1 — 정량적 목표}
+- [ ] {기대효과 2}
+```
 
-## 비고
+**notes:**
+```markdown
 * 릴리즈 일정: {일정}
 * 예상 개발 기간: {기간}
 ```
 
 #### Epic 템플릿
 
+**description:**
 ```markdown
 ## 개요
 {기능 설명}
@@ -123,20 +139,30 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 
 ### Infrastructure
 * {항목}
+```
 
+**acceptance:**
+```markdown
+- [ ] {성공 지표 1}
+- [ ] {성공 지표 2}
+```
+
+**design:**
+```markdown
 ## 기술 스펙
 {기술적 세부사항}
+```
 
+**notes:**
+```markdown
 ## 일정
 * Week 1: {내용}
 * Week 2: {내용}
-
-## 성공 지표
-* {지표}
 ```
 
 #### Task 템플릿
 
+**description:**
 ```markdown
 ## 개요
 {작업 내용 1-2줄 요약}
@@ -147,33 +173,52 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 
 ### 2. {컴포넌트/파일}
 * {변경 내용}
+```
 
+**acceptance:**
+```markdown
+- [ ] AC1: {조건 1}
+- [ ] AC2: {조건 2}
+```
+
+**design:**
+```markdown
 ## 기술 스펙
 {기술적 세부사항}
+```
 
+**notes:**
+```markdown
 ## 참조
 {관련 문서}
 ```
 
 #### Sub-task 템플릿
 
+**description:**
 ```markdown
 ## 설명
 {구체적으로 무엇을 구현할 것인가}
 
-## Acceptance Criteria
-* AC1: {조건 1}
-* AC2: {조건 2}
-
 ## 구현 위치
 {파일 경로}
+```
 
+**acceptance:**
+```markdown
+- [ ] AC1: {조건 1}
+- [ ] AC2: {조건 2}
+```
+
+**notes:**
+```markdown
 ## 참조
 {관련 문서}
 ```
 
 #### Bug 템플릿
 
+**description:**
 ```markdown
 ## 1. 현상 (What)
 {무엇이 잘못되었는가}
@@ -189,15 +234,10 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 ## 4. 실제 동작 (Actual)
 {실제 동작}
 
-## 5. 환경 (Environment)
-* 버전: {버전}
-* 클라우드: {클라우드}
-* 발생 빈도: {빈도}
-
-## 6. 로그/증거 (Evidence)
+## 5. 로그/증거 (Evidence)
 {에러 로그, 스크린샷}
 
-## 7. RCA - 5 Whys 분석
+## 6. RCA - 5 Whys 분석
 ### Why 1: 왜 문제가 발생했는가?
 {답변}
 
@@ -215,15 +255,33 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 
 ### 근본 원인 (Root Cause)
 {5 Whys 분석을 통해 도출된 근본 원인}
+```
 
-## 8. 해결 방안 (Solution)
+**acceptance:**
+```markdown
+- [ ] 즉시 수정 완료
+- [ ] 재발 방지 조치 완료
+- [ ] 영향 범위 확인 완료
+```
+
+**design:**
+```markdown
+## 해결 방안 (Solution)
 ### 즉시 수정 (Immediate Fix)
 {수정 내용}
 
 ### 재발 방지 (Prevention)
 {장기적 개선}
+```
 
-## 9. 영향 범위 (Impact)
+**notes:**
+```markdown
+## 환경 (Environment)
+* 버전: {버전}
+* 클라우드: {클라우드}
+* 발생 빈도: {빈도}
+
+## 영향 범위 (Impact)
 * 영향 받는 버전: {버전}
 * 우선순위: {우선순위}
 * 임시 조치 (Workaround): {임시 조치}
@@ -242,8 +300,17 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
  우선순위:      P{n}
  레이블:        {labels}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 설명 미리보기:
- {description 전체}
+ [description]
+ {description 내용}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [acceptance]
+ {acceptance 내용}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [design] (해당 시)
+ {design 내용}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ [notes] (해당 시)
+ {notes 내용}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -276,13 +343,27 @@ argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 **생성 명령어:**
 
 ```bash
-bd create "<제목>" --type <beads_type> --priority <beads_priority> --description "<마크다운 설명>"
+# 필수 필드
+bd create "<제목>" --type <beads_type> --priority <beads_priority> \
+  --description "<description 내용>" \
+  --acceptance "<acceptance 내용>"
+
+# 조건부 필드 (해당 시)
+# --design, --notes는 내용이 있을 때만 포함
+bd create "<제목>" --type <beads_type> --priority <beads_priority> \
+  --description "<description 내용>" \
+  --acceptance "<acceptance 내용>" \
+  --design "<design 내용>" \
+  --notes "<notes 내용>"
 ```
 
 레이블이 있는 경우:
 
 ```bash
-bd create "<제목>" --type <beads_type> --priority <beads_priority> --label <label1> --label <label2> --description "<마크다운 설명>"
+bd create "<제목>" --type <beads_type> --priority <beads_priority> \
+  --labels "<label1>,<label2>" \
+  --description "<description 내용>" \
+  --acceptance "<acceptance 내용>"
 ```
 
 ### Step 7: 완료 보고

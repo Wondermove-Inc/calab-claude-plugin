@@ -155,9 +155,11 @@ npx tsc --noEmit
 python -m py_compile {파일}
 ```
 
-### 6단계: 이슈 description 업데이트
+### 6단계: 이슈 필드 업데이트
 
-이슈 description에 작업 내용과 테스트 결과를 작성합니다:
+작업 결과를 beads 이슈의 **2개 필드**에 분리 작성합니다:
+
+#### description (작업 결과)
 
 ```markdown
 ## 작업 요약
@@ -183,8 +185,18 @@ python -m py_compile {파일}
 - 상태: 성공
 ```
 
+#### acceptance (Planner AC 달성 상태)
+
+```markdown
+- [x] AC1: [달성한 조건]
+- [x] AC2: [달성한 조건]
+- [ ] AC3: [미달성 조건 — 사유]
+```
+
 ```bash
-bd update <worker-subtask-id> --description "<위 내용>"
+bd update <worker-subtask-id> \
+  --description "<작업 결과>" \
+  --acceptance "<AC 달성 상태>"
 bd comments add <worker-subtask-id> "[Worker] 완료"
 ```
 
@@ -221,7 +233,7 @@ bd show <worker-subtask-id> | grep "\[Reviewer\].*수정필요"
 
 ### 재작업 이슈 업데이트 형식
 
-기존 description에 **재작업 섹션 추가**:
+기존 description에 **재작업 섹션 추가** + acceptance 업데이트:
 ```markdown
 ## 재작업 N차 (Reviewer 피드백 반영)
 
@@ -237,7 +249,9 @@ bd show <worker-subtask-id> | grep "\[Reviewer\].*수정필요"
 ```
 
 ```bash
-bd update <worker-subtask-id> --description "<기존 + 재작업 섹션>"
+bd update <worker-subtask-id> \
+  --description "<기존 + 재작업 섹션>" \
+  --acceptance "<AC 달성 상태 업데이트>"
 bd comments add <worker-subtask-id> "[Worker] 재작업 N차 완료"
 ```
 

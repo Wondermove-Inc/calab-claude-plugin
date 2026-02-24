@@ -216,9 +216,11 @@ bd show <worker-subtask-id>
 4. 용어 통일 확인
 ```
 
-### 6단계: 이슈 description 작성
+### 6단계: 이슈 필드 작성
 
-이슈 description에 리뷰 결과를 작성합니다:
+리뷰 결과를 beads 이슈의 **3개 필드**에 분리 작성합니다:
+
+#### description (리뷰 결과)
 
 ```markdown
 ## 리뷰 결과
@@ -290,18 +292,38 @@ bd show <worker-subtask-id>
 | Planner 이슈 | OK | 설계 완전성 확인 |
 | Worker 이슈 | OK | 구현 내용 정확 |
 
+## 결정
+[승인 사유 또는 수정필요 사유]
+```
+
+#### acceptance (리뷰 체크리스트 달성 상태)
+
+```markdown
+- [x] SOLID 원칙 준수
+- [x] 아키텍처 패턴 준수
+- [x] 비즈니스 로직 정합성
+- [x] 테스트 커버리지 충족
+- [x] Planner/Worker 이슈 품질
+```
+
+#### notes (장점 + 개선 제안)
+
+```markdown
 ## 장점
 - [잘 구현된 아키텍처/설계 부분]
 
-## 결정
-[승인 사유 또는 수정필요 사유]
+## 개선 제안 (Suggestion)
+- [향후 개선 가능한 부분]
 ```
 
 ### 7단계: 이슈 업데이트 및 반환
 
 #### 승인 시
 ```bash
-bd update <reviewer-subtask-id> --description "리뷰 승인. 품질 N/10, Critical 0건, Major N건."
+bd update <reviewer-subtask-id> \
+  --description "<6단계 리뷰 결과>" \
+  --acceptance "<리뷰 체크리스트>" \
+  --notes "<장점+개선제안>"
 bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (승인) - Completion Gate 요청"
 ```
 
@@ -314,7 +336,8 @@ bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (승인) - Completion G
 **Worker가 자동으로 재작업할 수 있도록 구체적 수정 항목을 반드시 포함합니다:**
 
 ```bash
-bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
+bd update <reviewer-subtask-id> \
+  --description "$(cat <<'EOFD'
 리뷰 수정필요. Critical N건, Major N건.
 
 ## 수정 항목
@@ -325,7 +348,9 @@ bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
 
 Worker 자동 재작업 필요.
 EOFD
-)"
+)" \
+  --acceptance "<리뷰 체크리스트 — 미달 항목 표시>" \
+  --notes "<장점+개선제안>"
 bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요) - Worker 자동 재작업"
 ```
 
@@ -336,7 +361,8 @@ bd comments add <reviewer-subtask-id> "[Reviewer] 완료 (수정필요) - Worker
 사용자가 Completion Gate에서 "수정 필요"를 선택한 경우, Reviewer는 **수정 계획**을 작성합니다:
 
 ```bash
-bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
+bd update <reviewer-subtask-id> \
+  --description "$(cat <<'EOFD'
 [Completion Gate 피드백 반영]
 
 ## 사용자 피드백
@@ -350,7 +376,8 @@ bd update <reviewer-subtask-id> --description "$(cat <<'EOFD'
 
 Worker 재작업 지시.
 EOFD
-)"
+)" \
+  --acceptance "<리뷰 체크리스트 업데이트>"
 bd comments add <reviewer-subtask-id> "[Reviewer] Completion Gate 피드백 반영 - Worker 재작업"
 ```
 
