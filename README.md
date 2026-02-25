@@ -1,494 +1,119 @@
-<div align="center">
+# Flash Plugin v3.0
 
-# CALAB
+> Opus + Codex 듀얼 모델 워크플로우를 위한 커스텀 Claude Code 플러그인
 
-**Code Assurance Layer for AI Building**
+## Opus ↔ Codex 워크플로우
 
-[![Version](https://img.shields.io/badge/version-2.9.0-0969da.svg)](https://github.com/Wondermove-Inc/calab-claude-plugin/releases)
-[![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-7c3aed.svg)](https://claude.ai/code)
-[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
-
-A workflow automation plugin that brings **18 skills**, **24 specialized agents**, and **27 lifecycle hooks** to Claude Code — enforcing best practices, eliminating hallucinations, and maintaining full traceability from planning to deployment.
-
-[Quick Start](#quick-start) · [Architecture](#architecture) · [Commands](#commands) · [Agents](#agents) · [Contributing](#contributing)
-
-</div>
-
----
-
-## The Problem
-
-AI-assisted development suffers from inconsistency: varying code quality, lost context between sessions, missing documentation, and unverified outputs. Teams waste time compensating for what the AI should handle automatically.
-
-## The Solution
-
-Calab Plugin wraps Claude Code in a structured development lifecycle — every plan gets reviewed, every implementation gets tested, every output gets validated. Context persists across sessions. Quality gates are non-negotiable.
-
-| Without Calab | With Calab |
-|:---|:---|
-| Code quality varies by prompt | Enforced quality gates on every output |
-| Context lost on compact/restart | Automatic state persistence & restoration |
-| Documentation drifts from code | Auto-synchronized on every change |
-| Hallucinated code ships unchecked | Validator → Reinforcer verification chain |
-| Ad-hoc development process | Plan → Design → Tasks → Build pipeline |
-| No traceability across phases | Mandatory artifacts with structured handoffs |
-
----
-
-## Architecture
-
-```mermaid
-graph TD
-    A[User Request] --> B["/dev — Pipeline"]
-    A --> C["/solve — Debugger"]
-    A --> D["/onboard — Analyzer"]
-
-    B --> B1[Plan]
-    B --> B2[Discuss]
-    B --> B3[Design]
-    B --> B4[Tasks]
-    B --> B5["Build (TDD)"]
-
-    C --> B5
-
-    B5 --> I{Validator}
-    I -->|"90%+ ✓"| J[Ship]
-    I -->|"70-89%"| K[Reinforcer]
-    K --> I
-    I -->|"< 70%"| L[Escalate]
-
-    style A fill:#f8fafc,stroke:#334155
-    style B fill:#dbeafe,stroke:#2563eb
-    style C fill:#fef3c7,stroke:#d97706
-    style D fill:#d1fae5,stroke:#059669
-    style J fill:#d1fae5,stroke:#059669
-    style L fill:#fee2e2,stroke:#dc2626
+```
+┌─────────────────────────────────────────────────────────┐
+│  Opus (Claude Code)                                     │
+│                                                         │
+│  1. 리서치     /calab-plugin:research [주제]             │
+│       ↓                                                 │
+│  2. 프로젝트   /calab-plugin:onboard (기존 프로젝트 시)   │
+│     분석           ↓                                    │
+│  3. 기획       /calab-plugin:dev plan [기능]             │
+│       ↓        → plans/에 PRD 생성                      │
+│  4. 설계       /calab-plugin:dev design                  │
+│       ↓        → 아키텍처 + ERD                         │
+│  5. 태스크     /calab-plugin:dev tasks                   │
+│     분해       → TASK-001 ~ TASK-N 생성                 │
+│       ↓                                                 │
+│  6. 핸드오프   /calab-plugin:handoff TASK-001            │
+│               → plans/handoff-20260225-xxx.md 생성      │
+└────────────────────┬────────────────────────────────────┘
+                     │ 명세서 전달
+                     ▼
+┌─────────────────────────────────────────────────────────┐
+│  Codex                                                  │
+│                                                         │
+│  "plans/handoff-20260225-xxx.md 를 읽고 구현해"          │
+│                                                         │
+│  → 명세서의 AC, Constraints, Scope에 따라 구현           │
+│  → git commit                                           │
+└────────────────────┬────────────────────────────────────┘
+                     │ 구현 완료
+                     ▼
+┌─────────────────────────────────────────────────────────┐
+│  Opus (Claude Code)                                     │
+│                                                         │
+│  7. 리뷰       /calab-plugin:review                     │
+│               → AC 1:1 대조 검증                        │
+│               → Constraints 준수 확인                    │
+│       ↓                                                 │
+│  ✅ 100% 통과 → 다음 TASK로 (6번 반복)                   │
+│  ❌ 미충족    → Codex 재위임 or Opus 직접 수정            │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Skill Layers
+## 단계별 상세
 
-| Layer | Skills | Trigger |
-|:------|:-------|:--------|
-| **Core** | `/dev` · `/solve` · `/onboard` | User-invoked |
-| **Utility** | `/docs` · `/security` · `/research` · `/jira` · `/refactor` · `/e2e` · `/guard` | User-invoked |
-| **Passive** | best-practices · code-quality · tdd-workflow · project-rules · work-tracker · clarification-protocol · skill-completion-rules · verify-agents | Auto-loaded contextually |
+| # | 누가 | 스킬 | 하는 일 | 산출물 |
+|---|------|------|---------|--------|
+| 1 | **Opus** | `/calab-plugin:research` | 기술 조사, 레퍼런스 수집 | 리서치 요약 |
+| 2 | **Opus** | `/calab-plugin:onboard` | 기존 코드베이스 분석 | 컨텍스트 문서 5종 |
+| 3 | **Opus** | `/calab-plugin:dev plan` | 브레인스토밍 + PRD | `plans/prd.md` |
+| 4 | **Opus** | `/calab-plugin:dev design` | 아키텍처 + ERD | `plans/architecture.md` |
+| 5 | **Opus** | `/calab-plugin:dev tasks` | 태스크 분해 | TASK-001 ~ N |
+| 6 | **Opus** | `/calab-plugin:handoff` | Codex용 구현 명세서 생성 | `plans/handoff-*.md` |
+| 7 | **Codex** | (직접 실행) | 명세서대로 구현 | git commit |
+| 8 | **Opus** | `/calab-plugin:review` | AC 대조 검증 | 검증 리포트 |
 
-### Lifecycle Hooks (27)
+## 역할 분담 원칙
 
-Session start/stop, pre-compact state save, code quality validation, worktree tracking, build error detection, artifact verification, confidence-based reinforcer escalation, and more — all running automatically in the background.
+| | Opus (분석/판단) | Codex (정밀 구현) |
+|---|---|---|
+| **강점** | 리서치, 아키텍처, 원인 분석, 리뷰 | 정확한 코드 작성, 대량 파일 수정 |
+| **적합** | "왜" + "무엇을" | "어떻게" |
+| **토큰** | 비쌈 → 분석/판단에 집중 | 저렴 → 반복 구현에 활용 |
 
----
-
-## Key Features (v2.9.0)
-
-### Prompt Engineering Best Practices
-
-| Feature | Description |
-|:--------|:-----------|
-| **6-Element Task Specification** | Every task includes What/How/Avoid+WHY/Verify/Done/Files with specificity testing |
-| **Structured Returns** | All agents communicate via fixed JSON schemas for reliable inter-agent handoffs |
-| **Deviation Rules** | Auto-fix protocol for 5 safe categories; user confirmation for 4 high-risk categories |
-| **50% Context Budget Rule** | 4-tier quality management (PEAK/GOOD/DEGRADING/POOR) based on context usage |
-| **Checkpoint Classification** | human-verify (90%) · decision (9%) · human-action (1%) — minimizes unnecessary interruptions |
-| **3-Level Artifact Verification** | Existence → Substantive → Wired — ensures artifacts are real, meaningful, and connected |
-| **Goal-Backward Verification** | Validates from user goal → observable truth → code artifact → key link |
-| **Fresh Context Pattern** | Each executor starts with only its task definition — no cross-contamination |
-| **Wave-based Parallel Execution** | Dependency graph → topological sort → wave grouping for parallel task execution |
-| **Questioning Guide** | "Think partner, not interviewer" — Ask vs Decide framework to minimize user fatigue |
-
-### Roadmap & Phase Management
+## 실전 사용 예시
 
 ```bash
-/dev --roadmap                       # View roadmap status
-/dev --roadmap add "Phase title"     # Add phase
-/dev --roadmap insert N "Title"      # Insert urgent phase before N
-/dev --roadmap complete N            # Complete phase N
-/dev --roadmap milestone "v1.0.0"    # Create milestone + archive
+# 1. Opus: 리서치 + 기획
+/calab-plugin:research "K8s HPA 커스텀 메트릭"
+/calab-plugin:dev plan "HPA 커스텀 메트릭 연동"
+
+# 2. Opus: 설계 + 태스크 분해
+/calab-plugin:dev design
+/calab-plugin:dev tasks
+
+# 3. Opus: TASK-001을 Codex 명세서로 변환
+/calab-plugin:handoff TASK-001
+
+# 4. Codex: 구현 (별도 터미널)
+codex "plans/handoff-20260225-hpa-metrics.md 를 읽고 구현해"
+
+# 5. Opus: 검증
+/calab-plugin:review --spec plans/handoff-20260225-hpa-metrics.md
+
+# 6. 통과 → 다음 TASK
+/calab-plugin:handoff TASK-002
 ```
 
----
-
-## Quick Start
-
-```bash
-# 1. Add marketplace
-/plugin marketplace add Wondermove-Inc/calab-claude-plugin
-
-# 2. Install plugin
-/plugin install calab-plugin@calab-marketplace
-
-# 3. Verify installation
-/plugins
-
-# 4. Onboard your project
-/onboard
-
-# 5. Start building
-/dev --plan user-authentication
-```
-
-### Skill Autocomplete (Optional)
-
-Register plugin skills for `/` tab-completion:
-
-```bash
-git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
-cd calab-claude-plugin && ./link-skills.sh
-```
-
-This creates `~/.claude/skills/calab-*` symlinks, enabling `/calab-dev`, `/calab-solve`, etc.
-Remove with `./link-skills.sh --remove`.
-
----
-
-## Commands
-
-### `/dev` — Development Pipeline
-
-```bash
-/dev --plan <feature>         # PRD & requirements brainstorming
-/dev --discuss <feature>      # Collect implementation decisions (resolve gray areas)
-/dev --design <feature>       # Architecture & ERD design
-/dev --tasks <feature>        # Task breakdown with acceptance criteria
-/dev --build <TASK-ID>        # TDD implementation (single task)
-/dev --build --wave <N>       # Parallel execution of Wave N tasks
-/dev --build --all            # Sequential wave execution (parallel within each wave)
-/dev --status                 # Progress dashboard
-```
-
-Each phase produces mandatory artifacts and validates prerequisites before advancing:
-
-```mermaid
-graph LR
-    A["--plan"] -->|"01-brainstorm.md\n02-PRD.md"| A2["--discuss"]
-    A2 -->|"00-CONTEXT.md"| B["--design"]
-    B -->|"03-architecture.md\n04-ERD.md"| C["--tasks"]
-    C -->|"05-tasks.md\nworktree.json"| D["--build"]
-    D -->|"Source + Tests\n80%+ coverage"| E["QA"]
-
-    style A fill:#dbeafe,stroke:#2563eb
-    style A2 fill:#bfdbfe,stroke:#3b82f6
-    style B fill:#e0e7ff,stroke:#4f46e5
-    style C fill:#ede9fe,stroke:#7c3aed
-    style D fill:#fae8ff,stroke:#a855f7
-    style E fill:#d1fae5,stroke:#059669
-```
-
-### `/solve` — Problem Solving
-
-```bash
-/solve <error-message>        # Auto-selects methodology
-/solve --5whys                # Iterative root cause analysis
-/solve --rca                  # Systematic 8-step RCA
-/solve --hypothesis           # Hypothesis-driven debugging
-/solve --binary               # Binary search debugging
-/solve --log                  # View progress log
-/solve --report               # Generate resolution report
-```
-
-### `/onboard` — Project Onboarding
-
-```bash
-/onboard                      # Full onboarding (5 context documents)
-/onboard --quick              # Quick onboarding (PROJECT_SUMMARY.md only)
-/onboard --phase <N>          # Analyze specific phase only
-/onboard --skip-domain        # Skip domain interview
-```
-
-### Utilities
-
-| Command | Purpose |
-|:--------|:--------|
-| `/docs --api\|--component\|--guide\|--update` | Generate documentation from code |
-| `/security --owasp\|--secrets\|--deps\|--full` | Security vulnerability scanning |
-| `/research --deep\|--compare` | Web research with source analysis |
-| `/jira --sync\|--create\|--update\|--link` | Bidirectional JIRA synchronization |
-| `/refactor --dead-code\|--duplicates\|--imports\|--cleanup` | Automated code cleanup |
-| `/e2e --run\|--debug\|--record\|--headed` | Playwright/Puppeteer E2E testing |
-| `/guard --rules\|--context\|--full` | Project rule compliance check |
-
----
-
-## Agents
-
-24 specialized agents, each with defined tools, permissions, and output contracts.
-
-<details>
-<summary><strong>Workflow</strong> — 7 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `dev-workflow` | Orchestrates Plan → Design → Tasks → Build with wave-based parallelism |
-| `planner-phase` | PRD authoring, phase decomposition, and roadmap management |
-| `planner-task` | Task breakdown with 6-element specification and specificity testing |
-| `design` | Architecture design and ERD generation |
-| `dev-executor` | TDD implementation with fresh context and deviation rules |
-| `project-onboarder` | Codebase analysis and context document generation |
-| `jira-connector` | Bidirectional JIRA issue synchronization |
-
-</details>
-
-<details>
-<summary><strong>Quality & Security</strong> — 4 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `code-reviewer` | Code quality review with structured JSON output |
-| `security-reviewer` | OWASP Top 10, secret detection, dependency audit |
-| `project-guardian` | Project rule and convention enforcement |
-| `build-error-resolver` | Build error resolution with circuit breaker (3-strike escalation) |
-
-</details>
-
-<details>
-<summary><strong>Verification</strong> — 4 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `validator` | 3-level artifact verification (Existence → Substantive → Wired) with goal-backward checking |
-| `task-validator` | Task-level acceptance criteria validation |
-| `reinforcer` | Confidence-based auto-remediation of validation failures |
-| `agent-verifier` | Parallel agent output audit — auto-triggers on batch completion |
-
-</details>
-
-<details>
-<summary><strong>Problem Solving</strong> — 2 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `root-cause-finder` | 5 Whys, RCA, hypothesis-driven analysis |
-| `bug-fixer` | TDD-based bug resolution |
-
-</details>
-
-<details>
-<summary><strong>Research</strong> — 2 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `web-researcher` | Real-time web search via Tavily MCP |
-| `deep-researcher` | Multi-source synthesis and report generation |
-
-</details>
-
-<details>
-<summary><strong>Documentation & Testing</strong> — 5 agents</summary>
-
-| Agent | Role |
-|:------|:-----|
-| `docs-generator` | API, component, and guide documentation |
-| `doc-updater` | Change-driven documentation sync |
-| `refactor-cleaner` | Dead code removal and import cleanup |
-| `e2e-runner` | Playwright/Puppeteer test execution |
-| `qa` | 8-stage QA verification pipeline |
-
-</details>
-
----
-
-## How It Works
-
-### Verification Chain
-
-Every implementation passes through a mandatory verification chain before completion:
-
-```mermaid
-graph LR
-    A[Implementation] --> B{Validator}
-    B -->|"Pass 90%+"| C[Done]
-    B -->|"Fail 70-89%"| D[Reinforcer]
-    D --> E{Re-validate}
-    E -->|Pass| C
-    E -->|"Fail < 70%"| F["User Decision / /solve"]
-
-    style C fill:#d1fae5,stroke:#059669
-    style F fill:#fee2e2,stroke:#dc2626
-```
-
-### Structured Handoffs
-
-Each phase validates prerequisites before proceeding:
-
-| Phase | Prerequisite | Produces |
-|:------|:-------------|:---------|
-| `--plan` | None | `01-brainstorm.md`, `02-PRD.md`, `ROADMAP.md` |
-| `--discuss` | PRD exists | `00-CONTEXT.md` (implementation decisions) |
-| `--design` | PRD exists | `03-architecture.md`, `04-ERD.md` |
-| `--tasks` | Architecture + ERD exist | `05-tasks.md`, `worktree.json` |
-| `--build` | Tasks + worktree exist | Source code, test code |
-
-### Context Persistence
-
-Session state is automatically preserved across compacts and restarts:
-
-```
-.claude-state/
-├── checkpoint.json       # Full session checkpoint
-├── worktree.json         # Task tree with progress
-├── circuit-breaker.json  # Failure tracking
-└── request-log.jsonl     # Request history
-
-.claude/memory/
-├── CURRENT_CONTEXT.md    # Active work context
-└── PROJECT_RULES.md      # Learned project rules
-```
-
-Recovery priority: `checkpoint.json` → `worktree.json` → `CURRENT_CONTEXT.md` → `/onboard`
-
-### Quality Enforcement
-
-| Rule | Enforcement |
-|:-----|:-----------|
-| Max 500 lines per file | `code-quality` passive skill |
-| JSDoc on all public functions | `code-quality` passive skill |
-| 100% type coverage | `code-quality` passive skill |
-| 80%+ test coverage | `tdd-workflow` passive skill |
-| No hardcoded secrets | `security-reviewer` agent |
-| Mandatory artifacts per phase | `post_skill_artifact_check` hook |
-
----
-
-## Project Structure
-
-```
-calab-claude-plugin/
-├── CLAUDE.md                        # Project-level AI instructions
-├── README.md
-├── link-skills.sh                   # Skill autocomplete setup
-└── plugins/calab-plugin/
-    ├── skills/                      # 18 skills (10 active + 8 passive)
-    │   ├── dev/                     #   Development pipeline
-    │   │   ├── SKILL.md
-    │   │   └── references/          #   Phase-specific prompts
-    │   ├── solve/                   #   Problem solving
-    │   ├── onboard/                 #   Project onboarding
-    │   ├── docs/                    #   Documentation generation
-    │   ├── security/                #   Security scanning
-    │   ├── research/                #   Web research
-    │   ├── jira/                    #   JIRA integration
-    │   ├── refactor/                #   Code cleanup
-    │   ├── e2e/                     #   E2E testing
-    │   ├── guard/                   #   Rule enforcement
-    │   ├── best-practices/          #   (passive) Tech-specific practices
-    │   ├── code-quality/            #   (passive) 500-line limit, JSDoc
-    │   ├── tdd-workflow/            #   (passive) Red-Green-Refactor
-    │   ├── project-rules/           #   (passive) Project conventions
-    │   ├── work-tracker/            #   (passive) Worktree updates
-    │   ├── clarification-protocol/  #   (passive) Subagent Q&A protocol
-    │   ├── skill-completion-rules/  #   (passive) Skill completion gates
-    │   └── verify-agents/           #   (passive) Parallel agent output audit
-    ├── agents/                      # 24 specialized agents
-    │   ├── dev-workflow.md
-    │   ├── planner-phase.md
-    │   ├── planner-task.md
-    │   ├── design.md
-    │   ├── dev-executor.md
-    │   ├── validator.md
-    │   ├── reinforcer.md
-    │   ├── code-reviewer.md
-    │   ├── security-reviewer.md
-    │   ├── agent-verifier.md
-    │   └── ... (14 more)
-    └── hooks/                       # 27 lifecycle hooks
-        ├── session_start.py
-        ├── pre_compact.py
-        ├── code_quality_validator.py
-        ├── confidence_based_reinforcer.py
-        ├── post_skill_artifact_check.py
-        └── ... (21 more)
-```
-
-### Runtime Directories (auto-generated)
-
-```
-.claude/
-├── memory/                  # Persistent context
-│   ├── CURRENT_CONTEXT.md   #   Active work state
-│   └── PROJECT_RULES.md     #   Learned project rules
-├── project-context/         # Onboarding output
-│   ├── PROJECT_SUMMARY.md
-│   ├── CODE_PATTERNS.md
-│   └── ARCHITECTURE.md
-├── docs/active/{feature}/   # Feature artifacts
-│   ├── 01-brainstorm.md
-│   ├── 02-PRD.md
-│   ├── 03-architecture.md
-│   ├── 04-ERD.md
-│   └── 05-tasks.md
-└── problem-solving/         # /solve output
-    ├── active/
-    ├── resolved/
-    └── knowledge-base/
-
-.claude-state/               # Session state
-├── checkpoint.json
-├── worktree.json
-├── circuit-breaker.json
-└── request-log.jsonl
-```
-
----
-
-## Requirements
-
-- **Claude Code** CLI v1.0+
-- **Python** 3.8+ (lifecycle hooks)
-- **Node.js** 18+ (optional, for specific hooks)
-
----
-
-## Installation Options
-
-<details>
-<summary><strong>Marketplace (Recommended)</strong></summary>
-
-```bash
-/plugin marketplace add Wondermove-Inc/calab-claude-plugin
-/plugin install calab-plugin@calab-marketplace
-```
-
-</details>
-
-<details>
-<summary><strong>Interactive Browser</strong></summary>
-
-```bash
-/plugin
-# → "Add Marketplace" → "Wondermove-Inc/calab-claude-plugin"
-# → "Discover" tab → Install calab-plugin
-```
-
-</details>
-
-<details>
-<summary><strong>Local Development</strong></summary>
-
-```bash
-git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
-/plugin marketplace add /path/to/calab-claude-plugin
-```
-
-</details>
-
----
-
-## Contributing
-
-```bash
-git clone https://github.com/Wondermove-Inc/calab-claude-plugin.git
-cd calab-claude-plugin
-git checkout -b feature/your-feature
-# Make changes
-git commit -m "feat: description"
-git push origin feature/your-feature
-# Open Pull Request
-```
-
----
-
-## License
-
-MIT — [Wondermove CALab](https://wondermove.net)
-
-**Issues**: [GitHub Issues](https://github.com/Wondermove-Inc/calab-claude-plugin/issues) · **Contact**: captain@wondermove.net
+핵심은 **6→7→8 루프를 TASK 단위로 반복**하는 것. Opus는 판단, Codex는 구현.
+
+## 전체 스킬 목록 (12개)
+
+| 스킬 | 설명 |
+|------|------|
+| `/calab-plugin:dev` | Plan/Design/Tasks/Build 워크플로우 |
+| `/calab-plugin:solve` | 체계적 문제 해결 (5 Whys, RCA) |
+| `/calab-plugin:research` | 웹 리서치 + 핵심 요약 |
+| `/calab-plugin:onboard` | 프로젝트 분석 + 컨텍스트 문서 생성 |
+| `/calab-plugin:handoff` | Opus → Codex 구현 위임 명세서 |
+| `/calab-plugin:review` | Codex 구현물 AC 검증 |
+| `/calab-plugin:best-practices` | 기술별 베스트 프랙티스 |
+| `/calab-plugin:code-quality` | 코드 품질 규칙 (500줄 제한, 주석) |
+| `/calab-plugin:project-rules` | 프로젝트 규칙 참조 |
+| `/calab-plugin:work-tracker` | 작업 진행 상태 추적 |
+| `/calab-plugin:clarification-protocol` | 서브에이전트 명확화 프로토콜 |
+| `/calab-plugin:skill-completion-rules` | 스킬 완료 시 다음 단계 규칙 |
+
+## 에이전트 (13개)
+
+planner-phase, planner-task, design, dev-executor, deep-researcher, web-researcher, root-cause-finder, bug-fixer, build-error-resolver, validator, reinforcer, project-guardian, project-onboarder
+
+## 원본
+
+[calab-claude-plugin](https://github.com/Wondermove-Inc/calab-claude-plugin) `flash` 브랜치에서 커스텀.
