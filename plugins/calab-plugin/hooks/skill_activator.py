@@ -89,6 +89,21 @@ SKILL_REFERENCES = {
             'full': ['analysis-report.md', 'architecture-template.md'],
             'phase': ['analysis-report.md']
         }
+    },
+    'handoff': {
+        'base_path': 'skills/handoff/templates',
+        'options': {
+            'quick': ['handoff-quick-template.md'],
+            'default': ['handoff-template.md']
+        },
+        'option_templates': {}
+    },
+    'review': {
+        'base_path': 'skills/review',
+        'options': {
+            'default': []
+        },
+        'option_templates': {}
     }
 }
 
@@ -97,19 +112,14 @@ CALAB_SKILL_ALIASES = {
     'calab-dev': 'dev',
     'calab-solve': 'solve',
     'calab-onboard': 'onboard',
-    'calab-docs': 'docs',
-    'calab-security': 'security',
     'calab-research': 'research',
-    'calab-jira': 'jira',
-    'calab-refactor': 'refactor',
-    'calab-e2e': 'e2e',
-    'calab-guard': 'guard',
+    'calab-handoff': 'handoff',
+    'calab-review': 'review',
 }
 
 # 모든 스킬 목록 (references가 없어도 상태 저장 대상)
 ALL_SKILLS = [
-    'dev', 'solve', 'onboard', 'guard', 'security',
-    'docs', 'refactor', 'e2e', 'jira', 'research'
+    'dev', 'solve', 'onboard', 'research', 'handoff', 'review'
 ]
 
 
