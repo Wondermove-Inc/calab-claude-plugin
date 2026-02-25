@@ -24,3 +24,6 @@
 ```bash
 {검증 명령어}
 ```
+
+## Note
+- **git commit/push 하지 마세요** — 커밋과 푸시는 Opus가 review 후 수행합니다
