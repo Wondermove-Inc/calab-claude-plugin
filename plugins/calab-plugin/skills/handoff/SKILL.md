@@ -1,3 +1,22 @@
+---
+name: handoff
+description: |
+  Opus → Codex 구현 위임. 분석 결과를 Codex용 구조화된 명세서로 변환합니다.
+argument-hint: "[feature-or-task] [--from-plan|--quick]"
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, Task, AskUserQuestion]
+skills: [project-rules, work-tracker, clarification-protocol, skill-completion-rules]
+agents:
+  primary: deep-researcher
+  orchestration:
+    analyze: [Explore]
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/post_skill_artifact_check.py\""
+          once: true
+---
+
 # /handoff - Opus → Codex 구현 위임
 
 > **Opus가 분석/계획한 결과를 Codex가 바로 구현할 수 있는 구조화된 명세서로 변환**

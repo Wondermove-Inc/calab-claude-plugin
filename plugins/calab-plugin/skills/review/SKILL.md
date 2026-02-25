@@ -1,3 +1,22 @@
+---
+name: review
+description: |
+  Codex 구현물 검증. 원본 명세서와 대조하여 AC 충족 여부를 검증합니다.
+argument-hint: "[--spec|--diff|--files] [path]"
+allowed-tools: [Read, Glob, Grep, Bash, Task, AskUserQuestion]
+skills: [project-rules, code-quality, clarification-protocol, skill-completion-rules]
+agents:
+  primary: validator
+  orchestration:
+    verify: [Explore, calab-plugin:validator]
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/post_skill_artifact_check.py\""
+          once: true
+---
+
 # /review - Codex 구현물 검증 (Opus Review)
 
 > **Codex가 구현한 결과물을 원본 명세서와 대조하여 검증**
