@@ -1,9 +1,9 @@
 {
   "name": "calab-plugin",
-  "version": "2.9.0",
-  "description": "개발 워크플로우 자동화 플러그인 - 10개 액티브 스킬 + 8개 패시브 스킬 + 24개 에이전트 + 27개 훅",
+  "version": "3.0.0-flash",
+  "description": "Flash 커스텀 플러그인 - Opus/Codex 워크플로우 최적화 (10 스킬 + 13 에이전트 + 19 훅)",
   "author": {
-    "name": "Wondermove CALab",
+    "name": "smlee",
     "email": "captain@wondermove.net"
   },
   "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
@@ -12,13 +12,9 @@
   "keywords": [
     "workflow",
     "automation",
-    "development",
-    "clean-architecture",
-    "best-practices",
-    "qa",
-    "jira",
-    "problem-solving",
-    "security",
-    "tdd"
+    "infrastructure",
+    "observability",
+    "opus-codex",
+    "problem-solving"
   ]
 }
