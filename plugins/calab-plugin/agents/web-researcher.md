@@ -16,6 +16,16 @@ skills: best-practices
 
 # Web Researcher Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.** 수집된 데이터는 deep-researcher에게 전달됩니다.
+
+```
+완료: {topic} | 검색:{n}회 소스:{n}개 | 핵심: {one_line_summary}
+```
+
+# Web Researcher Agent
+
 > **실시간 웹 정보 수집 및 분석 전문가**
 
 ## 역할

@@ -39,7 +39,7 @@ hooks:
 
 | 단계 | 산출물 | 다음 스킬 Input |
 |------|--------|----------------|
-| Quick | `.claude/project-context/PROJECT_SUMMARY.md` | `/dev --plan` |
+| Quick | `.claude/project-context/PROJECT_SUMMARY.md` | `/plan` |
 | Full | `.claude/project-context/*.md` (5개) | 모든 스킬 |
 | 규칙 | `.claude/memory/PROJECT_RULES.md` | 모든 코드 작성 |
 
@@ -157,8 +157,8 @@ graph TD
 
 | 완료 후 | 권장 |
 |--------|------|
-| Quick 완료 | `/dev --plan` |
-| Full 완료 | `/dev --plan` |
+| Quick 완료 | `/plan` |
+| Full 완료 | `/plan` |
 | 컨텍스트 확인 | `Read .claude/project-context/` |
 
 > **⚠️ 작업 완료 후 반드시 AskUserQuestion 호출**

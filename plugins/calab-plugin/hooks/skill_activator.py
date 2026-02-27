@@ -4,7 +4,7 @@ Skill Activator Hook - 슬래시 명령어 기반 References 자동 로드 + 스
 
 트리거: UserPromptSubmit 이벤트
 동작:
-1. /dev, /solve, /onboard 등 슬래시 명령어 감지 시 references 파일 자동 로드
+1. /plan, /brainstorm, /onboard 등 슬래시 명령어 감지 시 references 파일 자동 로드
 2. 현재 스킬 상태 저장 (skill_next_step.py에서 사용)
 
 변경 이력:
@@ -35,46 +35,26 @@ if not PLUGIN_ROOT:
 # 스킬별 References 파일 매핑
 # 옵션별로 로드할 파일 지정
 SKILL_REFERENCES = {
-    'dev': {
-        'base_path': 'skills/dev/references',
+    'plan': {
+        'base_path': 'skills/plan/templates',
         'options': {
-            'plan': ['plan-phase.md', 'plan.md'],
-            'discuss': ['plan.md'],
-            'design': ['design-phase.md', 'design.md', 'clean-architecture.md', 'api-design.md'],
-            'tasks': ['tasks-phase.md', 'tasks.md'],
-            'build': ['build-phase.md', 'build.md'],
-            'roadmap': ['roadmap-phase.md'],
-            'status': ['status.md'],
-            'default': ['plan-phase.md']
+            'default': [],
+            'design': []
         },
-        # option → template 매핑 (레퍼런스와 함께 자동 로드)
         'option_templates': {
-            'plan': ['prd-template.md'],
-            'design': ['architecture-template.md', 'erd-template.md'],
-            'tasks': ['task-template.md']
+            'default': ['prd-template.md'],
+            'design': ['prd-template.md']
         }
     },
-    'solve': {
-        'base_path': 'skills/solve/references',
+    'brainstorm': {
+        'base_path': 'skills/brainstorm/references',
         'options': {
             '5whys': ['5whys.md'],
             'rca': ['rca.md'],
             'hypothesis': ['hypothesis.md'],
-            'binary': ['explore.md'],
-            'log': ['log.md'],
-            'report': ['report.md'],
-            'explore': ['explore.md'],
-            'fix': ['fix.md'],
-            'default': ['testing.md', 'history.md']
+            'default': []
         },
-        'option_templates': {
-            'default': ['problem-definition.md'],
-            '5whys': ['analysis-report.md'],
-            'rca': ['analysis-report.md'],
-            'hypothesis': ['analysis-report.md'],
-            'report': ['solution-report.md'],
-            'fix': ['solution-report.md']
-        }
+        'option_templates': {}
     },
     'onboard': {
         'base_path': 'skills/onboard/references',
@@ -109,7 +89,7 @@ SKILL_REFERENCES = {
 
 # calab- 접두사 매핑 (심볼릭 링크된 스킬용)
 CALAB_SKILL_ALIASES = {
-    'calab-dev': 'dev',
+    'calab-plan': 'plan',
     'calab-solve': 'solve',
     'calab-onboard': 'onboard',
     'calab-research': 'research',
@@ -119,7 +99,7 @@ CALAB_SKILL_ALIASES = {
 
 # 모든 스킬 목록 (references가 없어도 상태 저장 대상)
 ALL_SKILLS = [
-    'dev', 'solve', 'onboard', 'research', 'handoff', 'review'
+    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review'
 ]
 
 
@@ -154,34 +134,16 @@ def detect_option(prompt: str, skill_name: str) -> str:
     """
     prompt_lower = prompt.lower()
 
-    if skill_name == 'dev':
-        if '--plan' in prompt_lower:
-            return 'plan'
-        elif '--discuss' in prompt_lower:
-            return 'discuss'
-        elif '--design' in prompt_lower:
+    if skill_name == 'plan':
+        if '--design' in prompt_lower:
             return 'design'
-        elif '--tasks' in prompt_lower:
-            return 'tasks'
-        elif '--build' in prompt_lower:
-            return 'build'
-        elif '--roadmap' in prompt_lower:
-            return 'roadmap'
-        elif '--status' in prompt_lower:
-            return 'status'
-    elif skill_name == 'solve':
+    elif skill_name == 'brainstorm':
         if '--5whys' in prompt_lower:
             return '5whys'
         elif '--rca' in prompt_lower:
             return 'rca'
         elif '--hypothesis' in prompt_lower:
             return 'hypothesis'
-        elif '--binary' in prompt_lower:
-            return 'binary'
-        elif '--log' in prompt_lower:
-            return 'log'
-        elif '--report' in prompt_lower:
-            return 'report'
     elif skill_name == 'onboard':
         if '--quick' in prompt_lower:
             return 'quick'
@@ -256,7 +218,7 @@ def parse_slash_command(prompt: str) -> Optional[str]:
     if not prompt_stripped.startswith('/'):
         return None
 
-    # 첫 번째 단어 추출 (/dev --plan → dev)
+    # 첫 번째 단어 추출 (/plan --design → plan)
     first_word = prompt_stripped.split()[0].lower()
     skill_name = first_word.lstrip('/')
 

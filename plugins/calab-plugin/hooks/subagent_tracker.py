@@ -48,39 +48,12 @@ if not PLUGIN_ROOT:
 # 사용자 옵션 로드(skill_activator)와 별개로, 에이전트에 특화된 상세 레퍼런스 제공
 AGENT_REFERENCES = {
     'calab-plugin:planner-phase': {
-        'references': 'skills/dev/references',
-        'files': ['plan-phase.md'],
-        'templates': 'skills/dev/templates',
+        'templates': 'skills/plan/templates',
         'template_files': ['prd-template.md']
     },
-    'calab-plugin:design': {
-        'references': 'skills/dev/references',
-        'files': ['design-phase.md', 'architecture-init.md', 'architecture-entity.md',
-                  'architecture-usecase.md', 'architecture-validate.md'],
-        'templates': 'skills/dev/templates',
-        'template_files': ['architecture-template.md', 'erd-template.md']
-    },
-    'calab-plugin:planner-task': {
-        'references': 'skills/dev/references',
-        'files': ['tasks-phase.md'],
-        'templates': 'skills/dev/templates',
-        'template_files': ['task-template.md']
-    },
-    'calab-plugin:dev-executor': {
-        'references': 'skills/dev/references',
-        'files': ['build-phase.md']
-    },
     'calab-plugin:root-cause-finder': {
-        'references': 'skills/solve/references',
-        'files': ['rca.md'],
-        'templates': 'skills/solve/templates',
-        'template_files': ['analysis-report.md']
-    },
-    'calab-plugin:bug-fixer': {
-        'references': 'skills/solve/references',
-        'files': ['fix.md'],
-        'templates': 'skills/solve/templates',
-        'template_files': ['solution-report.md']
+        'references': 'skills/brainstorm/references',
+        'files': ['rca.md']
     },
     'calab-plugin:project-onboarder': {
         'references': 'skills/onboard/references',

@@ -11,6 +11,14 @@ skills: project-rules, best-practices
 
 # Project Onboarder Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.** 상세 내용은 컨텍스트 문서에 작성합니다.
+
+```
+완료: {tech_stack} | {architecture} | 문서:{n}개 생성 | {context_path}
+```
+
 > **프로젝트 온보딩 전문 에이전트**
 
 ## 역할

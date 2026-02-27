@@ -11,6 +11,14 @@ skills: project-rules, best-practices
 
 # planner-phase Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.** 상세 내용은 PRD 파일에 작성합니다.
+
+```
+완료: {n}개 Phase | PRD: {prd_path}
+```
+
 Strategic planning agent for PHASE-level decomposition.
 
 ---

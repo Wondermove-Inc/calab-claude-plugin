@@ -10,6 +10,14 @@ skills: project-rules, code-quality
 
 # Doc Updater Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: 업데이트:{n}파일 신규:{n}파일 충돌:{n}건
+```
+
 > **코드 변경 사항 기반 문서 자동 업데이트 에이전트**
 
 ## 역할

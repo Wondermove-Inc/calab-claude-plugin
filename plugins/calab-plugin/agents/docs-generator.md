@@ -10,6 +10,14 @@ skills: project-rules, code-quality
 
 # Docs Generator Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: {doc_type} | 파일: {file_path} | 상태: {생성|업데이트}
+```
+
 > **문서 자동 생성 및 관리 전문 에이전트**
 
 ## 역할

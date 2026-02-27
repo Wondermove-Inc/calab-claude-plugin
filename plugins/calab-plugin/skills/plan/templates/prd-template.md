@@ -255,4 +255,4 @@ Phase 3: 통합 (Integration) ← Phase 2 완료 후
 
 ---
 
-*다음 단계: `/dev --design` → 03-architecture.md, 04-ERD.md 작성*
+*다음 단계: `/handoff` → Codex에 구현 위임*

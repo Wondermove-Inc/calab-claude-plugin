@@ -635,4 +635,4 @@ graph TB
 
 ---
 
-*다음 단계: /dev design --erd*
+*다음 단계: /plan --design*

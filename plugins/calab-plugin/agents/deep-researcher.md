@@ -5,12 +5,25 @@ description: |
   web-researcher가 수집한 데이터를 종합 분석하고 구조화된 보고서를 생성합니다.
 tools: Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, mcp__tavily__tavily-search, mcp__tavily__tavily-extract, mcp__tavily__tavily-crawl
 disallowedTools: Bash
-model: sonnet
+model: opus
 permissionMode: bypassPermissions
 skills: best-practices
 ---
 
 # Deep Researcher Agent
+
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.** 상세 내용은 보고서 파일에 작성합니다.
+
+```
+완료: {topic} | 검색:{n}회 출처:{n}개 | {report_path}
+```
+
+예시:
+```
+완료: ClickHouse S3 Tiering | 검색:8회 출처:12개 | .claude/research/clickhouse-s3-tiering.md
+```
 
 > **리서치 분석 및 보고서 작성 전문 에이전트**
 

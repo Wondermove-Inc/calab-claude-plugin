@@ -17,56 +17,31 @@ from typing import Dict, List, Optional
 
 # 스킬별 다음 단계 정의
 SKILL_NEXT_STEPS: Dict[str, Dict] = {
-    'dev': {
-        'plan': {
-            'description': '기획(PRD) 완료',
+    'brainstorm': {
+        'default': {
+            'description': '브레인스토밍 완료',
             'options': [
-                {'label': '/dev --design', 'description': '아키텍처 설계로 진행'},
+                {'label': '/plan', 'description': 'PRD 작성으로 진행 (권장)'},
+                {'label': '/plan', 'description': '수정 계획 작성'},
+                {'label': '/research', 'description': '추가 조사'},
+                {'label': '종료', 'description': '나중에 계속'},
+            ]
+        }
+    },
+    'plan': {
+        'default': {
+            'description': 'PRD 작성 완료',
+            'options': [
+                {'label': '/handoff', 'description': 'Codex에 구현 위임 (권장)'},
                 {'label': '수정 요청', 'description': 'PRD 내용 수정/보완'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         },
         'design': {
-            'description': '설계(Architecture) 완료',
+            'description': 'PRD + 아키텍처 설계 완료',
             'options': [
-                {'label': '/dev --tasks', 'description': 'Task 분해로 진행'},
+                {'label': '/handoff', 'description': 'Codex에 구현 위임 (권장)'},
                 {'label': '수정 요청', 'description': '설계 내용 수정/보완'},
-                {'label': '종료', 'description': '나중에 계속'},
-            ]
-        },
-        'tasks': {
-            'description': 'Task 분해 완료',
-            'options': [
-                {'label': '/dev --build TASK-001', 'description': '첫 번째 Task 구현 시작'},
-                {'label': '수정 요청', 'description': 'Task 분해 수정/보완'},
-                {'label': '종료', 'description': '나중에 계속'},
-            ]
-        },
-        'build': {
-            'description': 'Task 구현 완료',
-            'options': [
-                {'label': '다음 Task', 'description': '다음 Task 구현 진행'},
-                {'label': '/guard', 'description': '완료 검증'},
-                {'label': '수정 요청', 'description': '구현 내용 수정'},
-                {'label': '종료', 'description': '나중에 계속'},
-            ]
-        },
-        'default': {
-            'description': '개발 워크플로우 완료',
-            'options': [
-                {'label': '/dev --status', 'description': '진행 상황 확인'},
-                {'label': '/guard', 'description': '규칙 검증'},
-                {'label': '종료', 'description': '나중에 계속'},
-            ]
-        }
-    },
-    'solve': {
-        'default': {
-            'description': '문제 해결 완료',
-            'options': [
-                {'label': '/dev --plan', 'description': '새 기능 개발로 전환'},
-                {'label': '/solve --report', 'description': '해결 보고서 작성'},
-                {'label': '추가 분석', 'description': '다른 문제 분석'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         }
@@ -76,22 +51,22 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             'description': '빠른 온보딩 완료',
             'options': [
                 {'label': '/onboard --full', 'description': '전체 온보딩으로 확장'},
-                {'label': '/dev --plan', 'description': '개발 시작'},
+                {'label': '/plan', 'description': '개발 시작'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         },
         'full': {
             'description': '전체 온보딩 완료',
             'options': [
-                {'label': '/dev --plan', 'description': '새 기능 개발 시작'},
-                {'label': '/solve', 'description': '문제 해결 시작'},
+                {'label': '/plan', 'description': '새 기능 개발 시작'},
+                {'label': '/brainstorm', 'description': '문제 분석 시작'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         },
         'default': {
             'description': '온보딩 완료',
             'options': [
-                {'label': '/dev --plan', 'description': '개발 시작'},
+                {'label': '/plan', 'description': '개발 시작'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         }
@@ -101,7 +76,7 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             'description': '규칙 검증 완료',
             'options': [
                 {'label': '수정 진행', 'description': '발견된 이슈 수정'},
-                {'label': '/dev --build', 'description': '다음 Task 구현'},
+                {'label': '/plan', 'description': '다음 Task 구현'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         }
@@ -121,7 +96,7 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             'description': '문서 생성 완료',
             'options': [
                 {'label': '다른 문서 생성', 'description': '추가 문서 생성'},
-                {'label': '/dev --build', 'description': '개발 계속'},
+                {'label': '/plan', 'description': '개발 계속'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         }
@@ -140,7 +115,7 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
         'default': {
             'description': '리서치 완료',
             'options': [
-                {'label': '/dev --plan', 'description': '조사 결과로 개발 시작'},
+                {'label': '/plan', 'description': '조사 결과로 개발 시작'},
                 {'label': '추가 조사', 'description': '다른 주제 조사'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
@@ -160,7 +135,7 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
         'default': {
             'description': 'JIRA 동기화 완료',
             'options': [
-                {'label': '/dev --build', 'description': '이슈 구현 시작'},
+                {'label': '/plan', 'description': '이슈 구현 시작'},
                 {'label': '다른 이슈', 'description': '다른 이슈 처리'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]

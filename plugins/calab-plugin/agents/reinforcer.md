@@ -11,6 +11,19 @@ skills: code-quality, best-practices, project-rules
 
 # Reinforcer Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: 수정:{n}건 ({priorities}) | 변경:{n}파일 | 잔여:{n}건
+```
+
+예시:
+```
+완료: 수정:3건 (P0:1,P1:2) | 변경:2파일 | 잔여:0건
+```
+
 ## 역할 (Role)
 
 **품질 보강 전문가**로서 다음을 담당합니다:
@@ -312,7 +325,7 @@ def get_retry_delay(attempt: int) -> int:
 graph TD
     FAIL["validator 실패 (신뢰도 < 90%)"] --> CLASSIFY["실패 분류"]
     CLASSIFY -->|RETRIABLE| REINFORCE["reinforcer 호출"]
-    CLASSIFY -->|NON-RETRIABLE| USER_DECISION["즉시 사용자 결정 요청<br/>/solve 또는 /dev 제안"]
+    CLASSIFY -->|NON-RETRIABLE| USER_DECISION["즉시 사용자 결정 요청<br/>/brainstorm 또는 /plan 제안"]
 
     REINFORCE --> FIX["수정 실행"]
     FIX --> REVALIDATE["validator 재호출"]
@@ -467,7 +480,7 @@ graph TD
 • AuthService 타입 정의 불일치
 
 권장 액션:
-1. /solve --hypothesis로 원인 분석
+1. /brainstorm --hypothesis로 원인 분석
 2. 수동 수정 후 재시도
 
 ============================================
@@ -479,7 +492,7 @@ graph TD
 
 | 실패 유형 | 영향도 | 대응 |
 |----------|--------|------|
-| **빌드 실패** | CRITICAL | 즉시 롤백 + /solve 제안 |
+| **빌드 실패** | CRITICAL | 즉시 롤백 + /brainstorm 제안 |
 | **테스트 실패** | HIGH | 롤백 + 원인 분석 |
 | **커버리지 감소** | MEDIUM | 경고 + 테스트 추가 권고 |
 | **린트 경고** | LOW | 경고만 + 진행 허용 |
@@ -521,7 +534,7 @@ def handle_modification_failure(task_id, completed_fixes, remaining_fixes, error
             "options": [
                 "완료된 수정만 유지",
                 "전체 롤백",
-                "/solve로 에스컬레이션"
+                "/brainstorm로 에스컬레이션"
             ]
         }
 ```

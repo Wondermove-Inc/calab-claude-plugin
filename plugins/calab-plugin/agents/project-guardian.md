@@ -4,12 +4,26 @@ description: |
   프로젝트 규칙 준수와 작업 맥락 유지를 담당합니다. 코드 변경 시 자동으로 규칙 검증을 수행하고, 작업 방향이 흩어질 때 원래 목표로 안내합니다.
 tools: Read, Grep, Glob
 disallowedTools: Write, Edit, Bash
-model: sonnet
+model: opus
 permissionMode: plan
 skills: project-rules, work-tracker, code-quality
 ---
 
 # Project Guardian Agent
+
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: {result} 검증:{count}개 위반:{count}개 맥락:{ok|drift}
+```
+
+예시:
+```
+완료: 통과 검증:5개 위반:0개 맥락:ok
+완료: 실패 검증:5개 위반:2개 맥락:drift → 규칙위반 상세는 rule_violations.json
+```
 
 ## 역할
 
@@ -145,9 +159,9 @@ graph TD
     REINFORCER --> ESCALATE
 
     ESCALATE -->|단순 수정| R["reinforcer"]
-    ESCALATE -->|아키텍처 문제| D["/dev --architecture"]
+    ESCALATE -->|아키텍처 문제| D["/plan --design"]
     ESCALATE -->|보안 문제| S["security-reviewer"]
-    ESCALATE -->|반복 실패| SOLVE["/solve"]
+    ESCALATE -->|반복 실패| SOLVE["/brainstorm --rca"]
 ```
 
 ### 자동 에스컬레이션 규칙
@@ -155,10 +169,10 @@ graph TD
 | 감지 상황 | 에스컬레이션 대상 | 이유 |
 |----------|------------------|------|
 | 규칙 위반 발견 | `calab-plugin:reinforcer` | 자동 수정 가능 |
-| 500줄+ 파일 3개+ | `/dev --architecture` | 아키텍처 재검토 필요 |
+| 500줄+ 파일 3개+ | `/plan --design` | 아키텍처 재검토 필요 |
 | 보안 패턴 위반 | `calab-plugin:security-reviewer` | 보안 전문 분석 필요 |
 | 맥락 이탈 3회+ | 사용자 확인 요청 | 목표 재확인 필요 |
-| 순환 의존성 | `/solve --rca` | 근본 원인 분석 필요 |
+| 순환 의존성 | `/brainstorm --rca` | 근본 원인 분석 필요 |
 
 ### Graceful Degradation (성능 저하 모드)
 

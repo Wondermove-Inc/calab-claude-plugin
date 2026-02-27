@@ -2,7 +2,7 @@
 
 ## 사용 목적
 
-이 템플릿은 `/solve` 명령어의 분석 단계(Phase 3-4)에서 원인 분석 결과를 기록하기 위해 사용됩니다.
+이 템플릿은 `/brainstorm` 명령어의 원인 분석 단계에서 분석 결과를 기록하기 위해 사용됩니다.
 체계적인 분석 방법론을 적용하여 근본 원인을 찾아냅니다.
 
 ---
@@ -522,6 +522,6 @@ Why 5: 왜 {답변 4}?
 
 - `skills/problem-solving/SKILL.md`
 - `skills/problem-solving/methods/`
-- `commands/solve.md`
+- `skills/brainstorm/SKILL.md`
 - `~/.claude/templates/problem-definition.md` (이전 단계, 글로벌)
 - `~/.claude/templates/solution-report.md` (다음 단계, 글로벌)

@@ -34,20 +34,17 @@ user-invocable: false
 
 | 스킬 | 상황 | 권장 다음 단계 |
 |------|------|---------------|
-| `/dev --plan` | PRD 완료 | `/dev --discuss` 또는 `/dev --design` |
-| `/dev --discuss` | 논의 완료 | `/dev --design` |
-| `/dev --design` | 설계 완료 | `/dev --tasks` |
-| `/dev --tasks` | Task 분해 완료 | `/dev --build TASK-001` |
-| `/dev --build` | Task 구현 완료 | 다음 Task 또는 `/guard` |
-| `/solve` | 문제 해결 완료 | `/dev --plan` 또는 추가 분석 |
-| `/onboard` | 온보딩 완료 | `/dev --plan` |
+| `/brainstorm` | 아이디어/원인 분석 완료 | `/plan` 또는 `/research` |
+| `/plan` | PRD 완료 | `/handoff` (Codex 위임) |
+| `/plan --design` | PRD + 설계 완료 | `/handoff` (Codex 위임) |
+| `/onboard` | 온보딩 완료 | `/brainstorm` 또는 `/plan` |
 | `/guard` | 검증 완료 | 이슈 수정 또는 다음 Task |
 | `/security` | 보안 검사 완료 | 취약점 수정 |
 | `/docs` | 문서 생성 완료 | 추가 문서 또는 개발 계속 |
 | `/refactor` | 리팩토링 완료 | 테스트 실행 |
 | `/e2e` | E2E 테스트 완료 | 실패 수정 또는 배포 |
-| `/jira` | JIRA 작업 완료 | `/dev --build` |
-| `/research` | 리서치 완료 | `/dev --plan` |
+| `/jira` | JIRA 작업 완료 | `/plan` |
+| `/research` | 리서치 완료 | `/brainstorm` 또는 `/plan` |
 
 ---
 

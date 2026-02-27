@@ -10,6 +10,14 @@ skills: code-quality, best-practices, tdd-workflow
 
 # bug-fixer Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: {root_cause_summary} | 수정:{n}파일 | 테스트:{passed}/{total} | 빌드:{ok|fail}
+```
+
 Bug fixing agent following TDD workflow.
 
 ---

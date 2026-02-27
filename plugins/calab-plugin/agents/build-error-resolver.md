@@ -10,6 +10,14 @@ skills: code-quality, best-practices, project-rules
 
 # Build Error Resolver Agent
 
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.**
+
+```
+완료: {error_type} | 자동수정:{n}건 수동:{n}건 | 빌드:{ok|fail}
+```
+
 > **빌드 오류 전문 해결 에이전트**
 
 ## 역할
@@ -229,16 +237,16 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 적용하시겠습니까? [모두 적용] [선택 적용] [건너뛰기]
 ```
 
-## /solve 에스컬레이션
+## /brainstorm 에스컬레이션
 
-### 언제 /solve로 전환하는가?
+### 언제 /brainstorm로 전환하는가?
 
 | 상황 | 액션 |
 |------|------|
-| 동일 오류 3회+ 반복 | `/solve --5whys` 제안 |
-| 순환 의존성 | `/solve --rca` 제안 |
-| 아키텍처 문제 | `/dev --design` 재검토 제안 |
-| 알 수 없는 원인 | `/solve --hypothesis` 제안 |
+| 동일 오류 3회+ 반복 | `/brainstorm --5whys` 제안 |
+| 순환 의존성 | `/brainstorm --rca` 제안 |
+| 아키텍처 문제 | `/plan --design` 재검토 제안 |
+| 알 수 없는 원인 | `/brainstorm --hypothesis` 제안 |
 
 ### 에스컬레이션 로직
 
@@ -250,7 +258,7 @@ def check_escalation(error, attempt_count):
     if attempt_count >= 3:
         return {
             "escalate": True,
-            "target": "/solve --5whys",
+            "target": "/brainstorm --5whys",
             "reason": f"동일 오류 {attempt_count}회 반복 - 근본 원인 분석 필요"
         }
 
@@ -259,7 +267,7 @@ def check_escalation(error, attempt_count):
     if any(e in str(error).lower() for e in complex_errors):
         return {
             "escalate": True,
-            "target": "/solve --rca",
+            "target": "/brainstorm --rca",
             "reason": "복잡한 빌드 오류 - 체계적 분석 필요"
         }
 
@@ -368,7 +376,7 @@ class BuildCircuitBreaker:
 
 ⚠️ 빌드 시도가 일시 차단되었습니다.
 → 45초 후 HALF-OPEN 상태로 전환됩니다.
-→ 또는 `/solve --rca`로 근본 원인 분석을 시작하세요.
+→ 또는 `/brainstorm --rca`로 근본 원인 분석을 시작하세요.
 
 ============================================
 ```
@@ -435,7 +443,7 @@ graph TD
     BACKOFF --> BUILD["빌드 실행"]
     BUILD -->|성공| SUCCESS["Circuit Breaker 성공 기록 → Bulkhead 해제"]
     BUILD -->|실패| FAIL["Circuit Breaker 실패 기록 → Bulkhead 해제"]
-    FAIL -->|"3회 실패"| SOLVE["/solve 에스컬레이션"]
+    FAIL -->|"3회 실패"| SOLVE["/brainstorm 에스컬레이션"]
 ```
 
 ## 📦 산출물 (CRITICAL - 누락 금지)
@@ -496,7 +504,7 @@ graph TD
 
 ### 오류 분석 시작 시 필수 작업
 - [ ] 1. Circuit Breaker 상태 확인
-- [ ] 2. OPEN 상태면 cooldown 확인 후 재시도 또는 /solve 제안
+- [ ] 2. OPEN 상태면 cooldown 확인 후 재시도 또는 /brainstorm 제안
 - [ ] 3. 분석 시작 기록
 
 ### 수정 시도 시 필수 작업
@@ -512,7 +520,7 @@ graph TD
 ### 수정 실패 후 필수 작업
 - [ ] 1. Circuit Breaker failure 기록
 - [ ] 2. 3회 실패 시 OPEN 상태로 전환
-- [ ] 3. /solve 에스컬레이션 제안
+- [ ] 3. /brainstorm 에스컬레이션 제안
 
 ### State 파일 업데이트 예시
 
@@ -550,7 +558,7 @@ def update_circuit_breaker(result: str):
 
 ## 참조 파일
 
-- `skills/solve/SKILL.md` - 문제 해결 방법론 (에스컬레이션 대상)
+- `skills/brainstorm/SKILL.md` - 문제 해결 방법론 (에스컬레이션 대상)
 - `.claude/best-practices/typescript.md` - TypeScript 베스트 프랙티스
 - `.claude-state/circuit-breaker.json` - Circuit Breaker 상태 저장
 - `.claude-state/build-fix-log.jsonl` - 수정 이력

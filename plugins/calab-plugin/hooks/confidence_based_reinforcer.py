@@ -12,7 +12,7 @@ Confidence-Based Reinforcer Hook - validator 결과에 따른 reinforcer 자동 
 - 90%+:   다음 Task 진행 가능
 - 70-89%: reinforcer 자동 호출 권장
 - 50-69%: 사용자 확인 필요
-- 0-49%:  /solve 에스컬레이션 제안
+- 0-49%:  /brainstorm 에스컬레이션 제안
 """
 
 import json
@@ -113,13 +113,13 @@ AskUserQuestion으로 사용자에게 진행 방향을 확인하세요.
         elif confidence < 50:
             print(f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[CRITICAL] /solve 에스컬레이션 권장
+[CRITICAL] /brainstorm 에스컬레이션 권장
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 validator 신뢰도: {confidence:.1f}% (50% 미만)
 
 심각한 이슈가 발견되었습니다.
-/solve 스킬로 에스컬레이션하여 근본 원인 분석을 권장합니다.
+/brainstorm 스킬로 에스컬레이션하여 근본 원인 분석을 권장합니다.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """)

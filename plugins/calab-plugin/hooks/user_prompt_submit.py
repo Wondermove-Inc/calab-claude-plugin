@@ -61,28 +61,15 @@ def detect_slash_command(prompt: str) -> Optional[dict]:
     # 현재 스킬: dev, solve, onboard (메타), best-practices, code-quality, tdd-workflow,
     #           project-rules, work-tracker, clarification-protocol (패시브)
     command_patterns = {
-        # /dev - 개발 워크플로우 (메타 스킬)
-        '/dev --plan': {'type': 'design', 'category': '기획', 'command': '/dev --plan'},
-        '/dev --design': {'type': 'design', 'category': '설계', 'command': '/dev --design'},
-        '/dev --tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev --tasks'},
-        '/dev --build': {'type': 'implement', 'category': '구현', 'command': '/dev --build'},
-        '/dev --status': {'type': 'review', 'category': '진행 확인', 'command': '/dev --status'},
-        '/dev plan': {'type': 'design', 'category': '기획', 'command': '/dev plan'},
-        '/dev design': {'type': 'design', 'category': '설계', 'command': '/dev design'},
-        '/dev tasks': {'type': 'implement', 'category': '태스크 분해', 'command': '/dev tasks'},
-        '/dev build': {'type': 'implement', 'category': '구현', 'command': '/dev build'},
-        '/dev status': {'type': 'review', 'category': '진행 확인', 'command': '/dev status'},
-        '/dev': {'type': 'implement', 'category': '개발', 'command': '/dev'},
+        # /plan - 작업 계획 (PRD 작성)
+        '/plan --design': {'type': 'design', 'category': '계획 + 설계', 'command': '/plan --design'},
+        '/plan': {'type': 'design', 'category': '계획', 'command': '/plan'},
 
-        # /solve - 문제 해결 (메타 스킬)
-        '/solve --5whys': {'type': 'fix', 'category': '5 Whys 분석', 'command': '/solve --5whys'},
-        '/solve --rca': {'type': 'fix', 'category': 'Root Cause Analysis', 'command': '/solve --rca'},
-        '/solve --hypothesis': {'type': 'fix', 'category': '가설 검증', 'command': '/solve --hypothesis'},
-        '/solve --binary': {'type': 'fix', 'category': 'Binary Search 디버깅', 'command': '/solve --binary'},
-        '/solve --log': {'type': 'review', 'category': '분석 로그 확인', 'command': '/solve --log'},
-        '/solve --report': {'type': 'document', 'category': '보고서 생성', 'command': '/solve --report'},
-        '/solve --history': {'type': 'research', 'category': '해결 이력 검색', 'command': '/solve --history'},
-        '/solve': {'type': 'fix', 'category': '문제 해결', 'command': '/solve'},
+        # /brainstorm - 발산적 사고 + 원인 분석
+        '/brainstorm --5whys': {'type': 'fix', 'category': '5 Whys 분석', 'command': '/brainstorm --5whys'},
+        '/brainstorm --rca': {'type': 'fix', 'category': 'Root Cause Analysis', 'command': '/brainstorm --rca'},
+        '/brainstorm --hypothesis': {'type': 'fix', 'category': '가설 검증', 'command': '/brainstorm --hypothesis'},
+        '/brainstorm': {'type': 'design', 'category': '브레인스토밍', 'command': '/brainstorm'},
 
         # /onboard - 프로젝트 온보딩 (메타 스킬)
         '/onboard --quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard --quick'},
@@ -506,10 +493,10 @@ def get_context_reminder(intent: Optional[dict]) -> str:
 
     reminders = {
         'implement': "📋 코드 품질: 500줄 제한, JSDoc 주석 필수",
-        'fix': "🔍 문제 해결: /solve 명령으로 체계적 분석 가능",
+        'fix': "🔍 문제 분석: /brainstorm 명령으로 원인 분석 가능",
         'refactor': "🏗️ 리팩토링: 기존 테스트 통과 확인 필수",
         'review': "✅ 리뷰: 품질 규칙 준수 여부 확인",
-        'design': "📐 설계: /dev --design 명령으로 아키텍처 설계",
+        'design': "📐 설계: /plan --design 명령으로 아키텍처 설계",
         'research': "🔎 리서치: /onboard 명령으로 프로젝트 분석",
         'document': "📝 문서화: 코드 주석과 README 동기화",
         'test': "🧪 테스트: TDD는 모든 빌드에서 기본 적용"

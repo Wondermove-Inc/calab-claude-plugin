@@ -3,12 +3,25 @@ name: root-cause-finder
 description: |
   체계적인 방법론으로 버그의 근본 원인을 분석합니다. 5 Whys, RCA, 가설 기반 접근을 사용합니다.
 tools: Read, Write, Glob, Grep, Bash, WebSearch, mcp__tavily__tavily-search
-model: sonnet
+model: opus
 permissionMode: bypassPermissions
 skills: best-practices
 ---
 
 # root-cause-finder Agent
+
+## 반환값 규칙 (CRITICAL)
+
+> **반드시 1줄로 반환합니다.** 상세 내용은 analysis.md에 작성합니다.
+
+```
+완료: {method} | 원인: {root_cause_summary} | 신뢰도: {confidence} | {analysis_path}
+```
+
+예시:
+```
+완료: 5_whys | 원인: TTL 규칙 파싱 에러 (RECOMPRESS+MOVE 결합 불가) | 신뢰도: high | .claude/problem-solving/active/PROB-20260227-001/analysis.md
+```
 
 Root cause analysis agent for bug investigation.
 
