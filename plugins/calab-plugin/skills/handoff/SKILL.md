@@ -69,12 +69,14 @@ Codex의 강점(정확한 코드 구현, 버그 감지)으로 연결하는 **브
 
 ### Step 4: 사용자 확인
 
+> **CRITICAL**: 파일 경로는 반드시 **절대경로**로 표시합니다. Codex가 다른 디렉토리에서 실행될 수 있습니다.
+
 ```
 ============================================
  HANDOFF 명세서 생성 완료
 ============================================
 
- 📄 파일: plans/handoff-20260225-db-refactor.md
+ 📄 파일: /absolute/path/to/plans/handoff-20260225-db-refactor.md
 
  📋 요약:
  • 태스크: [설명]
@@ -82,10 +84,12 @@ Codex의 강점(정확한 코드 구현, 버그 감지)으로 연결하는 **브
  • AC: [N]개
 
  ✅ Codex 실행 방법:
- codex "plans/handoff-20260225-db-refactor.md 를 읽고 구현해"
+ codex "/absolute/path/to/plans/handoff-20260225-db-refactor.md 를 읽고 구현해"
 
 ============================================
 ```
+
+**절대경로 규칙**: `os.getcwd()` 또는 프로젝트 루트를 기준으로 절대경로 생성. 상대경로 사용 금지.
 
 ---
 
@@ -120,17 +124,12 @@ Large 규모는 태스크를 분할하여 개별 handoff 문서를 생성하는 
 ## Codex 실행 가이드 (명세서 소비 측)
 
 ```bash
-# 방법 1: 대화형 모드에서 명세서 참조
+# 방법 1: 대화형 모드에서 명세서 참조 (절대경로 사용)
 codex
-> plans/handoff-20260225-db-refactor.md 를 읽고 구현해줘
+> /absolute/path/to/plans/handoff-20260225-db-refactor.md 를 읽고 구현해줘
 
 # 방법 2: 비대화형 exec 모드
-codex exec "plans/handoff-20260225-db-refactor.md 의 태스크를 구현하라"
-
-# 방법 3: Plan Mode에서 먼저 검토
-codex
-> /plan
-> plans/handoff-20260225-db-refactor.md 를 읽고 구현 계획을 검토해줘
+codex exec "/absolute/path/to/plans/handoff-20260225-db-refactor.md 의 태스크를 구현하라"
 ```
 
 ---
