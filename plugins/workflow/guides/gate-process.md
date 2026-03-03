@@ -23,7 +23,9 @@ Completion Gate: 최종 완료 검토 (사용자 승인)
 
 ## Gate 적용 원칙
 
-**해당 단계가 실행된 경우에만 Gate 검증**
+**Gate는 무조건 실행하여 사용자 승인을 받아야 합니다.**
+- 에이전트 스킵 여부와 관계없이 Plan Gate와 Completion Gate는 항상 실행
+- Gate 없이 워크플로우가 자동 완료되는 것은 허용하지 않음
 
 ## 자동 반복 로직 (Worker ↔ Reviewer)
 

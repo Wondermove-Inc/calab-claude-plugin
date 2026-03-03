@@ -452,6 +452,9 @@ bd comments <epic-id>
 | Worker (TDD) | 코드 로직 변경 없는 경우 (설정, 문서, 오타) |
 | Reviewer | 3줄 미만 단순 수정 |
 
+> **주의: Gate는 에이전트 스킵과 무관하게 항상 실행합니다.**
+> 에이전트가 스킵되더라도 Plan Gate와 Completion Gate는 반드시 `AskUserQuestion`으로 사용자 승인을 받아야 합니다.
+
 ## 에이전트 호출 규칙
 
 - 모든 Task 호출 시 `run_in_background: true` 사용
