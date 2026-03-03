@@ -25,7 +25,7 @@ disable-model-invocation: true
    - 질문 형식:
      - question: "이 커밋과 연관된 Jira 티켓 키를 입력해주세요"
      - header: "Jira 티켓"
-     - 옵션 제공 불필요 (사용자가 직접 입력)
+     - options: [{"label": "필요없음", "description": "Jira 티켓 없이 커밋"}, {"label": "사용자 입력", "description": "Jira 티켓 키 직접 입력"}]
 
 4. **커밋 메시지 생성**
    - 메시지 형식:

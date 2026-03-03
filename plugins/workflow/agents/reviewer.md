@@ -149,9 +149,8 @@ pytest --cov
 
 ### 승인 판단 기준
 
-- **Critical/Major가 1건 이상** → 수정필요
-- **Minor만 존재** → Reviewer 재량으로 승인 또는 수정필요 결정
-- **Suggestion만 존재** → Reviewer가 자체 판단하여 승인 또는 수정필요 결정 (반영 가치가 높으면 수정필요, 아니면 승인)
+- **Critical/Major/Minor 중 1건 이상** → 수정필요
+- **Suggestion만 존재** → 승인 (Suggestion은 개선 제안일 뿐 승인 차단 사유가 아님)
 
 ## 작업 프로세스
 
