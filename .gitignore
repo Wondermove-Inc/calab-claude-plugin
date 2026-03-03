@@ -56,3 +56,7 @@ CLAUDE.md
 .beads
 .gitattributes
 .serena
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
