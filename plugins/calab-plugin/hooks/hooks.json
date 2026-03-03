@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/sensitive_file_guard.py\""
+            "command": "bash -c '[ -f \"${CLAUDE_PLUGIN_ROOT}/hooks/sensitive_file_guard.py\" ] && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/sensitive_file_guard.py\" || true'"
           }
         ]
       }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact_save_state.py\""
+            "command": "bash -c '[ -f \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact_save_state.py\" ] && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact_save_state.py\" || true'"
           }
         ]
       }
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/session_start_restore_hint.py\""
+            "command": "bash -c '[ -f \"${CLAUDE_PLUGIN_ROOT}/hooks/session_start_restore_hint.py\" ] && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/session_start_restore_hint.py\" || true'"
           }
         ]
       }
