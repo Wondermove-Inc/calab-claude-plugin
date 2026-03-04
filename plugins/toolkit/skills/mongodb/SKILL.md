@@ -1,9 +1,9 @@
 ---
 name: toolkit:mongodb
 description: MongoDB 데이터베이스 작업. mongosh로 데이터 조회, 수정, 삭제, 집계를 수행합니다.
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash
 disable-model-invocation: true
-argument-hint: [작업 설명]
+argument-hint: "[작업 설명]"
 ---
 
 # /toolkit:mongodb - MongoDB 데이터베이스 작업
@@ -26,54 +26,15 @@ mongosh를 사용하여 MongoDB 데이터베이스 작업을 수행합니다.
 
 ### Phase 1: 인터뷰 (필수)
 
-**AskUserQuestion 도구로 다음 정보를 순차적으로 수집:**
+**다음 정보를 텍스트로 한 번에 출력하여 수집합니다. 사용자 응답을 기다린 후 Phase 2로 진행합니다.**
 
-#### 질문 1: 접속 정보
 ```
-header: "MongoDB 접속"
-question: "MongoDB 접속 URI를 입력해주세요."
-options:
-  - label: "localhost:27017"
-    description: "로컬 기본 포트"
-  - label: "localhost:27018"
-    description: "로컬 대체 포트"
-  - label: "직접 입력"
-    description: "커스텀 URI 입력"
-```
+MongoDB 작업에 필요한 정보를 입력해주세요.
 
-#### 질문 2: 데이터베이스
-```
-header: "데이터베이스"
-question: "작업할 데이터베이스 이름은?"
-options:
-  - label: "직접 입력"
-    description: "데이터베이스 이름 입력"
-```
-
-#### 질문 3: 작업 유형
-```
-header: "작업 유형"
-question: "어떤 작업을 수행할까요?"
-options:
-  - label: "조회 (find)"
-    description: "문서 검색 및 조회"
-  - label: "수정 (update)"
-    description: "문서 수정"
-  - label: "삭제 (delete)"
-    description: "문서 삭제"
-  - label: "집계 (aggregate)"
-    description: "집계 파이프라인 실행"
-```
-
-#### 질문 4: 컬렉션 (조회/수정/삭제/집계 시)
-```
-header: "컬렉션"
-question: "작업할 컬렉션 이름은?"
-options:
-  - label: "목록 조회"
-    description: "컬렉션 목록을 먼저 확인"
-  - label: "직접 입력"
-    description: "컬렉션 이름 입력"
+1. 접속 URI: (기본: localhost:27017)
+2. 데이터베이스 이름:
+3. 작업 유형: 조회(find) / 수정(update) / 삭제(delete) / 집계(aggregate)
+4. 컬렉션 이름: (목록 확인이 필요하면 "목록" 입력)
 ```
 
 ### Phase 2: 접속 테스트

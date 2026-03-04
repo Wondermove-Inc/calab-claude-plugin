@@ -1,6 +1,6 @@
 {
   "name": "setup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Claude Code 환경 설정 - statusline, beads 설치 및 관리",
   "author": {
     "name": "wondermove lab",

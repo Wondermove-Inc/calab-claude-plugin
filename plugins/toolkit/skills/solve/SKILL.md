@@ -1,9 +1,9 @@
 ---
 name: toolkit:solve
 description: 문제 해결 프로세스를 시작합니다. 체계적인 방법론으로 근본 원인을 분석하고 해결합니다.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch, AskUserQuestion
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch
 disable-model-invocation: true
-argument-hint: [문제 설명] [--5whys | --rca | --hypothesis | --binary]
+argument-hint: "[문제 설명] [--5whys | --rca | --hypothesis | --binary]"
 ---
 
 # /solve - 문제 해결 프로세스
@@ -74,22 +74,14 @@ flowchart LR
 
 ### 1.1 문제 파악
 
-$ARGUMENTS에서 문제 설명을 파악하거나, 정보가 불충분하면 `AskUserQuestion` 툴로 추가 정보를 수집합니다.
+$ARGUMENTS에서 문제 설명을 파악하거나, 정보가 불충분하면 다음 내용을 텍스트로 출력하고 사용자 응답을 기다립니다:
 
-**질문 형식 (필요 시):**
 ```
-question: "문제를 정확히 파악하기 위해 추가 정보가 필요합니다"
-header: "문제 상세"
-options:
-  - label: "에러 메시지 확인"
-    description: "정확한 에러 메시지와 스택 트레이스"
-  - label: "발생 시점 확인"
-    description: "언제부터 발생했는지"
-  - label: "재현 조건 확인"
-    description: "재현 가능 여부와 조건"
-  - label: "최근 변경사항 확인"
-    description: "코드, 설정, 환경 변경 여부"
-multiSelect: true
+문제를 정확히 파악하기 위해 추가 정보가 필요합니다. 다음 중 제공 가능한 정보를 알려주세요:
+1. 에러 메시지 - 정확한 에러 메시지와 스택 트레이스
+2. 발생 시점 - 언제부터 발생했는지
+3. 재현 조건 - 재현 가능 여부와 조건
+4. 최근 변경사항 - 코드, 설정, 환경 변경 여부
 ```
 
 ### 1.2 문제 정의서 작성

@@ -1,7 +1,7 @@
 ---
 name: setup:statusline
 description: Claude Code statusline 설치. 터미널에 모델명, 컨텍스트 사용량, Git 상태를 표시합니다.
-allowed-tools: Bash, Read, Write, AskUserQuestion
+allowed-tools: Bash, Read, Write
 disable-model-invocation: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: setup:beads
 description: Beads(bd) 이슈 트래킹 도구 설치 및 관리. macOS 전용 (Homebrew 사용)
-allowed-tools: Bash, Read, AskUserQuestion
+allowed-tools: Bash, Read
 disable-model-invocation: true
 ---
 

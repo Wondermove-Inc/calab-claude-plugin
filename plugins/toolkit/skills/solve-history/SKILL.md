@@ -3,7 +3,7 @@ name: toolkit:solve-history
 description: 과거 해결된 문제 이력을 검색합니다. 유사 문제 찾기, 패턴 분석에 활용됩니다.
 allowed-tools: Read, Glob, Grep
 disable-model-invocation: true
-argument-hint: [검색어] [--recent | --keyword <키워드>]
+argument-hint: "[검색어] [--recent | --keyword <키워드>]"
 ---
 
 # /solve-history - 문제 해결 이력

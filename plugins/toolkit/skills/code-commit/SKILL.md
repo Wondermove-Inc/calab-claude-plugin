@@ -1,7 +1,7 @@
 ---
 name: toolkit:code-commit
 description: 현재 변경사항을 분석하고 커밋 메시지를 생성합니다
-allowed-tools: Bash, Read, AskUserQuestion
+allowed-tools: Bash, Read
 disable-model-invocation: true
 ---
 
@@ -21,11 +21,13 @@ disable-model-invocation: true
    - 테스트 코드 포함 여부 확인
 
 3. **Jira ticket key 확인**
-   - 인자로 전달되지 않은 경우 `AskUserQuestion` 툴을 사용하여 Jira ticket key 입력받음
-   - 질문 형식:
-     - question: "이 커밋과 연관된 Jira 티켓 키를 입력해주세요"
-     - header: "Jira 티켓"
-     - options: [{"label": "필요없음", "description": "Jira 티켓 없이 커밋"}, {"label": "사용자 입력", "description": "Jira 티켓 키 직접 입력"}]
+   - 인자로 전달되지 않은 경우 다음 내용을 텍스트로 출력하고 사용자 응답을 기다림:
+     ```
+     Jira 티켓 키를 입력해주세요.
+     - 티켓 없이 커밋하려면 "없음"을 입력하세요.
+     - 예: PROJ-123
+     ```
+   - 사용자가 응답할 때까지 다음 단계로 진행하지 않음
 
 4. **커밋 메시지 생성**
    - 메시지 형식:
@@ -51,12 +53,12 @@ disable-model-invocation: true
 
 5. **사용자 확인 및 커밋**
    - 생성된 커밋 메시지를 채팅 창에 코드블록으로 표시
-   - `AskUserQuestion` 툴로 승인 여부만 확인
-   - 질문 형식:
-     - question: "커밋하시겠습니까?"
-     - header: "커밋"
-     - options: [{"label": "예", "description": "커밋 진행"}, {"label": "아니오", "description": "취소"}]
-   - "예" 선택 시 `git add` 및 `git commit` 실행
+   - 다음 내용을 텍스트로 출력하고 사용자 응답을 기다림:
+     ```
+     위 메시지로 커밋하시겠습니까? (예/아니오)
+     ```
+   - 사용자가 승인할 때까지 커밋을 실행하지 않음
+   - "예" 응답 시 `git add` 및 `git commit` 실행
 
 ## 사용 예시
 

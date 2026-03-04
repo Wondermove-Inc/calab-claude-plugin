@@ -1,7 +1,7 @@
 ---
 name: toolkit:sync-jira
 description: beads 이슈를 Jira 티켓으로 동기화합니다. 이슈 내용을 그대로 Jira에 생성하며, 부모 티켓 지정이 필수입니다.
-allowed-tools: Bash, AskUserQuestion, mcp__atlassian__jira_create_issue, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search
+allowed-tools: Bash, mcp__atlassian__jira_create_issue, mcp__atlassian__jira_get_issue, mcp__atlassian__jira_search
 disable-model-invocation: true
 argument-hint: <beads-issue-id>
 ---
@@ -31,22 +31,20 @@ beads에서 관리하는 로컬 이슈를 Jira 티켓으로 동기화합니다.
 
 ### Step 1: beads 이슈 번호 확인 (필수)
 
-인자로 beads 이슈 번호가 전달되지 않았으면, `AskUserQuestion` 툴을 사용하여 입력받습니다.
+인자로 beads 이슈 번호가 전달되지 않았으면, 다음 내용을 텍스트로 출력하고 사용자 응답을 기다립니다.
 이 단계를 건너뛰지 않습니다. 임의로 추측하거나 자동 선택하지 않습니다.
 
-**질문 형식:**
-- question: "동기화할 beads 이슈 번호를 입력해주세요 (예: 1, 2, 3)"
-- header: "이슈 번호"
-- 사용자가 직접 입력 (옵션 불필요)
+```
+동기화할 beads 이슈 번호를 입력해주세요. (예: 1, 2, 3)
+```
 
 ### Step 2: Jira 부모 티켓 확인 (필수)
 
-`AskUserQuestion` 툴을 사용하여 Jira 부모 티켓 정보를 입력받습니다.
+다음 내용을 텍스트로 출력하고 사용자 응답을 기다립니다:
 
-**질문 형식:**
-- question: "Jira 부모 티켓 키를 입력해주세요 (예: PROJ-123)"
-- header: "부모 티켓"
-- 사용자가 직접 입력
+```
+Jira 부모 티켓 키를 입력해주세요. (예: PROJ-123)
+```
 
 인자로 전달되지 않았으면 반드시 질문합니다.
 이 단계를 건너뛰지 않습니다.
@@ -107,12 +105,13 @@ Step 2에서 부모 티켓 확인 시, 보고자도 함께 질문합니다.
 
 ### Step 5: 사용자 확인
 
-동기화 전에 매핑 결과를 사용자에게 보여주고 `AskUserQuestion` 툴로 확인을 받습니다.
+동기화 전에 매핑 결과를 사용자에게 보여주고 다음 내용을 텍스트로 출력하여 확인을 받습니다:
 
-**질문 형식:**
-- question: "이 내용으로 Jira 티켓을 생성하시겠습니까?"
-- header: "동기화 확인"
-- options: [{"label": "예", "description": "동기화 진행"}, {"label": "아니오", "description": "취소"}]
+```
+이 내용으로 Jira 티켓을 생성하시겠습니까? (예/아니오)
+```
+
+사용자가 승인할 때까지 다음 단계로 진행하지 않습니다.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

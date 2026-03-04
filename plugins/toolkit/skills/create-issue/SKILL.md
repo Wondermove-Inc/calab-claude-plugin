@@ -1,7 +1,7 @@
 ---
 name: toolkit:create-issue
 description: 이슈 작성 가이드라인에 따라 beads 이슈 티켓을 생성합니다. 이슈 타입(initiative, epic, task, sub-task, bug)에 맞는 템플릿으로 구조화된 이슈를 작성합니다.
-allowed-tools: Bash, Read, AskUserQuestion
+allowed-tools: Bash, Read
 disable-model-invocation: true
 argument-hint: <이슈 설명> [--type initiative|epic|task|sub-task|bug]
 ---
