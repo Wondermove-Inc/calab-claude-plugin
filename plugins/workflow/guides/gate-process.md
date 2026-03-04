@@ -29,10 +29,10 @@ Completion Gate: 최종 완료 검토 (사용자 승인)
 
 ### 강제 중단 보장
 
-Gate 텍스트를 출력한 후 **반드시 다음 규칙을 따릅니다:**
-1. Gate 텍스트 출력 후 즉시 메시지를 종료 (추가 도구 호출이나 텍스트 출력 금지)
-2. 사용자의 다음 메시지가 도착할 때까지 어떤 단계도 진행하지 않음
-3. 사용자 응답이 "승인", "수정 필요", "완료", "취소" 중 하나에 매칭되지 않으면 재질문
+Gate에서 AskUserQuestion 도구를 호출한 후 **반드시 다음 규칙을 따릅니다:**
+1. AskUserQuestion 호출 후 즉시 메시지를 종료 (추가 도구 호출이나 텍스트 출력 금지)
+2. 사용자의 응답이 도착할 때까지 어떤 단계도 진행하지 않음
+3. 사용자가 "Other"를 선택한 경우 입력 내용을 분석하여 적절한 분기를 결정
 
 ## 자동 반복 로직 (Worker ↔ Reviewer)
 
@@ -60,8 +60,11 @@ iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
 
 ### Plan Gate: 계획 승인
 
-> Planner가 작성한 이슈를 기반으로 승인을 요청합니다.
+> Planner가 작성한 이슈를 기반으로 AskUserQuestion 도구로 승인을 요청합니다.
 
+**요약 텍스트 출력 후 AskUserQuestion 호출:**
+
+요약 표시:
 ```
 ## Plan 검토
 
@@ -71,17 +74,20 @@ iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
 - 유형: [새 기능 개발 / 버그 수정 / 리팩토링]
 - 복잡도: [단순 / 중간 / 복잡]
 - 주요 변경: [요약]
+```
 
-옵션:
+AskUserQuestion 옵션:
 - "승인": Worker 단계로 진행
 - "수정 필요": Planner 재호출, 이슈 수정
 - "취소": 작업 중단
-```
 
 ### Completion Gate: 최종 완료 검토
 
-> Reviewer가 **승인** 판정 시 사용자에게 최종 완료 검토를 요청합니다.
+> Reviewer가 **승인** 판정 시 AskUserQuestion 도구로 최종 완료 검토를 요청합니다.
 
+**요약 텍스트 출력 후 AskUserQuestion 호출:**
+
+요약 표시:
 ```
 ## 워크플로우 완료 검토
 
@@ -90,26 +96,22 @@ iteration_count=$(bd show <epic-id> | grep -c "Worker-Reviewer 자동 반복")
 - Critical: 0건, Major: N건
 - 자동 반복: N/3회
 - 리뷰 상세: bd show <reviewer-subtask-id>
+```
 
-옵션:
+AskUserQuestion 옵션 (일반):
 - "완료": 워크플로우 종료 및 모든 이슈 close
 - "수정 필요": Reviewer가 수정 계획 업데이트 → Worker 재작업
 - "취소": 작업 중단
-```
 
 #### 3회 자동 반복 도달 시 추가 옵션
 
-자동 반복이 3/3회에 도달한 경우 Completion Gate에서 추가 옵션을 제공합니다:
+자동 반복이 3/3회에 도달한 경우 AskUserQuestion에서 추가 옵션을 제공합니다:
 
-```
-⚠️ 자동 반복 최대 도달 (3/3회) - 품질 재검토 권장
-
-추가 옵션:
+AskUserQuestion 옵션 (3회 도달):
 - "완료": 현재 상태로 워크플로우 종료
 - "수정 필요 (재시도)": 자동 반복 카운터를 초기화하고 Worker 재작업 (최대 3회 재시도)
 - "수정 필요 (1회)": 카운터 초기화 없이 Worker 1회 재작업 후 Completion Gate 복귀
 - "취소": 작업 중단
-```
 
 재시도 선택 시 Epic 코멘트 추가:
 ```

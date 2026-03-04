@@ -225,7 +225,8 @@ bd show <worker-subtask-id> | grep "\[Reviewer\].*수정필요"
 3. 각 수정 항목에 대해:
    - Critical: 반드시 수정 (최우선)
    - Major: 반드시 수정
-   - Minor/Suggestion: 판단하여 수정
+   - Minor: 반드시 수정
+   - Suggestion: 반드시 수정 (사용자가 "반영 불필요"로 결정한 항목 제외)
 4. 수정 후 테스트 실행 → PASS 확인
 5. 빌드 확인
 6. Worker 이슈 description 업데이트 (재작업 내역 추가)

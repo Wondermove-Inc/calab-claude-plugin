@@ -1,7 +1,7 @@
 ---
 name: workflow:start
 description: 워크플로우를 시작합니다. start 스킬이 오케스트레이터로서 Planner→Worker→Reviewer 흐름을 관리합니다.
-allowed-tools: Bash, Task, TaskOutput
+allowed-tools: Bash, Task, TaskOutput, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -123,7 +123,7 @@ Task (subagent_type: workflow:planner, model: opus, run_in_background: true):
 ```
 TaskOutput(task_id, block: true, timeout: 600000)
 → 완료: 결과 확인 후 다음 단계
-→ timeout: 사용자에게 "Planner 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+→ timeout: AskUserQuestion으로 재대기 또는 취소 선택 요청
 ```
 
 완료 시:
@@ -133,37 +133,27 @@ bd comments add <epic-id> "[Planner] 완료"
 
 ### 2단계: Plan Gate
 
-다음 내용을 텍스트로 출력하고 사용자 응답을 기다립니다:
+> Gate 정책 및 옵션 상세는 `guides/gate-process.md`의 "Plan Gate" 섹션을 참조합니다.
 
-```
-[Plan Gate] Planner가 작성한 계획을 검토해주세요.
-- 승인: Worker 단계로 진행
-- 수정 필요: Planner 재호출
-- 취소: 작업 중단
-```
-
-**강제 중단**: Gate 텍스트 출력 후 즉시 메시지를 종료합니다. 추가 도구 호출이나 텍스트 출력 없이 사용자의 다음 메시지를 기다립니다.
-
-**질문 전 요약 표시:**
-```
-## Plan 검토
-
-이슈: bd show <planner-subtask-id>
-
-### 요약
-- 유형: [작업 유형]
-- 복잡도: [복잡도]
-- 주요 변경: [요약]
-
-### ⚠️ 판단 필요 항목
-[Planner가 [판단 필요]로 표기한 항목이 있으면 여기에 나열]
-- (항목 없으면 이 섹션 생략)
-```
+요약을 텍스트로 표시한 후 AskUserQuestion 도구로 사용자 승인을 요청합니다.
 
 **`[판단 필요]` 마커 처리:**
-- Planner 결과에서 `[판단 필요]` 텍스트가 포함된 항목을 검출하여 별도로 나열
+- Planner 결과에서 `[판단 필요]` 텍스트가 포함된 항목을 검출하여 요약에 별도 나열
 - 해당 항목이 1개 이상이면 "⚠️ 판단 필요 항목" 섹션을 반드시 표시
 - 항목이 없으면 이 섹션을 생략
+
+**아래 파라미터로 AskUserQuestion 도구를 호출합니다:**
+```
+question: "[Plan Gate] Planner가 작성한 계획을 검토해주세요. 어떻게 진행하시겠습니까?"
+header: "Plan Gate"
+options:
+  - label: "승인", description: "Worker 단계로 진행합니다"
+  - label: "수정 필요", description: "Planner를 재호출하여 이슈를 수정합니다"
+  - label: "취소", description: "작업을 중단합니다"
+multiSelect: false
+```
+
+**강제 중단**: AskUserQuestion 호출 후 즉시 메시지를 종료합니다. 추가 도구 호출이나 텍스트 출력 없이 사용자의 응답을 기다립니다.
 
 ### 3단계: Worker 호출
 
@@ -178,7 +168,7 @@ Task (subagent_type: workflow:worker, model: sonnet, run_in_background: true):
 ```
 TaskOutput(task_id, block: true, timeout: 600000)
 → 완료: 결과 확인 후 다음 단계
-→ timeout: 사용자에게 "Worker 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+→ timeout: AskUserQuestion으로 재대기 또는 취소 선택 요청
 ```
 
 완료 시:
@@ -201,7 +191,7 @@ Task (subagent_type: workflow:reviewer, model: opus, run_in_background: true):
 ```
 TaskOutput(task_id, block: true, timeout: 600000)
 → 완료: Reviewer 결과 확인
-→ timeout: 사용자에게 "Reviewer 에이전트가 10분 내 완료되지 않았습니다" 알림, 재대기 또는 취소 선택
+→ timeout: AskUserQuestion으로 재대기 또는 취소 선택 요청
 ```
 
 #### Reviewer 결과 분석
@@ -284,36 +274,24 @@ bd comments add <epic-id> "[Reviewer] 승인 - Completion Gate 진입"
 
 ### 6단계: Completion Gate — 최종 완료 검토
 
-Reviewer 승인 시 다음 내용을 텍스트로 출력하고 사용자 응답을 기다립니다:
+> Gate 정책, 요약 형식, 옵션 상세 및 3회 반복 도달 시 추가 옵션은 `guides/gate-process.md`의 "Completion Gate" 섹션을 참조합니다.
 
+Reviewer 승인 시 요약을 텍스트로 표시한 후 AskUserQuestion 도구로 사용자 승인을 요청합니다.
+
+**아래 파라미터로 AskUserQuestion 도구를 호출합니다 (일반):**
 ```
-[Completion Gate] 워크플로우를 완료하시겠습니까?
-- 완료: 워크플로우 종료 및 모든 이슈 close
-- 수정 필요: Reviewer가 수정 계획 업데이트 → Worker 재작업
-- 취소: 작업 중단
-```
-
-**강제 중단**: Gate 텍스트 출력 후 즉시 메시지를 종료합니다. 추가 도구 호출이나 텍스트 출력 없이 사용자의 다음 메시지를 기다립니다.
-
-**질문 전 요약 표시:**
-```
-## 워크플로우 완료 검토
-
-- Reviewer 결정: 승인
-- 품질: N/10
-- Critical: 0건, Major: N건
-- 자동 반복: ${iteration_count}/3회
-- 리뷰 상세: bd show <reviewer-subtask-id>
+question: "[Completion Gate] 워크플로우를 완료하시겠습니까?"
+header: "Completion"
+options:
+  - label: "완료", description: "워크플로우 종료 및 모든 이슈 close"
+  - label: "수정 필요", description: "Reviewer가 수정 계획 업데이트 → Worker 재작업"
+  - label: "취소", description: "작업을 중단합니다"
+multiSelect: false
 ```
 
-**3회 자동 반복 도달 시 추가 경고:**
-```
-⚠️ [Completion Gate] 자동 반복 최대 도달 (3/3회) - 품질 재검토 후 선택해주세요.
-- 완료: 현재 상태로 워크플로우 종료
-- 수정 필요 (재시도): 자동 반복 카운터 초기화 후 Worker 재작업 (최대 3회)
-- 수정 필요 (1회): 카운터 초기화 없이 Worker 1회 재작업
-- 취소: 작업 중단
-```
+**3회 자동 반복 도달 시**: `guides/gate-process.md`의 추가 옵션(재시도/1회)을 사용합니다.
+
+**강제 중단**: AskUserQuestion 호출 후 즉시 메시지를 종료합니다. 추가 도구 호출이나 텍스트 출력 없이 사용자의 응답을 기다립니다.
 
 #### 완료 선택 시
 
@@ -447,7 +425,7 @@ bd comments <epic-id>
 | Reviewer | 3줄 미만 단순 수정 |
 
 > **주의: Gate는 에이전트 스킵과 무관하게 항상 실행합니다.**
-> 에이전트가 스킵되더라도 Plan Gate와 Completion Gate는 반드시 텍스트 출력으로 사용자 승인을 받아야 합니다.
+> 에이전트가 스킵되더라도 Plan Gate와 Completion Gate는 반드시 AskUserQuestion 도구로 사용자 승인을 받아야 합니다.
 
 ## 에이전트 호출 규칙
 
@@ -467,11 +445,14 @@ TaskOutput(task_id, block: true, timeout: 600000)
 ```
 
 **timeout 처리:**
-- timeout 발생 시 다음 내용을 텍스트로 출력하고 사용자 응답을 기다림:
+- timeout 발생 시 아래 파라미터로 AskUserQuestion 도구를 호출합니다:
 ```
-{에이전트명} 에이전트가 10분 내 완료되지 않았습니다. 어떻게 하시겠습니까?
-- 재대기: 10분 추가 대기
-- 취소: 작업 중단
+question: "{에이전트명} 에이전트가 10분 내 완료되지 않았습니다. 어떻게 하시겠습니까?"
+header: "Timeout"
+options:
+  - label: "재대기", description: "10분 추가 대기합니다"
+  - label: "취소", description: "작업을 중단합니다"
+multiSelect: false
 ```
 - 재대기 선택 시 동일한 task_id로 `TaskOutput` 재호출
 
@@ -494,7 +475,7 @@ flowchart LR
 | Completion Gate (수정 필요) | Reviewer 수정 계획 → Worker 재작업 → Completion Gate 복귀 |
 
 | 에이전트 실패 | 최대 3회 재시도, 3회 실패 → 사용자 보고 |
-| 대기 timeout (10분) | 사용자에게 알림 → 재대기 또는 취소 선택 |
+| 대기 timeout (10분) | AskUserQuestion으로 재대기 또는 취소 선택 요청 |
 | 사용자 취소 | Epic 코멘트 기록 후 close |
 
 ## 참조 문서
