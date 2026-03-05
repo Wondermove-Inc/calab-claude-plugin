@@ -84,6 +84,14 @@ SKILL_REFERENCES = {
             'default': []
         },
         'option_templates': {}
+    },
+    'jira-ticket': {
+        'base_path': 'skills/jira-ticket',
+        'options': {
+            'subtasks': [],
+            'default': []
+        },
+        'option_templates': {}
     }
 }
 
@@ -99,7 +107,7 @@ CALAB_SKILL_ALIASES = {
 
 # 모든 스킬 목록 (references가 없어도 상태 저장 대상)
 ALL_SKILLS = [
-    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review'
+    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review', 'jira-ticket'
 ]
 
 
@@ -144,6 +152,9 @@ def detect_option(prompt: str, skill_name: str) -> str:
             return 'rca'
         elif '--hypothesis' in prompt_lower:
             return 'hypothesis'
+    elif skill_name == 'jira-ticket':
+        if '--subtasks' in prompt_lower:
+            return 'subtasks'
     elif skill_name == 'onboard':
         if '--quick' in prompt_lower:
             return 'quick'

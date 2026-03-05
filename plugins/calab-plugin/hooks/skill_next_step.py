@@ -131,12 +131,12 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             ]
         }
     },
-    'jira': {
+    'jira-ticket': {
         'default': {
-            'description': 'JIRA 동기화 완료',
+            'description': 'JIRA 티켓 추천 완료',
             'options': [
-                {'label': '/plan', 'description': '이슈 구현 시작'},
-                {'label': '다른 이슈', 'description': '다른 이슈 처리'},
+                {'label': '/handoff', 'description': 'Codex에 구현 위임 (권장)'},
+                {'label': '수정 요청', 'description': '티켓 내용 수정/보완'},
                 {'label': '종료', 'description': '나중에 계속'},
             ]
         }

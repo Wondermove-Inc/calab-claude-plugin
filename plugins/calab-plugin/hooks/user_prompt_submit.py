@@ -71,6 +71,10 @@ def detect_slash_command(prompt: str) -> Optional[dict]:
         '/brainstorm --hypothesis': {'type': 'fix', 'category': '가설 검증', 'command': '/brainstorm --hypothesis'},
         '/brainstorm': {'type': 'design', 'category': '브레인스토밍', 'command': '/brainstorm'},
 
+        # /jira-ticket - JIRA 티켓 추천
+        '/jira-ticket --subtasks': {'type': 'design', 'category': 'JIRA 티켓 추천 (Sub-task 포함)', 'command': '/jira-ticket --subtasks'},
+        '/jira-ticket': {'type': 'design', 'category': 'JIRA 티켓 추천', 'command': '/jira-ticket'},
+
         # /onboard - 프로젝트 온보딩 (메타 스킬)
         '/onboard --quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard --quick'},
         '/onboard --phases': {'type': 'research', 'category': '단계별 온보딩', 'command': '/onboard --phases'},

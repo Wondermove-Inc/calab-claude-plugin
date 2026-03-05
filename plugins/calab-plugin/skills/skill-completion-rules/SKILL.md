@@ -43,7 +43,7 @@ user-invocable: false
 | `/docs` | 문서 생성 완료 | 추가 문서 또는 개발 계속 |
 | `/refactor` | 리팩토링 완료 | 테스트 실행 |
 | `/e2e` | E2E 테스트 완료 | 실패 수정 또는 배포 |
-| `/jira` | JIRA 작업 완료 | `/plan` |
+| `/jira-ticket` | 티켓 추천 완료 | `/handoff` 또는 JIRA 생성 |
 | `/research` | 리서치 완료 | `/brainstorm` 또는 `/plan` |
 
 ---
