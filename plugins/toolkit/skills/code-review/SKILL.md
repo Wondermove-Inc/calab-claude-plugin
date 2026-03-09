@@ -1,8 +1,8 @@
 ---
 name: toolkit:code-review
 description: 코드 품질(보안/성능/언어별 권장사항)을 검증하고 개선점을 제안합니다
-allowed-tools: Bash, Read, Grep, Glob
-disable-model-invocation: true
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write
+disable-model-invocation: false
 ---
 
 # Code Review Command
@@ -20,8 +20,14 @@ disable-model-invocation: true
    - 아래 리뷰 기준에 따라 변경된 코드 분석
    - **변경된 코드에 집중** (기존 코드의 문제가 아닌 새로 도입된 이슈만)
    - 프로젝트의 CLAUDE.md, 린트 설정 등 기존 컨벤션 확인 후 적용
+   - 각 피드백 항목을 **자동 수정 가능** vs **사용자 판단 필요**로 분류
 
-3. **리뷰 요약 리포트 생성**
+3. **자동 수정 실행**
+   - `/simplify` 스킬을 호출하여 코드 품질, 재사용성, 효율성 이슈를 자동 수정
+   - `/simplify`가 다루지 않는 Auto-fix 대상 항목(보안, 에러 핸들링, 언어별 패턴 등)은 직접 수정
+   - 수정 완료 후 리포트의 Auto-fixed 섹션에 기록
+
+4. **리뷰 요약 리포트 생성**
    다음 형식에 따라 리포트를 작성:
 
 ```
@@ -30,33 +36,20 @@ disable-model-invocation: true
 ### Overall Assessment
 - Quality Score: X/10
 - Issues Found: X (Critical: X, Warning: X, Suggestion: X)
+- Auto-fixed: X items
 
-### Critical Issues (보안 취약점)
-| # | 파일 | 내용 | 수정 방안 |
+### Auto-fixed (자동 수정 완료)
+| # | 파일 | 내용 | 수정 내용 |
 |---|------|------|----------|
-| 1 | path/to/file:line | [취약점 유형] | [구체적 수정 방안] |
+| 1 | path/to/file:line | [이슈] | [수정한 내용] |
 
-### Warnings (성능/에러 처리)
-| # | 파일 | 내용 | 수정 방안 |
-|---|------|------|----------|
-| 1 | path/to/file:line | [문제] | [구체적 수정 방안] |
-
-### Suggestions (코드 품질)
-| # | 파일 | 내용 | 수정 방안 |
-|---|------|------|----------|
-| 1 | path/to/file:line | [개선점] | [제안] |
-
-### Language-Specific Issues
-- **Go**: [발견 사항]
-- **TypeScript**: [발견 사항]
-- **React**: [발견 사항]
-- **Python**: [발견 사항]
+### Needs Decision (사용자 판단 필요)
+| # | 파일 | 내용 | 판단 사유 | 수정 방안 |
+|---|------|------|----------|----------|
+| 1 | path/to/file:line | [이슈] | [사용자 판단이 필요한 이유] | [선택지] |
 
 ### Good Points
 - [잘 작성된 부분들]
-
-### Recommendations
-- 전반적인 개선 방향
 ```
 
 ## 사용 예시
@@ -80,6 +73,28 @@ disable-model-invocation: true
 - **높은 확신도만 보고**: 추측성 지적보다 명확한 이슈에 집중
 - **프로젝트 컨벤션 우선**: 일반 규칙보다 프로젝트의 기존 패턴을 우선
 - **심각도 분류 엄격 적용**: Critical은 보안 취약점에만, 성능은 Warning, 스타일은 Suggestion
+- **발견 즉시 수정**: 사용자 판단이 불필요한 피드백은 리포트만 남기지 않고 코드를 직접 수정
+
+## 자동 수정 분류 기준
+
+### Auto-fix 대상 (사용자 판단 불필요 → 즉시 수정)
+- 에러 핸들링 누락 (에러 무시, 미처리 에러)
+- 리소스 해제 누락 (defer close, finally 등)
+- 타입 안전성 위반 (`any` → 구체적 타입, 불필요한 타입 단언)
+- 불필요한 코드 제거 (dead code, unused imports/variables)
+- 네이밍 컨벤션 위반 (프로젝트 기존 패턴 기준)
+- 언어별 관용적 패턴 미준수 (Go error wrapping, Python bare except 등)
+- 명백한 성능 이슈 (N+1 쿼리, 반복문 내 중복 호출)
+- 보안 취약점 (SQL injection, XSS, 하드코딩된 secrets)
+- 코드 스타일/포맷팅 (린트 규칙 위반)
+
+### Needs Decision 대상 (사용자 판단 필요 → 리포트만 작성)
+- 비즈니스 로직 변경이 수반되는 수정
+- API 스펙/인터페이스 변경
+- 아키텍처/설계 패턴 변경 (함수 분리, 모듈 구조 변경)
+- 의존성 추가/제거/버전 변경
+- 동작 변경 가능성이 있는 리팩토링
+- 여러 선택지가 존재하는 개선안
 
 ---
 
