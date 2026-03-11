@@ -1,0 +1,22 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "description": "심플 워크플로우 - Worker 기반 TDD 실행. 중/소규모 작업용.",
+  "author": {
+    "name": "wondermove lab",
+    "email": "support@wondermove.net"
+  },
+  "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "simple",
+    "worker",
+    "tdd"
+  ],
+  "agents": [
+    "./agents/worker.md"
+  ],
+  "skills": [
+    "./skills/start"
+  ]
+}

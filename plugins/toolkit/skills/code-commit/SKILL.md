@@ -36,8 +36,6 @@ disable-model-invocation: true
 
    - 주요 변경사항 1
    - 주요 변경사항 2
-
-   Co-Authored-By: Claude <noreply@anthropic.com>
    ```
 
    - fix 타입인 경우 Jira 티켓 링크를 본문에 추가
@@ -76,8 +74,6 @@ disable-model-invocation: true
 - OAuth2 기반 로그인 플로우 구현
 - 세션 관리 미들웨어 추가
 - 로그인/로그아웃 API 엔드포인트 추가
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ```
@@ -86,8 +82,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - README.md 설치 가이드 오탈자 수정
 
 Jira: https://jira.example.com/browse/PROJ-456
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ```
@@ -95,8 +89,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 - hasStatusData 함수 재도입하여 빈 Status 명시적 처리
 - hasStatusChanged에 newStatus 데이터 존재 여부 체크 추가
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## 주의사항
