@@ -36,6 +36,13 @@
       "description": "문서 콘텐츠 자동 생성 (Docusaurus)",
       "category": "documentation",
       "tags": ["docs", "docusaurus", "documentation"]
+    },
+    {
+      "name": "simple",
+      "source": "./plugins/simple",
+      "description": "심플 워크플로우 - Worker 기반 TDD 실행 (중/소규모 작업용)",
+      "category": "development",
+      "tags": ["simple", "worker", "tdd"]
     }
   ]
 }
