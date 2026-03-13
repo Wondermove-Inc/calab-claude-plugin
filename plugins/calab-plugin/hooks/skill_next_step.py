@@ -141,6 +141,15 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             ]
         }
     },
+    'cleanup': {
+        'default': {
+            'description': '브랜치 정리 + dev 동기화 완료',
+            'options': [
+                {'label': '/plan', 'description': '다음 기능 개발 시작'},
+                {'label': '종료', 'description': '나중에 계속'},
+            ]
+        }
+    },
 }
 
 

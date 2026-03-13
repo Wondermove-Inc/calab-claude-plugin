@@ -92,6 +92,14 @@ SKILL_REFERENCES = {
             'default': []
         },
         'option_templates': {}
+    },
+    'cleanup': {
+        'base_path': 'skills/cleanup',
+        'options': {
+            'dry-run': [],
+            'default': []
+        },
+        'option_templates': {}
     }
 }
 
@@ -107,7 +115,7 @@ CALAB_SKILL_ALIASES = {
 
 # 모든 스킬 목록 (references가 없어도 상태 저장 대상)
 ALL_SKILLS = [
-    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review', 'jira-ticket'
+    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review', 'jira-ticket', 'cleanup'
 ]
 
 
@@ -155,6 +163,9 @@ def detect_option(prompt: str, skill_name: str) -> str:
     elif skill_name == 'jira-ticket':
         if '--subtasks' in prompt_lower:
             return 'subtasks'
+    elif skill_name == 'cleanup':
+        if '--dry-run' in prompt_lower:
+            return 'dry-run'
     elif skill_name == 'onboard':
         if '--quick' in prompt_lower:
             return 'quick'

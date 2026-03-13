@@ -75,6 +75,10 @@ def detect_slash_command(prompt: str) -> Optional[dict]:
         '/jira-ticket --subtasks': {'type': 'design', 'category': 'JIRA 티켓 추천 (Sub-task 포함)', 'command': '/jira-ticket --subtasks'},
         '/jira-ticket': {'type': 'design', 'category': 'JIRA 티켓 추천', 'command': '/jira-ticket'},
 
+        # /cleanup - PR 머지 후 브랜치 정리
+        '/cleanup --dry-run': {'type': 'refactor', 'category': '브랜치 정리 (미리보기)', 'command': '/cleanup --dry-run'},
+        '/cleanup': {'type': 'refactor', 'category': '브랜치 정리', 'command': '/cleanup'},
+
         # /onboard - 프로젝트 온보딩 (메타 스킬)
         '/onboard --quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard --quick'},
         '/onboard --phases': {'type': 'research', 'category': '단계별 온보딩', 'command': '/onboard --phases'},

@@ -44,6 +44,7 @@ user-invocable: false
 | `/refactor` | 리팩토링 완료 | 테스트 실행 |
 | `/e2e` | E2E 테스트 완료 | 실패 수정 또는 배포 |
 | `/jira-ticket` | 티켓 추천 완료 | `/handoff` 또는 JIRA 생성 |
+| `/cleanup` | 브랜치 정리 완료 | `/plan` (다음 기능) |
 | `/research` | 리서치 완료 | `/brainstorm` 또는 `/plan` |
 
 ---
