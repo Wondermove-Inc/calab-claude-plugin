@@ -1,6 +1,6 @@
 {
   "name": "simple",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "심플 워크플로우 - Worker 기반 TDD 실행. 중/소규모 작업용.",
   "author": {
     "name": "wondermove lab",
