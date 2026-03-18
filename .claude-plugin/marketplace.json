@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "plugins": [
     {
@@ -43,6 +43,13 @@
       "description": "심플 워크플로우 - Worker 기반 TDD 실행 (중/소규모 작업용)",
       "category": "development",
       "tags": ["simple", "worker", "tdd"]
+    },
+    {
+      "name": "cmux",
+      "source": "./plugins/cmux",
+      "description": "cmux 터미널 제어 - 워크스페이스/패널 관리, 브라우저 자동화, 사이드바 상태",
+      "category": "utilities",
+      "tags": ["cmux", "terminal", "browser", "automation", "workspace"]
     }
   ]
 }
