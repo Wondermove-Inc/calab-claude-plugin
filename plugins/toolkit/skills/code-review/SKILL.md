@@ -1,6 +1,6 @@
 ---
 name: toolkit:code-review
-description: 코드 품질(보안/아키텍처/정확성/언어별 권장사항)을 검증하고 개선점을 제안합니다. simplify가 다루지 않는 보안 취약점, 아키텍처 적합성, 설계 패턴, 동시성, AI 코드 검증 등 구조적 리뷰를 수행합니다.
+description: 코드 품질(보안/아키텍처/정확성/언어별 권장사항)을 검증하고 개선점을 제안합니다. simplify가 다루지 않는 보안 취약점, 아키텍처 적합성, 설계 패턴, 동시성, AI 코드 검증 등 구조적 리뷰를 수행합니다. 보안 분석, OWASP 취약점 점검, 아키텍처 검증, SOLID 원칙 위반 탐지가 필요할 때 사용합니다.
 allowed-tools: Bash, Read, Grep, Glob, Edit, Write
 disable-model-invocation: false
 ---

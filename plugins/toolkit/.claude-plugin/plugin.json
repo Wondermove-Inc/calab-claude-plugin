@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "1.0.9",
-  "description": "리서치, 문제 해결, 이슈 생성, 코드 리뷰/커밋, DB 작업, Jira 동기화 도구",
+  "version": "1.1.0",
+  "description": "이슈 생성, 코드 리뷰/커밋, Jira 동기화 도구",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -9,12 +9,6 @@
   "homepage": "https://github.com/Wondermove-Inc/calab-claude-plugin",
   "license": "MIT",
   "keywords": [
-    "research",
-    "problem-solving",
-    "analysis",
-    "web-search",
-    "mongodb",
-    "database",
     "code-review",
     "code-commit",
     "git",
@@ -22,12 +16,6 @@
     "sync"
   ],
   "skills": [
-    "./skills/research",
-    "./skills/solve",
-    "./skills/solve-report",
-    "./skills/solve-log",
-    "./skills/solve-history",
-    "./skills/mongodb",
     "./skills/code-review",
     "./skills/code-commit",
     "./skills/create-issue",

@@ -1,6 +1,6 @@
 ---
 name: toolkit:code-commit
-description: 현재 변경사항을 분석하고 커밋 메시지를 생성합니다
+description: 현재 변경사항을 분석하고 컨벤션에 맞는 커밋 메시지를 생성하여 커밋합니다.
 allowed-tools: Bash, Read
 disable-model-invocation: true
 ---

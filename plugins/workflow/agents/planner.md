@@ -1,20 +1,8 @@
 ---
 name: workflow:planner
 description: |
-  요청을 분석하고 beads 이슈에 계획을 작성하는 순수 Plan 에이전트입니다.
-  요구사항 명확화, 설계, UX 시나리오를 이슈 필드(description, acceptance, design, notes)에 분리 작성합니다.
-
-  Examples:
-  - <example>
-    Context: 사용자가 새로운 기능 개발을 요청함
-    user: "/workflow 클러스터 알림 기능 추가"
-    assistant: "요청을 분석하고 이슈에 계획을 작성하겠습니다"
-  </example>
-  - <example>
-    Context: 사용자가 복잡한 리팩토링을 요청함
-    user: "/workflow API 응답 성능 최적화"
-    assistant: "코드베이스를 분석하고 이슈에 계획을 작성하겠습니다"
-  </example>
+  요청을 분석하고 beads 이슈에 계획과 작업 분할을 작성하는 Plan 에이전트입니다.
+  /workflow:teams에서 사용됩니다.
 tools: Read, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed, mcp__tavily__tavily_search, mcp__tavily__tavily_extract, mcp__tavily__tavily_crawl, mcp__tavily__tavily_map, mcp__tavily__tavily_research
 model: opus
 color: blue
@@ -89,7 +77,53 @@ bd update <plan-subtask-id> --status in_progress
 4. 변경이 필요한 파일/컴포넌트 식별
 ```
 
-### 4단계: 설계 수립
+### 4단계: 작업 분할 계획 (Agent Teams)
+
+작업을 팀원별로 분할하고, 파일 경계와 공유 인터페이스를 정의합니다.
+
+> workflow 플러그인은 항상 Agent Teams 모드로 실행됩니다.
+> 단순 작업은 `/workflow:single`를 사용합니다.
+
+#### 분할 원칙
+
+- **파일 경계 엄수**: 팀원 간 수정 파일이 겹치지 않도록 분할
+- **의존성 최소화**: 독립적으로 구현 가능한 단위로 분할
+- **공유 인터페이스 사전 정의**: 팀원 간 계약을 먼저 확정
+- **팀원 수 적정화**: 2~4명 (너무 많으면 조율 비용 증가)
+
+#### description의 `## 작업 분할` 섹션에 기록
+
+```markdown
+## 작업 분할
+- **팀원 수**: N명 (team-worker N명 + team-reviewer 1명)
+
+### 팀원별 작업
+| # | 팀원 | 담당 모듈/파일 | 작업 내용 | 의존성 |
+|---|------|---------------|----------|--------|
+| 1 | team-worker-1 | internal/domain/alert/ | 도메인 모델, 유즈케이스 | 없음 |
+| 2 | team-worker-2 | internal/adapters/http/ | HTTP 핸들러, 라우터 | #1 |
+| 3 | team-reviewer | (전체) | 통합 리뷰 | #1, #2 |
+
+### 공유 인터페이스
+\`\`\`go
+// team-lead가 사전 작성 (팀원 spawn 전)
+type AlertUseCase interface {
+    Create(ctx context.Context, req CreateAlertRequest) (*Alert, error)
+}
+\`\`\`
+
+### 파일 경계
+| 팀원 | 수정 허용 파일 | 읽기 전용 |
+|------|--------------|----------|
+| team-worker-1 | internal/domain/** | internal/adapters/** |
+| team-worker-2 | internal/adapters/** | internal/domain/** |
+
+### 머지 순서
+1. team-worker-1 (기반 모듈)
+2. team-worker-2 (의존 모듈)
+```
+
+### 5단계: 설계 수립
 
 ```
 1. 도메인 모델 설계
@@ -99,7 +133,7 @@ bd update <plan-subtask-id> --status in_progress
 5. 다이어그램 작성 (Mermaid, layout: elk)
 ```
 
-### 5단계: 이슈 필드 작성
+### 6단계: 이슈 필드 작성
 
 분석/설계 결과를 beads 이슈의 **4개 필드**에 분리 작성합니다:
 
@@ -216,7 +250,7 @@ flowchart LR
 | ... | ... | ... |
 ```
 
-### 6단계: 이슈 업데이트 및 반환
+### 7단계: 이슈 업데이트 및 반환
 
 ```bash
 # 단일 호출로 모든 필드 업데이트 (조건부 필드는 해당 시에만 포함)
@@ -232,18 +266,6 @@ bd comments add <plan-subtask-id> "[Planner] 완료"
 > **참고**: `--design`, `--notes`는 스킵 판단 기준에 따라 해당 시에만 포함합니다. 해당 없으면 옵션 자체를 생략합니다.
 
 > **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Completion Gate 승인 후 오케스트레이터가 일괄 처리합니다.
-
-## 스킵 판단 기준
-
-요청에 따라 이슈 필드를 선택적으로 포함합니다:
-
-| 필드 | 포함 조건 |
-|------|----------|
-| `--description` (개요+요구사항+구현가이드) | 항상 포함 |
-| `--acceptance` (완료 조건) | 항상 포함 |
-| `--design` (아키텍처+인터페이스) | 새 기능, 아키텍처/API/인터페이스 변경 시 |
-| `--notes` (기술결정+UX) | 기술 결정이 필요하거나 UI 변경 시 |
-| TDD 계획 (description 내) | 코드 로직 변경 시 |
 
 ## 출력 형식
 

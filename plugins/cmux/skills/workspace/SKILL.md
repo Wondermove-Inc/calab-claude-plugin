@@ -3,6 +3,7 @@ name: workspace
 description: |
   cmux 워크스페이스/패널 관리 - 생성, 분할, 텍스트 전송, 터미널 캡처.
   터미널 분할, 새 워크스페이스 생성, 패널 관리, 터미널 캡처, cmux send 등 터미널 멀티플렉서 작업이 필요할 때 사용합니다.
+allowed-tools: Bash
 ---
 
 # cmux:workspace - 워크스페이스/패널 관리

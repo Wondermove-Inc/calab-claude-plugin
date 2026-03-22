@@ -6,22 +6,22 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "1.0.1"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "workflow",
       "source": "./plugins/workflow",
-      "description": "멀티 에이전트 워크플로우 + Clean/Hexagonal Architecture 가이드",
+      "description": "통합 워크플로우 - Single(단일 Worker) + Teams(Agent Teams 병렬 구현+리뷰) + Compound 회고",
       "category": "development",
-      "tags": ["multi-agent", "workflow", "architecture", "clean-architecture", "hexagonal"]
+      "tags": ["multi-agent", "workflow", "agent-teams", "tdd", "architecture"]
     },
     {
       "name": "toolkit",
       "source": "./plugins/toolkit",
-      "description": "리서치 및 문제 해결 (웹 검색, 5 Whys, RCA)",
+      "description": "이슈 생성, 코드 리뷰/커밋, Jira 동기화 도구",
       "category": "productivity",
-      "tags": ["research", "problem-solving", "rca"]
+      "tags": ["code-review", "code-commit", "jira", "sync"]
     },
     {
       "name": "setup",
@@ -29,20 +29,6 @@
       "description": "Claude Code 환경 설정 (statusline, beads)",
       "category": "utilities",
       "tags": ["setup", "install", "statusline", "beads"]
-    },
-    {
-      "name": "docs",
-      "source": "./plugins/docs",
-      "description": "문서 콘텐츠 자동 생성 (Docusaurus)",
-      "category": "documentation",
-      "tags": ["docs", "docusaurus", "documentation"]
-    },
-    {
-      "name": "simple",
-      "source": "./plugins/simple",
-      "description": "심플 워크플로우 - Worker 기반 TDD 실행 (중/소규모 작업용)",
-      "category": "development",
-      "tags": ["simple", "worker", "tdd"]
     },
     {
       "name": "cmux",

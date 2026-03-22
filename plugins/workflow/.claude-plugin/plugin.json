@@ -1,7 +1,7 @@
 {
   "name": "workflow",
-  "version": "2.0.9",
-  "description": "멀티 에이전트 워크플로우 - Plan → Work → Review → Compound 루프 기반 체계적 개발.",
+  "version": "3.0.0",
+  "description": "통합 워크플로우 - Single(단일 Worker) + Teams(Agent Teams 병렬 구현+리뷰) + Compound 회고.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -11,6 +11,9 @@
   "keywords": [
     "multi-agent",
     "workflow",
+    "single",
+    "agent-teams",
+    "discovery",
     "planner",
     "worker",
     "reviewer",
@@ -18,13 +21,16 @@
     "tdd"
   ],
   "agents": [
-    "./agents/planner.md",
     "./agents/worker.md",
-    "./agents/reviewer.md",
+    "./agents/planner.md",
+    "./agents/team-lead.md",
+    "./agents/team-worker.md",
+    "./agents/team-reviewer.md",
     "./agents/compound.md"
   ],
   "skills": [
-    "./skills/start",
+    "./skills/single",
+    "./skills/teams",
     "./skills/help",
     "./skills/compound"
   ]

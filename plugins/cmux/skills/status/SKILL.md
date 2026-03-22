@@ -3,6 +3,7 @@ name: status
 description: |
   cmux 사이드바 상태/알림 관리 - 진행률, 상태 표시, 알림, 로그.
   작업 진행률 표시, 상태 업데이트, 알림 전송, 로그 기록 등 사이드바 UI 제어가 필요할 때 사용합니다.
+allowed-tools: Bash
 ---
 
 # cmux:status - 사이드바 상태/알림 관리

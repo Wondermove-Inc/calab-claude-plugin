@@ -1,16 +1,17 @@
 ---
-name: simple:start
-description: 심플 워크플로우를 시작합니다. 이슈 또는 사용자 요청을 기반으로 Worker를 실행합니다.
+name: workflow:single
+description: 단일 Worker 워크플로우. 이슈 또는 사용자 요청을 기반으로 Worker를 실행합니다. 중/소규모 작업용.
 disable-model-invocation: true
 ---
 
-# /simple:start 커맨드
+# /workflow:single 커맨드
 
-이슈 ID 또는 사용자의 자유 요청을 받아 Worker를 실행합니다.
+이슈 ID 또는 사용자의 자유 요청을 받아 단일 Worker를 실행합니다.
+복잡한 작업은 `/workflow:teams`를 사용하세요.
 
 ```
-/simple:start bd-abc123             # 기존 이슈 기반
-/simple:start 로그인 API에 rate limiting 추가해줘  # 사용자 요청 기반
+/workflow:single bd-abc123             # 기존 이슈 기반
+/workflow:single 로그인 API에 rate limiting 추가해줘  # 사용자 요청 기반
 ```
 
 ## 입력 판별
@@ -53,7 +54,7 @@ disable-model-invocation: true
 
 ```bash
 bd show <issue-id>
-bd update <issue-id> --status in_progress && bd comments add <issue-id> "[Simple] 워크플로우 시작"
+bd update <issue-id> --status in_progress && bd comments add <issue-id> "[Single] 워크플로우 시작"
 ```
 
 이슈의 description과 acceptance를 분석하여 작업 범위를 파악합니다.
@@ -67,7 +68,7 @@ bd create "<요청 요약>" --type task --priority 2
 bd update <생성된-id> \
   --description "<사용자 요청 내용 정리>" \
   --acceptance "<요청에서 도출한 완료 조건>"
-bd update <생성된-id> --status in_progress && bd comments add <생성된-id> "[Simple] 워크플로우 시작"
+bd update <생성된-id> --status in_progress && bd comments add <생성된-id> "[Single] 워크플로우 시작"
 ```
 
 이후 이슈 모드와 동일하게 진행합니다.
@@ -109,7 +110,7 @@ options:
 #### 단일 실행 (기본)
 
 ```
-Task (subagent_type: simple:worker, model: opus, run_in_background: true):
+Task (subagent_type: workflow:worker, model: opus, run_in_background: true):
 "bd-<issue-id> 구현. bd show로 상세 확인."
 ```
 
@@ -122,7 +123,7 @@ TaskOutput(task_id, block: true, timeout: 600000)
 각 Worker에게 담당 영역을 명시합니다 (최대 5개):
 
 ```
-Task (subagent_type: simple:worker, model: opus, run_in_background: true):
+Task (subagent_type: workflow:worker, model: opus, run_in_background: true):
 "bd-<issue-id> 구현. 담당: <영역 설명>. bd show로 상세 확인."
 ```
 
@@ -153,7 +154,7 @@ options:
 bd update <issue-id> \
   --description "<작업 요약: 변경 파일, 주요 변경 내용>" \
   --acceptance "<AC 체크리스트: [x] 달성 / [ ] 미달성>"
-bd comments add <issue-id> "[Simple] 완료" && bd close <issue-id>
+bd comments add <issue-id> "[Single] 완료" && bd close <issue-id>
 ```
 
 description 예시:

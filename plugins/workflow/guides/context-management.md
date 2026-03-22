@@ -82,10 +82,10 @@ git add -A && git commit -m "WIP: <작업내용>"
 
 ### 2. 상세는 이슈에, 반환은 ID만
 ```
-# 에이전트 → start 스킬
+# 에이전트 → teams 스킬
 완료: bd-abc123
 
-# start 스킬 → 사용자
+# teams 스킬 → 사용자
 완료: bd-epic-123 | 상태: closed | 상세: bd show bd-epic-123
 ```
 

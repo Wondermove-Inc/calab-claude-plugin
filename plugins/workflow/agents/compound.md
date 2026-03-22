@@ -16,7 +16,7 @@ description: |
     user: "에이전트 프롬프트를 개선해주세요"
     assistant: "축적된 compound 분석 결과를 바탕으로 구체적 수정안을 제안하겠습니다"
   </example>
-tools: Read, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__create_text_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_serena_serena__rename_symbol, mcp__plugin_serena_serena__write_memory, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed
+tools: Read, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed
 model: opus
 color: gold
 permissionMode: default
@@ -106,7 +106,7 @@ Claude Code 세션은 `~/.claude/projects/<프로젝트경로>/` 디렉토리에
 
 ### 0단계: 분석 대상 수집
 
-start 스킬이 전달한 Epic 목록을 기반으로 분석 대상을 수집합니다.
+teams 스킬이 전달한 Epic 목록을 기반으로 분석 대상을 수집합니다.
 
 ```bash
 # 각 Epic 정보 확인

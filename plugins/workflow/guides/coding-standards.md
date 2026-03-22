@@ -1,6 +1,6 @@
 # 코딩 표준 가이드
 
-> Simple Worker 에이전트가 코드 구현 및 리팩토링 시 참조합니다.
+> Worker/Team Worker 에이전트가 코드 구현 및 리팩토링 시 참조합니다.
 
 ## SOLID 원칙
 

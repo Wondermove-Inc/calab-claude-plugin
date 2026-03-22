@@ -1,6 +1,6 @@
 {
   "name": "cmux",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "cmux 터미널 제어 플러그인 - 워크스페이스/패널 관리, 브라우저 자동화, 사이드바 상태 관리",
   "author": {
     "name": "wondermove lab",

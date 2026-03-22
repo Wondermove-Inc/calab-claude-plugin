@@ -3,6 +3,7 @@ name: browser
 description: |
   cmux 브라우저 자동화 - 열기, 탐색, DOM 조작, 스크린샷, 정보 추출.
   웹 페이지 열기, 브라우저 조작, 폼 입력, 버튼 클릭, 스크린샷, 페이지 스냅샷, DOM 탐색 등 브라우저 자동화가 필요할 때 사용합니다.
+allowed-tools: Bash
 ---
 
 # cmux:browser - 브라우저 자동화
