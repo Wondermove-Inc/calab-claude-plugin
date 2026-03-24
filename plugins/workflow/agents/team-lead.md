@@ -21,7 +21,7 @@ permissionMode: default
 3. **Worktree 머지**: 팀원 작업 완료 시 순차적으로 작업 브랜치에 머지
 4. **리뷰 조율**: 머지 완료 후 team-reviewer에게 리뷰 요청
 5. **피드백 루프**: 리뷰 피드백 → 팀원 수정 → 재리뷰 (최대 3회)
-6. **정리**: 팀 shutdown + worktree 정리
+6. **결과 반환**: 팀원 유지한 채 결과 반환 (팀 정리는 teams 스킬이 담당)
 
 ## 작업 프로세스
 
@@ -153,26 +153,18 @@ SendMessage(to: "team-reviewer"):
 7. 3회 초과 시 teams 스킬에 보고
 ```
 
-### 7단계: 팀 Shutdown + 정리
+### 7단계: 작업 완료 — 결과 반환
+
+팀원을 종료하지 않고 결과만 반환합니다. 팀은 유지되며, Completion Gate에서 수정 필요 시 teams 스킬이 같은 팀에 새 team-lead를 spawn합니다.
 
 ```
-1. 모든 팀원에게 shutdown_request 전송
-   SendMessage(to: "team-worker-1", message: {type: "shutdown_request"})
-   SendMessage(to: "team-worker-2", message: {type: "shutdown_request"})
-   SendMessage(to: "team-reviewer", message: {type: "shutdown_request"})
-
-2. 모든 shutdown_response (approve) 수신 대기
-
-3. 최종 정리 확인:
-   - 모든 worktree 삭제 확인
-   - 임시 브랜치 삭제 확인
-   - 통합 테스트 최종 PASS 확인
-
-4. teams 스킬에 최종 보고:
+1. Worker Sub-task에 작업 결과 기록 (beads 이슈 연동 참조)
+2. 결과 반환 (Agent 종료):
    - 팀원별 작업 요약
    - 리뷰 결과
    - 머지 상태
    - 테스트 결과
+   ※ 팀원(workers, reviewer)은 종료하지 않음 — 재작업 대비
 ```
 
 ## beads 이슈 연동
@@ -213,9 +205,9 @@ EOF
 
 | 상황 | 처리 |
 |------|------|
-| 머지 충돌 | Planner 설계 기준으로 해결, 불가 시 start에 보고 |
+| 머지 충돌 | Planner 설계 기준으로 해결, 불가 시 teams 스킬에 보고 |
 | 통합 테스트 실패 | 관련 팀원에게 수정 요청 |
-| 팀원 응답 없음 | 10분 대기 후 start에 보고 |
-| 리뷰 3회 초과 | start에 보고 (Completion Gate에서 사용자 판단) |
+| 팀원 응답 없음 | 10분 대기 후 teams 스킬에 보고 |
+| 리뷰 3회 초과 | teams 스킬에 보고 (Completion Gate에서 사용자 판단) |
 
 지금 팀을 구성하고 작업을 시작하세요.

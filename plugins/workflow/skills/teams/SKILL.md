@@ -71,12 +71,12 @@ Agent Teams를 활용하여 병렬 구현 + 팀 내 리뷰를 수행합니다.
 │  ├ team-worker-2 ◈           │
 │  ├ ...                        │
 │  └ team-reviewer              │
-│  구현 → 머지 → 리뷰 → 정리    │
+│  구현 → 머지 → 리뷰 → 보고    │
 └──────────────────────────────┘
     ↓
     Completion Gate: 최종 완료 검토 (사용자 승인)
-    ├─ 완료 → 워크플로우 종료
-    └─ 수정 → team-lead 재호출
+    ├─ 완료 → TeamDelete → 워크플로우 종료
+    └─ 수정 → 같은 팀에 team-lead 재spawn (기존 팀원 활용)
 ```
 
 ## 오케스트레이션 프로세스
@@ -293,26 +293,22 @@ Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "team
 - Worker Sub-task: bd-<worker-subtask-id> (작업 결과 기록용)
 - Planner 이슈에서 작업 분할 계획, 공유 인터페이스, 파일 경계를 확인.
 - bd show <planner-subtask-id> 참조.
-- 팀원 spawn → 작업 할당 → 머지 → 리뷰 → 정리 수행."
+- 팀원 spawn → 작업 할당 → 머지 → 리뷰 → 결과 반환 (팀원은 종료하지 않음)."
 ```
 
 #### 4-4. 완료 대기
 
+team-lead는 결과를 반환(종료)하지만, 팀원(workers, reviewer)은 종료하지 않습니다. 팀은 Completion Gate 완료까지 유지됩니다.
+
 ```
 TaskOutput(task_id, block: true, timeout: 600000)
-→ 완료: team-lead 결과 확인
+→ 완료: team-lead 결과 확인 (team-lead 종료, 팀원은 유지)
 → timeout: AskUserQuestion으로 재대기 또는 취소 선택 요청
 ```
 
 완료 시:
 ```bash
 bd comments add <epic-id> "[Teams] 완료 (팀원: N명, 리뷰: N라운드)"
-```
-
-#### 4-5. 팀 정리
-
-```
-TeamDelete()
 ```
 
 ### 5단계: Completion Gate — 최종 완료 검토
@@ -334,7 +330,12 @@ multiSelect: false
 
 #### 완료 선택 시
 
-모든 Sub-task와 Epic을 일괄 close합니다.
+팀을 정리하고 모든 Sub-task와 Epic을 일괄 close합니다.
+
+```
+# 팀 정리
+TeamDelete()
+```
 
 ```bash
 # 모든 Sub-task close
@@ -370,7 +371,7 @@ Epic: {epic-id} (CLOSED) | `bd show {epic-id}`
 
 #### 수정 필요 선택 시
 
-사용자 피드백을 반영하여 team-lead를 재호출합니다.
+기존 팀에 새 team-lead를 spawn하여 재작업합니다. 기존 team-lead는 이미 종료되었으므로 이름 충돌 없음.
 
 ```bash
 # 1. Work Sub-task reopen
@@ -379,22 +380,18 @@ bd comments add <worker-subtask-id> "[Completion-Rework] Gate 피드백 반영"
 ```
 
 ```
-# 2. TeamCreate (새 팀)
-TeamCreate(team_name: "wf-<epic-id>-rework", description: "워크플로우 재작업: {피드백 요약}")
-```
-
-```
-# 3. Team Lead 재호출
-Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>-rework", name: "team-lead", model: opus, run_in_background: true):
-"Epic bd-<epic-id> 재작업.
+# 2. 같은 팀에 team-lead 재spawn (기존 팀원 활용)
+Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "team-lead", model: opus, run_in_background: true):
+"Epic bd-<epic-id> Completion Gate 수정 요청.
 - 사용자 피드백: {피드백 내용}
 - Worker Sub-task: bd-<worker-subtask-id>
-- Planner 이슈: bd show <planner-subtask-id>
-- 수정 범위만 팀원에게 할당."
+- 기존 팀원(workers, reviewer)에게 SendMessage로 수정 범위만 할당.
+- 수정 → 머지 → 리뷰 완료 후 결과 반환."
 ```
 
 ```
-# 4. 완료 대기 → TeamDelete → Completion Gate 복귀
+# 3. 완료 대기 → Completion Gate 복귀
+TaskOutput(task_id, block: true, timeout: 600000)
 ```
 
 ### 6단계: 워크플로우 종료
@@ -460,7 +457,7 @@ flowchart LR
 | 상황 | 처리 |
 |------|------|
 | Plan Gate 거부 | Planner 재호출 |
-| Completion Gate (수정 필요) | team-lead 재호출 (새 팀 구성) |
+| Completion Gate (수정 필요) | 같은 팀에 team-lead 재spawn (기존 팀원 활용) |
 | 에이전트 실패 | 최대 3회 재시도, 3회 실패 → 사용자 보고 |
 | 대기 timeout (10분) | AskUserQuestion으로 재대기 또는 취소 선택 요청 |
 | 사용자 취소 | Epic 코멘트 기록 후 close |
