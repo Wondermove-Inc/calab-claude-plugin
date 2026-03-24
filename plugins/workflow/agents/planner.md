@@ -106,7 +106,7 @@ bd update <plan-subtask-id> --status in_progress
 
 ### 공유 인터페이스
 \`\`\`go
-// team-lead가 사전 작성 (팀원 spawn 전)
+// captain이 사전 작성 (팀원 spawn 전)
 type AlertUseCase interface {
     Create(ctx context.Context, req CreateAlertRequest) (*Alert, error)
 }

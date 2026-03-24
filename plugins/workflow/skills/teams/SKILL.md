@@ -1,7 +1,7 @@
 ---
 name: workflow:teams
 description: Agent Teams 워크플로우. Discovery→Plan→Agent Teams(병렬 구현+리뷰) 흐름을 관리합니다. 대규모/복잡 작업용.
-allowed-tools: Bash, Task, TaskOutput, AskUserQuestion, Read, Grep, Glob, TeamCreate, TeamDelete, SendMessage
+allowed-tools: Agent, Bash, Task, TaskOutput, AskUserQuestion, Read, Grep, Glob, TeamCreate, TeamDelete, SendMessage
 disable-model-invocation: true
 ---
 
