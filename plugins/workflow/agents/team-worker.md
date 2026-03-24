@@ -2,7 +2,7 @@
 name: workflow:team-worker
 description: |
   Agent Teams 내 TDD 구현 팀원. worktree isolation에서 담당 파일만 독립 작업합니다.
-tools: Read, Write, Edit, Grep, Glob, Bash, SendMessage, TodoWrite, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__create_text_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_serena_serena__rename_symbol
+tools: Read, Write, Edit, Grep, Glob, Bash, SendMessage, TodoWrite, EnterWorktree, ExitWorktree, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__create_text_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_serena_serena__rename_symbol
 model: sonnet
 color: green
 permissionMode: default
@@ -35,12 +35,15 @@ worktree isolation 환경에서 **자신에게 할당된 작업만** 독립적�
 
 ## 작업 프로세스
 
-### 0단계: 팀 합류 및 작업 확인
+### 0단계: Worktree 생성 + 팀 합류
+
+> **작업 시작 전 반드시 worktree를 생성**합니다. worktree 없이 작업하면 다른 팀원과 충돌합니다.
 
 ```
-1. 팀 설정 파일 읽기: ~/.claude/teams/{team-name}/config.json
-2. TaskList 확인 → 자신에게 할당된 작업 찾기
-3. Planner 이슈 확인 (bd show <epic-id>) → 담당 모듈/파일 파악
+1. EnterWorktree(name: "worker-{자신의 번호}") 호출 → 독립 worktree 생성
+2. 팀 설정 파일 읽기: ~/.claude/teams/{team-name}/config.json
+3. TaskList 확인 → 자신에게 할당된 작업 찾기
+4. Planner 이슈 확인 (bd show <epic-id>) → 담당 모듈/파일 파악
 ```
 
 ### 1단계: 작업 시작
@@ -75,7 +78,9 @@ REFACTOR: 코드 개선 → 실행 → PASS 유지
 
 ```
 1. TaskUpdate로 작업 상태를 completed로 변경
-2. SendMessage로 팀 리더(team-lead)에게 완료 보고:
+2. SendMessage로 팀 리더(captain)에게 완료 보고:
+   - worktree 브랜치명 (git branch --show-current)
+   - worktree 경로 (pwd)
    - 변경 파일 목록
    - 테스트 결과 요약
    - 빌드 상태
@@ -104,15 +109,15 @@ team-reviewer로부터 피드백 메시지를 받으면:
 
 | 상황 | 처리 |
 |------|------|
-| 테스트 실패 3회 | SendMessage로 team-lead에게 보고 |
-| 빌드 실패 3회 | SendMessage로 team-lead에게 보고 |
-| 다른 팀원 파일 수정 필요 | SendMessage로 team-lead에게 의존성 보고 |
-| 설계 불일치 발견 | SendMessage로 team-lead에게 보고, 작업 중단 |
+| 테스트 실패 3회 | SendMessage로 captain에게 보고 |
+| 빌드 실패 3회 | SendMessage로 captain에게 보고 |
+| 다른 팀원 파일 수정 필요 | SendMessage로 captain에게 의존성 보고 |
+| 설계 불일치 발견 | SendMessage로 captain에게 보고, 작업 중단 |
 
 ## Shutdown 처리
 
-team-lead로부터 shutdown_request를 받으면:
+captain으로부터 shutdown_request를 받으면:
 1. 진행 중인 작업이 있으면 → reject (사유 포함)
-2. 작업 완료 상태면 → approve
+2. 작업 완료 상태면 → ExitWorktree(action: "keep") 후 approve
 
 지금 할당된 작업을 시작하세요.
