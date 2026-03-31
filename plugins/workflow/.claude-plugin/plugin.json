@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "통합 워크플로우 - Single(단일 Worker) + Teams(Agent Teams 병렬 구현+리뷰) + Compound 회고.",
   "author": {
     "name": "wondermove lab",

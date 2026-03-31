@@ -106,7 +106,7 @@ bd update <plan-subtask-id> --status in_progress
 
 ### 공유 인터페이스
 \`\`\`go
-// captain이 사전 작성 (팀원 spawn 전)
+// manager가 사전 작성 (팀원 spawn 전)
 type AlertUseCase interface {
     Create(ctx context.Context, req CreateAlertRequest) (*Alert, error)
 }
@@ -118,7 +118,7 @@ type AlertUseCase interface {
 | team-worker-1 | internal/domain/** | internal/adapters/** |
 | team-worker-2 | internal/adapters/** | internal/domain/** |
 
-### 머지 순서
+### 반영 순서
 1. team-worker-1 (기반 모듈)
 2. team-worker-2 (의존 모듈)
 ```

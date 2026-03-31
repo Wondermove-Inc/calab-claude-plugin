@@ -36,17 +36,17 @@ Agent Teams를 활용하여 병렬 구현 + 팀 내 리뷰를 수행합니다.
 | 용어 | 정의 |
 |------|------|
 | **Discovery** | 사용자 주도 탐색 → AI 보완 질문 → 요점 정리의 구체화 단계 |
-| **Agent Teams** | captain(조율) + team-worker(N)(구현) + team-reviewer(리뷰). main이 전원 spawn |
+| **Agent Teams** | team-leader(조율) + team-worker(N)(구현) + team-reviewer(리뷰). manager가 전원 spawn |
 | **worktree isolation** | 각 team-worker가 EnterWorktree로 독립 git worktree를 생성하여 작업, 충돌 방지 |
 
 ## 핵심 원칙
 
 1. **teams 스킬이 오케스트레이터**: Discovery 대화, 흐름 제어, Gate 관리를 이 스킬이 담당
 2. **Discovery는 사용자 주도**: 사용자가 질문/확인을 먼저 하고, AI는 요청에 응답
-3. **main이 전원 spawn**: Planner가 작업을 분할하면, main이 captain + workers + reviewer를 직접 spawn
+3. **manager가 전원 spawn**: Planner가 작업을 분할하면, manager가 team-leader + workers + reviewer를 직접 spawn
 4. **beads가 Single Source of Truth**: 이슈 상태로 추적
-5. **팀 내 리뷰**: team-reviewer가 머지된 코드를 리뷰 (최대 3라운드)
-6. **Completion Gate**: captain 완료 후 사용자 최종 검토
+5. **팀 내 리뷰**: team-reviewer가 반영된 코드를 리뷰 (최대 3라운드)
+6. **Completion Gate**: team-leader 완료 후 사용자 최종 검토
 
 ## 워크플로우 흐름
 
@@ -65,13 +65,13 @@ Agent Teams를 활용하여 병렬 구현 + 팀 내 리뷰를 수행합니다.
 └─────────────┘
     ↓ Plan Gate: 계획 승인
 ┌──────────────────────────────┐
-│  Agent Teams (main이 전원 spawn) │
-│  captain (조율/머지/리뷰 관리)    │
+│  Agent Teams (manager가 전원 spawn) │
+│  team-leader (조율/코드반영/리뷰 관리)    │
 │  ├ team-worker-1 ◈           │  ◈ = worktree isolation (EnterWorktree)
 │  ├ team-worker-2 ◈           │
 │  ├ ...                        │
 │  └ team-reviewer              │
-│  구현 → 머지 → 리뷰 → 보고    │
+│  구현 → 코드반영 → 리뷰 → 보고    │
 └──────────────────────────────┘
     ↓
     Completion Gate: 최종 완료 검토 (사용자 승인)
@@ -191,7 +191,7 @@ multiSelect: false
 |------|----------|------|
 | Epic | teams 스킬 | 1단계 |
 | Plan Sub-task | Planner 에이전트 | 2단계 시작 시 |
-| Work Sub-task | teams 스킬 | 4단계 시작 시 (captain이 결과 기록) |
+| Work Sub-task | teams 스킬 | 4단계 시작 시 (team-leader가 결과 기록) |
 
 ```bash
 # Epic 생성 (워크플로우 Epic 필드 사용법 참조)
@@ -209,8 +209,8 @@ bd create "[YY.Q.N][영역] 기능명" --type epic --priority 2 \
 | 순서 | 에이전트 | 작업 |
 |------|---------|------|
 | 1 | planner | 요청 분석, 설계, 작업 분할 → 이슈에 작성 |
-| 2 | main | 전원 spawn (captain + workers + reviewer) |
-| 3 | captain | 작업 할당 → 머지 → 리뷰 조율 → 결과 반환 |
+| 2 | manager | 전원 spawn (team-leader + workers + reviewer) |
+| 3 | team-leader | 작업 할당 → 코드반영 → 리뷰 조율 → 결과 반환 |
 EOF
 )" \
   --acceptance "$(cat <<'EOF'
@@ -269,8 +269,8 @@ multiSelect: false
 
 ### 4단계: Agent Teams 실행
 
-> **main이 전원 spawn합니다.** 팀원은 Agent 도구를 사용할 수 없으므로, main이 captain + workers + reviewer를 직접 생성합니다.
-> captain은 조율/머지/리뷰만 담당하고, 코드 구현은 하지 않습니다.
+> **manager가 전원 spawn합니다.** 팀원은 Agent 도구를 사용할 수 없으므로, manager가 team-leader + workers + reviewer를 직접 생성합니다.
+> team-leader는 조율/코드반영/리뷰만 담당하고, 코드 구현은 하지 않습니다.
 
 #### 4-1. Work Sub-task 생성
 
@@ -287,20 +287,20 @@ TeamCreate(team_name: "wf-<epic-id>", description: "워크플로우 Teams: {기�
 
 #### 4-3. 공유 인터페이스 사전 작성 (필요 시)
 
-Planner가 정의한 공유 인터페이스(포트, 타입)가 있으면 **worker spawn 전에** main이 먼저 작성합니다.
+Planner가 정의한 공유 인터페이스(포트, 타입)가 있으면 **worker spawn 전에** manager가 먼저 작성합니다.
 
-#### 4-4. 전원 Spawn (main이 직접)
+#### 4-4. 전원 Spawn (manager가 직접)
 
-Planner의 작업 분할 계획에 따라 **captain + workers + reviewer를 한 번에 spawn**합니다.
+Planner의 작업 분할 계획에 따라 **team-leader + workers + reviewer를 한 번에 spawn**합니다.
 
 ```
-# 1. captain (조율/머지/리뷰 관리)
-Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "captain", model: opus, run_in_background: true):
+# 1. team-leader (조율/코드반영/리뷰 관리)
+Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "team-leader", model: opus, run_in_background: true):
 "Epic bd-<epic-id> Teams 모드.
 - Worker Sub-task: bd-<worker-subtask-id> (작업 결과 기록용)
 - Planner 이슈(bd show <planner-subtask-id>) 참조.
-- 팀원은 main이 spawn 완료. worker 완료 대기 → 머지 → reviewer에게 리뷰 요청 → 결과 반환.
-- 직접 코드 구현 금지. 조율/머지/리뷰 관리만 수행."
+- 팀원은 manager가 spawn 완료. worker 완료 대기 → 코드반영 → reviewer에게 리뷰 요청 → 결과 반환.
+- 직접 코드 구현 금지. 조율/코드반영/리뷰 관리만 수행."
 
 # 2. workers (병렬 — 각 worker가 EnterWorktree로 독립 worktree 생성)
 Agent (subagent_type: workflow:team-worker, team_name: "wf-<epic-id>", name: "team-worker-1", run_in_background: true):
@@ -309,18 +309,18 @@ Agent (subagent_type: workflow:team-worker, team_name: "wf-<epic-id>", name: "te
 Agent (subagent_type: workflow:team-worker, team_name: "wf-<epic-id>", name: "team-worker-2", run_in_background: true):
 "Epic bd-<epic-id>. 담당: {모듈/파일 목록}. Planner 이슈(bd show <planner-subtask-id>) 참조."
 
-# 3. reviewer (머지 후 리뷰 — captain이 SendMessage로 리뷰 시작 알림)
+# 3. reviewer (코드반영 후 리뷰 — team-leader가 SendMessage로 리뷰 시작 알림)
 Agent (subagent_type: workflow:team-reviewer, team_name: "wf-<epic-id>", name: "team-reviewer", run_in_background: true):
-"Epic bd-<epic-id>. 모든 구현 머지 후 captain이 리뷰 요청 메시지를 보냅니다. 대기."
+"Epic bd-<epic-id>. 모든 구현 코드반영 후 team-leader가 리뷰 요청 메시지를 보냅니다. 대기."
 ```
 
 #### 4-5. 완료 대기
 
-captain이 worker 완료 → 머지 → 리뷰 → 결과 반환까지 관리합니다. captain 완료 시 main에 자동 알림.
+team-leader가 worker 완료 → 코드반영 → 리뷰 → 결과 반환까지 관리합니다. team-leader 완료 시 manager에 자동 알림.
 
 ```
-# captain의 완료를 대기 (captain이 전체 팀 조율 후 결과 반환)
-# workers/reviewer는 captain이 관리하므로 main은 captain만 대기
+# team-leader의 완료를 대기 (team-leader가 전체 팀 조율 후 결과 반환)
+# workers/reviewer는 team-leader가 관리하므로 manager는 team-leader만 대기
 ```
 
 완료 시:
@@ -330,7 +330,7 @@ bd comments add <epic-id> "[Teams] 완료 (팀원: N명, 리뷰: N라운드)"
 
 ### 5단계: Completion Gate — 최종 완료 검토
 
-captain 완료 후 요약을 텍스트로 표시한 후 AskUserQuestion 도구로 사용자 승인을 요청합니다.
+team-leader 완료 후 요약을 텍스트로 표시한 후 AskUserQuestion 도구로 사용자 승인을 요청합니다.
 
 **아래 파라미터로 AskUserQuestion 도구를 호출합니다:**
 ```
@@ -338,7 +338,7 @@ question: "[Completion Gate] 워크플로우를 완료하시겠습니까?"
 header: "Completion"
 options:
   - label: "완료", description: "워크플로우 종료 및 모든 이슈 close"
-  - label: "수정 필요", description: "captain을 재호출하여 수정합니다"
+  - label: "수정 필요", description: "team-leader를 재호출하여 수정합니다"
   - label: "취소", description: "작업을 중단합니다"
 multiSelect: false
 ```
@@ -372,7 +372,7 @@ bd close <epic-id>
 | 단계 | 에이전트 | 토큰 | 시간 | 결과 |
 |------|---------|------|------|------|
 | Plan | Planner | {tokens} | {time} | ✅ |
-| Teams | captain | {tokens} | {time} | ✅ |
+| Teams | team-leader | {tokens} | {time} | ✅ |
 |  | team-worker-1 | {tokens} | {time} | ✅ |
 |  | team-worker-2 | {tokens} | {time} | ✅ |
 |  | team-reviewer | {tokens} | {time} | {decision} |
@@ -388,7 +388,7 @@ Epic: {epic-id} (CLOSED) | `bd show {epic-id}`
 
 #### 수정 필요 선택 시
 
-기존 팀에 새 captain을 spawn하여 재작업합니다. 기존 captain은 이미 종료되었으므로 이름 충돌 없음. workers/reviewer는 유지 중.
+기존 팀에 새 team-leader를 spawn하여 재작업합니다. 기존 team-leader는 이미 종료되었으므로 이름 충돌 없음. workers/reviewer는 유지 중.
 
 ```bash
 # 1. Work Sub-task reopen
@@ -397,17 +397,17 @@ bd comments add <worker-subtask-id> "[Completion-Rework] Gate 피드백 반영"
 ```
 
 ```
-# 2. 같은 팀에 captain 재spawn (기존 workers/reviewer에게 SendMessage로 수정 지시)
-Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "captain", model: opus, run_in_background: true):
+# 2. 같은 팀에 team-leader 재spawn (기존 workers/reviewer에게 SendMessage로 수정 지시)
+Agent (subagent_type: workflow:team-lead, team_name: "wf-<epic-id>", name: "team-leader", model: opus, run_in_background: true):
 "Epic bd-<epic-id> Completion Gate 수정 요청.
 - 사용자 피드백: {피드백 내용}
 - Worker Sub-task: bd-<worker-subtask-id>
 - 기존 팀원(workers, reviewer)에게 SendMessage로 수정 범위 할당. 직접 구현 금지.
-- 수정 → 머지 → 리뷰 완료 후 결과 반환."
+- 수정 → 코드반영 → 리뷰 완료 후 결과 반환."
 ```
 
 ```
-# 3. captain 완료 대기 → Completion Gate 복귀
+# 3. team-leader 완료 대기 → Completion Gate 복귀
 ```
 
 ### 6단계: 워크플로우 종료
@@ -473,7 +473,7 @@ flowchart LR
 | 상황 | 처리 |
 |------|------|
 | Plan Gate 거부 | Planner 재호출 |
-| Completion Gate (수정 필요) | captain 재spawn → 기존 팀원에게 SendMessage로 수정 지시 |
+| Completion Gate (수정 필요) | team-leader 재spawn → 기존 팀원에게 SendMessage로 수정 지시 |
 | 에이전트 실패 | 최대 3회 재시도, 3회 실패 → 사용자 보고 |
 | 대기 timeout (10분) | AskUserQuestion으로 재대기 또는 취소 선택 요청 |
 | 사용자 취소 | Epic 코멘트 기록 후 close |
@@ -482,7 +482,7 @@ flowchart LR
 
 ### 에이전트
 - `agents/planner.md`: 요청 분석, 작업 분할, 이슈에 계획 작성
-- `agents/team-lead.md`: captain (조율/머지/리뷰 — Agent 도구 없음, SendMessage로 팀원 조율)
+- `agents/team-lead.md`: team-leader (조율/코드반영/리뷰 — Agent 도구 없음, SendMessage로 팀원 조율)
 - `agents/team-worker.md`: 팀 구현원 (worktree isolation, TDD)
 - `agents/team-reviewer.md`: 팀 리뷰어 (통합 리뷰)
 - `agents/compound.md`: 회고 분석 (수동 호출만)

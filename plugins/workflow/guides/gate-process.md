@@ -14,7 +14,7 @@ Discovery Gate → Plan Gate → (Agent Teams 실행) → Completion Gate
 |------|----------|------|
 | **Discovery Gate** | 요점 정리 (What) | Discovery 완료 후 |
 | **Plan Gate** | 설계 + 작업 분할 (How) | Planner 완료 후 |
-| **Completion Gate** | 최종 완료 검토 | captain 완료 후 |
+| **Completion Gate** | 최종 완료 검토 | team-leader 완료 후 |
 
 - Discovery 스킵 시 Discovery Gate도 생략
 - Gate 없이 워크플로우가 자동 완료되는 것은 허용하지 않음
@@ -32,7 +32,7 @@ AskUserQuestion 호출 후 **반드시**:
 |------|------|
 | Discovery Gate (수정 필요) | Phase 1로 복귀 |
 | Plan Gate (수정 필요) | Planner 재호출 |
-| Completion Gate (수정 필요) | 같은 팀에 captain 재spawn → Completion Gate 복귀 |
+| Completion Gate (수정 필요) | 같은 팀에 team-leader를 재spawn → Completion Gate 복귀 |
 
 ## 취소 시 처리
 

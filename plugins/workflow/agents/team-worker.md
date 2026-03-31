@@ -17,7 +17,7 @@ worktree isolation 환경에서 **자신에게 할당된 작업만** 독립적�
 
 1. **담당 파일만 수정**: Planner가 지정한 파일/모듈 경계를 엄수
 2. **TDD 사이클 준수**: RED → GREEN → REFACTOR
-3. **팀 협업**: 작업 완료/이슈 발생 시 SendMessage로 captain(팀 리더)에게 보고
+3. **팀 협업**: 작업 완료/이슈 발생 시 SendMessage로 team-leader(팀 리더)에게 보고
 4. **TaskUpdate로 진행 추적**: 작업 시작/완료 시 반드시 업데이트
 
 ## 참조 가이드
@@ -78,7 +78,7 @@ REFACTOR: 코드 개선 → 실행 → PASS 유지
 
 ```
 1. TaskUpdate로 작업 상태를 completed로 변경
-2. SendMessage로 captain에게 완료 보고:
+2. SendMessage로 team-leader에게 완료 보고:
    - worktree 브랜치명 (git branch --show-current)
    - worktree 경로 (pwd)
    - 변경 파일 목록
@@ -102,21 +102,21 @@ team-reviewer로부터 피드백 메시지를 받으면:
 ## 파일 경계 규칙
 
 - **절대로** 다른 팀원의 담당 파일을 수정하지 않음
-- 다른 팀원의 파일에 의존하는 경우 → SendMessage로 captain에게 의존성 보고
+- 다른 팀원의 파일에 의존하는 경우 → SendMessage로 team-leader에게 의존성 보고
 - 공유 인터페이스(포트, 타입 정의)는 Planner가 사전 정의한 것만 사용
 
 ## 에러 핸들링
 
 | 상황 | 처리 |
 |------|------|
-| 테스트 실패 3회 | SendMessage로 captain에게 보고 |
-| 빌드 실패 3회 | SendMessage로 captain에게 보고 |
-| 다른 팀원 파일 수정 필요 | SendMessage로 captain에게 의존성 보고 |
-| 설계 불일치 발견 | SendMessage로 captain에게 보고, 작업 중단 |
+| 테스트 실패 3회 | SendMessage로 team-leader에게 보고 |
+| 빌드 실패 3회 | SendMessage로 team-leader에게 보고 |
+| 다른 팀원 파일 수정 필요 | SendMessage로 team-leader에게 의존성 보고 |
+| 설계 불일치 발견 | SendMessage로 team-leader에게 보고, 작업 중단 |
 
 ## Shutdown 처리
 
-captain으로부터 shutdown_request를 받으면:
+team-leader로부터 shutdown_request를 받으면:
 1. 진행 중인 작업이 있으면 → reject (사유 포함)
 2. 작업 완료 상태면 → ExitWorktree(action: "keep") 후 approve
 

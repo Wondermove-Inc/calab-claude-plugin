@@ -32,7 +32,7 @@ disable-model-invocation: true
 |----------|------|------|------|
 | `worker` | Single | TDD 구현 | opus |
 | `planner` | Teams | 설계, 작업 분할 | opus |
-| `team-lead` | Teams | captain (팀 조율, 머지, 리뷰 조율) | opus |
+| `team-lead` | Teams | team-leader (팀 조율, 코드반영, 리뷰 조율) | opus |
 | `team-worker` | Teams | TDD 구현 (worktree) | sonnet |
 | `team-reviewer` | Teams | 통합 리뷰 | opus |
 | `compound` | 공용 | 회고 분석 (수동) | opus |
