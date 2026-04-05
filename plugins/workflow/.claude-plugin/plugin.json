@@ -1,7 +1,7 @@
 {
   "name": "workflow",
-  "version": "3.2.1",
-  "description": "통합 워크플로우 - Single(단일 Worker) + Teams(Agent Teams 병렬 구현+리뷰) + Compound 회고.",
+  "version": "4.0.0",
+  "description": "통합 워크플로우 - Single(단일 Worker) + Teams(team-lead=메인 Claude 주도) + Compound 회고.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -14,7 +14,7 @@
     "single",
     "agent-teams",
     "discovery",
-    "planner",
+    "team-lead",
     "worker",
     "reviewer",
     "compound",
@@ -23,7 +23,6 @@
   "agents": [
     "./agents/worker.md",
     "./agents/planner.md",
-    "./agents/team-lead.md",
     "./agents/team-worker.md",
     "./agents/team-reviewer.md",
     "./agents/compound.md"

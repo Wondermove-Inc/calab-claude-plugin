@@ -2,7 +2,7 @@
 name: workflow:planner
 description: |
   요청을 분석하고 beads 이슈에 계획과 작업 분할을 작성하는 Plan 에이전트입니다.
-  /workflow:teams에서 사용됩니다.
+  /workflow:single의 복잡 작업 분석에 사용됩니다.
 tools: Read, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__read_memory, mcp__plugin_serena_serena__list_memories, mcp__plugin_serena_serena__execute_shell_command, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__check_onboarding_performed, mcp__tavily__tavily_search, mcp__tavily__tavily_extract, mcp__tavily__tavily_crawl, mcp__tavily__tavily_map, mcp__tavily__tavily_research
 model: opus
 color: blue
@@ -106,7 +106,7 @@ bd update <plan-subtask-id> --status in_progress
 
 ### 공유 인터페이스
 \`\`\`go
-// manager가 사전 작성 (팀원 spawn 전)
+// 오케스트레이터가 사전 작성 (팀원 spawn 전)
 type AlertUseCase interface {
     Create(ctx context.Context, req CreateAlertRequest) (*Alert, error)
 }
@@ -265,7 +265,7 @@ bd comments add <plan-subtask-id> "[Planner] 완료"
 
 > **참고**: `--design`, `--notes`는 스킵 판단 기준에 따라 해당 시에만 포함합니다. 해당 없으면 옵션 자체를 생략합니다.
 
-> **주의**: Sub-task를 close하지 않습니다. 모든 티켓의 close는 Completion Gate 승인 후 오케스트레이터가 일괄 처리합니다.
+> **주의 (single 모드)**: Planner는 자신의 Sub-task를 close하지 않습니다. 모든 티켓의 close는 /workflow:single의 오케스트레이터가 일괄 처리합니다. (teams 모드에서는 각 팀원이 자신의 이슈를 직접 close하며 이 에이전트는 사용되지 않습니다.)
 
 ## 출력 형식
 

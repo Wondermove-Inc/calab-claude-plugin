@@ -1,6 +1,7 @@
 ---
 name: workflow:single
 description: 단일 Worker 워크플로우. 이슈 또는 사용자 요청을 기반으로 Worker를 실행합니다. 중/소규모 작업용.
+allowed-tools: Agent, Bash, AskUserQuestion, Read, Grep, Glob
 disable-model-invocation: true
 ---
 
@@ -107,25 +108,44 @@ options:
 
 ### 4단계: Worker 호출
 
-#### 단일 실행 (기본)
+#### 단일 실행 (기본) — 포그라운드 차단
+
+단일 Worker는 `Agent` 도구를 **포그라운드**(`run_in_background: false`)로 호출합니다. 메인 Claude는 Worker가 완료될 때까지 대기하고, Worker의 최종 출력이 그대로 반환됩니다.
 
 ```
-Task (subagent_type: workflow:worker, model: opus, run_in_background: true):
-"bd-<issue-id> 구현. bd show로 상세 확인."
+Agent(
+  subagent_type: "workflow:worker",
+  model: "opus",
+  run_in_background: false,
+  description: "단일 Worker 실행",
+  prompt: "bd-<issue-id> 구현. bd show로 상세 확인."
+)
 ```
 
-```
-TaskOutput(task_id, block: true, timeout: 600000)
-```
+#### 병렬 실행 — 백그라운드 + 자동 완료 수신
 
-#### 병렬 실행
-
-각 Worker에게 담당 영역을 명시합니다 (최대 5개):
+병렬 Worker (최대 5개)는 `run_in_background: true`로 동시 spawn. 각 Worker가 완료하면 `<teammate-message>`로 결과가 자동 전달됩니다. 모든 Worker의 완료 메시지를 수신한 후 5단계로 진행.
 
 ```
-Task (subagent_type: workflow:worker, model: opus, run_in_background: true):
-"bd-<issue-id> 구현. 담당: <영역 설명>. bd show로 상세 확인."
+# 병렬 Worker N개를 한 메시지에서 동시 호출
+Agent(
+  subagent_type: "workflow:worker",
+  model: "opus",
+  run_in_background: true,
+  description: "Worker 1",
+  prompt: "bd-<issue-id> 구현. 담당: <영역 설명 1>. bd show로 상세 확인."
+)
+
+Agent(
+  subagent_type: "workflow:worker",
+  model: "opus",
+  run_in_background: true,
+  description: "Worker 2",
+  prompt: "bd-<issue-id> 구현. 담당: <영역 설명 2>. bd show로 상세 확인."
+)
 ```
+
+병렬 Worker는 **팀 소속이 아닙니다** (TeamCreate 없음). 단순 백그라운드 subagent 실행이며, 완료 시 각자의 출력이 자동으로 대화 턴으로 도착합니다.
 
 ### 5단계: 결과 검증 및 완료
 
@@ -193,11 +213,12 @@ description 예시:
 |------|------|
 | 이슈 없음 | "이슈를 찾을 수 없습니다" 보고 후 종료 |
 | Worker 실패 | 사용자에게 재시도/종료 선택 요청 |
-| timeout (10분) | 사용자에게 상태 보고 |
+| 백그라운드 Worker 무응답 | 사용자에게 상태 보고 후 판단 |
 
 ## 에이전트 호출 규칙
 
-- 모든 Task 호출 시 `run_in_background: true` 사용
+- 단일 Worker: `Agent(run_in_background: false)` — 포그라운드 차단 + 결과 직접 반환
+- 병렬 Worker (2개 이상): `Agent(run_in_background: true)` 동시 호출 → 자동 완료 메시지 수신
 - Worker에게 이슈 ID만 전달 (토큰 효율화)
 - 병렬 Worker는 담당 영역을 명시
 

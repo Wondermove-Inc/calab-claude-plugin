@@ -1,6 +1,6 @@
 # workflow 플러그인
 
-> Single/Teams 두 가지 모드를 제공하는 멀티 에이전트 워크플로우 (v3.0.0)
+> Single/Teams 두 가지 모드를 제공하는 멀티 에이전트 워크플로우 (v4.0.0)
 
 ## 명령어
 
@@ -15,7 +15,7 @@
 
 ```
 plugins/workflow/
-├── agents/           # 6개 에이전트 (worker, planner, team-lead, team-worker, team-reviewer, compound)
+├── agents/           # 5개 에이전트 (worker, planner, team-worker, team-reviewer, compound)
 ├── skills/           # 4개 스킬 (single, teams, help, compound)
 ├── guides/           # 공통 가이드 (TDD, 코딩 표준, 아키텍처, Gate, beads)
 └── templates/        # 설계 문서 템플릿

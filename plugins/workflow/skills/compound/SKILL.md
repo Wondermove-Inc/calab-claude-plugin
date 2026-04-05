@@ -1,7 +1,7 @@
 ---
 name: workflow:compound
 description: 최근 1주일간 완료된 워크플로우를 전체 분석하여 성공/개선 패턴을 추출하고 시스템 개선안을 제안합니다.
-allowed-tools: Bash, Task, TaskOutput, Read
+allowed-tools: Agent, Bash, Read
 disable-model-invocation: true
 ---
 
@@ -33,11 +33,18 @@ bd list --status closed --type epic
 
 ### 2단계: Compound 에이전트 호출
 
+`Agent` 도구를 **포그라운드**(`run_in_background: false`)로 호출합니다. 분석이 완료되면 에이전트의 최종 출력(1줄 요약)이 직접 반환됩니다.
+
 ```
-Task (subagent_type: workflow:compound, model: opus, run_in_background: true):
-"최근 1주일간 완료된 워크플로우 전체 분석.
+Agent(
+  subagent_type: "workflow:compound",
+  model: "opus",
+  run_in_background: false,
+  description: "Compound 회고 분석",
+  prompt: "최근 1주일간 완료된 워크플로우 전체 분석.
 대상 Epic: <수집된 epic-id 목록>
 프로젝트: {현재 경로}"
+)
 ```
 
 ### 3단계: 에이전트가 수행하는 3-Layer 분석
