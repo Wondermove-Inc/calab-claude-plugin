@@ -24,15 +24,19 @@ disable-model-invocation: true
 | 모드 | 적합한 작업 | 흐름 |
 |------|------------|------|
 | **Single** | 버그 수정, 설정 변경, 단일 모듈 | 요청 → Worker(TDD) → 완료 |
-| **Teams** | 다중 모듈, 새 기능, 대규모 리팩토링 | Discovery → Epic 생성 → 팀 spawn → Plan(메인 Claude) → 구현·리뷰 조율 → Completion Gate |
+| **Teams** | 다중 모듈, 새 기능, 대규모 리팩토링 | Discovery → Epic 생성 → 팀 spawn(7명) → architect 설계 → 구현·병렬 리뷰·문서 → Completion Gate |
 
 ## 에이전트
 
 | 에이전트 | 모드 | 역할 | 모델 |
 |----------|------|------|------|
 | `worker` | Single | TDD 구현 | opus |
-| `team-worker` | Teams | 구현원 (worktree, TDD, 이슈 상태 전환) | sonnet |
-| `team-reviewer` | Teams | Review Task 소유·관리, 분류 협의, 변경점 확인 후 close | opus |
+| `architect` | Teams | 설계 초안 + 아키텍처 리뷰 | opus |
+| `builder` | Teams | 구현원 (worktree, TDD, 이슈 상태 전환) | sonnet |
+| `security-reviewer` | Teams | 보안 전문 리뷰 (OWASP, 인증/인가) | opus |
+| `performance-reviewer` | Teams | 성능 전문 리뷰 (N+1, 메모리, I/O) | opus |
+| `logic-reviewer` | Teams | 로직/코드 품질 리뷰 (에러 처리, 테스트) | opus |
+| `scribe` | Teams | 문서 생성 (API, 아키텍처, CHANGELOG) | sonnet |
 | `compound` | 독립 | 회고 분석 (수동 호출) | opus |
 
 > `planner` 에이전트는 수동 호출 전용입니다. 필요 시 `workflow:planner` subagent_type으로 호출하세요.
@@ -40,10 +44,12 @@ disable-model-invocation: true
 
 ## Teams 모드 핵심 개념
 
-- **team-lead = 메인 Claude**: Discovery + Plan + Epic·Worker Task 생성 + 구현·리뷰 조율 + Completion Gate 전부 직접 수행
-- **설계 리스크 자기 검증**: Plan 직후 5개 리스크 체크리스트, 중대 리스크 시 `AskUserQuestion` 노출
-- **이슈 주체**: Epic과 Worker Task는 team-lead(메인 Claude), Review Task는 team-reviewer가 생성·소유
-- **피드백 분류**: auto-fix(자동 수정 루프, 최대 3회) / user-decision(Completion Gate 판단)
+- **team-lead = 메인 Claude**: Discovery + 조율 + 피드백 취합 + Completion Gate 직접 수행
+- **architect 설계 위임**: Plan을 architect에 위임, team-lead가 검토·확정
+- **병렬 리뷰**: architect + security + performance + logic 4명이 동시 리뷰
+- **이슈 주체**: Epic과 Worker Task는 team-lead(메인 Claude). 리뷰 피드백은 SendMessage로 보고 (이슈 미생성)
+- **피드백 취합**: team-lead가 4명 피드백을 수신·중복 제거·분류 확정 후 auto-fix(최대 3회) / user-decision(Completion Gate 판단)
+- **문서 생성**: 리뷰 완료 후 scribe가 `.workflow/docs/<epic-id>/`에 문서 생성
 - **팀 유지**: Completion Gate 수정 요청 시에도 같은 팀으로 재작업
 
 ## 사용 예시

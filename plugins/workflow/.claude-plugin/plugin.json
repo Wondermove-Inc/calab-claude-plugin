@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "통합 워크플로우 - Single(단일 Worker) + Teams(team-lead=메인 Claude 주도) + Compound 회고.",
   "author": {
     "name": "wondermove lab",
@@ -23,8 +23,12 @@
   "agents": [
     "./agents/worker.md",
     "./agents/planner.md",
-    "./agents/team-worker.md",
-    "./agents/team-reviewer.md",
+    "./agents/architect.md",
+    "./agents/builder.md",
+    "./agents/security-reviewer.md",
+    "./agents/performance-reviewer.md",
+    "./agents/logic-reviewer.md",
+    "./agents/scribe.md",
     "./agents/compound.md"
   ],
   "skills": [

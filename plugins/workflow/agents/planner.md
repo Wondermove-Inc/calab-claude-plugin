@@ -95,18 +95,17 @@ bd update <plan-subtask-id> --status in_progress
 
 ```markdown
 ## 작업 분할
-- **팀원 수**: N명 (team-worker N명 + team-reviewer 1명)
+- **팀원 수**: N명 (builder N명 + architect 1명 + reviewer 3명 + scribe 1명)
 
 ### 팀원별 작업
 | # | 팀원 | 담당 모듈/파일 | 작업 내용 | 의존성 |
 |---|------|---------------|----------|--------|
-| 1 | team-worker-1 | internal/domain/alert/ | 도메인 모델, 유즈케이스 | 없음 |
-| 2 | team-worker-2 | internal/adapters/http/ | HTTP 핸들러, 라우터 | #1 |
-| 3 | team-reviewer | (전체) | 통합 리뷰 | #1, #2 |
+| 1 | builder-1 | internal/domain/alert/ | 도메인 모델, 유즈케이스 | 없음 |
+| 2 | builder-2 | internal/adapters/http/ | HTTP 핸들러, 라우터 | #1 |
 
 ### 공유 인터페이스
 \`\`\`go
-// 오케스트레이터가 사전 작성 (팀원 spawn 전)
+// architect가 설계, builder-1이 선행 작성
 type AlertUseCase interface {
     Create(ctx context.Context, req CreateAlertRequest) (*Alert, error)
 }
@@ -115,12 +114,12 @@ type AlertUseCase interface {
 ### 파일 경계
 | 팀원 | 수정 허용 파일 | 읽기 전용 |
 |------|--------------|----------|
-| team-worker-1 | internal/domain/** | internal/adapters/** |
-| team-worker-2 | internal/adapters/** | internal/domain/** |
+| builder-1 | internal/domain/** | internal/adapters/** |
+| builder-2 | internal/adapters/** | internal/domain/** |
 
 ### 반영 순서
-1. team-worker-1 (기반 모듈)
-2. team-worker-2 (의존 모듈)
+1. builder-1 (기반 모듈)
+2. builder-2 (의존 모듈)
 ```
 
 ### 5단계: 설계 수립

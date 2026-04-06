@@ -6,23 +6,21 @@
 
 ```
 Epic (team-lead / 메인 Claude 생성)
-├── Worker Task #1 (team-lead 생성, team-worker-1에 할당)
-├── Worker Task #2 (team-lead 생성, team-worker-2에 할당)
-├── ...
-├── Review Task #1 (team-reviewer 생성, 리뷰 라운드 #1)
-├── Review Task #2 (team-reviewer 생성, 리뷰 라운드 #2, auto-fix 루프 시)
+├── Worker Task #1 (team-lead 생성, builder-1에 할당)
+├── Worker Task #2 (team-lead 생성, builder-2에 할당)
 └── ...
 ```
+
+> 리뷰 피드백은 이슈로 관리하지 않습니다. 리뷰어들의 피드백은 SendMessage로 team-lead에 직접 보고하고, team-lead가 Epic comment에 주요 사항을 기록합니다.
 
 ### 이슈 주체 매트릭스
 
 | 이슈 | 생성 주체 | 상태 전환 | close 주체 |
 |------|----------|----------|-----------|
 | **Epic** | team-lead (메인 Claude, 2단계) | open → closed | team-lead (Completion Gate 최종 승인) |
-| **Worker Task** | team-lead (Plan 후 6단계) | open → in_progress(worker) → closed(worker) | team-worker (작업 완료 시) |
-| **Review Task** | team-reviewer (리뷰 시작 시, 라운드마다) | open → closed | team-reviewer (변경점 확인 후) |
+| **Worker Task** | team-lead (Plan 후 6단계) | open → in_progress(builder) → closed(builder) | builder (작업 완료 시) |
 
-Plan은 team-lead가 직접 수행하며, 결과는 Epic description과 Worker Task description에 분산 기록됩니다. 별도 Plan 이슈는 생성하지 않습니다.
+Plan은 architect가 설계 초안을 작성하고 team-lead가 검토·확정합니다. 결과는 Epic description과 Worker Task description에 분산 기록됩니다. 별도 Plan 이슈는 생성하지 않습니다.
 
 ## 버전 표기 규칙
 
@@ -35,7 +33,6 @@ Plan은 team-lead가 직접 수행하며, 결과는 Epic description과 Worker T
 |------|------|------|
 | Epic | `[YY.Q.N][영역] 기능명` | `[26.2.1][Azure] AKS 클러스터 통합` |
 | Worker Task | `Work #N: {담당 모듈}` | `Work #1: 도메인 모델` |
-| Review Task | `Review #<라운드>: {기능명}` | `Review #1: AKS 클러스터 통합` |
 
 ## Epic 생성 (team-lead / 메인 Claude가 2단계에서 수행)
 
@@ -53,9 +50,13 @@ bd create "[YY.Q.N][영역] 기능명" \
 {Phase 3 요약 전문 — Discovery 스킵 시 "Discovery 스킵 (요청이 충분히 구체적)"}
 
 ## 실행 구조
-- team-lead: Discovery + Plan + 이슈 생성 + 조율 + 리뷰 루프 + Completion Gate (전 생명주기 소유)
-- team-worker ×N: 할당받은 Worker Task 수행 (worktree isolation, TDD)
-- team-reviewer: Review Task 생성·관리, 피드백 분류, 변경점 확인 후 close
+- team-lead: Discovery + 조율 + 피드백 취합 + Completion Gate (전 생명주기 소유)
+- architect: 설계 초안 작성 + 아키텍처 리뷰
+- builder ×N: 할당받은 Worker Task 수행 (worktree isolation, TDD)
+- security-reviewer: 보안 전문 리뷰
+- performance-reviewer: 성능 전문 리뷰
+- logic-reviewer: 로직/코드 품질 리뷰
+- scribe: 문서 생성
 EOF
 )" \
   --acceptance "$(cat <<'EOF'
@@ -65,21 +66,21 @@ EOF
 )"
 ```
 
-> **필드 구성**: Epic은 `--description`과 `--acceptance`만 사용합니다. 설계 내용은 team-lead가 Worker Task description에 분산 기록합니다.
+> **필드 구성**: Epic은 `--description`과 `--acceptance`만 사용합니다. 설계 내용은 architect가 작성하고 team-lead가 Worker Task description에 분산 기록합니다.
 
 ## Worker Task 생성 (team-lead / 메인 Claude가 Plan 후 수행)
 
-워커 1명당 1개 생성. team-lead가 플랜 결과에 따라 분할합니다.
+builder 1명당 1개 생성. team-lead가 architect의 설계 초안에 따라 분할합니다.
 
 ```bash
 bd create "Work #<N>: {담당 모듈}" \
   --parent <epic-id> \
   --type task \
   --priority 2 \
-  --labels "implementation,worker,teams" \
+  --labels "implementation,builder,teams" \
   --description "$(cat <<'EOF'
 ## 담당
-- 워커: team-worker-<N>
+- builder: builder-<N>
 - 모듈/파일: {파일 경로 목록}
 
 ## 작업 내용
@@ -117,13 +118,13 @@ EOF
 bd update <worker-task-id> --blocked-by <dependency-task-id>
 ```
 
-## Worker Task 완료 기록 (team-worker가 수행)
+## Worker Task 완료 기록 (builder가 수행)
 
 작업 완료 시 comment로 결과를 기록하고 close합니다.
 
 ```bash
 bd comments add <worker-task-id> "$(cat <<'EOF'
-## [team-worker-N] 작업 완료
+## [builder-N] 작업 완료
 
 ### 변경 내역
 | 파일 | 변경 내용 |
@@ -143,84 +144,23 @@ EOF
 bd close <worker-task-id>
 ```
 
-## Review Task 생성 (team-reviewer가 리뷰 라운드마다 수행)
-
-```bash
-bd create "Review #<라운드>: {기능명}" \
-  --parent <epic-id> \
-  --type task \
-  --priority 2 \
-  --labels "review,reviewer,teams" \
-  --description "$(cat <<'EOF'
-## 리뷰 범위
-- 라운드: #<N>
-- 반영된 파일: {목록}
-- 연관 Worker Task: bd-<task-id-1>, bd-<task-id-2>
-
-## 체크 항목
-- [ ] 아키텍처 (SOLID, 의존성 방향)
-- [ ] 통합 (인터페이스 일관성, 모듈 경계)
-- [ ] 코드 품질 (보안, 성능, 에러 처리)
-- [ ] 테스트 (커버리지, 경계값)
-- [ ] 문서/리네이밍 (해당 시)
-EOF
-)"
-```
-
-### Review Task 피드백 기록 (comment)
-
-피드백은 auto-fix / user-decision으로 분류되어 comment에 기록됩니다:
-
-```bash
-bd comments add <review-task-id> "$(cat <<'EOF'
-## [피드백 - 라운드 #N]
-
-### auto-fix (N건)
-1. [Critical] path/to/file:42 — {설명} → 담당: team-worker-1
-2. [Major] path/to/file:78 — {설명} → 담당: team-worker-2
-3. [Minor] path/to/file:103 — {설명} → 담당: team-worker-1
-
-### user-decision (N건)
-1. [Major] path/to/file:55 — {설명}
-   - 옵션 A: ...
-   - 옵션 B: ...
-   - 내 의견: 옵션 A 권장 (이유: ...)
-EOF
-)"
-```
-
-### Review Task close (team-reviewer가 수행)
-
-```bash
-bd comments add <review-task-id> "$(cat <<'EOF'
-## [최종 확인 완료]
-- auto-fix: N건 전부 반영
-- user-decision: N건 보류 (Completion Gate 판단)
-- 변경점 최종 확인: ✅
-- 추가 이슈 없음
-EOF
-)"
-
-bd close <review-task-id>
-```
-
 ## 피드백 분류 기준
 
 | 분류 | 조건 | 예시 |
 |------|------|------|
-| **auto-fix** | 객관적 기준 위반, 답이 하나 | SOLID 위반, 타입 오류, 의존성 역전, null check, 커버리지 부족, 네이밍 컨벤션 |
-| **user-decision** | 트레이드오프, 사용자 선호 개입 | 스코프 변경, 설계 방향, 성능 vs 가독성, API 이름, 기능 추가 제안 |
+| **auto-fix** | 객관적 기준 위반, 답이 하나 | SOLID 위반, 타입 오류, 의존성 역전, null check, 커버리지 부족, 네이밍 컨벤션, 보안 취약점, N+1 쿼리 |
+| **user-decision** | 트레이드오프, 사용자 선호 개입 | 스코프 변경, 설계 방향, 성능 vs 가독성, API 이름, 기능 추가 제안, 보안-편의성 균형 |
 
-분류는 **team-reviewer가 draft → team-lead와 협의 → 확정**의 순서로 진행됩니다.
+분류는 **team-lead가 4명 리뷰어의 피드백을 취합 후 직접 확정**합니다.
 
 ## 심각도 등급 (분류와 별개)
 
 | 등급 | 의미 |
 |------|------|
-| Critical | 아키텍처 위반, 로직 오류 |
-| Major | SOLID 위반, 설계 불일치 |
-| Minor | 패턴/네이밍 일관성 |
-| Suggestion | 개선 제안 |
+| Critical | 아키텍처 위반, 로직 오류, 즉시 악용 가능 취약점, 프로덕션 장애 유발 |
+| Major | SOLID 위반, 설계 불일치, N+1 쿼리, 에러 처리 누락 |
+| Minor | 패턴/네이밍 일관성, 최적화 기회 |
+| Suggestion | 개선 제안, 모범 사례 |
 
 ## 라벨 컨벤션
 
@@ -231,8 +171,7 @@ bd close <review-task-id>
 `feature`, `improvement`, `refactoring`, `patch`, `hotfix`
 
 ### 워크플로우 역할별
-- `implementation,worker,teams` (Worker Task)
-- `review,reviewer,teams` (Review Task)
+- `implementation,builder,teams` (Worker Task)
 
 ## 우선순위 매핑
 
@@ -250,13 +189,10 @@ bd close <review-task-id>
 ```
 Epic:         open → (team-lead 작업 중) → closed (Completion Gate 최종 승인)
 
-Worker Task:  open → in_progress (worker 시작) → closed (worker 완료)
+Worker Task:  open → in_progress (builder 시작) → closed (builder 완료)
               ↑                                    │
               └────── 재작업 (리뷰 피드백) ─────────┘
               (bd update <id> --status in_progress)
-
-Review Task:  open → closed (reviewer 변경점 확인 후) | (승격 close — 3회 루프 초과)
-              ※ 라운드마다 새 Review Task 생성 (재open하지 않음)
 ```
 
 ### 재작업 경로 (Worker Task)
@@ -271,12 +207,12 @@ Review Task:  open → closed (reviewer 변경점 확인 후) | (승격 close �
 | `[Workflow] 완료` | 최종 승인 직전 Epic close | team-lead |
 | `[Workflow] 사용자 취소` | 사용자 취소 시 | team-lead |
 | `[Workflow] 설계 리스크로 중단` | 설계 리스크 중단 시 | team-lead |
+| `[리뷰 취합 #N]` | 리뷰 라운드 취합 결과 | team-lead |
 
 ### 필수 규칙
 
-- **team-worker**: 작업 시작 시 `bd update <id> --status in_progress`, 완료 시 `bd close <id>`. 재작업 시 동일 명령으로 재open.
-- **team-reviewer**: 리뷰 라운드마다 새 Review Task 생성. 라운드 #2 이상이면 description에 `이전 라운드: bd-<prev-id>` 필수 기록.
-- **team-lead**: Worker Task 생성·할당만 수행. Worker Task 상태 전환은 워커에 위임. Epic은 Completion Gate 최종 승인/취소/설계 리스크 중단 시에만 close. 취소 시 `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close.
+- **builder**: 작업 시작 시 `bd update <id> --status in_progress`, 완료 시 `bd close <id>`. 재작업 시 동일 명령으로 재open.
+- **team-lead**: Worker Task 생성·할당만 수행. Worker Task 상태 전환은 builder에 위임. Epic은 Completion Gate 최종 승인/취소/설계 리스크 중단 시에만 close. 취소 시 `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close. 리뷰 피드백 취합 결과를 Epic comment에 기록.
 
 ## 계층 관리 명령어
 
@@ -297,7 +233,11 @@ bd epic status
 ## 참조
 
 - `skills/teams/SKILL.md`: 전체 워크플로우 오케스트레이션 (team-lead = 메인 Claude가 주도)
-- `agents/team-worker.md`: 구현 + 이슈 상태 전환
-- `agents/team-reviewer.md`: Review Task 소유·관리
+- `agents/architect.md`: 설계 + 아키텍처 리뷰
+- `agents/builder.md`: 구현 + 이슈 상태 전환
+- `agents/security-reviewer.md`: 보안 전문 리뷰
+- `agents/performance-reviewer.md`: 성능 전문 리뷰
+- `agents/logic-reviewer.md`: 로직/품질 리뷰
+- `agents/scribe.md`: 문서 생성
 - `guides/context-management.md`: 이슈 기반 컨텍스트 관리
 - `guides/gate-process.md`: Discovery Gate + Completion Gate

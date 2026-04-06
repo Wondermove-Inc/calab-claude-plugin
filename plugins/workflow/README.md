@@ -15,7 +15,7 @@
 
 ```
 plugins/workflow/
-├── agents/           # 5개 에이전트 (worker, planner, team-worker, team-reviewer, compound)
+├── agents/           # 9개 에이전트 (worker, planner, architect, builder, security-reviewer, performance-reviewer, logic-reviewer, scribe, compound)
 ├── skills/           # 4개 스킬 (single, teams, help, compound)
 ├── guides/           # 공통 가이드 (TDD, 코딩 표준, 아키텍처, Gate, beads)
 └── templates/        # 설계 문서 템플릿
