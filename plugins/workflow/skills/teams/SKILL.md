@@ -51,6 +51,7 @@ Agent Teams 기반 워크플로우를 시작합니다. **메인 Claude가 프레
 6. **beads가 Single Source of Truth**: Epic + Worker Task. 모든 상태는 beads에 영속 기록. 리뷰 피드백은 SendMessage로 보고하고 team-lead가 Epic comment에 주요 사항 기록.
 7. **피드백 취합**: 4명의 리뷰어(architect 포함) 피드백을 team-lead가 수신·중복 제거·분류 확정 후 통합 auto-fix를 builder에 전달.
 8. **팀 유지**: Completion Gate 수정 요청 시에도 같은 팀 유지. 최종 승인·취소 시에만 `TeamDelete`.
+9. **코드베이스 탐색은 architect의 역할**: 메인 Claude는 코드베이스를 직접 탐색하지 않음. 코드 분석·설계는 architect에 위임. Discovery 단계에서는 사용자와의 요구사항 대화만 진행.
 
 ## 워크플로우 흐름
 
@@ -318,6 +319,8 @@ architect의 `[설계 완료]`에 포함된 리스크 분석을 team-lead가 판
 - 의존성: `bd update <task-id> --blocked-by <other-id>` (필요 시)
 
 #### 6-2. 작업 시작 지시
+
+> **전제**: builder 할당 전에 team-lead가 작업 브랜치에 체크아웃된 상태여야 합니다.
 
 각 builder에 `SendMessage`:
 
