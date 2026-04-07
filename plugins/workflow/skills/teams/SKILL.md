@@ -551,6 +551,10 @@ TeamDelete()
 ```
 
 ```bash
+# 워크트리 변경사항을 베이스 브랜치에 커밋
+git add -A
+git commit -m "[workflow] <epic-id>: {기능 요약}"
+
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
