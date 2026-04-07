@@ -376,7 +376,7 @@ git reset HEAD
 # 4. 충돌 시: 파일 경계 규칙에 따라 담당 builder 버전 사용. 해결 불가 시 사용자에 AskUserQuestion으로 에스컬레이션.
 ```
 
-> **Worktree 보존**: builder worktree는 팀 해산 시점까지 유지합니다. 재작업 루프에서 재사용하기 때문.
+> **Worktree 보존**: builder worktree는 팀 해산 시점까지 유지합니다. 재작업 루프에서 재사용하기 때문. 최종 완료 시 worktree를 제거합니다.
 
 ### 9단계: 통합 테스트 + 빌드
 
@@ -554,6 +554,10 @@ TeamDelete()
 # 워크트리 변경사항을 베이스 브랜치에 커밋
 git add -A
 git commit -m "[workflow] <epic-id>: {기능 요약}"
+
+# 완료된 워크트리 제거
+git worktree remove .claude/worktrees/builder-1
+git worktree remove .claude/worktrees/builder-2
 
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>

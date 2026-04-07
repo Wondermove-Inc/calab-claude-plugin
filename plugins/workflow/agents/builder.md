@@ -159,4 +159,4 @@ SendMessage(to: "team-lead"):
 | 테스트/빌드 3회 연속 실패 | `[에스컬레이션]` SendMessage로 team-lead 보고 |
 | 다른 팀원 파일 수정 필요 | `[에스컬레이션]` 의존성 보고 |
 | 설계 불일치 발견 | `[에스컬레이션]` 보고 + 작업 중단 |
-| 팀 해산 (워크플로우 종료) | `ExitWorktree(action: "keep")` 후 Task 자연 종료 |
+| 팀 해산 (워크플로우 종료) | `ExitWorktree(action: "remove")` 후 Task 자연 종료 |
