@@ -17,7 +17,7 @@ Epic (team-lead / 메인 Claude 생성)
 
 | 이슈 | 생성 주체 | 상태 전환 | close 주체 |
 |------|----------|----------|-----------|
-| **Epic** | team-lead (메인 Claude, 2단계) | open → closed | team-lead (Completion Gate 최종 승인) |
+| **Epic / 기존 티켓** | team-lead (2단계) 또는 사용자 전달 | → in_progress(team-lead, 2단계) → closed | team-lead (Completion Gate 최종 승인) |
 | **Worker Task** | team-lead (Plan 후 6단계) | open → in_progress(builder) → closed(builder) | builder (작업 완료 시) |
 
 Plan은 architect가 설계 초안을 작성하고 team-lead가 검토·확정합니다. 결과는 Epic description과 Worker Task description에 분산 기록됩니다. 별도 Plan 이슈는 생성하지 않습니다.
@@ -187,9 +187,9 @@ bd close <worker-task-id>
 ### 상태 흐름
 
 ```
-Epic:         open → (team-lead 작업 중) → closed (Completion Gate 최종 승인)
+Epic/기존 티켓:  → in_progress (team-lead, 2단계) → closed (Completion Gate 최종 승인)
 
-Worker Task:  open → in_progress (builder 시작) → closed (builder 완료)
+Worker Task:     open → in_progress (builder 시작) → closed (builder 완료)
               ↑                                    │
               └────── 재작업 (리뷰 피드백) ─────────┘
               (bd update <id> --status in_progress)
@@ -212,7 +212,7 @@ Worker Task:  open → in_progress (builder 시작) → closed (builder 완료)
 ### 필수 규칙
 
 - **builder**: 작업 시작 시 `bd update <id> --status in_progress`, 완료 시 `bd close <id>`. 재작업 시 동일 명령으로 재open.
-- **team-lead**: Worker Task 생성·할당만 수행. Worker Task 상태 전환은 builder에 위임. Epic은 Completion Gate 최종 승인/취소/설계 리스크 중단 시에만 close. 취소 시 `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close. 리뷰 피드백 취합 결과를 Epic comment에 기록.
+- **team-lead**: Epic/기존 티켓은 2단계에서 `bd update <id> --status in_progress`로 작업 시작 표시. Worker Task 생성·할당만 수행. Worker Task 상태 전환은 builder에 위임. Epic은 Completion Gate 최종 승인/취소/설계 리스크 중단 시에만 close. 취소 시 `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close. 리뷰 피드백 취합 결과를 Epic comment에 기록.
 
 ## 계층 관리 명령어
 

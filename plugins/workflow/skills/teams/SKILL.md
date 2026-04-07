@@ -173,14 +173,34 @@ multiSelect: false
 - **수정 필요**: Phase 1(사용자 주도 탐색)으로 복귀 (Epic·팀 미생성)
 - **취소**: Epic·팀 미존재 상태 → beads 기록 없이 즉시 종료
 
-### 2단계: Epic 생성
+### 2단계: Epic 생성 / 기존 티켓 연결
+
+#### 2-A. 기존 티켓을 전달받은 경우
+
+사용자가 기존 beads 티켓 ID(예: `bd-xxx`)를 전달한 경우:
+
+```bash
+bd show <ticket-id>
+```
+
+- **epic 타입**: 그대로 `<epic-id>`로 사용
+- **task 타입**: 해당 task를 워크플로우의 최상위 이슈로 사용 (Epic 생성 불필요)
+
+#### 2-B. 새 Epic 생성
 
 `guides/beads-issue-guide.md` "Epic 생성" 섹션 템플릿에 따라 `bd create --type epic`을 실행합니다.
 
 - description: 요청 분석, Discovery 요약, 실행 구조 섹션 포함
 - acceptance: AC 체크리스트
-- 생성 후: `bd comments add <epic-id> "[Workflow] 시작"`
-- 생성된 `<epic-id>`를 이후 단계에서 사용
+
+#### 2-공통. 상태 전환 (2-A, 2-B 공통)
+
+```bash
+bd update <epic-id> --status in_progress
+bd comments add <epic-id> "[Workflow] 시작"
+```
+
+생성된/연결된 `<epic-id>`를 이후 단계에서 사용합니다.
 
 ### 3단계: TeamCreate + 팀원 spawn
 
@@ -551,17 +571,15 @@ TeamDelete()
 ```
 
 ```bash
-# 워크트리 변경사항을 베이스 브랜치에 커밋
-git add -A
-git commit -m "[workflow] <epic-id>: {기능 요약}"
-
-# 완료된 워크트리 제거
+# 완료된 워크트리 제거 (변경사항은 8단계에서 이미 unstaged로 반영됨)
 git worktree remove .claude/worktrees/builder-1
 git worktree remove .claude/worktrees/builder-2
 
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
+
+> **커밋은 사용자가 직접 수행합니다.** 변경사항은 unstaged 상태로 작업 브랜치에 남아 있습니다.
 
 **사용자에게 간결한 결과 보고**:
 
