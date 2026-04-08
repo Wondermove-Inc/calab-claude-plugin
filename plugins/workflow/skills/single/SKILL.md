@@ -1,7 +1,7 @@
 ---
 name: workflow:single
 description: 단일 Worker 워크플로우. 이슈 또는 사용자 요청을 기반으로 Worker를 실행합니다. 중/소규모 작업용.
-allowed-tools: Agent, Bash, AskUserQuestion, Read, Grep, Glob
+allowed-tools: Agent, Bash, AskUserQuestion, Read, Grep, Glob, TeamCreate, TeamDelete, SendMessage
 disable-model-invocation: false
 ---
 
@@ -27,7 +27,7 @@ disable-model-invocation: false
 ## 핵심 원칙
 
 1. **요구사항 명확화**: 복잡한 요청은 사용자에게 질문, 단순 요청은 바로 실행
-2. **Worker만 실행**: Planner/Reviewer 없음
+2. **Planner/Architect 없음**: Worker로 바로 구현, 리뷰는 전문 리뷰어 3명이 수행
 3. **TDD 필수**: Worker는 RED → GREEN → REFACTOR 사이클 준수
 4. **결과 검증**: Worker 실패 시 이슈를 닫지 않고 사용자에게 판단 요청
 
@@ -54,7 +54,11 @@ disable-model-invocation: false
   ↓
 4. Worker 호출
   ↓
-5. 결과 검증 & 이슈 완료
+5. 병렬 리뷰 (보안 + 성능 + 로직)
+  ↓
+6. 피드백 취합 & auto-fix 반영
+  ↓
+7. 결과 검증 & 이슈 완료
 ```
 
 ## 오케스트레이션 프로세스
@@ -170,7 +174,92 @@ Agent(
 
 병렬 Worker는 **팀 소속이 아닙니다** (TeamCreate 없음). 단순 백그라운드 subagent 실행이며, 완료 시 각자의 출력이 자동으로 대화 턴으로 도착합니다.
 
-### 5단계: 결과 검증 및 완료
+### 5단계: 리뷰어 팀 생성 & 병렬 리뷰
+
+Worker 완료 후 3명의 리뷰어를 팀으로 생성하여 병렬 리뷰를 수행합니다. 리뷰 요청은 TeamCreate 프롬프트에 직접 포함하여 즉시 리뷰를 시작합니다.
+
+```
+TeamCreate(
+  name: "single-reviewers",
+  members: [
+    {
+      subagent_type: "workflow:security-reviewer",
+      model: "opus",
+      name: "security-reviewer",
+      prompt: "[보안 리뷰 요청] 이슈 bd-<issue-id>\n- 반영된 파일: {Worker가 변경한 파일 목록}\n- 리뷰 라운드: #1"
+    },
+    {
+      subagent_type: "workflow:performance-reviewer",
+      model: "opus",
+      name: "performance-reviewer",
+      prompt: "[성능 리뷰 요청] 이슈 bd-<issue-id>\n- 반영된 파일: {Worker가 변경한 파일 목록}\n- 리뷰 라운드: #1"
+    },
+    {
+      subagent_type: "workflow:logic-reviewer",
+      model: "opus",
+      name: "logic-reviewer",
+      prompt: "[로직 리뷰 요청] 이슈 bd-<issue-id>\n- 반영된 파일: {Worker가 변경한 파일 목록}\n- 리뷰 라운드: #1"
+    }
+  ]
+)
+```
+
+3명의 리뷰어로부터 `[보안/성능/로직 피드백 보고]` SendMessage를 수신한 후 6단계로 진행합니다.
+
+### 6단계: 피드백 취합 & auto-fix 반영
+
+#### 6-1. 피드백 취합
+
+team-lead(메인 Claude)가 3명의 피드백을 취합합니다:
+- **중복 제거**: 같은 file:line을 여러 리뷰어가 지적한 경우, 더 높은 심각도 기준 우선
+- **분류 확정**: 각 리뷰어의 draft 분류(auto-fix / user-decision)를 team-lead가 최종 확정
+
+#### 6-2. auto-fix 반영
+
+auto-fix 항목이 존재하면 Worker를 재호출하여 수정합니다:
+
+```
+Agent(
+  subagent_type: "workflow:worker",
+  model: "opus",
+  run_in_background: false,
+  description: "리뷰 auto-fix 반영",
+  prompt: "bd-<issue-id> auto-fix 반영.\n\n수정 항목:\n{auto-fix 목록}\n\n기존 테스트가 깨지지 않도록 주의."
+)
+```
+
+#### 6-3. user-decision 항목 처리
+
+user-decision 항목이 존재하면 사용자에게 판단을 요청합니다:
+
+```
+AskUserQuestion:
+  question: "리뷰어 피드백 중 사용자 판단이 필요한 항목이 있습니다:\n\n{user-decision 항목 나열}\n\n각 항목에 대해 선택해주세요."
+  header: "리뷰 피드백"
+```
+
+사용자 결정 후 추가 수정이 필요하면 Worker를 재호출합니다.
+
+#### 6-4. 재리뷰 (auto-fix 반영 후)
+
+auto-fix 수정이 반영된 경우, **해당 이슈를 제기한 리뷰어에게만** 재리뷰를 요청합니다. 이전 라운드에서 "이슈 없음"이었던 리뷰어는 스킵합니다.
+
+```
+SendMessage(to: "<이슈를 제기한 리뷰어>",
+  message: "[<관점> 재리뷰 요청] 이슈 bd-<issue-id>\n- 반영된 파일: {수정된 파일 목록}\n- 리뷰 라운드: #N")
+```
+
+재리뷰에서 모든 리뷰어가 "이슈 없음"을 보고하면 7단계로 진행합니다. 새로운 이슈가 발견되면 6-1부터 반복합니다 (최대 3라운드).
+
+#### 6-5. 리뷰어 팀 해산
+
+리뷰 완료 후 팀을 해산합니다:
+
+```
+TeamDelete(name: "single-reviewers")
+```
+
+### 7단계: 결과 검증 및 완료
 
 #### Worker 출력 검증
 
@@ -185,9 +274,10 @@ Worker 출력을 파싱하여 성공/실패를 판단합니다. **Worker가 성�
 
 | Worker 출력 | 처리 |
 |-------------|------|
-| `완료: ... 빌드 성공` | 성공 → 이슈 업데이트 및 close |
+| `완료: ... 빌드 성공` + 리뷰 통과 | 성공 → 이슈 업데이트 및 close |
 | `완료: ... 빌드 실패` 또는 오류 보고 | 실패 → 사용자에게 판단 요청 |
 | 병렬 Worker 일부 실패 | 성공한 결과 유지, 실패 내용 보고 후 사용자 판단 |
+| 리뷰 3라운드 초과 | 남은 이슈와 함께 사용자에게 판단 요청 |
 
 **실패 시 AskUserQuestion**:
 ```
@@ -232,6 +322,8 @@ description 예시:
 | 변경 파일 | N개 |
 | 테스트 | N개 PASS |
 | 빌드 | 성공 |
+| 리뷰 | 보안 PASS / 성능 PASS / 로직 PASS |
+| 리뷰 라운드 | N회 |
 | AC 달성 | N/N |
 
 `bd show <issue-id>`
@@ -245,6 +337,8 @@ description 예시:
 | Worker 실패 | 사용자에게 재시도/종료 선택 요청 |
 | 백그라운드 Worker 무응답 | 사용자에게 상태 보고 후 판단 |
 | Worker가 CONFUSION 보고 | 혼란 내용과 옵션을 사용자에게 전달, 판단 후 Worker 재실행 |
+| 리뷰어 무응답 | 해당 리뷰어 스킵 후 사용자에게 보고 |
+| 리뷰 3라운드 초과 | 미해결 항목과 함께 사용자에게 판단 요청 |
 
 ## 에이전트 호출 규칙
 
@@ -252,6 +346,7 @@ description 예시:
 - 병렬 Worker (2개 이상): `Agent(run_in_background: true)` 동시 호출 → 자동 완료 메시지 수신
 - Worker에게 이슈 ID만 전달 (토큰 효율화)
 - 병렬 Worker는 담당 영역을 명시
+- 리뷰는 필수: Worker 완료 후 반드시 리뷰 단계(5-6단계)를 거친 뒤 이슈를 close
 
 ## 지금 시작하세요
 
