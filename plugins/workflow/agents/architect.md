@@ -66,7 +66,7 @@ team-lead로부터 `[설계 요청]` SendMessage 수신 대기:
 | **공유 인터페이스는 별도 Work** | 공유 타입·포트·인터페이스 선언은 `Work #0: 공유 인터페이스`로 한 builder에 우선 할당 |
 
 각 Work 항목에 포함할 내용:
-- 담당 builder 이름 (builder-1 또는 builder-2)
+- 담당 builder 이름 (builder-{i}, 병렬 작업 수에 따라 최대 5개)
 - 수정 허용 파일 목록
 - 읽기 전용 파일 목록
 - 구현 범위
@@ -95,17 +95,21 @@ SendMessage(to: "team-lead"):
 {도메인 모델, 인터페이스, 데이터 흐름}
 
 ## 작업 분할 draft
+- 병렬 작업 수: N (최대 5)
+
 | # | 담당 | 모듈 | 의존성 |
 |---|------|------|--------|
 | 0 | builder-1 | 공유 인터페이스 | 없음 |
 | 1 | builder-1 | ... | #0 |
 | 2 | builder-2 | ... | #0 |
+| ... | builder-N | ... | ... |
 
 ## 파일 경계
 | builder | 수정 허용 | 읽기 전용 |
 |---------|---------|---------|
 | builder-1 | ... | ... |
 | builder-2 | ... | ... |
+| ... | ... | ... |
 
 ## TDD 계획
 {각 Work별 RED/GREEN 단계}
@@ -168,8 +172,8 @@ SendMessage(to: "team-lead"):
 - 발견 항목: N건
 
 ### auto-fix (N건)
-1. [Critical] path/to/file:42 — {설명} → 담당: builder-1
-2. [Major] path/to/file:78 — {설명} → 담당: builder-2
+1. [Critical] path/to/file:42 — {설명} → 담당: builder-{i}
+2. [Major] path/to/file:78 — {설명} → 담당: builder-{j}
 
 ### user-decision (N건)
 1. [Major] path/to/file:55 — {설명}

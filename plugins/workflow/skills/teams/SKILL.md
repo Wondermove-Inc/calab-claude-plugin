@@ -39,7 +39,9 @@ Agent Teams 기반 워크플로우를 시작합니다. **메인 Claude가 프레
 | **logic-reviewer** | 서브에이전트. 로직/코드 품질 관점에서 검증 (로직 오류, 에러 처리, 네이밍, 테스트 등) |
 | **scribe** | 서브에이전트. 리뷰 완료 후 구현 코드를 분석하여 문서를 생성 |
 | **Discovery** | 사용자 주도 탐색 → AI 보완 질문 → 요점 정리 |
-| **worktree isolation** | 각 builder가 독립 git worktree에서 작업하여 충돌 방지 |
+| **베이스 브랜치** | 사용자가 `/workflow:teams` 실행 시점에 체크아웃한 현재 브랜치. 워크플로우 최종 완료 시 통합 브랜치가 이 브랜치에 머지됨 |
+| **통합 브랜치** | `wf-<epic-id>` 이름의 브랜치. team-lead 전용 worktree에서 builder 코드를 머지하고 통합 테스트·리뷰를 수행하는 작업 공간 |
+| **worktree isolation** | team-lead와 각 builder가 독립 git worktree에서 작업하여 베이스 브랜치 보호 및 충돌 방지 |
 
 ## 핵심 원칙
 
@@ -74,7 +76,7 @@ sequenceDiagram
     MC->>U: Discovery 대화 + Gate
     U-->>MC: 요구사항 확정
     MC->>MC: Epic 생성
-    MC->>MC: TeamCreate + Agent spawn ×7
+    MC->>MC: TeamCreate + 통합 worktree 생성 + Agent spawn ×5
     MC->>A: [설계 요청]
     A->>A: 코드 분석 + 설계 + 리스크
     A-->>MC: [설계 완료]
@@ -83,11 +85,12 @@ sequenceDiagram
         MC->>U: AskUserQuestion
         U-->>MC: 계속/수정/중단
     end
+    MC->>MC: Builder spawn ×N (설계 기반, 최대 5)
     MC->>MC: Worker Task 생성
     MC->>B: [작업 할당]
-    B->>B: in_progress → TDD → closed
-    B-->>MC: [작업 완료] 브랜치·경로
-    MC->>MC: 코드 반영 (git checkout)
+    B->>B: worktree → TDD → commit → closed
+    B-->>MC: [작업 완료] 브랜치
+    MC->>MC: 통합 worktree에서 merge + 테스트
     par 병렬 리뷰
         MC->>A: [아키텍처 리뷰 요청]
         MC->>SR: [보안 리뷰 요청]
@@ -118,7 +121,7 @@ sequenceDiagram
         note over MC,LR: 루프 재진입
     end
     U-->>MC: 최종 승인
-    MC->>MC: 전원 shutdown + TeamDelete + Epic close
+    MC->>MC: 통합→베이스 머지 + worktree 정리 + TeamDelete + Epic close
 ```
 
 ## 오케스트레이션 프로세스
@@ -202,7 +205,7 @@ bd comments add <epic-id> "[Workflow] 시작"
 
 생성된/연결된 `<epic-id>`를 이후 단계에서 사용합니다.
 
-### 3단계: TeamCreate + 팀원 spawn
+### 3단계: TeamCreate + 통합 Worktree + 팀원 spawn
 
 #### 3-1. TeamCreate
 
@@ -212,9 +215,23 @@ TeamCreate(team_name: "wf-<epic-id>", description: "워크플로우: {기능명}
 
 TeamCreate 호출자(메인 Claude)가 자동으로 `name: "team-lead"`, `agentType: "orchestrator"`로 팀에 등록됩니다.
 
-#### 3-2. 팀원 spawn
+#### 3-1b. 통합 Worktree 생성
 
-기본 7명: 1명 architect + 2명 builder + 3명 reviewer + 1명 scribe.
+베이스 브랜치(현재 브랜치)에서 통합 브랜치를 분기하고 worktree를 생성합니다.
+
+```bash
+# 현재 브랜치를 베이스 브랜치로 기록
+BASE_BRANCH=$(git branch --show-current)
+
+# 통합 worktree 생성 (베이스 브랜치에서 분기)
+git worktree add .claude/worktrees/wf-<epic-id> -b wf-<epic-id>
+```
+
+> **이후 team-lead의 머지·테스트·리뷰는 모두 통합 worktree(`.claude/worktrees/wf-<epic-id>/`)에서 수행합니다.** 베이스 브랜치는 워크플로우 최종 완료 시까지 변경되지 않습니다.
+
+#### 3-2. 팀원 spawn (builder 제외)
+
+초기 spawn 5명: 1명 architect + 3명 reviewer + 1명 scribe. **builder는 architect 설계 완료 후 동적 생성** (4-4단계).
 
 ```
 # Architect
@@ -226,18 +243,6 @@ Agent(
   description: "설계 + 아키텍처 리뷰",
   prompt: "Epic bd-<epic-id>. 현재는 대기 상태입니다. team-lead의 [설계 요청] SendMessage 수신 전까지 어떤 도구도 호출하지 마세요."
 )
-
-# Builder 1
-Agent(
-  subagent_type: "workflow:builder",
-  team_name: "wf-<epic-id>",
-  name: "builder-1",
-  run_in_background: true,
-  description: "TDD 구현 팀원",
-  prompt: "Epic bd-<epic-id>. 현재는 대기 상태입니다. team-lead의 [작업 할당] SendMessage 수신 전까지 어떤 도구도 호출하지 마세요. 할당받으면 EnterWorktree → bd show → TDD 구현 → closed → SendMessage(to: \"team-lead\")로 [작업 완료] 보고."
-)
-
-# Builder 2 — 동일 포맷, name: "builder-2"
 
 # Security Reviewer
 Agent(
@@ -305,7 +310,7 @@ architect가 `[설계 완료]`를 SendMessage로 보고합니다. 내용:
 
 #### 4-3. team-lead 검토·확정
 
-- 경미한 수정: team-lead가 직접 조정 후 6단계 진행
+- 경미한 수정: team-lead가 직접 조정 후 5단계 진행
 - 대폭 수정 필요: architect에 `SendMessage [설계 수정 요청]`으로 재작업 지시
 - 확정 후 Worker Task description에 설계 내용 반영
 
@@ -314,7 +319,7 @@ architect가 `[설계 완료]`를 SendMessage로 보고합니다. 내용:
 architect의 `[설계 완료]`에 포함된 리스크 분석을 team-lead가 판단합니다.
 
 **분기**:
-- **경미**: 6단계 진행
+- **경미**: 5-2단계(Builder 동적 spawn) 진행
 - **중대**: 사용자에게 즉시 노출
   ```
   AskUserQuestion:
@@ -326,7 +331,30 @@ architect의 `[설계 완료]`에 포함된 리스크 분석을 team-lead가 판
       - label: "중단", description: "워크플로우 중단, TeamDelete"
   ```
 
-**중단 선택 시**: 전원 `shutdown_request` → `TeamDelete` → `bd comments add <epic-id> "[Workflow] 설계 리스크로 중단"` → Epic close.
+**중단 선택 시**: 전원 `shutdown_request` → `TeamDelete` → worktree 정리(`git worktree remove .claude/worktrees/wf-<epic-id>`) → `git checkout <base-branch>` → `bd comments add <epic-id> "[Workflow] 설계 리스크로 중단"` → Epic close.
+
+#### 5-2. Builder 동적 spawn
+
+> **리스크 판단 통과 후** builder를 생성합니다. 중단 시 불필요한 agent 낭비를 방지합니다.
+
+architect의 작업 분할 draft에서 **병렬 실행 가능한 Work 수**(= 필요 builder 수 `N`)를 결정합니다.
+
+> **규칙**: `N` = 의존성 없이 동시 실행 가능한 최대 Work 수. **상한 5개**. 순차 의존성이 있는 Work는 동일 builder에 연속 할당하므로 별도 builder를 생성하지 않습니다.
+
+```
+# N개 builder를 병렬 spawn (N = architect 설계 결과 기반, 최대 5)
+for i in 1..N:
+  Agent(
+    subagent_type: "workflow:builder",
+    team_name: "wf-<epic-id>",
+    name: "builder-{i}",
+    run_in_background: true,
+    description: "TDD 구현 팀원",
+    prompt: "Epic bd-<epic-id>. 현재는 대기 상태입니다. team-lead의 [작업 할당] SendMessage 수신 전까지 어떤 도구도 호출하지 마세요. 할당받으면 EnterWorktree → bd show → TDD 구현 → closed → SendMessage(to: \"team-lead\")로 [작업 완료] 보고."
+  )
+```
+
+**예시**: architect가 3개 병렬 Work를 설계한 경우 → `builder-1`, `builder-2`, `builder-3` 생성.
 
 ### 6단계: Worker Task 생성 + 할당
 
@@ -335,20 +363,21 @@ architect의 `[설계 완료]`에 포함된 리스크 분석을 team-lead가 판
 각 builder당 1개(+ 필요 시 `Work #0: 공유 인터페이스`). `guides/beads-issue-guide.md` "Worker Task 생성" 섹션 템플릿 사용.
 
 - 명령: `bd create "Work #N: {담당 모듈}" --parent <epic-id> --type task --labels "implementation,builder,teams"`
-- description 본문에 **담당 builder 이름**(builder-1 또는 builder-2) 명시
+- description 본문에 **담당 builder 이름**(builder-{i}) 명시
 - 의존성: `bd update <task-id> --blocked-by <other-id>` (필요 시)
 
 #### 6-2. 작업 시작 지시
 
-> **전제**: builder 할당 전에 team-lead가 작업 브랜치에 체크아웃된 상태여야 합니다.
+> **전제**: builder 할당 전에 통합 worktree(`.claude/worktrees/wf-<epic-id>/`)가 생성된 상태여야 합니다.
 
 각 builder에 `SendMessage`:
 
 ```
+# 각 builder에 대응하는 Worker Task를 SendMessage로 할당
 SendMessage(
-  to: "builder-1",
-  summary: "작업 할당 Work #1",
-  message: "[작업 할당] Worker Task: bd-<task-id-1>\n- Epic: bd-<epic-id>\n- 담당: {모듈/파일}\n- EnterWorktree 후 in_progress 전환, TDD 진행, 완료 시 closed + [작업 완료] SendMessage(to: \"team-lead\")"
+  to: "builder-{i}",
+  summary: "작업 할당 Work #N",
+  message: "[작업 할당] Worker Task: bd-<task-id-N>\n- Epic: bd-<epic-id>\n- 담당: {모듈/파일}\n- EnterWorktree 후 in_progress 전환, TDD 진행, 완료 시 closed + [작업 완료] SendMessage(to: \"team-lead\")"
 )
 ```
 
@@ -359,7 +388,7 @@ SendMessage(
 builder가 `SendMessage(to: "team-lead", ...)`로 보고 시 `<teammate-message>` 대화 턴으로 자동 도착합니다. 기대 포맷:
 
 ```
-수신 (from builder-1):
+수신 (from builder-{i}):
 "[작업 완료] Worker Task: bd-<task-id>
 - 브랜치: <branch-name>
 - 경로: <worktree-path>
@@ -374,7 +403,7 @@ builder가 `SendMessage(to: "team-lead", ...)`로 보고 시 `<teammate-message>
 
 ### 8단계: 코드 반영
 
-**커밋 없이 변경점만 작업 브랜치에 unstaged로 적용**.
+**통합 worktree**에서 `git merge --no-ff --no-commit`으로 builder 브랜치를 머지합니다. 커밋은 생성하지 않습니다.
 
 #### 8-1. 반영 순서
 
@@ -383,24 +412,23 @@ builder가 `SendMessage(to: "team-lead", ...)`로 보고 시 `<teammate-message>
 #### 8-2. 반영 프로세스
 
 ```bash
-# 1. 작업 브랜치로 이동
-git checkout <working-branch>
+# 1. 통합 worktree로 이동
+cd .claude/worktrees/wf-<epic-id>
 
-# 2. 각 builder 보고에서 받은 브랜치/파일로 체크아웃
-git checkout <builder-1-branch> -- <file1> <file2>
-git checkout <builder-2-branch> -- <file3> <file4>
+# 2. 각 builder 브랜치를 순차 머지 (의존성 순서대로)
+for i in 1..N:
+  git merge --no-ff --no-commit <builder-{i}-branch>
 
-# 3. staged → unstaged 전환
+# 3. 머지 충돌 시: 파일 경계 규칙에 따라 담당 builder 버전 사용. 해결 불가 시 사용자에 AskUserQuestion으로 에스컬레이션.
+# 4. staged → unstaged 전환
 git reset HEAD
-
-# 4. 충돌 시: 파일 경계 규칙에 따라 담당 builder 버전 사용. 해결 불가 시 사용자에 AskUserQuestion으로 에스컬레이션.
 ```
 
 > **Worktree 보존**: builder worktree는 팀 해산 시점까지 유지합니다. 재작업 루프에서 재사용하기 때문. 최종 완료 시 worktree를 제거합니다.
 
 ### 9단계: 통합 테스트 + 빌드
 
-프로젝트 전체 테스트·빌드 실행.
+**통합 worktree(`.claude/worktrees/wf-<epic-id>/`)에서** 프로젝트 전체 테스트·빌드 실행.
 - 실패: 관련 builder에 `SendMessage [재작업 요청]`
 - 성공: 10단계로
 
@@ -554,11 +582,38 @@ multiSelect: false
 
 #### 15-2. 완료 선택 시
 
+##### 15-2a. 통합 브랜치에 최종 코드 반영
+
+8단계(코드 반영) 프로세스를 반복합니다. 8단계 이후 재작업이 없었다면 `git merge`는 "Already up to date"로 no-op입니다.
+
+##### 15-2b. 베이스 브랜치에 최종 머지
+
+통합 브랜치의 변경사항을 베이스 브랜치에 머지합니다.
+
+```bash
+# 1. 통합 worktree에서 변경사항 커밋 (머지 대상 생성)
+cd .claude/worktrees/wf-<epic-id>
+git add -u  # 추적된 파일만 (빌드 아티팩트 등 미추적 파일 제외)
+git commit -m "wf-<epic-id>: {기능명} 통합"
+
+# 2. 베이스 브랜치로 이동 (프로젝트 루트)
+cd <project-root>
+git checkout <base-branch>
+
+# 3. 통합 브랜치를 베이스 브랜치에 머지
+git merge --no-ff --no-commit wf-<epic-id>
+
+# 4. staged → unstaged 전환 (사용자가 최종 커밋)
+git reset HEAD
+```
+
+##### 15-2c. 팀 해산 + Worktree 일괄 정리
+
 ```
 # 팀원 순차 shutdown
 SendMessage(to: "architect", message: {type: "shutdown_request"})
-SendMessage(to: "builder-1", message: {type: "shutdown_request"})
-SendMessage(to: "builder-2", message: {type: "shutdown_request"})
+for i in 1..N:  # N = 생성된 builder 수
+  SendMessage(to: "builder-{i}", message: {type: "shutdown_request"})
 SendMessage(to: "security-reviewer", message: {type: "shutdown_request"})
 SendMessage(to: "performance-reviewer", message: {type: "shutdown_request"})
 SendMessage(to: "logic-reviewer", message: {type: "shutdown_request"})
@@ -571,15 +626,16 @@ TeamDelete()
 ```
 
 ```bash
-# 완료된 워크트리 제거 (변경사항은 8단계에서 이미 unstaged로 반영됨)
-git worktree remove .claude/worktrees/builder-1
-git worktree remove .claude/worktrees/builder-2
+# 모든 worktree 일괄 정리 (코드는 15-2b에서 이미 베이스 브랜치에 반영 완료)
+for i in 1..N:
+  git worktree remove .claude/worktrees/builder-{i}
+git worktree remove .claude/worktrees/wf-<epic-id>
 
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
 
-> **커밋은 사용자가 직접 수행합니다.** 변경사항은 unstaged 상태로 작업 브랜치에 남아 있습니다.
+> **커밋은 사용자가 직접 수행합니다.** 변경사항은 베이스 브랜치에 unstaged 상태로 남아 있습니다.
 
 **사용자에게 간결한 결과 보고**:
 
@@ -613,6 +669,14 @@ TeamDelete()
 ```
 
 ```bash
+# 모든 worktree 일괄 정리 (베이스 브랜치에 머지하지 않음)
+for i in 1..N:
+  git worktree remove .claude/worktrees/builder-{i} 2>/dev/null || true
+git worktree remove .claude/worktrees/wf-<epic-id> 2>/dev/null || true
+
+# 베이스 브랜치로 복귀
+git checkout <base-branch>
+
 # 남은 open 하위 이슈 일괄 close (sanity check)
 for tid in $(bd list --parent <epic-id> --status open -q); do
   bd close $tid
@@ -645,7 +709,7 @@ bd close <epic-id>
 
 ```
 SendMessage(
-  to: "<name>",                   // architect / builder-1 / builder-2 / security-reviewer / performance-reviewer / logic-reviewer / scribe / team-lead
+  to: "<name>",                   // architect / builder-{i} (i=1..N) / security-reviewer / performance-reviewer / logic-reviewer / scribe / team-lead
   summary: "<한 줄 요약 5-10 어절>",  // UI에 프리뷰로 표시
   message: "<접두어로 시작하는 본문>"   // 아래 접두어 표 참조
 )

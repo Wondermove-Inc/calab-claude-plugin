@@ -44,6 +44,7 @@ team-lead로부터 SendMessage 수신:
 ```
 1. EnterWorktree(name: "builder-<N>")
    → 에이전트 이름과 동일한 worktree name 사용 (예: 에이전트 이름이 "builder-1"이면 worktree name도 "builder-1")
+   → worktree는 `origin/HEAD` 기반으로 생성됨 (통합 브랜치 `wf-<epic-id>`와 무관한 독립 분기)
    → 반환값에서 브랜치명과 경로를 확보하여 기억 (완료 보고 시 필요)
 2. bd show <worker-task-id> → 담당 파일, 작업 내용, AC, TDD 계획 확인
 3. bd show <epic-id> → Epic 컨텍스트 확인
@@ -78,6 +79,17 @@ REFACTOR: 코드 개선 → 실행 → PASS 유지
 
 **3회 실패 기준**: 동일 명령을 수정 후 재실행하여 **누적 3회 연속 실패** 시 team-lead에 보고합니다.
 
+### 4-2단계: 변경사항 커밋
+
+테스트·빌드 통과 후 worktree 브랜치에 변경사항을 커밋합니다.
+
+```bash
+git add <변경 파일 목록>
+git commit -m "Work #N: {작업 요약}"
+```
+
+> **필수**: team-lead가 `git merge --no-ff --no-commit`으로 코드를 반영하므로, worktree 브랜치에 커밋이 존재해야 합니다.
+
 ### 5단계: Worker Task 결과 기록 + close
 
 Worker Task에 `## [builder-N] 작업 완료` comment로 **변경 내역 / 테스트 결과 / Worktree(브랜치·경로)** 기록 후 `bd close <worker-task-id>` 실행.
@@ -96,13 +108,13 @@ SendMessage(to: "team-lead"):
 - 빌드: PASS"
 ```
 
-**주의**: 브랜치명과 경로는 team-lead가 코드 반영 시 `git checkout <branch> -- <files>` 명령 조립에 사용하므로 **반드시 정확한 값**을 전달해야 합니다.
+**주의**: 브랜치명은 team-lead가 `git merge --no-ff --no-commit <branch>` 실행에 사용하므로 **반드시 정확한 값**을 전달해야 합니다.
 
 ### 7단계: 대기 상태 (ExitWorktree 하지 않음)
 
 작업 완료 후 **worktree를 유지한 채** 다음 SendMessage를 대기합니다:
 - `[재작업 요청]` → 8단계(재작업)
-- team-lead가 워크플로우 종료 시 팀 해산으로 자연 종료
+- `shutdown_request` → 9단계(shutdown)
 
 > **ExitWorktree 미호출 이유**: 피드백 루프에서 같은 worktree에 재진입해야 하므로 워크플로우 종료까지 worktree를 유지합니다.
 
@@ -127,8 +139,11 @@ bd comments add <worker-task-id> "[builder-N] 리뷰 피드백 반영 시작 (�
 # 3. 피드백 내용에 따라 해당 파일 수정
 # 4. 테스트 재실행 → PASS 확인
 # 5. 빌드 재확인
+# 6. 변경사항 커밋
+git add <변경 파일>
+git commit -m "Work #N: 피드백 반영 (라운드 #N)"
 
-# 6. Worker Task 재close
+# 7. Worker Task 재close
 bd comments add <worker-task-id> "[builder-N] 피드백 반영 완료"
 bd close <worker-task-id>
 ```
@@ -146,6 +161,16 @@ SendMessage(to: "team-lead"):
 
 이후 다시 7단계(대기)로 복귀.
 
+### 9단계: Shutdown 처리
+
+team-lead로부터 `shutdown_request` 수신 시:
+
+```
+1. SendMessage(to: "team-lead", message: {type: "shutdown_approved"})
+```
+
+> **Worktree 정리는 team-lead가 수행합니다.** builder는 worktree를 건드리지 않고 종료합니다.
+
 ## 파일 경계 규칙
 
 - 다른 팀원의 담당 파일 수정 금지
@@ -159,4 +184,4 @@ SendMessage(to: "team-lead"):
 | 테스트/빌드 3회 연속 실패 | `[에스컬레이션]` SendMessage로 team-lead 보고 |
 | 다른 팀원 파일 수정 필요 | `[에스컬레이션]` 의존성 보고 |
 | 설계 불일치 발견 | `[에스컬레이션]` 보고 + 작업 중단 |
-| 팀 해산 (워크플로우 종료) | `ExitWorktree(action: "remove")` 후 Task 자연 종료 |
+| `shutdown_request` 수신 | 9단계: `shutdown_approved` 보고 후 종료 (worktree 정리는 team-lead) |

@@ -8,7 +8,8 @@
 Epic (team-lead / 메인 Claude 생성)
 ├── Worker Task #1 (team-lead 생성, builder-1에 할당)
 ├── Worker Task #2 (team-lead 생성, builder-2에 할당)
-└── ...
+├── ...
+└── Worker Task #N (team-lead 생성, builder-N에 할당, 최대 5명)
 ```
 
 > 리뷰 피드백은 이슈로 관리하지 않습니다. 리뷰어들의 피드백은 SendMessage로 team-lead에 직접 보고하고, team-lead가 Epic comment에 주요 사항을 기록합니다.

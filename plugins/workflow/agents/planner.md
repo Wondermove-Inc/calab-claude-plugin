@@ -89,19 +89,21 @@ bd update <plan-subtask-id> --status in_progress
 - **파일 경계 엄수**: 팀원 간 수정 파일이 겹치지 않도록 분할
 - **의존성 최소화**: 독립적으로 구현 가능한 단위로 분할
 - **공유 인터페이스 사전 정의**: 팀원 간 계약을 먼저 확정
-- **팀원 수 적정화**: 2~4명 (너무 많으면 조율 비용 증가)
+- **팀원 수 적정화**: builder 1~5명 (병렬 가능한 Work 수 기준, 너무 많으면 조율 비용 증가)
 
 #### description의 `## 작업 분할` 섹션에 기록
 
 ```markdown
 ## 작업 분할
-- **팀원 수**: N명 (builder N명 + architect 1명 + reviewer 3명 + scribe 1명)
+- **builder 수**: N명 (병렬 가능한 Work 수 기준, 최대 5)
+- **전체 팀원**: N명 builder + architect 1명 + reviewer 3명 + scribe 1명
 
 ### 팀원별 작업
 | # | 팀원 | 담당 모듈/파일 | 작업 내용 | 의존성 |
 |---|------|---------------|----------|--------|
 | 1 | builder-1 | internal/domain/alert/ | 도메인 모델, 유즈케이스 | 없음 |
 | 2 | builder-2 | internal/adapters/http/ | HTTP 핸들러, 라우터 | #1 |
+| ... | builder-N | ... | ... | ... |
 
 ### 공유 인터페이스
 \`\`\`go
@@ -116,10 +118,12 @@ type AlertUseCase interface {
 |------|--------------|----------|
 | builder-1 | internal/domain/** | internal/adapters/** |
 | builder-2 | internal/adapters/** | internal/domain/** |
+| ... | ... | ... |
 
 ### 반영 순서
 1. builder-1 (기반 모듈)
 2. builder-2 (의존 모듈)
+3. ... (의존성 순서대로)
 ```
 
 ### 5단계: 설계 수립

@@ -96,8 +96,8 @@ SendMessage(to: "team-lead"):
 - 발견 항목: N건
 
 ### auto-fix (N건)
-1. [Critical] path/to/file:42 — {설명} → 담당: builder-1
-2. [Major] path/to/file:78 — {설명} → 담당: builder-2
+1. [Critical] path/to/file:42 — {설명} → 담당: builder-{i}
+2. [Major] path/to/file:78 — {설명} → 담당: builder-{j}
 
 ### user-decision (N건)
 1. [Major] path/to/file:55 — {설명}
