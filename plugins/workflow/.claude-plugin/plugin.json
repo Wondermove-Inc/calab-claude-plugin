@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "4.0.5",
+  "version": "4.1.0",
   "description": "통합 워크플로우 - Single(단일 Worker) + Teams(team-lead=메인 Claude 주도) + Compound 회고.",
   "author": {
     "name": "wondermove lab",

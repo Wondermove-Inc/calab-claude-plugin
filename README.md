@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Private](https://img.shields.io/badge/Repo-Private-orange.svg)]()
-[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)]()
 
 > Claude Code 플러그인 모음 - 반복 작업 자동화, 코드 품질 표준화 (사내 전용)
 
@@ -12,10 +11,10 @@
 
 | 플러그인 | 설명 | 스킬 수 |
 |----------|------|----------|
-| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 + 아키텍처 가이드 | 3개 + 9 에이전트 |
-| **[toolkit](plugins/toolkit/)** | 리서치, 문제 해결, 코드 리뷰/커밋, DB 작업 | 11개 |
-| **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads) | 3개 |
-| **[docs](plugins/docs/)** | 문서 콘텐츠 자동 생성 (Docusaurus) | 3개 |
+| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 (Single/Teams) | 4개 + 9 에이전트 |
+| **[toolkit](plugins/toolkit/)** | 코드 리뷰/커밋, 이슈 관리, Jira 동기화 | 5개 |
+| **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads, graph) | 4개 |
+| **[cmux](plugins/cmux/)** | tmux 터미널 제어, 브라우저 자동화 | 3개 |
 
 ---
 
@@ -33,27 +32,18 @@
 
 ```bash
 /plugin install workflow@calab-marketplace --scope user  # 멀티 에이전트 워크플로우
-/plugin install toolkit@calab-marketplace --scope user        # 리서치/문제해결
-/plugin install setup@calab-marketplace --scope user          # CLI 설정
-/plugin install docs@calab-marketplace --scope user           # 문서 생성
+/plugin install toolkit@calab-marketplace --scope user   # 코드 리뷰/커밋
+/plugin install setup@calab-marketplace --scope user     # CLI 설정
+/plugin install cmux@calab-marketplace --scope user      # 터미널 제어
 ```
 
 ### 권장 설치 조합
 
 | 용도 | 설치할 플러그인 |
 |------|----------------|
-| **Full** | workflow, toolkit, setup, docs |
+| **Full** | workflow, toolkit, setup, cmux |
 | **Core** | workflow, toolkit |
 | **Minimal** | workflow |
-
-### 로컬 설치 (대안)
-
-```bash
-git clone git@github.com:Wondermove-Inc/calab-claude-plugin.git ~/workspace/calab-claude-plugin
-cd ~/workspace/calab-claude-plugin && git checkout marketplace
-/plugin marketplace add ~/workspace/calab-claude-plugin
-/plugin install workflow@calab-marketplace --scope user
-```
 
 ---
 
@@ -61,14 +51,14 @@ cd ~/workspace/calab-claude-plugin && git checkout marketplace
 
 | 상황 | 명령어 |
 |------|--------|
-| 새 기능 개발 | `/workflow:start [기능]` |
+| 버그 수정, 단일 모듈 | `/workflow:single [요청]` |
+| 새 기능, 다중 모듈 | `/workflow:teams [요청]` |
 | 워크플로우 회고 | `/workflow:compound` |
-| 기술 조사 | `/toolkit:research [주제]` |
-| 버그 원인 분석 | `/toolkit:solve [문제]` |
 | 코드 리뷰 | `/toolkit:code-review` |
 | 커밋 생성 | `/toolkit:code-commit` |
 | 이슈 생성 | `/toolkit:create-issue` |
-| DB 작업 | `/toolkit:mongodb` |
+| 환경 설정 | `/setup:help` |
+| 그래프 초기화 | `/setup:graph` |
 
 각 플러그인의 상세 사용법은 해당 플러그인의 README를 참조하세요.
 
@@ -81,10 +71,12 @@ calab-claude-plugin/
 ├── .claude-plugin/
 │   └── marketplace.json      # 마켓플레이스 정의
 ├── plugins/
-│   ├── workflow/              # 멀티 에이전트 + 코딩 원칙
-│   ├── toolkit/              # 리서치 + 문제해결 + 리뷰/커밋
-│   ├── setup/                # CLI 환경 설정
-│   └── docs/                 # 문서 자동 생성
+│   ├── workflow/              # 멀티 에이전트 워크플로우
+│   ├── toolkit/               # 코드 리뷰/커밋, 이슈 관리
+│   ├── setup/                 # CLI 환경 설정
+│   └── cmux/                  # 터미널 제어
+├── CLAUDE.md
+├── AGENTS.md
 └── README.md
 ```
 

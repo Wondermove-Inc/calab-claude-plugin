@@ -12,6 +12,12 @@ disable-model-invocation: false
 
 ## 작업 순서
 
+0. **구조적 영향 분석 (code-review-graph)**
+   - `get_minimal_context(task: "code review")` → 리스크 점수, 영향 커뮤니티 조감 (~100토큰)
+   - `detect_changes` → 리스크 기반 우선순위로 리뷰 대상 자동 정렬
+   - `get_impact_radius` → 변경 파일의 blast radius 확인 (의존 그래프 2홉)
+   - 이 결과를 이후 리뷰 범위 판단과 심각도 분류에 활용
+
 1. **변경사항 파악**
    - `git diff HEAD~1` 또는 사용자가 지정한 범위의 변경사항 확인
    - 변경된 파일 목록과 변경 컨텍스트 (관련 이슈, 커밋 메시지) 파악
@@ -65,8 +71,22 @@ disable-model-invocation: false
 - **높은 확신도**: 추측성 지적보다 명확한 이슈에 집중
 - **프로젝트 컨벤션 우선**: 일반 규칙보다 기존 패턴을 우선
 - **심각도 분류**: Critical(보안) → Warning(아키텍처/정확성) → Suggestion(언어별 패턴)
+- **NOTICED BUT NOT TOUCHING**: 변경 범위 밖에서 발견한 기존 이슈는 수정하지 않고, 리포트 하단에 별도 기록
+
+리포트에 범위 외 발견사항이 있으면 다음 섹션을 추가합니다:
+
+```
+### Noticed But Not Touching (범위 외 발견)
+| # | 파일 | 내용 | 사유 |
+|---|------|------|------|
+| 1 | path/to/file:line | [기존 이슈] | 이번 변경과 무관 |
+```
 
 ---
+
+## 신뢰 수준 체계
+
+Untrusted → Trusted 경계를 넘는 데이터 흐름에서 검증이 누락되면 Critical로 분류합니다. 수준 정의는 글로벌 CLAUDE.md의 MCP 도구 활용 정책을 참조.
 
 ## 리뷰 기준
 

@@ -1,13 +1,14 @@
 # setup 플러그인
 
-> Claude Code 환경 설정 도구 모음
+> Claude Code 환경 설정 도구 모음 (v1.1.0)
 
 ## 스킬 목록
 
 | 스킬 | 설명 |
 |------|------|
 | `/setup:statusline` | Statusline 설정 및 설치 |
-| `/setup:beads` | Beads(bd) 설치 가이드 |
+| `/setup:beads` | Beads(bd) 설치 (macOS) |
+| `/setup:graph` | code-review-graph 프로젝트 초기화 |
 | `/setup:help` | 플러그인 도움말 |
 
 ## 도구 목록
@@ -15,14 +16,6 @@
 ### 1. Statusline
 
 터미널 프롬프트에 유용한 정보를 표시합니다.
-
-```bash
-# 설치/업데이트
-bash scripts/setup-statusline.sh install
-
-# 삭제
-bash scripts/setup-statusline.sh uninstall
-```
 
 **표시 정보:**
 - 현재 Claude 모델명 (Opus, Sonnet, Haiku)
@@ -40,14 +33,6 @@ Opus 4.5 | ▓▓▓▓░░░░░░ | 32% (Rst:2h15m) | my-project |  main
 
 Claude Code용 이슈 트래킹 도구입니다. 기본적으로 `--stealth` 모드(로컬 전용)를 사용합니다.
 
-```bash
-# 설치
-bash scripts/setup-beads.sh install
-
-# 삭제
-bash scripts/setup-beads.sh uninstall
-```
-
 **요구사항:** macOS + Homebrew
 
 **주요 명령어:**
@@ -59,10 +44,25 @@ bd update <id> --status in_progress  # 작업 시작
 bd close <id>         # 작업 완료
 ```
 
+### 3. Graph (code-review-graph)
+
+프로젝트별 코드 지식 그래프를 빌드하고 벡터 임베딩을 생성합니다. 구축 후 architect, reviewer, code-review 등이 구조적 영향 분석에 활용합니다.
+
+**요구사항:** `uv tool install "code-review-graph[embeddings]"`
+
+**명령어:**
+```
+/setup:graph          # 빌드 + 임베딩 (초기화 또는 증분)
+/setup:graph 전체     # 전체 재빌드
+/setup:graph 상태     # 그래프 통계 확인
+/setup:graph 삭제     # 그래프 데이터 삭제
+```
+
 ## 요구사항
 
 - **Statusline**: `jq`
 - **Beads**: macOS, Homebrew
+- **Graph**: `uv`, `code-review-graph[embeddings]`
 
 ## 플러그인 구조
 
@@ -77,6 +77,7 @@ plugins/setup/
 ├── skills/
 │   ├── statusline/SKILL.md
 │   ├── beads/SKILL.md
+│   ├── graph/SKILL.md
 │   └── help/SKILL.md
 └── README.md
 ```

@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "이슈 생성, 코드 리뷰/커밋, Jira 동기화 도구",
   "author": {
     "name": "wondermove lab",
