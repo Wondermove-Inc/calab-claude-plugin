@@ -2,7 +2,7 @@
 name: workflow:single
 description: 단일 Worker 워크플로우. 이슈 또는 사용자 요청을 기반으로 Worker를 실행합니다. 중/소규모 작업용.
 allowed-tools: Agent, Bash, AskUserQuestion, Read, Grep, Glob
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # /workflow:single 커맨드
