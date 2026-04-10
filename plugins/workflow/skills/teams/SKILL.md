@@ -341,7 +341,7 @@ architect의 `[설계 완료]`에 포함된 리스크 분석을 team-lead가 판
       - label: "중단", description: "워크플로우 중단, TeamDelete"
   ```
 
-**중단 선택 시**: 전원 `shutdown_request` → `TeamDelete` → worktree 정리(`git worktree remove .claude/worktrees/wf-<epic-id>`) → `git checkout <base-branch>` → `bd comments add <epic-id> "[Workflow] 설계 리스크로 중단"` → Epic close.
+**중단 선택 시**: 전원 `shutdown_request` → `TeamDelete` → `cd <project-root>`(베이스 워크디렉토리로 이동) → worktree 정리(`git worktree remove .claude/worktrees/wf-<epic-id>`) → `git checkout <base-branch>` → `bd comments add <epic-id> "[Workflow] 설계 리스크로 중단"` → Epic close.
 
 #### 5-2. Builder 동적 spawn
 
@@ -642,7 +642,10 @@ TeamDelete()
 ```
 
 ```bash
-# 모든 worktree 일괄 정리 (코드는 15-2b에서 이미 베이스 브랜치에 반영 완료)
+# 1. 베이스 워크디렉토리로 이동 (worktree 내부에서 remove 시도 시 실패 방지)
+cd <project-root>
+
+# 2. 모든 worktree 일괄 정리 (코드는 15-2b에서 이미 베이스 브랜치에 반영 완료)
 for i in 1..N:
   git worktree remove .claude/worktrees/builder-{i}
 git worktree remove .claude/worktrees/wf-<epic-id>
@@ -650,6 +653,8 @@ git worktree remove .claude/worktrees/wf-<epic-id>
 bd comments add <epic-id> "[Workflow] 완료"
 bd close <epic-id>
 ```
+
+> **중요**: `git worktree remove`는 제거 대상 worktree 내부에서 실행하면 실패합니다. 반드시 베이스 워크디렉토리(`<project-root>`)로 이동한 뒤 실행해야 합니다.
 
 > **커밋은 사용자가 직접 수행합니다.** 변경사항은 베이스 브랜치에 unstaged 상태로 남아 있습니다.
 
@@ -685,12 +690,15 @@ TeamDelete()
 ```
 
 ```bash
-# 모든 worktree 일괄 정리 (베이스 브랜치에 머지하지 않음)
+# 1. 베이스 워크디렉토리로 이동 (worktree 내부에서 remove 시도 시 실패 방지)
+cd <project-root>
+
+# 2. 모든 worktree 일괄 정리 (베이스 브랜치에 머지하지 않음)
 for i in 1..N:
   git worktree remove .claude/worktrees/builder-{i} 2>/dev/null || true
 git worktree remove .claude/worktrees/wf-<epic-id> 2>/dev/null || true
 
-# 베이스 브랜치로 복귀
+# 3. 베이스 브랜치로 복귀
 git checkout <base-branch>
 
 # 남은 open 하위 이슈 일괄 close (sanity check)
