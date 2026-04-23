@@ -52,12 +52,12 @@ bd create "[YY.Q.N][영역] 기능명" \
 
 ## 실행 구조
 - team-lead: Discovery + 조율 + 피드백 취합 + Completion Gate (전 생명주기 소유)
-- architect: 설계 초안 작성 + 아키텍처 리뷰
+- architect: 설계 전담 (아키텍처 리뷰 제외 — self-review 방지)
 - builder ×N: 할당받은 Worker Task 수행 (worktree isolation, TDD)
 - security-reviewer: 보안 전문 리뷰
 - performance-reviewer: 성능 전문 리뷰
-- logic-reviewer: 로직/코드 품질 리뷰
-- scribe: 문서 생성
+- logic-reviewer: 로직 + 아키텍처/SOLID 통합 리뷰
+- scribe: 문서 생성 (on-demand, 필요 시만)
 EOF
 )" \
   --acceptance "$(cat <<'EOF'
@@ -81,7 +81,7 @@ bd create "Work #<N>: {담당 모듈}" \
   --labels "implementation,builder,teams" \
   --description "$(cat <<'EOF'
 ## 담당
-- builder: builder-<N>
+- builder: builder-N
 - 모듈/파일: {파일 경로 목록}
 
 ## 작업 내용
@@ -152,7 +152,9 @@ bd close <worker-task-id>
 | **auto-fix** | 객관적 기준 위반, 답이 하나 | SOLID 위반, 타입 오류, 의존성 역전, null check, 커버리지 부족, 네이밍 컨벤션, 보안 취약점, N+1 쿼리 |
 | **user-decision** | 트레이드오프, 사용자 선호 개입 | 스코프 변경, 설계 방향, 성능 vs 가독성, API 이름, 기능 추가 제안, 보안-편의성 균형 |
 
-분류는 **team-lead가 4명 리뷰어의 피드백을 취합 후 직접 확정**합니다.
+분류는 **team-lead가 3명 리뷰어(security/performance/logic)의 피드백을 취합 후 직접 확정**합니다.
+
+심각도 자동 승격 규칙(1라운드 후 Minor/Suggestion → user-decision)은 [`gate-process.md`](gate-process.md) §심각도 자동 승격 규칙 참조.
 
 ## 심각도 등급 (분류와 별개)
 
@@ -234,11 +236,12 @@ bd epic status
 ## 참조
 
 - `skills/teams/SKILL.md`: 전체 워크플로우 오케스트레이션 (team-lead = 메인 Claude가 주도)
-- `agents/architect.md`: 설계 + 아키텍처 리뷰
+- `agents/architect.md`: 설계 전담
 - `agents/builder.md`: 구현 + 이슈 상태 전환
 - `agents/security-reviewer.md`: 보안 전문 리뷰
 - `agents/performance-reviewer.md`: 성능 전문 리뷰
-- `agents/logic-reviewer.md`: 로직/품질 리뷰
-- `agents/scribe.md`: 문서 생성
+- `agents/logic-reviewer.md`: 로직 + 아키텍처/SOLID 통합 리뷰
+- `agents/scribe.md`: 문서 생성 (on-demand)
+- `references/agent-common.md`: 에이전트 공통 규칙
 - `guides/context-management.md`: 이슈 기반 컨텍스트 관리
 - `guides/gate-process.md`: Discovery Gate + Completion Gate
