@@ -11,9 +11,9 @@
 
 | 플러그인 | 설명 | 스킬 수 |
 |----------|------|----------|
-| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 (Single/Teams) | 4개 + 9 에이전트 |
+| **[workflow](plugins/workflow/)** | 멀티 에이전트 워크플로우 (Discovery → Build) | 4개 + 6 에이전트 |
 | **[toolkit](plugins/toolkit/)** | 코드 리뷰/커밋, 이슈 관리, Jira 동기화 | 5개 |
-| **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads, graph) | 4개 |
+| **[setup](plugins/setup/)** | CLI 환경 설정 (statusline, beads) | 3개 |
 | **[cmux](plugins/cmux/)** | tmux 터미널 제어, 브라우저 자동화 | 3개 |
 
 ---
@@ -51,14 +51,12 @@
 
 | 상황 | 명령어 |
 |------|--------|
-| 버그 수정, 단일 모듈 | `/workflow:single [요청]` |
-| 새 기능, 다중 모듈 | `/workflow:teams [요청]` |
-| 워크플로우 회고 | `/workflow:compound` |
+| 버그 수정, 단일 모듈 | `/workflow:build [요청]` |
+| 새 기능, 다중 모듈 (설계 필요) | `/workflow:discovery [요청]` → `/workflow:build bd-<epic>` |
 | 코드 리뷰 | `/toolkit:code-review` |
 | 커밋 생성 | `/toolkit:code-commit` |
 | 이슈 생성 | `/toolkit:create-issue` |
 | 환경 설정 | `/setup:help` |
-| 그래프 초기화 | `/setup:graph` |
 
 각 플러그인의 상세 사용법은 해당 플러그인의 README를 참조하세요.
 

@@ -14,18 +14,18 @@ workflow 플러그인은 기본적으로 hook을 포함하지 **않습니다**. 
 
 ## 2. 권장 hook 구성
 
-### 2-1. TaskCompleted: builder 보고 전 테스트 재실행
+### 2-1. TaskCompleted: worker 보고 전 테스트 재실행
 
 ```json
 {
   "hooks": {
     "TaskCompleted": [
       {
-        "matcher": "builder-.*",
+        "matcher": "worker",
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/verify-builder-task.sh"
+            "command": ".claude/hooks/verify-worker-task.sh"
           }
         ]
       }
@@ -34,10 +34,10 @@ workflow 플러그인은 기본적으로 hook을 포함하지 **않습니다**. 
 }
 ```
 
-`.claude/hooks/verify-builder-task.sh`:
+`.claude/hooks/verify-worker-task.sh`:
 ```bash
 #!/usr/bin/env bash
-# builder 완료 시점에 테스트/빌드를 재실행하여 보고의 진위 검증
+# worker 완료 시점에 테스트/빌드를 재실행하여 보고의 진위 검증
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
@@ -46,8 +46,8 @@ if go test ./... -count=1 >&2; then
   exit 0
 else
   cat >&2 <<'MSG'
-[hook] 테스트 실패. builder 보고가 허위일 수 있습니다.
-team-lead: builder에 재작업 요청 SendMessage를 전송하세요.
+[hook] 테스트 실패. worker 보고가 허위일 수 있습니다.
+메인 Claude: worker 재호출로 재작업 요청하세요.
 MSG
   exit 2
 fi
@@ -89,7 +89,7 @@ fi
 exit 0
 ```
 
-### 2-3. PreToolUse: builder의 파일 경계 위반 차단
+### 2-3. PreToolUse: worker의 파일 경계 위반 차단
 
 ```json
 {
@@ -112,7 +112,7 @@ exit 0
 `.claude/hooks/check-file-boundary.sh` (개념 예시):
 ```bash
 #!/usr/bin/env bash
-# builder-N은 자신의 담당 경로 외 파일 수정 금지
+# worker는 자신의 담당 경로 외 파일 수정 금지
 AGENT="${CLAUDE_AGENT_NAME:-unknown}"
 TARGET_FILE="$1"
 BOUNDARY_FILE=".claude/boundaries/${AGENT}.txt"
@@ -124,9 +124,9 @@ fi
 exit 0
 ```
 
-> 경계 파일은 architect 설계 확정 시 team-lead가 `.claude/boundaries/builder-1.txt` 형태로 자동 생성하도록 확장 가능.
+> 경계 파일은 discovery 단계에서 architect의 작업 분할 결과를 토대로 메인 Claude가 `.claude/boundaries/worker.txt` 형태로 자동 생성하도록 확장 가능.
 
-### 2-4. TaskCreated: Worker Task 생성 시 beads 동기화
+### 2-4. TaskCreated: task 생성 시 beads 동기화
 
 ```json
 {
@@ -136,7 +136,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": "bd comments add \"${CLAUDE_EPIC_ID:-unknown}\" \"[hook] Worker Task 생성됨: ${CLAUDE_TASK_TITLE}\""
+            "command": "bd comments add \"${CLAUDE_EPIC_ID:-unknown}\" \"[hook] task 생성됨: ${CLAUDE_TASK_TITLE}\""
           }
         ]
       }
@@ -152,11 +152,11 @@ exit 0
 
 ## 4. 주의
 
-- Hook 실패는 team-lead에 피드백으로 전달됩니다. team-lead가 해석·조치해야 합니다.
+- Hook 실패는 메인 Claude에 피드백으로 전달됩니다. 해석·조치는 메인 Claude가 수행합니다.
 - `exit 2` 대신 `exit 1`을 사용하면 경고만 출력되고 차단되지 않습니다.
 - hook 스크립트는 레포에 커밋하지 않으려면 `.gitignore`에 추가하거나 `~/.claude/hooks/`에 배치.
 
 ## 5. 참조
 
 - Claude Code Hooks 공식 문서: `https://code.claude.com/docs/en/hooks`
-- Agent Teams hook 목록 (`TeammateIdle`, `TaskCreated`, `TaskCompleted`): `https://code.claude.com/docs/en/agent-teams#enforce-quality-gates-with-hooks`
+- Hook 종류 (`TeammateIdle`, `TaskCreated`, `TaskCompleted` 등): `https://code.claude.com/docs/en/agent-teams#enforce-quality-gates-with-hooks`

@@ -6,15 +6,15 @@
   },
   "metadata": {
     "description": "원더 무브 연구소 Claude 플러그인 마켓플레이스 - 필요한 기능만 선택적으로 설치",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
     {
       "name": "workflow",
       "source": "./plugins/workflow",
-      "description": "통합 워크플로우 - Single(단일 Worker) + Teams(Agent Teams 병렬 구현+리뷰) + Compound 회고",
+      "description": "Discovery(대화형 탐색, task/epic 산출) → Build(단일 Worker + 3 reviewer + Completion Gate) 분리형 워크플로우",
       "category": "development",
-      "tags": ["multi-agent", "workflow", "agent-teams", "tdd", "architecture"]
+      "tags": ["multi-agent", "workflow", "discovery", "build", "tdd", "architecture"]
     },
     {
       "name": "toolkit",

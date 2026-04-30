@@ -4,14 +4,14 @@
 
 ## 1. 공통 금지 사항
 
-모든 workflow 서브에이전트에 적용:
+`agents/` 디렉토리의 모든 서브에이전트에 적용 (현재: architect, worker, security/performance/logic-reviewer):
 
 | 금지 | 이유 |
 |------|------|
-| 다른 팀원에 직접 지시 | 반드시 team-lead(또는 Single 오케스트레이터)를 경유. 서브에이전트 간 직접 통신은 허용 가능하지만 지시·작업 할당은 team-lead 권한 |
-| Epic/Worker Task 이외 이슈 생성 (`bd create`) | 이슈 생성 권한은 team-lead에 귀속. 리뷰 피드백·발견사항은 SendMessage/보고로 전달 |
-| `git worktree remove` 직접 호출 | worktree 정리는 team-lead가 일괄 수행 (builder는 작업 유지 상태로 대기) |
-| 베이스 브랜치 직접 push/커밋 | worktree 브랜치 안에서만 커밋. 머지는 team-lead가 수행 |
+| 다른 서브에이전트에 직접 지시 | 반드시 메인 Claude(discovery/build 오케스트레이터)를 경유. 서브에이전트는 단발 호출이며 호출자에게 응답으로만 보고 |
+| Epic/task 외 이슈 생성 (`bd create`) | 이슈 생성 권한은 메인 Claude에 귀속. 발견사항·피드백은 응답으로만 전달 |
+| 베이스 브랜치 직접 push/커밋 | 커밋·머지는 사용자가 직접 수행. 에이전트는 작업 디렉토리에 변경만 남김 |
+| 임의 추가 파일 생성 | 산출물은 SKILL.md 또는 호출 prompt에서 요구한 범위에 한정 |
 
 **리뷰 에이전트 추가 금지**: 코드 편집 도구(Write, Edit) 없음. 발견한 문제는 피드백 보고로만 전달.
 
@@ -23,19 +23,19 @@
 | "RED 단계 없이 바로 GREEN 가도 돼" | RED를 건너뛰면 테스트가 진짜 실패하는지 확인할 수 없다. 회귀 감지 메커니즘이 소실된다. |
 | "한번에 다 구현하는 게 빠른데" | 500줄 중 어떤 줄이 원인인지 찾기 전까지만 빠르게 느껴진다. |
 | "리팩토링은 나중에 할게" | REFACTOR를 미루면 기술 부채가 즉시 누적된다. GREEN 직후가 적기다. |
-| "이 파일도 같이 고치는 게 낫겠다" | 담당 영역 밖은 다른 팀원·다른 이슈의 영역이다. 발견은 `NOTICED BUT NOT TOUCHING`으로 보고만. |
-| "에스컬레이션 없이 직접 해결하는 게 빠르지" | 3회 실패·설계 불일치·파일 의존성은 team-lead 판단 사안이다. 보고하라. |
-| "사소한 피드백은 무시해도 돼" | 심각도 분류는 리뷰어가 수행하고, 분류 확정은 team-lead가 한다. 개별 팀원이 임의로 무시하지 말 것. |
+| "이 파일도 같이 고치는 게 낫겠다" | 담당 영역 밖은 다른 이슈의 영역이다. 발견은 `NOTICED BUT NOT TOUCHING`으로 보고만. |
+| "에스컬레이션 없이 직접 해결하는 게 빠르지" | 3회 실패·설계 불일치·파일 의존성은 메인 Claude 판단 사안이다. 보고하라. |
+| "사소한 피드백은 무시해도 돼" | 심각도 분류는 리뷰어가 수행하고, 분류 확정은 메인 Claude가 한다. 개별 에이전트가 임의로 무시하지 말 것. |
 
 ## 3. 신뢰 수준 체계
 
-신뢰 수준 구분(Trusted/Verify/Untrusted)과 에이전트 유형별 적용 지침은 [`trust-levels.md`](trust-levels.md) 참조. architect는 Untrusted 소스에서 나온 요구사항을 "확인 필요" 가정으로 표면화합니다 (trust-levels.md에 추가 기술되지 않은 설계 고유 규칙).
+신뢰 수준 구분(Trusted/Verify/Untrusted)과 에이전트 유형별 적용 지침은 [`trust-levels.md`](trust-levels.md) 참조. architect는 Untrusted 소스에서 나온 요구사항을 "확인 필요" 가정으로 표면화합니다.
 
 ## 4. 혼란 관리 프로토콜
 
-구현/설계 중 **스펙과 기존 코드가 충돌**하거나 **방향이 모호**한 경우, 임의 결정 금지. 상위에 옵션을 표면화합니다.
+구현/설계 중 **스펙과 기존 코드가 충돌**하거나 **방향이 모호**한 경우, 임의 결정 금지. 호출자(메인 Claude)에게 옵션을 표면화합니다.
 
-포맷(구현/설계 에이전트 공통):
+포맷:
 
 ```
 CONFUSION:
@@ -47,9 +47,9 @@ CONFUSION:
 
 | 상황 | 처리 |
 |------|------|
-| 스펙(AC)과 기존 코드 패턴 충돌 | 옵션 나열 → 상위 판단 대기 (builder: team-lead에 에스컬레이션 SendMessage, worker: "실패" 출력) |
-| AC가 모호하여 해석이 분기 | 해석 옵션 나열 → 상위 판단 대기 |
-| 의존 모듈 인터페이스가 설계와 다름 (Teams) | builder가 team-lead에 설계 불일치 에스컬레이션 |
+| 스펙(AC)과 기존 코드 패턴 충돌 | 옵션 나열 → 응답에 포함 (worker: "실패" 출력 패턴, architect/reviewer: 응답 본문) |
+| AC가 모호하여 해석이 분기 | 해석 옵션 나열 → 메인 Claude 판단 대기 |
+| 의존 모듈 인터페이스가 설계와 다름 | architect 재호출 또는 메인 Claude 판단 |
 
 **절대 임의로 결정하고 진행하지 마라.** 잘못된 방향의 구현은 리뷰 단계에서 전면 재작업으로 이어진다.
 
@@ -60,15 +60,15 @@ CONFUSION:
 ```
 NOTICED BUT NOT TOUCHING:
 - {파일:라인} — {발견 내용} (이 작업과 무관)
-- {파일:라인} — {발견 내용} (다른 builder 담당)
-→ 별도 이슈가 필요하면 team-lead/오케스트레이터가 판단합니다.
+- {파일:라인} — {발견 내용} (다른 task 담당)
+→ 별도 이슈가 필요하면 메인 Claude가 판단합니다.
 ```
 
 발견사항이 없으면 기재 생략.
 
 ## 6. 가정 표면화 (ASSUMPTIONS)
 
-불확실한 부분을 임의로 결정하지 않고 명시적으로 나열한 뒤 team-lead 확인을 받습니다. 다음 단계 시작 전 출력에 포함.
+불확실한 부분을 임의로 결정하지 않고 명시적으로 나열한 뒤 메인 Claude 확인을 받습니다. 다음 단계 시작 전 출력에 포함.
 
 ```
 ASSUMPTIONS:
@@ -81,28 +81,36 @@ ASSUMPTIONS:
 
 ## 7. 완료 검증 체크리스트 (증거 기반)
 
-builder/worker가 완료 보고 전에 수행. "맞는 것 같다"는 불충분 — 실행 결과나 파일:라인으로 검증.
+worker가 완료 보고 전에 수행. "맞는 것 같다"는 불충분 — 실행 결과나 파일:라인으로 검증.
 
 - [ ] 모든 AC 항목이 구현됨 (이슈 AC와 1:1 대조)
 - [ ] 새 코드에 대한 테스트 존재 + PASS (테스트 실행 결과로 확인)
 - [ ] 기존 테스트 비파괴 (전체 테스트 실행 결과로 확인)
 - [ ] 빌드 성공 (빌드 명령 실행 결과로 확인)
 - [ ] 담당 파일 경계 준수 (`git diff --name-only`로 확인)
-- [ ] (Teams) 공유 인터페이스 사용이 설계와 일치
 
-하나라도 미충족이면 수정 후 재검증. 3회 실패 또는 해결 불가 시 상위에 에스컬레이션 보고 (builder: SendMessage, worker: "실패" 출력).
+하나라도 미충족이면 수정 후 재검증. 3회 실패 또는 해결 불가 시 호출자(메인 Claude)에 에스컬레이션 (worker: "실패" 출력).
 
 ## 8. 보고 통신 규칙
 
-### Teams 모드 (builder, architect, reviewer, scribe)
-team-lead 보고는 `SendMessage(to: "team-lead", ...)`로 **명시 호출**해야 합니다. 턴을 그냥 끝내면 `idle_notification`만 전달되고 내용이 유실됩니다.
+호출 패턴은 에이전트별로 다릅니다.
 
-### Single 모드 (worker)
-오케스트레이터(메인 Claude)에 전달되는 것은 **마지막 한 줄 출력**입니다. SendMessage 없이 출력 규격을 준수합니다 (`agents/worker.md` §출력 형식 참조).
+| 에이전트 | 호출 방식 | 호출자 | 응답 형식 |
+|----------|----------|--------|----------|
+| architect | 단발 `Agent(...)` | discovery 메인 Claude | 마지막 응답 본문 (설계 + 분할 + 리스크) — `agents/architect.md` §6 |
+| worker | 단발 `Agent(...)` | build 메인 Claude | 마지막 한 줄 — `agents/worker.md` §출력 형식 |
+| security/performance/logic-reviewer | `TeamCreate` 병렬 + `SendMessage` | build 메인 Claude | `SendMessage(to: "team-lead", ...)` 피드백 본문 |
+
+### reviewer 보고 규칙 (SendMessage)
+
+build 5단계에서 메인 Claude가 `TeamCreate(name: "build-reviewers", ...)`로 3명의 reviewer를 생성한 뒤 SendMessage로 리뷰 요청을 보냅니다. reviewer는 결과를 `SendMessage(to: "team-lead", ...)`로 **명시 호출**해 보고해야 합니다. 턴을 그냥 끝내면 `idle_notification`만 전달되어 내용이 유실됩니다.
+
+> build의 메인 Claude는 `TeamCreate` 호출자로서 자동으로 `name: "team-lead"`로 등록됩니다.
 
 ### 공통 본문 규칙
+
 접두어 포맷은 강제하지 않습니다 — 자연어로 명확하게 작성하되, 다음 메타 정보는 반드시 포함:
-- 대상 이슈 ID (Epic, Worker Task)
+- 대상 이슈 ID (Epic, task)
 - 진행 상태 (완료/실패/혼란/에스컬레이션)
 - 테스트·빌드 결과 (PASS/FAIL)
-- 변경 파일 목록 (builder·worker 공통, 통합·검증에 필요)
+- 변경 파일 목록 (worker 필수, 메인 Claude 검증에 사용)

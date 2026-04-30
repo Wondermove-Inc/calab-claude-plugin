@@ -17,7 +17,6 @@ disable-model-invocation: true
 사용자 입력에서 도구명을 파악합니다:
 - "statusline" 키워드 → statusline 상세 가이드 출력
 - "beads" 또는 "bd" 키워드 → beads 상세 가이드 출력
-- "graph" 또는 "code-review-graph" 키워드 → graph 상세 가이드 출력
 - 키워드 없음 → 도구 목록 출력
 
 ---
@@ -39,7 +38,6 @@ Claude Code 환경 설정 도구 모음입니다.
 |------|------|--------|
 | statusline | 터미널 상태바 설치/관리 | `/setup:statusline` |
 | beads | 이슈 트래킹 도구 설치 (macOS) | `/setup:beads` |
-| graph | code-review-graph 프로젝트 초기화 | `/setup:graph` |
 
 ## 도구별 상세 가이드
 
@@ -48,7 +46,6 @@ Claude Code 환경 설정 도구 모음입니다.
 예시:
 - `/setup:help statusline`
 - `/setup:help beads`
-- `/setup:help graph`
 
 **[출력 끝]**
 
@@ -194,57 +191,6 @@ Claude Code용 경량 이슈 트래킹 도구입니다. 로컬 `.beads/` 디렉�
 - macOS 필수
 - Homebrew 필수
   - 미설치 시: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-
-**[출력 끝]**
-
----
-
----
-
-## graph 상세 가이드
-
-사용자가 `/setup:help graph`를 입력한 경우 아래 내용을 **그대로** 출력합니다:
-
----
-**[출력 시작]**
-
-# graph 도구
-
-code-review-graph의 코드 지식 그래프를 프로젝트별로 빌드하고 관리합니다. 그래프가 구축되면 architect, reviewer, code-review 등이 구조적 영향 분석을 수행할 수 있습니다.
-
-## 명령어
-
-| 명령어 | 설명 |
-|--------|------|
-| /setup:graph | 그래프 빌드 + 임베딩 (초기화 또는 증분 업데이트) |
-| /setup:graph 전체 | 전체 재빌드 + 임베딩 |
-| /setup:graph 상태 | 그래프 상태 확인 |
-| /setup:graph 삭제 | 그래프 데이터 삭제 |
-
-## 초기화 흐름
-
-```
-환경 확인 (uv tool list)
-  ↓
-그래프 빌드 (build_or_update_graph_tool)
-  ↓
-벡터 임베딩 (embed_graph_tool)
-  ↓
-검증 (list_graph_stats_tool)
-```
-
-## 요구사항
-
-- code-review-graph[embeddings] 설치 필요
-  - 설치: `uv tool install "code-review-graph[embeddings]"`
-  - 업데이트: `uv tool upgrade code-review-graph`
-
-## 데이터 위치
-
-| 파일 | 설명 |
-|------|------|
-| .code-review-graph/graph.db | 코드 지식 그래프 DB |
-| .code-review-graph/.gitignore | 자동 생성 (graph.db 제외) |
 
 **[출력 끝]**
 

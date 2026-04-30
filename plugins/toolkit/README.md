@@ -22,12 +22,6 @@
 | `/toolkit:create-issue` | "이슈 만들어줘" | beads 이슈 생성 |
 | `/toolkit:sync-jira` | "Jira 동기화해줘" | Jira 이슈와 동기화 |
 
-### 도움말
-
-| 명령어 | 설명 |
-|--------|------|
-| `/toolkit:help` | 플러그인 도움말 |
-
 ---
 
 ## 코드 리뷰 상세

@@ -1,7 +1,7 @@
 {
   "name": "workflow",
-  "version": "5.0.0",
-  "description": "통합 워크플로우 - Single(단일 Worker + 3 reviewer) + Teams(team-lead 주도, 3 reviewer) + Compound 회고.",
+  "version": "6.0.0",
+  "description": "Discovery(대화형 탐색, 라운드 무제한, task/epic 산출 또는 미산출) → Build(단일 Worker + 3 reviewer + Completion Gate) 분리형 워크플로우.",
   "author": {
     "name": "wondermove lab",
     "email": "support@wondermove.net"
@@ -11,29 +11,22 @@
   "keywords": [
     "multi-agent",
     "workflow",
-    "single",
-    "agent-teams",
     "discovery",
-    "team-lead",
+    "build",
+    "architect",
     "worker",
     "reviewer",
-    "compound",
     "tdd"
   ],
   "agents": [
     "./agents/worker.md",
     "./agents/architect.md",
-    "./agents/builder.md",
     "./agents/security-reviewer.md",
     "./agents/performance-reviewer.md",
-    "./agents/logic-reviewer.md",
-    "./agents/scribe.md",
-    "./agents/compound.md"
+    "./agents/logic-reviewer.md"
   ],
   "skills": [
-    "./skills/single",
-    "./skills/teams",
-    "./skills/help",
-    "./skills/compound"
+    "./skills/discovery",
+    "./skills/build"
   ]
 }

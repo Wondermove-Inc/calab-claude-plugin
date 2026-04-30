@@ -1,27 +1,38 @@
 # beads 이슈 작성 가이드라인
 
-> teams 워크플로우에서 이슈를 생성할 때 참조합니다. team-lead(메인 Claude)가 전 생명주기를 소유하는 구조에서의 이슈 계층을 정의합니다.
+> discovery / build 워크플로우에서 이슈를 생성할 때 참조합니다. 메인 Claude가 discovery(설계)과 build(구현) 단계의 오케스트레이터로 동작하며, 두 스킬이 bd 이슈로 인계됩니다.
 
 ## 워크플로우 이슈 계층
 
+discovery는 작업 사이즈에 따라 두 가지 산출물 형태 중 하나를 만듭니다 (보수적 판단, 기본은 task).
+
+### A. task 단일 (단일 모듈, 단일 책임)
+
 ```
-Epic (team-lead / 메인 Claude 생성)
-├── Worker Task #1 (team-lead 생성, builder-1에 할당)
-├── Worker Task #2 (team-lead 생성, builder-2에 할당)
-├── ...
-└── Worker Task #N (team-lead 생성, builder-N에 할당, 최대 5명)
+Task (discovery 5단계 생성, build가 in_progress 전환·close)
 ```
 
-> 리뷰 피드백은 이슈로 관리하지 않습니다. 리뷰어들의 피드백은 SendMessage로 team-lead에 직접 보고하고, team-lead가 Epic comment에 주요 사항을 기록합니다.
+### B. epic + 자식 task (다중 모듈, 분할 명백)
+
+```
+Epic (discovery 메인 Claude 생성, 또는 사용자가 보강 모드로 전달)
+├── Task #1 (discovery 5단계 생성, build가 in_progress 전환·close)
+├── Task #2
+├── ...
+└── Task #N
+```
+
+> 리뷰 피드백은 이슈로 관리하지 않습니다. reviewer들의 피드백은 SendMessage로 메인 Claude에 직접 보고하고, build 메인 Claude가 task comment에 주요 사항을 기록합니다.
 
 ### 이슈 주체 매트릭스
 
 | 이슈 | 생성 주체 | 상태 전환 | close 주체 |
 |------|----------|----------|-----------|
-| **Epic / 기존 티켓** | team-lead (2단계) 또는 사용자 전달 | → in_progress(team-lead, 2단계) → closed | team-lead (Completion Gate 최종 승인) |
-| **Worker Task** | team-lead (Plan 후 6단계) | open → in_progress(builder) → closed(builder) | builder (작업 완료 시) |
+| **단일 Task (task 단일 케이스)** | discovery 메인 Claude (5단계) | open → in_progress(build, 1-A) → closed(build, 8단계) | build 메인 Claude (Completion Gate 통과 후) |
+| **Epic** | discovery 메인 Claude (5단계) 또는 사용자 전달 | open → in_progress(discovery, 5단계) → closed(build) | build 메인 Claude (모든 자식 close 후 사용자 승인 시) |
+| **자식 Task (epic 케이스)** | discovery 메인 Claude (5단계) | open → in_progress(build, 1-A) → closed(build, 8단계) | build 메인 Claude (Completion Gate 통과 후) |
 
-Plan은 architect가 설계 초안을 작성하고 team-lead가 검토·확정합니다. 결과는 Epic description과 Worker Task description에 분산 기록됩니다. 별도 Plan 이슈는 생성하지 않습니다.
+Discovery는 architect가 단발 Agent 호출로 설계 초안을 반환하면, discovery 메인 Claude가 검토·확정한 뒤 5단계에서 산출물 형태(task 단일 vs epic+task)를 결정합니다. 별도 Discovery 이슈는 생성하지 않으며, **단일 Work + 단일 모듈 + 의존성 없음이면 task 1개**, 그 외(Work 2개 이상 / 다중 모듈)는 epic + 자식 task 계층을 만듭니다.
 
 ## 버전 표기 규칙
 
@@ -33,9 +44,9 @@ Plan은 architect가 설계 초안을 작성하고 team-lead가 검토·확정�
 | 이슈 | 형식 | 예시 |
 |------|------|------|
 | Epic | `[YY.Q.N][영역] 기능명` | `[26.2.1][Azure] AKS 클러스터 통합` |
-| Worker Task | `Work #N: {담당 모듈}` | `Work #1: 도메인 모델` |
+| Task (epic 자식) | `Work #N: {담당 모듈}` | `Work #1: 도메인 모델` |
 
-## Epic 생성 (team-lead / 메인 Claude가 2단계에서 수행)
+## Epic 생성 (discovery 메인 Claude가 5단계에서 수행)
 
 ```bash
 bd create "[YY.Q.N][영역] 기능명" \
@@ -48,16 +59,14 @@ bd create "[YY.Q.N][영역] 기능명" \
 - **복잡도**: [단순 / 중간 / 복잡]
 
 ## Discovery 요약
-{Phase 3 요약 전문 — Discovery 스킵 시 "Discovery 스킵 (요청이 충분히 구체적)"}
+{Discovery 요점 — 스킵 시 "Discovery 스킵 (요청이 충분히 구체적)"}
 
 ## 실행 구조
-- team-lead: Discovery + 조율 + 피드백 취합 + Completion Gate (전 생명주기 소유)
-- architect: 설계 전담 (아키텍처 리뷰 제외 — self-review 방지)
-- builder ×N: 할당받은 Worker Task 수행 (worktree isolation, TDD)
-- security-reviewer: 보안 전문 리뷰
-- performance-reviewer: 성능 전문 리뷰
-- logic-reviewer: 로직 + 아키텍처/SOLID 통합 리뷰
-- scribe: 문서 생성 (on-demand, 필요 시만)
+- discovery 메인 Claude: Discovery + architect 호출 + Discovery Gate (설계 단계)
+- architect: 설계 + 작업 분할 + 리스크 (단발 Agent 호출)
+- build 메인 Claude: Worker 호출 + 검증 + 리뷰 취합 + Completion Gate (구현 단계)
+- worker: TDD 구현 (단발 Agent 호출)
+- security/performance/logic-reviewer: 병렬 리뷰 (TeamCreate)
 EOF
 )" \
   --acceptance "$(cat <<'EOF'
@@ -67,21 +76,20 @@ EOF
 )"
 ```
 
-> **필드 구성**: Epic은 `--description`과 `--acceptance`만 사용합니다. 설계 내용은 architect가 작성하고 team-lead가 Worker Task description에 분산 기록합니다.
+> **필드 구성**: Epic은 `--description`과 `--acceptance`만 사용합니다. 설계 내용은 architect가 작성하고 discovery 메인 Claude가 task description에 분산 기록합니다.
 
-## Worker Task 생성 (team-lead / 메인 Claude가 Plan 후 수행)
+## task 생성 (discovery 메인 Claude가 5단계에서 수행)
 
-builder 1명당 1개 생성. team-lead가 architect의 설계 초안에 따라 분할합니다.
+architect의 작업 분할 draft에 따라 Work 1개당 task 1개 생성. open 상태로 유지 (in_progress 전환은 build가 수행).
 
 ```bash
 bd create "Work #<N>: {담당 모듈}" \
   --parent <epic-id> \
   --type task \
   --priority 2 \
-  --labels "implementation,builder,teams" \
+  --labels "build,worker" \
   --description "$(cat <<'EOF'
 ## 담당
-- builder: builder-N
 - 모듈/파일: {파일 경로 목록}
 
 ## 작업 내용
@@ -91,7 +99,7 @@ bd create "Work #<N>: {담당 모듈}" \
 {아키텍처, 인터페이스 정의, 데이터 흐름 — Mermaid 다이어그램 포함 가능}
 
 ## 의존성
-- 선행 작업: {다른 Worker Task ID 또는 "없음"}
+- 선행 작업: {다른 task ID 또는 "없음"}
 - 공유 인터페이스: {타입/포트 정의}
 
 ## TDD 계획
@@ -119,13 +127,13 @@ EOF
 bd update <worker-task-id> --blocked-by <dependency-task-id>
 ```
 
-## Worker Task 완료 기록 (builder가 수행)
+## task 완료 기록 (build 메인 Claude가 8단계에서 수행)
 
-작업 완료 시 comment로 결과를 기록하고 close합니다.
+build 메인 Claude가 Completion Gate 통과 후 close합니다. worker는 close 권한 없음.
 
 ```bash
 bd comments add <worker-task-id> "$(cat <<'EOF'
-## [builder-N] 작업 완료
+## [Build] 완료
 
 ### 변경 내역
 | 파일 | 변경 내용 |
@@ -134,11 +142,11 @@ bd comments add <worker-task-id> "$(cat <<'EOF'
 
 ### 테스트 결과
 - 단위 테스트: PASS (N건)
-- 커버리지: ...
+- 빌드: 성공
+- 리뷰 라운드: N회
 
-### Worktree
-- 브랜치: {branch-name}
-- 경로: {worktree-path}
+### Gate
+- 사용자 승인 (또는 자동 통과)
 EOF
 )"
 
@@ -152,7 +160,7 @@ bd close <worker-task-id>
 | **auto-fix** | 객관적 기준 위반, 답이 하나 | SOLID 위반, 타입 오류, 의존성 역전, null check, 커버리지 부족, 네이밍 컨벤션, 보안 취약점, N+1 쿼리 |
 | **user-decision** | 트레이드오프, 사용자 선호 개입 | 스코프 변경, 설계 방향, 성능 vs 가독성, API 이름, 기능 추가 제안, 보안-편의성 균형 |
 
-분류는 **team-lead가 3명 리뷰어(security/performance/logic)의 피드백을 취합 후 직접 확정**합니다.
+분류는 **build 메인 Claude가 3명 reviewer(security/performance/logic)의 피드백을 취합 후 직접 확정**합니다.
 
 심각도 자동 승격 규칙(1라운드 후 Minor/Suggestion → user-decision)은 [`gate-process.md`](gate-process.md) §심각도 자동 승격 규칙 참조.
 
@@ -174,7 +182,7 @@ bd close <worker-task-id>
 `feature`, `improvement`, `refactoring`, `patch`, `hotfix`
 
 ### 워크플로우 역할별
-- `implementation,builder,teams` (Worker Task)
+- `build,worker` (task 라벨)
 
 ## 우선순위 매핑
 
@@ -190,32 +198,27 @@ bd close <worker-task-id>
 ### 상태 흐름
 
 ```
-Epic/기존 티켓:  → in_progress (team-lead, 2단계) → closed (Completion Gate 최종 승인)
+Epic/기존 티켓:  → in_progress (discovery, 5단계) → closed (build, 모든 자식 close 후 사용자 승인)
 
-Worker Task:     open → in_progress (builder 시작) → closed (builder 완료)
-              ↑                                    │
-              └────── 재작업 (리뷰 피드백) ─────────┘
+Task:            open(discovery 5단계) → in_progress (build 1-A) → closed (build 8단계)
+              ↑                                              │
+              └───────────────── 재작업 (리뷰 피드백) ─────────┘
               (bd update <id> --status in_progress)
 ```
 
-### 재작업 경로 (Worker Task)
+### 재작업 경로 (task)
 
-리뷰 피드백 반영 시 closed → in_progress로 직접 전환합니다. beads는 `bd update <id> --status in_progress`로 closed 이슈를 다시 진행 상태로 되돌리는 것을 지원합니다.
+리뷰 피드백 반영 시 closed → in_progress로 직접 전환합니다. beads는 `bd update <id> --status in_progress`로 closed 이슈를 다시 진행 상태로 되돌리는 것을 지원합니다. 다만 build 워크플로우는 일반적으로 close 전에 Completion Gate에서 모든 피드백을 반영하므로 재open은 사용자 결정에 따른 예외 경로입니다.
 
-### Epic 코멘트 키
+### 코멘트 키
 
-| 키 | 시점 | 주체 |
-|----|------|------|
-| `[Workflow] 시작` | Epic 생성 직후 | team-lead |
-| `[Workflow] 완료` | 최종 승인 직전 Epic close | team-lead |
-| `[Workflow] 사용자 취소` | 사용자 취소 시 | team-lead |
-| `[Workflow] 설계 리스크로 중단` | 설계 리스크 중단 시 | team-lead |
-| `[리뷰 취합 #N]` | 리뷰 라운드 취합 결과 | team-lead |
+전체 키 목록과 시점 정의는 [`gate-process.md`](gate-process.md) §comment 키를 정전(canonical)으로 참조합니다. 요약: `[Discovery] 진입` / `[Discovery Gate]` / `[Discovery] build 인계` / `[Build] 시작` / `[Build 검증]` / `[Build 리뷰 #N]` / `[Build Gate]` / `[Build] 완료` / `[Build] Epic 완료`.
 
 ### 필수 규칙
 
-- **builder**: 작업 시작 시 `bd update <id> --status in_progress`, 완료 시 `bd close <id>`. 재작업 시 동일 명령으로 재open.
-- **team-lead**: Epic/기존 티켓은 2단계에서 `bd update <id> --status in_progress`로 작업 시작 표시. Worker Task 생성·할당만 수행. Worker Task 상태 전환은 builder에 위임. Epic은 Completion Gate 최종 승인/취소/설계 리스크 중단 시에만 close. 취소 시 `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close. 리뷰 피드백 취합 결과를 Epic comment에 기록.
+- **build 메인 Claude**: task의 in_progress 전환·close, Epic의 close 모두 build가 수행. worker는 코드 변경만 담당하고 이슈 상태 전환 권한 없음.
+- **discovery 메인 Claude**: Epic 생성·in_progress 전환, task 생성(open). 자체적으로 close하지 않음 (예외: 설계 리스크 중단 시 Epic close).
+- **취소 시**: `bd list --parent <epic-id> --status open`으로 남은 하위 이슈를 일괄 close하기 전에 사용자에게 확인.
 
 ## 계층 관리 명령어
 
@@ -235,13 +238,12 @@ bd epic status
 
 ## 참조
 
-- `skills/teams/SKILL.md`: 전체 워크플로우 오케스트레이션 (team-lead = 메인 Claude가 주도)
-- `agents/architect.md`: 설계 전담
-- `agents/builder.md`: 구현 + 이슈 상태 전환
+- `skills/discovery/SKILL.md`: Discovery + 설계 + 작업 분할 (task 또는 epic+task 생성)
+- `skills/build/SKILL.md`: 단일 Worker 구현 + 리뷰 + Completion Gate
+- `agents/architect.md`: 설계 전담 (discovery 단발 호출)
+- `agents/worker.md`: TDD 구현 (build 단발 호출)
 - `agents/security-reviewer.md`: 보안 전문 리뷰
 - `agents/performance-reviewer.md`: 성능 전문 리뷰
 - `agents/logic-reviewer.md`: 로직 + 아키텍처/SOLID 통합 리뷰
-- `agents/scribe.md`: 문서 생성 (on-demand)
 - `references/agent-common.md`: 에이전트 공통 규칙
-- `guides/context-management.md`: 이슈 기반 컨텍스트 관리
-- `guides/gate-process.md`: Discovery Gate + Completion Gate
+- `guides/gate-process.md`: Discovery / Completion Gate 정책

@@ -2,14 +2,14 @@
 name: workflow:worker
 description: |
   TDD 기반 코드 구현 에이전트. 이슈의 description/acceptance를 기반으로 RED→GREEN→REFACTOR 사이클을 수행합니다.
-  /workflow:single에서 사용됩니다.
+  /workflow:build에서 사용됩니다.
 tools: Read, Write, Edit, Grep, Glob, Bash, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir, mcp__plugin_serena_serena__find_file, mcp__plugin_serena_serena__replace_content, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__replace_symbol_body, mcp__plugin_serena_serena__insert_after_symbol, mcp__plugin_serena_serena__insert_before_symbol, mcp__plugin_code-review-graph_code-review-graph__get_minimal_context_tool, mcp__plugin_code-review-graph_code-review-graph__query_graph_tool
 model: opus
 color: green
 permissionMode: default
 ---
 
-# Worker 에이전트 (Single 모드)
+# Worker 에이전트
 
 TDD 기반 구현 전문가. 이슈 description/acceptance를 기반으로 RED → GREEN → REFACTOR 사이클을 수행합니다.
 
