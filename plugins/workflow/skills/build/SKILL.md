@@ -28,8 +28,8 @@ allowed-tools: Agent, Bash, AskUserQuestion, Read, Grep, Glob, TeamCreate, TeamD
 2. **설계 단계 없음**: Worker가 바로 구현, 리뷰는 전문 리뷰어 3명 병렬
 3. **TDD 필수**: RED → GREEN → REFACTOR
 4. **증거 기반 검증**: Worker 보고를 오케스트레이터가 테스트 재실행으로 교차 검증
-5. **심각도 기반 루프 단축**: Minor/Suggestion은 자동 user-decision 승격 (Critical/Major만 auto-fix)
-6. **Completion Gate**: close 직전 사용자 승인 게이트 통과 필수
+5. **리뷰 이슈 전수 처리(이번 PR 내)**: 등급 무관 모든 리뷰 항목은 ① 코드 반영, ② Worker 반려(사유 + 사용자 확인), ③ 사용자 명시적 무시(사유 필수) 중 하나로 close 전 종결. 미결 상태로 close 금지.
+6. **Completion Gate**: close 직전 사용자 승인 게이트 통과 필수. user-decision/Worker 반려 항목이 있으면 항목별 처리 결정 강제.
 7. **이슈 comment 영속 기록**: 시작/검증/라운드별 리뷰 취합/게이트 결정/완료를 모두 bd comments에 기록
 
 > 공통 규칙(금지 사항, 합리화 경고, 신뢰 수준, 혼란 관리): [`references/agent-common.md`](../../references/agent-common.md)
@@ -228,19 +228,23 @@ TeamCreate(
 
 ## 6단계: 피드백 취합 + auto-fix 루프
 
-### 6-1. 취합
+### 6-1. 취합 (3-way 분류)
 
 - **중복 제거**: 같은 file:line은 더 높은 심각도 기준
-- **분류 확정**: team-lead가 auto-fix/user-decision 최종 확정
-- **심각도 자동 승격**: [`guides/gate-process.md`](../../guides/gate-process.md) §심각도 자동 승격 규칙
+- **분류 확정**: team-lead가 다음 3가지로 최종 확정
+  - **auto-fix**: 명백한 개선. 등급 무관 전수 적용 대상
+  - **user-decision**: 트레이드오프가 명확하여 사용자 결정이 필요 (옵션 A/B, 정책 결정, 리뷰어 간 의견 충돌)
+  - **reject 후보**: team-lead 판단으로도 false positive·컨텍스트 부족이 의심되는 항목 → Worker 검토 후 사유와 함께 7-2로 승격
 - **comment 영속 기록**: 라운드별 취합 결과를 반드시 bd에 기록
 
 ```bash
-bd comments add <issue-id> "[Build 리뷰 #N] auto-fix N건 / user-decision M건 — 핵심: <2~3줄 요약>"
-# 예) [Build 리뷰 #1] auto-fix 3건 / user-decision 1건 — 핵심: SQL 인젝션 1건(Critical), 캐싱 누락 1건(Major), 네이밍 1건(Minor)
+bd comments add <issue-id> "[Build 리뷰 #N] auto-fix N건 / user-decision M건 / reject-후보 K건 — 핵심: <2~3줄 요약>"
+# 예) [Build 리뷰 #1] auto-fix 3건 / user-decision 1건 / reject-후보 1건 — 핵심: SQL 인젝션 1건(Critical), 캐싱 정책 1건, 보안 false-positive 의심 1건
 ```
 
-### 6-2. auto-fix 반영 (Critical/Major만)
+### 6-2. auto-fix 반영 + Worker 반려 권한
+
+auto-fix 대상은 등급 무관 전수 적용. Worker는 false positive·컨텍스트 부족·상충 충돌·AC 위반 시 적용을 거부하고 반려 사유를 보고할 권한이 있음. 사유 정의·반려 보고 포맷은 [`agents/worker.md`](../../agents/worker.md) §리뷰 auto-fix 모드 참조.
 
 ```
 Agent(
@@ -248,9 +252,11 @@ Agent(
   model: "opus",
   run_in_background: false,
   description: "리뷰 auto-fix 반영",
-  prompt: "bd-<issue-id> auto-fix 반영.\n수정 항목:\n{auto-fix 목록}\n기존 테스트 비파괴 주의."
+  prompt: "bd-<issue-id> auto-fix 반영.\n수정 항목 (등급 무관 전수):\n{auto-fix 목록}\n\n반려 권한 행사 시 worker.md §리뷰 auto-fix 모드의 반려 보고 포맷 사용. 기존 테스트 비파괴 주의."
 )
 ```
+
+team-lead는 Worker 반려 항목을 6-1의 reject-후보와 합쳐 **user-decision으로 자동 승격**시키고 7-2-B로 보냅니다.
 
 ### 6-3. 재검증 (4단계 반복)
 
@@ -274,11 +280,11 @@ bd comments add <issue-id> "[Build 리뷰 #N] auto-fix N건 (재리뷰 통과 / 
 ### 6-5. 루프 종료 조건
 
 - 모든 리뷰어가 "이슈 없음" → 7단계
-- 최대 3라운드 초과 → 남은 항목을 user-decision으로 승격, comment에 승격 사유 기록 후 7단계
-- 새 Critical/Major 발견 → 6-1부터 반복
+- 최대 3라운드 초과 → 남은 항목을 user-decision으로 승격, comment에 승격 사유 기록 후 7단계 (Gate에서 항목별 처리 강제)
+- 새 항목 발견(등급 무관) → 6-1부터 반복
 
 ```bash
-bd comments add <issue-id> "[Build 리뷰 종료] 라운드 N회 종료 — 잔여 user-decision M건"
+bd comments add <issue-id> "[Build 리뷰 종료] 라운드 N회 종료 — 잔여 user-decision M건 (Gate에서 전수 처리)"
 ```
 
 ### 6-6. 팀 해산
@@ -289,7 +295,7 @@ TeamDelete(name: "build-reviewers")
 
 ## 7단계: Completion Gate (사용자 승인)
 
-close 직전 **사용자에게 최종 변경사항을 노출하고 승인을 받습니다**. user-decision 항목이 있으면 함께 제시.
+close 직전 **사용자에게 최종 변경사항을 노출하고 승인을 받습니다**. **리뷰에서 도출된 모든 이슈는 이번 PR 안에서 종결되어야 하며**, user-decision 잔여 항목이 있으면 항목별로 처리 결정을 강제합니다.
 
 ### 7-1. 게이트 보고 (사용자 노출)
 
@@ -307,6 +313,7 @@ close 직전 **사용자에게 최종 변경사항을 노출하고 승인을 받
 - [ ] 테스트 PASS (오케스트레이터 직접 실행 결과)
 - [ ] 빌드 성공 (오케스트레이터 직접 실행 결과)
 - [ ] 리뷰 auto-fix 전수 반영
+- [ ] user-decision 잔여 0건 (또는 7-2 처리 후 0건)
 
 ### 리뷰 결과
 - 라운드: N회 / auto-fix: N건 / user-decision: M건
@@ -316,31 +323,51 @@ close 직전 **사용자에게 최종 변경사항을 노출하고 승인을 받
 1. [항목 1] — {설명} (옵션 A/B + reviewer 의견)
 ```
 
-### 7-2. AskUserQuestion 분기
+### 7-2. user-decision 항목별 처리 (M ≥ 1인 경우 필수)
+
+user-decision 잔여(6-1 트레이드오프 + 6-2 Worker 반려 + 3라운드 초과 승격분)가 한 건이라도 있으면 **항목별로** `AskUserQuestion`을 호출. "보류한 채 완료"는 허용하지 않습니다.
+
+분기 표(7-2-A 일반 user-decision / 7-2-B Worker 반려 항목)와 선택지별 처리 정의는 [`guides/gate-process.md`](../../guides/gate-process.md) §Completion Gate의 user-decision 처리를 참조.
+
+#### AskUserQuestion 호출 패턴
+
+```
+# 7-2-A 일반 user-decision (트레이드오프)
+AskUserQuestion:
+  question: "[Build Gate] user-decision 항목 N/M:\n{항목 설명}\n출처: {reviewer}\n옵션: {A / B / 트레이드오프}"
+  options: ["옵션 A 반영", "옵션 B 반영", "이번 PR 무시 (사유 필수)", "취소 (close 안 함)"]
+
+# 7-2-B Worker 반려 항목
+AskUserQuestion:
+  question: "[Build Gate] Worker 반려 항목 N/M:\n리뷰 피드백: {원 피드백}\n출처: {reviewer}\nWorker 반려 사유: {사유 + 코드 근거}"
+  options: ["Worker 반려 인정 (적용 안 함)", "그래도 적용 (Worker 반려 거부)", "이번 PR 무시 (사유 필수)", "취소 (close 안 함)"]
+```
+
+처리 결정 누적 후 일괄 반영 권장. "반영" 또는 "그래도 적용" 결정이 1건 이상이면 worker 재호출 필수(6-2 패턴 → 4·5·6 재진행 → 7 재진입).
+
+```bash
+bd comments add <issue-id> "[Build Gate] user-decision 처리 — 반영 N건 / Worker 반려 인정 K건 / 무시 M건"
+bd comments add <issue-id> "[Build Gate] 반려 인정 — {항목명}: {Worker 사유}"   # 반려 인정 항목별
+bd comments add <issue-id> "[Build Gate] 무시 사유 — {항목명}: {사용자 사유}"   # 무시 항목별
+```
+
+### 7-3. 최종 분기 (user-decision 잔여 0건 도달 후)
+
+user-decision이 0건이거나 7-2 처리로 0건이 되면:
 
 ```
 AskUserQuestion:
-  question: "[Build Gate] 작업을 완료하시겠습니까? (user-decision M건)"
-  options: ["완료" / "수정 필요" / "취소"]
+  question: "[Build Gate] 모든 리뷰 이슈가 처리되었습니다. 완료할까요?"
+  options: ["완료" / "취소"]
 ```
 
-**자동 통과 조건** (게이트 스킵 가능): user-decision 0건 + 모든 리뷰 PASS + AC 1:1 모두 충족인 경우, 게이트를 스킵하고 바로 8단계 진행해도 됩니다. 단, comment에는 `[Build Gate] 자동 통과` 기록.
-
-### 7-3. 분기 처리
+**자동 통과 조건** (게이트 스킵 가능): user-decision 0건 + 모든 리뷰 PASS + AC 1:1 모두 충족인 경우, 7-2·7-3을 스킵하고 바로 8단계 진행해도 됩니다. comment에는 `[Build Gate] 자동 통과` 기록.
 
 **완료** — 8단계 진행:
 
 ```bash
 bd comments add <issue-id> "[Build Gate] 사용자 승인 — 완료"
 ```
-
-**수정 필요** — 사용자 결정 항목 반영 후 4단계부터 재진입:
-
-```bash
-bd comments add <issue-id> "[Build Gate] 수정 필요 — 사유: <사용자 결정>"
-```
-
-이후 user-decision 결정에 따라 Worker 재호출 (6-2 패턴) → 4·5·6 재진행 → 7 재게이트.
 
 **취소** — close하지 않음, 변경사항 처리는 사용자에게 위임:
 
@@ -407,9 +434,12 @@ bd list --parent <epic-id> --status open  # 미완료 자식 task
 | 시작 | `[Build] 시작` | 워크플로우 진입 (Epic 자식인 경우 Epic ID 표기) |
 | Worker 검증 통과 | `[Build 검증]` | 변경 파일 수, 테스트/빌드 결과 |
 | Worker 검증 실패 | `[Build 검증실패]` | 실패 사유 (선택) |
-| 리뷰 라운드별 | `[Build 리뷰 #N]` | auto-fix/user-decision 건수, 핵심 요약 |
-| 리뷰 종료 | `[Build 리뷰 종료]` | 종료 사유 (전부 통과 / 3라운드 초과) |
-| Gate 결정 | `[Build Gate]` | 사용자 승인 / 수정 필요 / 취소 / 자동 통과 |
+| 리뷰 라운드별 | `[Build 리뷰 #N]` | auto-fix/user-decision/reject-후보 건수, 핵심 요약 |
+| 리뷰 종료 | `[Build 리뷰 종료]` | 종료 사유 (전부 통과 / 3라운드 초과 — Gate에서 전수 처리) |
+| Gate user-decision 처리 | `[Build Gate] user-decision 처리` | 항목별 반영/Worker 반려 인정/무시 결정 합계 |
+| Gate 반려 인정 | `[Build Gate] 반려 인정` | 항목별 Worker 반려 사유 (적용 안 함 결정 시) |
+| Gate 무시 사유 | `[Build Gate] 무시 사유` | 항목별 사용자 명시 사유 (반영 안 함 결정 시) |
+| Gate 결정 | `[Build Gate]` | 사용자 승인 / 취소 / 자동 통과 |
 | 완료 | `[Build] 완료` | close 직전 |
 | 취소 | `[Build] 사용자 취소` | close 안 함, 사유 기록 |
 | Epic 완료 | `[Build] Epic 완료` | Epic close 시 (Epic 이슈 측에 기록) |
@@ -424,7 +454,9 @@ bd list --parent <epic-id> --status open  # 미완료 자식 task
 | 병렬 Worker 일부 실패 | 성공분 유지, 실패 내용 보고 후 사용자 판단 |
 | Worker가 CONFUSION 출력 | 혼란 내용·옵션을 사용자에게 전달 |
 | 리뷰어 무응답 | 해당 리뷰어 스킵 후 사용자 보고 |
-| 리뷰 3라운드 초과 | 남은 항목을 user-decision으로 승격 후 7단계 Gate |
+| 리뷰 3라운드 초과 | 남은 항목을 user-decision으로 승격 후 7단계 Gate (항목별 처리 강제) |
+| Worker가 auto-fix 반려 | 6-1 reject-후보와 합쳐 user-decision 자동 승격 → 7-2-B에서 사용자 결정 |
+| Gate user-decision 잔여 | 항목별 `AskUserQuestion`로 반영/반려 인정/무시(사유 필수)/취소 강제 |
 | Gate 취소 | 이슈 in_progress 유지, 변경사항 수동 처리 안내 |
 
 ## 호출 규칙 요약

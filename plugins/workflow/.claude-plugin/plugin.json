@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Discovery(대화형 탐색, 라운드 무제한, task/epic 산출 또는 미산출) → Build(단일 Worker + 3 reviewer + Completion Gate) 분리형 워크플로우.",
   "author": {
     "name": "wondermove lab",

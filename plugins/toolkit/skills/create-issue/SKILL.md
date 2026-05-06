@@ -380,6 +380,25 @@ bd create "<제목>" --type <beads_type> --priority <beads_priority> \
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+### Step 8: Jira 동기화 여부 확인 (필수)
+
+이슈 생성 후 **반드시** 사용자에게 Jira 동기화 여부를 질문합니다. 자동으로 sync-jira를 호출하지 않습니다.
+
+```
+AskUserQuestion:
+  question: "생성된 이슈 {issue-id}를 Jira로 동기화할까요?"
+  options:
+    - "예 — sync-jira 실행"
+    - "아니오 — beads에만 유지"
+```
+
+| 선택 | 처리 |
+|------|------|
+| 예 | `/toolkit:sync-jira {issue-id}` 호출. 부모 티켓 등 추가 입력은 sync-jira 스킬 내부에서 사용자에게 질문 |
+| 아니오 | 종료. 추후 수동으로 `/toolkit:sync-jira <id>` 호출 가능함을 1줄로 안내 |
+
+> 복수 이슈를 연속 생성한 경우, 각 이슈 생성마다 개별 확인하지 말고 마지막에 일괄로 묻습니다 (`sync-jira` 스킬은 복수 ID 인자를 지원).
+
 ## 레이블 가이드
 
 이슈 내용에서 자동으로 적절한 레이블을 추출합니다.

@@ -41,43 +41,63 @@
 | 설계 리스크 노출 | 그대로 진행 | 4-4 이슈 생성으로 진행 |
 | 설계 리스크 노출 | 다시 논의 | 2단계 대화 루프 복귀 |
 | 설계 리스크 노출 | 이슈 없이 종료 | 5-B 단순 종료 |
-| Completion Gate | 완료 | task close + 결과 보고. Epic 자식이면 다음 task 안내 |
-| Completion Gate | 수정 필요 | 사용자 결정에 따라 Worker 재호출 → 4·5·6 재진행 → Gate 재진입 |
+| Completion Gate | 완료 (user-decision 0건 도달 후) | task close + 결과 보고. Epic 자식이면 다음 task 안내 |
+| Completion Gate | user-decision 항목별 "반영" / "그래도 적용" | 결정 누적 → worker 재호출 → 4·5·6 재진행 → Gate 재진입 |
+| Completion Gate | user-decision 항목별 "Worker 반려 인정" | 반려 사유 comment 기록 후 잔여 목록에서 제외 (PR 미반영) |
+| Completion Gate | user-decision 항목별 "이번 PR 무시" | 사용자 사유 필수 입력 → comment 기록 후 잔여 목록에서 제외 |
 | Completion Gate | 취소 | 이슈 in_progress 유지, 변경사항 수동 처리 안내 (자동 revert 없음) |
 
-## 심각도 자동 승격 규칙
+## 리뷰 이슈 처리 원칙 (이번 PR 내 전수 처리)
 
-리뷰 라운드에서 발견된 항목의 처리 우선순위:
+리뷰에서 도출된 모든 항목은 **이번 PR 안에서 종결**되어야 합니다. 미결 상태로 close하지 않습니다.
+
+### 3-way 분류
+
+| 분류 | 정의 | 처리 |
+|------|------|------|
+| **auto-fix** | 명백한 개선 (등급 무관) | Worker가 1라운드부터 전수 적용. Critical/Major/Minor/Suggestion 모두 동일 |
+| **user-decision** | 트레이드오프가 명확하여 작성자만으로 판단 불가 (옵션 A/B 양자택일, 정책·범위 결정, 리뷰어 간 의견 충돌) | Completion Gate 7-2-A에서 항목별 결정 |
+| **Worker 반려** | Worker가 auto-fix 시도 중 false positive·컨텍스트 부족·상충 충돌·AC 위반으로 부적절 판단한 항목 | Completion Gate 7-2-B에서 사용자가 반려 인정 / 그래도 적용 / 무시 / 취소 결정 |
 
 | 등급 | 1라운드 | 2~3라운드 |
 |------|---------|-----------|
 | **Critical** | auto-fix | auto-fix (반복) |
 | **Major** | auto-fix | auto-fix (반복) |
-| **Minor** | auto-fix 시도 | **자동 user-decision 승격** |
-| **Suggestion** | auto-fix 시도 또는 스킵 | **자동 user-decision 승격** |
+| **Minor** | auto-fix | auto-fix (반복) |
+| **Suggestion** | auto-fix | auto-fix (반복) |
 
-1라운드 auto-fix 반영 후에도 남은 Minor/Suggestion은 모두 Completion Gate에서 사용자 판단에 위임합니다. 3회 라운드 상한에 도달하지 않도록 루프를 단축합니다.
+3라운드 초과 시 잔여 항목은 user-decision으로 자동 승격되며, **승격된 항목과 Worker 반려 항목 모두 Completion Gate 7-2에서 항목별 처리 결정이 강제**됩니다.
 
-## Completion Gate의 user-decision 처리
+### Worker 반려 권한 (false positive 방지)
 
-3명 리뷰어의 피드백에서 메인 Claude가 취합한 **user-decision 목록**을 사용자에게 명시적으로 제시:
+리뷰어 피드백이 항상 옳지는 않으므로 Worker는 false positive·컨텍스트 부족·상충 충돌·AC 위반 시 적용을 거부할 권한을 가집니다. 사유 정의·반려 보고 포맷은 [`agents/worker.md`](../agents/worker.md) §리뷰 auto-fix 모드가 정전.
 
-```markdown
-## ⚠️ 사용자 판단 필요 항목 (user-decision)
+반려 시 Worker는 항목ID + 근거 코드 위치를 사유에 포함해야 하며, team-lead는 이를 user-decision으로 승격하여 7-2-B에서 사용자 최종 결정에 부칩니다.
 
-### 리뷰어 제시 트레이드오프
-1. [항목 1] — {설명} (출처: {리뷰어 이름})
-   - 옵션 A: ...
-   - 옵션 B: ...
-   - reviewer 의견: ...
+## Completion Gate의 user-decision 처리 (항목별 강제)
 
-### 심각도 승격된 잔여 Minor/Suggestion
-2. [Minor/승격] {설명}
-   - 출처: {리뷰어}
-   - 반영 권장도: 낮음 (시간/비용 vs 효과 판단 필요)
-```
+user-decision 잔여(원래의 트레이드오프 + Worker 반려 + 3라운드 초과 승격분)가 1건 이상이면 **항목별로** `AskUserQuestion`을 호출합니다. "보류한 채 완료"는 허용하지 않습니다.
 
-사용자가 옵션을 선택하면 메인 Claude는 결과를 메모리로 저장한 뒤 "수정 필요" 분기에서 worker 재호출(6-2 패턴)에 반영. Completion Gate "완료/수정 필요/취소" 자체는 `AskUserQuestion` 분기입니다.
+### 7-2-A. 일반 user-decision 선택지
+
+| 선택 | 처리 |
+|------|------|
+| 옵션 X 반영 | 결정 누적 → 모든 항목 결정 후 worker 재호출(6-2) → 4·5·6 재진행 → Gate 재진입 |
+| 이번 PR 무시 | 사용자 자유 입력으로 사유 필수 → `[Build Gate] 무시 사유` comment 기록 → 잔여 목록에서 제외 |
+| 취소 | Gate 취소 분기 (close 안 함, in_progress 유지) |
+
+### 7-2-B. Worker 반려 항목 선택지
+
+| 선택 | 처리 |
+|------|------|
+| Worker 반려 인정 | `[Build Gate] 반려 인정` comment 기록 후 잔여 목록에서 제외 (PR에 반영 안 함) |
+| 그래도 적용 | 반려 사유를 무력화하는 명시 지시와 함께 worker 재호출. Gate 재진입 |
+| 이번 PR 무시 | 7-2-A의 무시와 동일 처리 |
+| 취소 | 7-2-A의 취소와 동일 처리 |
+
+처리 결정은 누적 후 일괄 반영(라운드 절약). "반영" 또는 "그래도 적용" 결정이 1건 이상이면 worker 재호출 필수.
+
+user-decision 잔여가 0건이 되면 최종 분기(`["완료" / "취소"]`)로 진입합니다. **자동 통과 조건**(user-decision 0건 + 모든 리뷰 PASS + AC 1:1 충족)에서는 Gate 전체 스킵 가능.
 
 ## 증거 기반 완료 검증
 
@@ -137,9 +157,12 @@ discovery 종료 분기에 따라 세 가지 경로가 있습니다.
 | build | `[Build] 시작` | 진입 (Epic 자식인 경우 Epic ID 표기) |
 | build | `[Build 검증]` | Worker 검증 통과 |
 | build | `[Build 검증실패]` | Worker 검증 실패 (선택) |
-| build | `[Build 리뷰 #N]` | 라운드별 취합 결과 |
-| build | `[Build 리뷰 종료]` | 리뷰 루프 종료 (전부 통과 / 3라운드 초과) |
-| build | `[Build Gate]` | 완료 / 수정 필요 / 취소 / 자동 통과 |
+| build | `[Build 리뷰 #N]` | 라운드별 취합 결과 (auto-fix/user-decision/reject-후보) |
+| build | `[Build 리뷰 종료]` | 리뷰 루프 종료 (전부 통과 / 3라운드 초과 — Gate에서 전수 처리) |
+| build | `[Build Gate] user-decision 처리` | 항목별 반영/반려 인정/무시 결정 합계 |
+| build | `[Build Gate] 반려 인정` | 항목별 Worker 반려 사유 (적용 안 함 결정 시) |
+| build | `[Build Gate] 무시 사유` | 항목별 사용자 명시 사유 |
+| build | `[Build Gate]` | 완료 / 취소 / 자동 통과 |
 | build | `[Build] 완료` | task close 직전 |
 | build | `[Build] 사용자 취소` | Gate 취소 시 (close 안 함) |
 | build | `[Build] Epic 완료` | Epic close 직전 (Epic 이슈 측) |
