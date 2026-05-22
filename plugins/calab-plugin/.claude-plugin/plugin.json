@@ -1,7 +1,7 @@
 {
   "name": "calab-plugin",
   "version": "3.0.0-flash",
-  "description": "Flash 커스텀 플러그인 - Opus/Codex 워크플로우 최적화 (16 스킬 + 12 에이전트 + 3 훅)",
+  "description": "Flash 커스텀 플러그인 - Opus/Codex 워크플로우 최적화 (20 스킬 + 12 에이전트 + 3 훅)",
   "author": {
     "name": "smlee",
     "email": "captain@wondermove.net"
