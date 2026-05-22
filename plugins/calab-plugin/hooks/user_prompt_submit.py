@@ -79,6 +79,14 @@ def detect_slash_command(prompt: str) -> Optional[dict]:
         '/cleanup --dry-run': {'type': 'refactor', 'category': '브랜치 정리 (미리보기)', 'command': '/cleanup --dry-run'},
         '/cleanup': {'type': 'refactor', 'category': '브랜치 정리', 'command': '/cleanup'},
 
+        # /handoff-replica - 세션 간 컨텍스트 동기화
+        '/handoff-replica --resume': {'type': 'research', 'category': '세션 컨텍스트 복원', 'command': '/handoff-replica --resume'},
+        '/handoff-replica': {'type': 'document', 'category': '세션 핸드오프 작성', 'command': '/handoff-replica'},
+
+        # /handoff-quiz - 세션 인계 검증 퀴즈
+        '/handoff-quiz --grade': {'type': 'review', 'category': '인계 퀴즈 채점', 'command': '/handoff-quiz --grade'},
+        '/handoff-quiz': {'type': 'review', 'category': '인계 퀴즈 출제', 'command': '/handoff-quiz'},
+
         # /onboard - 프로젝트 온보딩 (메타 스킬)
         '/onboard --quick': {'type': 'research', 'category': '빠른 온보딩', 'command': '/onboard --quick'},
         '/onboard --phases': {'type': 'research', 'category': '단계별 온보딩', 'command': '/onboard --phases'},

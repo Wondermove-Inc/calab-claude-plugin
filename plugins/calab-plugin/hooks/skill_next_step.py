@@ -150,6 +150,27 @@ SKILL_NEXT_STEPS: Dict[str, Dict] = {
             ]
         }
     },
+    'handoff-replica': {
+        'default': {
+            'description': '세션 핸드오프 문서 작성 완료',
+            'options': [
+                {'label': '/handoff-quiz', 'description': '인계 검증 퀴즈 출제 (권장)'},
+                {'label': '세션 종료', 'description': '새 세션에서 --resume으로 복원'},
+                {'label': '내용 보완', 'description': '핸드오프 문서 수정/추가'},
+                {'label': '종료', 'description': '나중에 계속'},
+            ]
+        }
+    },
+    'handoff-quiz': {
+        'default': {
+            'description': '인계 검증 퀴즈 출제 완료',
+            'options': [
+                {'label': '/handoff-quiz --grade', 'description': '새 세션 답변 채점 (권장)'},
+                {'label': '문항 조정', 'description': '--count로 재출제'},
+                {'label': '종료', 'description': '나중에 계속'},
+            ]
+        }
+    },
 }
 
 

@@ -78,6 +78,22 @@ SKILL_REFERENCES = {
         },
         'option_templates': {}
     },
+    'handoff-replica': {
+        'base_path': 'skills/handoff-replica/templates',
+        'options': {
+            'resume': [],
+            'default': ['replica-template.md']
+        },
+        'option_templates': {}
+    },
+    'handoff-quiz': {
+        'base_path': 'skills/handoff-quiz',
+        'options': {
+            'grade': [],
+            'default': []
+        },
+        'option_templates': {}
+    },
     'review': {
         'base_path': 'skills/review',
         'options': {
@@ -115,7 +131,7 @@ CALAB_SKILL_ALIASES = {
 
 # 모든 스킬 목록 (references가 없어도 상태 저장 대상)
 ALL_SKILLS = [
-    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'review', 'jira-ticket', 'cleanup'
+    'brainstorm', 'plan', 'onboard', 'research', 'handoff', 'handoff-replica', 'handoff-quiz', 'review', 'jira-ticket', 'cleanup'
 ]
 
 
@@ -166,6 +182,12 @@ def detect_option(prompt: str, skill_name: str) -> str:
     elif skill_name == 'cleanup':
         if '--dry-run' in prompt_lower:
             return 'dry-run'
+    elif skill_name == 'handoff-replica':
+        if '--resume' in prompt_lower:
+            return 'resume'
+    elif skill_name == 'handoff-quiz':
+        if '--grade' in prompt_lower:
+            return 'grade'
     elif skill_name == 'onboard':
         if '--quick' in prompt_lower:
             return 'quick'

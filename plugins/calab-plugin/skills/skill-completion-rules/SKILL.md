@@ -45,6 +45,8 @@ user-invocable: false
 | `/e2e` | E2E 테스트 완료 | 실패 수정 또는 배포 |
 | `/jira-ticket` | 티켓 추천 완료 | `/handoff` 또는 JIRA 생성 |
 | `/cleanup` | 브랜치 정리 완료 | `/plan` (다음 기능) |
+| `/handoff-replica` | 세션 핸드오프 작성 완료 | `/handoff-quiz` 또는 새 세션 `--resume` |
+| `/handoff-quiz` | 인계 검증 퀴즈 출제/채점 | 손실 영역 보강 또는 작업 진행 |
 | `/research` | 리서치 완료 | `/brainstorm` 또는 `/plan` |
 
 ---
